@@ -5,7 +5,7 @@ Plugin Name: bwtrace
 Plugin URI: http://www.bobbingwidewebdesign.com/content/bwtrace
 Description: Easy to use trace macros for Bobbing Wide websites
 Author: bobbingwide
-Version: 0.01
+Version: 0.1
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
@@ -37,6 +37,7 @@ function bwtrace_version() {
 }
 
 require_once( 'bwtrace.inc');
+require_once( 'bobbfunc.inc' );
 
 
 
