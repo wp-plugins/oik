@@ -5,7 +5,7 @@ Plugin Name: oik base plugin
 Plugin URI: http://www.bobbingwidewebdesign.com/content/oik
 Description: Easy to use shortcode macros for Bobbing Wide WordPress websites
 Author: bobbingwide
-Version: 0.01
+Version: 0.1
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
@@ -32,13 +32,12 @@ global $bw_options;
 //echo '<p>BATa='.$bwapi_trace_test.'=aBAT</p>';
 
 function oik_version() {
-  return '0.01';
+  return '0.1';
 }
 
   require_once( "bobbfunc.inc" );
   require_once( "bobblink.inc" );
   require_once( "bobbcomp.inc" );
-  require_once( "bobbart.inc" );
   require_once( "bwlink.inc" );
   require_once( "bobbgoog.inc" ); 
   
