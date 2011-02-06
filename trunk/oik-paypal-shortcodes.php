@@ -42,7 +42,7 @@ https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_ho
 
 if ( ! defined( 'ABSPATH' ) )
 	die( "Can't load this file directly" );
-require_once( "bobbfuncs.inc" );        
+require_once( "bobbfunc.inc" );        
 require_once( "bobbforms.inc" );        
 
 class BWPaypal
