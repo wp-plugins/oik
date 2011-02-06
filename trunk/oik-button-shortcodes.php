@@ -68,7 +68,7 @@ function bw_button_shortcodes($atts) {
   $title = $atts['title']; 
   $class = $atts['class'];
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
-  art_button( $link, $text, $title, $class ); 
+  $this->art_button( $link, $text, $title, $class ); 
 
   return( bw_ret());  
 }
