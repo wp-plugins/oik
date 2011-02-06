@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: oik Paypal Shortcodes
-Plugin URI: http://www.bobbingwidewebdesign.com/2011/01/28/oik-paypal-shortcodes-plugin
-Description: [bw] PayPal Shortcodes - Pay Now, Buy Now, Donate, Add to Cart and View Cart buttons
-Author: Herb Miller
-Version: 0.1
+Plugin URI: http://www.bobbingwidewebdesign.com/oik
+Description: [oik] PayPal Shortcodes - Pay Now, Buy Now, Donate, Add to Cart and View Cart buttons
+Author: bobbingwide
+Version: 0.2
 Author URI: http://www.bobbingwide.com/content/herb-miller
 
 Notes & Limitations
@@ -24,7 +24,13 @@ Notes & Limitations
 - The generated code is for NonHostedGuest buttons - not buttons that are saved in your PayPal account.
   see https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_html_paypal_shopping_cart
   
-By default, the button creation tool saves payment buttons in your PayPal account. The tool saves your button and generates the code when you click the Create Button. You must copy and paste the generated code onto your webpages, whether or not you save your button at PayPal. The generated code is shorter for saved buttons, because PayPal keeps most of the information about your button in your account, instead of placing it in the code that you add to your website.
+This is an extract from PayPal button creation help...
+  
+By default, the button creation tool saves payment buttons in your PayPal account. 
+The tool saves your button and generates the code when you click the Create Button. 
+You must copy and paste the generated code onto your webpages, whether or not you save your button at PayPal. 
+The generated code is shorter for saved buttons, because PayPal keeps most of the information about your button in your account,
+instead of placing it in the code that you add to your website.
 
 Saving your payment buttons in your PayPal account has these benefits:
 

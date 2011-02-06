@@ -2,10 +2,10 @@
 
 /*
 Plugin Name: oik base plugin 
-Plugin URI: http://www.bobbingwidewebdesign.com/content/oik
-Description: Easy to use shortcode macros for Bobbing Wide WordPress websites
+Plugin URI: http://www.bobbingwidewebdesign.com/oik
+Description: Easy to use shortcode macros for often included key-information 
 Author: bobbingwide
-Version: 0.1
+Version: 0.2
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
@@ -32,7 +32,7 @@ global $bw_options;
 //echo '<p>BATa='.$bwapi_trace_test.'=aBAT</p>';
 
 function oik_version() {
-  return '0.1';
+  return '0.2';
 }
 
   require_once( "bobbfunc.inc" );
@@ -50,7 +50,9 @@ function oik_version() {
 
 
 
-/* Shortcodes for each of the more useful APIs */
+/* Shortcodes for each of the more useful "often included key-information" fields 
+   in Bobbing Wide's Wonder of WordPress websites
+*/
 add_shortcode( 'bw', 'bw' );
 add_shortcode( 'bw_address', 'bw_address');
 add_shortcode( 'bw_mailto', 'bw_mailto' );
@@ -66,6 +68,10 @@ add_shortcode( 'bw_contact', 'bw_contact' );
 add_shortcode( 'bw_twitter', 'bw_twitter' );
 add_shortcode( 'bw_facebook', 'bw_facebook' );
 add_shortcode( 'bw_linkedin', 'bw_linkedin' );
+add_shortcode( 'bw_youtube', 'bw_youtube' );
+add_shortcode( 'bw_flickr', 'bw_flickr' );
+add_shortcode( 'bw_picasa', 'bw_picasa' );
+
 
 add_shortcode( 'bw_company', 'bw_company' );
 add_shortcode( 'bw_business', 'bw_business' );
@@ -76,6 +82,7 @@ add_shortcode( 'bw_admin', 'bw_admin' );
 add_shortcode( 'bw_domain', 'bw_domain' );
 
 // add_shortcode( 'div', 'bw_div' );
+// add_shortcode( 'ediv', 'bw_ediv' );
 
 add_shortcode( 'clear', 'bw_clear' );
 
@@ -93,35 +100,32 @@ add_filter('the_content', 'do_shortcode' );
 // In which sequence should these go?
 // trying api, bobbingwide then bwlink
 
+$bw_options = get_option( 'bw_options' );
+
 wp_enqueue_style( 'oikCSS', WP_PLUGIN_URL . '/oik/oik.css' ); 
 wp_enqueue_style( 'bwlinkCSS', WP_PLUGIN_URL . '/oik/bwlink.css' ); 
+
 $customCSS =  bw_get_company( 'customCSS' );
 if ( !empty( $customCSS) )
   wp_enqueue_style( 'customCSS', get_theme_root_uri() . $customCSS);
 
 
-
-/* Test code for bw_wpadmin ( which doesn't work quite right */
-
-$bw_options = get_option( 'bw_options' );
-
-
 add_action('admin_init', 'oik_options_init' );
 add_action('admin_menu', 'oik_options_add_page');
 
-// Init plugin options to white list our options
+// Init plugin options 
 function oik_options_init(){
 	register_setting( 'oik_options_options', 'bw_options', 'oik_options_validate' );
 }
 
-// Add menu page
+// Add the options page
 function oik_options_add_page() {
 	add_options_page('[bw] Options', 'oik options', 'manage_options', 'bw_options', 'oik_options_do_page');
 }
 
 
 
-// Draw the menu page itself
+// Draw the oik options page 
 function oik_options_do_page() {
   require_once( "bobbforms.inc" );
   sdiv( "column span-15 wrap" );
@@ -147,12 +151,12 @@ function oik_options_do_page() {
     textfield( "bw_options[email]", 50, "Email [bw_mailto]", $options['email']  );
     textfield( "bw_options[admin]", 50, "Admin [bw_admin]", $options['admin']  );
     
-// extended-address e.g.  1 Fernwood House
-// street-address   e.g.  45-47 London Road                            
-// locality         e.g   Cowplain
-// region           e.g.  WATERLOOVILLE, HANTS                         
-// postal-code      e.g.  PO8 8H                        
-// country-name     e.g.  UK 
+    // extended-address e.g.  Bobbing Wide
+    // street-address   e.g.  41 Redhill Road
+    // locality         e.g   Rowlands Castle
+    // region           e.g.  HANTS
+    // postal-code      e.g.  PO9 6DE                        
+    // country-name     e.g.  UK 
 
 
     textfield( "bw_options[extended-address]", 50, "Extended-address [bw_address]", $options['extended-address']  );
@@ -165,7 +169,7 @@ function oik_options_do_page() {
     textfield( "bw_options[lat]", 50, "Latitude [bw_geo]", $options['lat']  );
     textfield( "bw_options[long]", 50, "Longitude", $options['long']  );
     
-// ABQIAAAAEraXBMl-kX5b-Swk0AR98BQiFdr9vy7axdrApFjkJGV6ZRaqtxRqjZfTaNvU9q3jxZ50yMHK-mrzag
+    // ABQIAAAAEraXBMl-kX5b-Swk0AR98BQiFdr9vy7axdrApFjkJGV6ZRaqtxRqjZfTaNvU9q3jxZ50yMHK-mrzag
     textfield( "bw_options[google_maps_api_key]", 87, "Google Maps API key [bw_show_googlemap]", $options['google_maps_api_key']  );
     textfield( "bw_options[width]", 10, "Google Map width", $options['width']  );
     textfield( "bw_options[height]", 10, "Google Map height", $options['height']  );
@@ -179,6 +183,7 @@ function oik_options_do_page() {
     textfield( "bw_options[linkedin]", 50, "LinkedIn URL [bw_linkedin]", $options['linkedin'] );
     textfield( "bw_options[youtube]", 50, "YouTube URL [bw_youtube]", $options['youtube'] );
     textfield( "bw_options[flickr]", 50, "Flickr URL [bw_flickr]", $options['flickr'] );
+    textfield( "bw_options[picasa]", 50, "Picasa URL [bw_picasa]", $options['picasa'] );
     
     textfield( "bw_options[paypal-email]", 50, "PayPal email [bw_paypal]", $options['paypal-email'] );
     
@@ -190,29 +195,13 @@ tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" );
   
   ediv(); 
   sdiv("column span-5 last");
-  p("Use the shortcode options in your pages, widgets and titles" );
+  p("Use the shortcode options in your pages, widgets and titles. e.g." );
   p("[bw_address] to print your address" );
   p( bw_address());
   ediv();      
   bw_flush();
 }
 
-/*
-                        
-			<table class="form-table">
-				<tr valign="top"><th scope="row">A Checkbox</th>
-					<td><input name="bw_options[option1]" type="checkbox" value="1" <?php checked('1', $options['option1']); ?> /></td>
-				</tr>
-				<tr valign="top"><th scope="row">Some text</th>
-					<td><input type="text" name="bw_options[sometext]" value="<?php echo $options['sometext']; ?>" /></td>
-				</tr>
-			</table>
-			<p class="submit">
-			<input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
-			</p>
-		</form>
-  
-*/
 
 // Sanitize and validate input. Accepts an array, return a sanitized array.
 function oik_options_validate($input) {
