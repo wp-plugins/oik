@@ -314,7 +314,7 @@ function bw_linkedin() {
   return( bw_follow( "LinkedIn" ));
 } 
    
-function bw_youttube() {  
+function bw_youtube() {  
   return( bw_follow( "YouTube" ));
 }
     
