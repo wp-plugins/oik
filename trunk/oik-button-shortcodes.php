@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: oik [bw_button] shortcodes
-Plugin URI: http://www.bobbingwidewebdesign.com/2011/01/28/oik-button-shortcodes-plugin
-Description: [oik] button shortcode - Call to action style buttons for Artisteer themes
-Author: Herb Miller
-Version: 0.1
+Plugin URI: http://www.bobbingwidewebdesign.com/oik
+Description: [oik] button shortcodes - Call to action style buttons for Artisteer themes
+Author: bobbingwide
+Version: 0.2
 Author URI: http://www.bobbingwide.com/content/herb-miller
 
 Notes & Limitations: tbc

@@ -2,10 +2,10 @@
 
 /*
 Plugin Name: oik sidebar
-Plugin URI: http://www.bobbingwidewebdesign.com/content/oik
+Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Applies widget wrangler sidebar functionality to Artisteer themes
 Author: bobbingwide
-Version: 0.1
+Version: 0.2
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
@@ -29,8 +29,23 @@ License: GPL2
 global $oik_options;
 
 function oik_sidebar_api_version() {
-  return '0.1';
+  return '0.2';
 }
+
+/* Note: for this plugin to do anything you need to do the following: 
+   o change your Artisteer theme to call bw_dynamic_sidebar instead of art_dynamic_sidebar
+   o install the Widget Wrangler plugin  
+   o define Widget Wrangler sidebars for each dynamic sidebar you want to control
+   o The sidebar names you may use are:
+     Artisteer 2.6
+       default_before
+       default_after
+       secondary_before
+       secondary_after
+     Artisteer 3
+       as for Artisteer 2.6 plus you can have _before and/or _after versions for the other sidebars:
+   o For more information see  http://www.bobbingwidewebdevelopment.com/content/how-control-which-widget-appears-particular-page 
+*/   
 
 function bw_dynamic_sidebar( $name ) {
   

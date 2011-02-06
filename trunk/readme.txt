@@ -1,9 +1,9 @@
 === oik ===
 Contributors: bobbingwide
 Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
-Tags: shortcodes, PayPal, buttons, Artisteer, widget
+Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
 Requires: at least 3.0.4
-Tested up to: 3.0.4
+Tested up to: 3.1
 Stable tag: trunk
 
 Often included key-information. 
@@ -23,10 +23,10 @@ Each of the shortcodes is prefixed bw_ (for Bobbing Wide) e.g. [ bw_mailto], whi
 Other plugins extend the functionality: 
 * oik-paypal-shortcodes to provide PayPal buttons, 
 * oik-button-shortcodes to provide call-to-action button links
-* oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes, 
+* oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
+* oik-bwtrace provides a rudimentary trace function, which logs trace information to a file, rather than including it within the web page output. 
 
 The plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
-There is also a rudimentary trace function, which logs trace information to a file, rather than including it within the web page output. 
 
 == Installation ==
 
@@ -58,7 +58,10 @@ I want to get the plugin hosted first, then I'll get back to the FAQ.
 5. base oik shortcodes and examples (part 2)
 
 == Changelog ==
-= 0.01 =
+= 0.2 =
+* Added shortcodes for [bw_flickr], [bw_youtube], [bw_picasa]
+* renamed bwtrace.php to oik-bwtrace.php 
+= 0.1 =
 * initial version 
 
 == Upgrade notice ==
