@@ -611,5 +611,19 @@ function bw( $bw_class_prefix=NULL ) {
 function ebw( $bw_class_prefix=NULL ) {
      bw_echo( bw( $bw_class_prefix ) );
 }
+
+
+
+function art_button( $linkurl, $text, $title=NULL, $class=NULL  )
+{
+  sp();
+  span("art-button-wrapper" );
+  sepan("art-button-l l");
+  sepan("art-button-r r");
+  alink( "button art-button " . $class , $linkurl, $text, $title ) ;
+  epan();
+  ep();
+}
+
   
 

@@ -32,19 +32,20 @@ The plugins are developed using a set of functions that can make PHP and HTML co
 
 1. Upload the contents of the oik plugin to the `/wp-content/plugins/oik' directory
 1. Activate the oik base plugin through the 'Plugins' menu in WordPress
-1. Go to Settings > oik options to fill in your *o*ften *i*ncluded *k*ey information
+1. Go to Settings > oik options to fill in your **o**ften **i**ncluded **k**ey information
 1. Activate other oik plugins when you need them
 
 
-If you are a developer and want to try the bwtrace plugin then you may find you need to add a line to your wp-config.php file.
+If you are a developer and want to try the oik-bwtrace plugin then you may find you need to add a line to your wp-config.php file.
 Put this before the require_once for wp-settings.php
 
 `require_once(ABSPATH . '/wp-content/plugins/oik/bwtrace.inc' );`
 
+Don't forget to remove this line before deleting the plugin.
+
 == Frequently Asked Questions ==
 = Where is the FAQ? =
-[ oik FAQ ]  http://www.bobbingwidewebdesign.com/oik/oik-faq "the oik plugin - for often included information"
-
+[oik FAQ](http://www.bobbingwidewebdesign.com/oik/oik-faq)
 
 = Why isn't the FAQ here =
 I want to get the plugin hosted first, then I'll get back to the FAQ.
@@ -56,8 +57,20 @@ I want to get the plugin hosted first, then I'll get back to the FAQ.
 3. oik button shortcodes - showing a Contact me button
 4. base oik shortcodes and examples (part 1)
 5. base oik shortcodes and examples (part 2)
+6. oik button dialog
+7. oik PayPal dialog
+8. oik shortcode selection dialog
 
 == Changelog ==
+= 0.3 =
+* Added: Tiny MCE button for entry of the [bw_button] shortcode parameters
+* Added: Tiny MCE button to select an oik shortcode 
+* Note: optional parameters to the oik shortcode button are not yet effective
+* Added: [bw_email] for inline mailto: link. Use [bw_mailto] for a link with a prefix
+* Fixed: attempted to correct problems in this file - my misunderstanding of how to do links
+* Fixed: Added code to expand [bw_picasa] shortcode
+* Added: [loik] shortcode - a link to the oik plugin
+* Change: Moved art_button() to bobbfunc.inc so that it could be used on the oik options page
 = 0.2 =
 * Added shortcodes for [bw_flickr], [bw_youtube], [bw_picasa]
 * renamed bwtrace.php to oik-bwtrace.php 
@@ -69,7 +82,9 @@ I want to get the plugin hosted first, then I'll get back to the FAQ.
 Needed for Bobbing Wide's Wonder of WordPress websites 
 
 == Further reading ==
-If you want to read more about the oik plugins then please visit
-the [oik plugin] http://www.bobbingwidewebdesign.com/oik "the oik plugin - for often included key information"
+If you want to read more about the oik plugins then please visit the
+[oik plugin](http://www.bobbingwidewebdesign.com/oik) 
+**"the oik plugin - for often included key-information"**
+
 
 
