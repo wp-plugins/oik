@@ -4,10 +4,10 @@ Plugin Name: oik [bw_button] shortcodes
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: [oik] button shortcodes - Call to action style buttons for Artisteer themes
 Author: bobbingwide
-Version: 0.2
+Version: 0.3
 Author URI: http://www.bobbingwide.com/content/herb-miller
 
-Notes & Limitations: tbc
+Notes & Limitations: 
   
   
 */
@@ -48,19 +48,6 @@ class BWButton
 */
 
 
-function art_button( $linkurl, $text, $title=NULL, $class=NULL  )
-{
-  sp();
-  span("art-button-wrapper" );
-  sepan("art-button-l l");
-  sepan("art-button-r r");
-  //alink( "art-button", "contact-us.php", "Contact " .bw_get_company( "company" ) . "  now" ) ;
-  //$linkurl = bw_expand_link( $linkurl );
-  alink( "button art-button " . $class , $linkurl, $text, $title ) ;
-  epan();
-  ep();
-}
-
 
 function bw_button_shortcodes($atts) {
   $link = $atts['link'];
@@ -68,7 +55,7 @@ function bw_button_shortcodes($atts) {
   $title = $atts['title']; 
   $class = $atts['class'];
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
-  $this->art_button( $link, $text, $title, $class ); 
+  art_button( $link, $text, $title, $class ); 
 
   return( bw_ret());  
 }

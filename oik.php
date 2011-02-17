@@ -5,7 +5,7 @@ Plugin Name: oik base plugin
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use shortcode macros for often included key-information 
 Author: bobbingwide
-Version: 0.2
+Version: 0.3
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
@@ -32,7 +32,7 @@ global $bw_options;
 //echo '<p>BATa='.$bwapi_trace_test.'=aBAT</p>';
 
 function oik_version() {
-  return '0.2';
+  return '0.3';
 }
 
   require_once( "bobbfunc.inc" );
@@ -47,6 +47,8 @@ function oik_version() {
   $theme = "bobbingwide";     
   $art_theme = NULL;
   $bobb_theme = NULL;    
+  
+  require_once( "oik-shortc-shortcodes.php" );
 
 
 
@@ -148,7 +150,7 @@ function oik_options_do_page() {
     textfield( "bw_options[alt-slogan]", 50, "Alt. slogan [bw_alt_slogan]", $options['alt-slogan']  );
     
     textfield( "bw_options[contact]", 50, "Contact [bw_contact]", $options['contact']  );
-    textfield( "bw_options[email]", 50, "Email [bw_mailto]", $options['email']  );
+    textfield( "bw_options[email]", 50, "Email [bw_mailto]/[bw_email]", $options['email']  );
     textfield( "bw_options[admin]", 50, "Admin [bw_admin]", $options['admin']  );
     
     // extended-address e.g.  Bobbing Wide
@@ -198,7 +200,10 @@ tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" );
   p("Use the shortcode options in your pages, widgets and titles. e.g." );
   p("[bw_address] to print your address" );
   p( bw_address());
-  ediv();      
+  p("For more information:" );
+  art_button( "http://www.bobbingwidewebdesign.com/oik", "oik documentation", "Read the documentation for the oik plugin" );
+   
+  ediv(); 
   bw_flush();
 }
 

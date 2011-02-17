@@ -218,6 +218,8 @@ function bw_email( $prefix = NULL, $primary=TRUE )
   return( bw_ret() );
 }
 
+/* [bw_mailto] is for a mailto link with a prefix ( in a paragraph )
+*/
 function bw_mailto( $prefix = NULL, $primary=TRUE )
 {
   sp("email");
@@ -320,6 +322,10 @@ function bw_youtube() {
     
 function bw_flickr() {  
   return( bw_follow( "Flickr" ));
+}
+    
+function bw_picasa() {  
+  return( bw_follow( "Picasa" ));
 }    
 
 function bw_output( $field ) {

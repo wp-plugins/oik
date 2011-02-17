@@ -109,6 +109,10 @@ function bw_oik ( $class = NULL )
 
 }
 
-      
+function bw_loik() {
+  alink( NULL, "http://www.bobbingwidewebdesign.com/oik", bw_oik(), "Link to the oik plugin") ;
+  return( bw_ret());
+}
+        
         
 
