@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2009, 2010
+<?php // (C) Copyright Bobbing Wide 2009, 2011
 // Functions for the anchor tag...
 // because it's more complicated than others
 
@@ -59,10 +59,11 @@ function atext( $linktori )
    $alt - if NULL will use $linktori
 */   
 
-function alink( $class=NULL, $url, $linktori, $alt=NULL )
+function alink( $class=NULL, $url, $linktori, $alt=NULL, $id=NULL )
 {
   sa();
   aclass( $class );
+  aid( $id );
   ahref( $url );
   if ( is_null( $alt ) )
      $alt = $linktori;

@@ -2,7 +2,7 @@
 Contributors: bobbingwide
 Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
-Requires: at least 3.0.4
+Requires: 3.0.4
 Tested up to: 3.1
 Stable tag: trunk
 
@@ -21,6 +21,7 @@ Each of the shortcodes is prefixed bw_ (for Bobbing Wide) e.g. [ bw_mailto], whi
 
 
 Other plugins extend the functionality: 
+
 * oik-paypal-shortcodes to provide PayPal buttons, 
 * oik-button-shortcodes to provide call-to-action button links
 * oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
@@ -62,6 +63,11 @@ I want to get the plugin hosted first, then I'll get back to the FAQ.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 0.4 = 
+* Added: [bw_post] and [bw_page] buttons for easy creation of New Posts and Pages
+* Changed: icons for TinyMCE
+* Added parameter to pass CSS id field to alink()
+* Added [bw_plug name="plugin-name" link="URL" info="y/n"] shortcode for displaying information about WordPress plugins
 = 0.3 =
 * Added: Tiny MCE button for entry of the [bw_button] shortcode parameters
 * Added: Tiny MCE button to select an oik shortcode 
