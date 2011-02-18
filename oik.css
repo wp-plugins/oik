@@ -313,6 +313,8 @@ a.WordPress   ,
 a.Yahoo       , 
 a.YouTube     ,
 a.directory   ,
+a.post        ,
+a.page        ,
 a.my-site     
  { padding-left: 50px; line-height: 50px; padding: 16px 0px 16px 50px }  
 
@@ -336,5 +338,8 @@ a.Yahoo       { background: transparent url(images/yahoo_48.png)       no-repeat
 a.YouTube     { background: transparent url(images/youtube_48.png)     no-repeat top left ; }
 a.directory   { background: transparent url(images/directory_48.png)   no-repeat top left ; }
 a.my-site     { background: transparent url(images/favicon-48.png) no-repeat top left ; }
+a.post        { background: transparent url(images/post_48.png) no-repeat top left ; }
+a.page        { background: transparent url(images/page_48.png) no-repeat top left ; }
+
 
 
