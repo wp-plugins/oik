@@ -5,7 +5,7 @@ Plugin Name: oik base plugin
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use shortcode macros for often included key-information 
 Author: bobbingwide
-Version: 0.3
+Version: 0.4
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
@@ -32,7 +32,7 @@ global $bw_options;
 //echo '<p>BATa='.$bwapi_trace_test.'=aBAT</p>';
 
 function oik_version() {
-  return '0.3';
+  return '0.4';
 }
 
   require_once( "bobbfunc.inc" );
@@ -196,7 +196,7 @@ tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" );
   etag( "form" );
   
   ediv(); 
-  sdiv("column span-5 last");
+  sdiv("column span-6 last");
   p("Use the shortcode options in your pages, widgets and titles. e.g." );
   p("[bw_address] to print your address" );
   p( bw_address());
