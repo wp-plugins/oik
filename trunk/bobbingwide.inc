@@ -1,4 +1,5 @@
 <?php // (C) Copyright Bobbing Wide 2010, 2011
+require_once( "bobblink.inc" );
  
 
 function bw_bob( $class = NULL)
