@@ -4,8 +4,8 @@
 Plugin Name: oik-bwtrace 
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use trace macros for oik plugins
+Version: 0.5
 Author: bobbingwide
-Version: 0.2
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
@@ -31,13 +31,14 @@ global $bw_trace_options, $bw_trace_on, $bw_trace_level;
 
 $bwapi_trace_test = 'bw_trace';
 
-function oik_bwtrace_version() {
-  return '0.2';
-  
-}
 
 require_once( 'bwtrace.inc');
 require_once( 'bobbfunc.inc' );
+
+function oik_bwtrace_version() {
+  return oik_version();
+  
+}
 
 
 

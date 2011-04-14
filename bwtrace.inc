@@ -19,6 +19,9 @@ function bw_trace_inc_init() {
   global $bw_trace_options, $bwapi_trace_test;   
   $bw_trace_options = array( 'file' => "bwtrace.log" ); 
   bw_trace_off();
+
+  //bw_trace_reset();
+  //bw_trace_on();
   // bw_trace_errors( 3 );
   //echo "<p>BAT1 $bwapi_trace_test</p>";
 
@@ -100,10 +103,10 @@ function bw_flf( $function, $lineno, $file, $level,  $text, $text_label = NULL )
 function bw_trace_file() {   
   global $bw_trace_options;
   // $file = bw_get_docroot_suffix();
-  if ( defined( ABSPATH ))
-    $file = ABSPATH;
-  else 
-    $file = ABSPATH; 
+  
+  if ( !defined('ABSPATH') )
+	define('ABSPATH', dirname(__FILE__) . '/');
+  $file = ABSPATH;
      
   $file .= $bw_trace_options['file'];
   return( $file );
@@ -130,7 +133,9 @@ function bw_trace_log( $line ) {
 function bw_write( $file, $line ) {
   // echo 'in bw_write';
   $handle = fopen( $file, "a" );
+  // echo "<!-- $handle $file $line-->";
   fwrite( $handle, $line );
+  
   fclose( $handle );
 } 
 
@@ -151,5 +156,5 @@ function bw_trace_errors( $level ) {
 }
 
 bw_trace_inc_init();  
-
+// bw_trace_on();
 

@@ -114,17 +114,33 @@ function bw_loik() {
   alink( NULL, "http://www.bobbingwidewebdesign.com/oik", bw_oik(), "Link to the oik plugin") ;
   return( bw_ret());
 } 
- 
 
-function bw_post() {
+
+/** 
+  * Create an Add Post button. If the text parameter is passed create "Add Post" regardless of the text
+  */
+function bw_post( $atts ) {
+  $text = $atts['text'];
+  
   $url = site_url( "/wp-admin/post-new.php" );
-  alink( "post", $url, "Add Post", "Add New Post", "" );
+  if ( $text ) {
+    $text = "Add Post";
+  }    
+  alink( "post", $url, $text, "Add New Post", "" );
   return( bw_ret());
 }
 
-function bw_page() {
+/** 
+ * Create an Add Page button. Similar code to bw_post()
+ */
+function bw_page( $atts ) {
+  $text = $atts['text'];
+
   $url = site_url( "/wp-admin/post-new.php?post_type=page" );
-  alink( "page", $url, "Add Page", "Add New Page", "" );
+  if ( $text )
+    $text = "Add Page";
+
+  alink( "page", $url, $text, "Add New Page", "" );
   return( bw_ret());
 }
 
@@ -243,13 +259,11 @@ function bw_get_plugin_info( $plugin_slug ) {
 }
  
 
-/* Format the bw_plug output as a table with a number of columns
-  1. plugin name - and link to WordPress
-  2. plugin slug 
-  3. bw link
-  4. other stuff
-*/  
-
+/** Format the bw_plug output as a table with a number of columns
+ * 1. plugin name and short description
+ * 2. link to plugin, link to plugin's home page, link to [bw]'s notes on the plugin
+ * 3. other stuff: version, number times downloaded, last update date, tested up to WP x.x.xx 
+ */  
 function bw_format_table( $name, $link, $plugininfo ) {
 
   stag( "tr");
@@ -273,13 +287,88 @@ function bw_format_table( $name, $link, $plugininfo ) {
     br();
     alink( "home", $plugininfo->homepage, "home", "Link to plugin homepage" ); 
     br();
+    
+    if (empty( $link )) {
+      $link = "http://www.bobbingwidewebdesign.com/plugins/$name";
+    }
     alink( "bwlink", $link, "...", "Link to bobbing wide's notes on ".$name );
     etag( "td" );
     
-    td( $plugininfo->version . '<br />' . $plugininfo->downloaded . '<br />'. $plugininfo->last_updated );
+    td( $plugininfo->version . '<br />' . $plugininfo->downloaded . '<br />'. $plugininfo->last_updated . '<br />' . $plugininfo->tested );
   } 
   etag("tr");  
 }
+
+
+/**
+ * Load module information for a Drupal module
+ * **?** TBD No idea how to get this information at present
+ * perhaps I just load it from a bobbingwidewebdevelopment.com/rss feed
+ * Drupal.org probably needs to know the node id of the module before it can show detailed stuff.
+ */
+function bw_get_module_info( $name ) {
+  $moduleinfo->name = $name;
+  $moduleinfo->short_description = $name;
+  return( $moduleinfo );
+}
+
+
+/** 
+ * Added [bw_mod name="module name" link="URL" table="t,y/n/1/0"] shortcode
+ */
+function bw_module( $atts ) {
+  $name = $atts['name'];
+  $link = $atts['link'];
+  $table = $atts['table']; 
+  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
+  
+  $table = bw_validate_torf( $table );
+  
+  bw_trace( $table, __FUNCTION__, __LINE__, __FILE__, "table" );
+  
+  $moduleinfo = bw_get_module_info( $name );
+  
+  bw_trace( $moduleinfo, __FUNCTION__, __LINE__, __FILE__, "moduleinfo" );
+  
+  bw_format_modlink( $name, $link, $moduleinfo );
+  /*
+  if ( !$plugininfo->name ) {
+    if ( $table ) {
+      bw_format_table( $name, $link, NULL );
+    }  
+    else {
+      bw_format_default( $name, $link );
+    } 
+  }   
+  else {
+    if ( $table ) {
+      bw_format_table( $name, $link, $plugininfo );
+    }  
+    else {
+      bw_format_link( $name, $link, $plugininfo );
+    }  
+  } 
+  */ 
+  return( bw_ret());  
+}
+
+
+/**
+  * Create a link to the Drupal module
+  * (http://drupal.org/project/
+  */
+function bw_format_modlink( $name, $link, $moduleinfo ) {  
+        
+  $title = "Link to the $moduleinfo->name ($name: $moduleinfo->short_description) module on drupal.org" ;
+  alink( NULL, "http://drupal.org/project/".$name, $moduleinfo->name, $title );  
+  if (empty( $link )) {
+    $link = "http://www.bobbingwidewebdevelopment.com/modules/$name";
+  }
+  e( "(" );
+  alink( "bwlink", $link, "...", "Link to bobbing wide's notes on ".$name );
+  e( ")" ); 
+}
+
 
 
 

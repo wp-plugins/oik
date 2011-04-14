@@ -3,7 +3,7 @@ Contributors: bobbingwide
 Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
 Requires: 3.0.4
-Tested up to: 3.1
+Tested up to: 3.1.1
 Stable tag: trunk
 
 Often included key-information. 
@@ -63,6 +63,9 @@ I want to get the plugin hosted first, then I'll get back to the FAQ.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 0.5 =
+* Added: [bw_tel] and [bw_mob] - inline versions of [bw_telephone] and [bw_mobile]
+* Fixed: plugin versions should be correct
 = 0.4 = 
 * Added: [bw_post] and [bw_page] buttons for easy creation of New Posts and Pages
 * Changed: icons for TinyMCE

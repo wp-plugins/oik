@@ -14,7 +14,7 @@ em.hg { color: #b736e2; vertical-align: -0.2em;}
 em.hW { font-weight: bold; color: #555; letter-spacing: 2pt; font-size: 1.5em; text-transform: lowercase;}
 em.hi2 { font-weight: bold; color: #666; letter-spacing: 3pt; font-size: 1.5em; }
 em.hd { font-weight: bold; color: #777; letter-spacing: 4pt; font-size: 1.5em; }
-em.he { font-weight: bold; color: #888; letter-spacing: 5pt; font-size: 1.6em; font-variant: small-caps;}
+em.he { font-weight: bold; color: #888; letter-spacing: 5pt; font-size: 1.6em; /* font-variant: small-caps; */}
 
 
 em.B1 { color:  #213623; color: #36e2b7; text-transform: uppercase; }
@@ -49,6 +49,8 @@ span.e, span.e a { font-weight: bold; color: #888; }
 
 /* This is to remove the italics from bobbing wide when used in a link */
 .url em, a em { font-style: normal; font-weight: bold; }
+h1 a em { font-style: italic; font-weight: normal; }
+.header h1 { margin: 0px; }
 .url a { color: black; text-decoration: none; }  
 .url em, a em { text-shadow: black 0px 1px 1px; }
 
