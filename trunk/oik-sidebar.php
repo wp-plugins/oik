@@ -4,8 +4,8 @@
 Plugin Name: oik sidebar
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Applies widget wrangler sidebar functionality to Artisteer themes
+Version: 0.5
 Author: bobbingwide
-Version: 0.2
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
@@ -27,9 +27,10 @@ License: GPL2
 
 */
 global $oik_options;
+require_once( 'bobbfunc.inc' );
 
 function oik_sidebar_api_version() {
-  return '0.2';
+  return bw_oik_version();
 }
 
 /* Note: for this plugin to do anything you need to do the following: 

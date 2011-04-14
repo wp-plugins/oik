@@ -316,7 +316,7 @@ a.directory   ,
 a.post        ,
 a.page        ,
 a.my-site     
- { padding-left: 50px; line-height: 50px; padding: 16px 0px 16px 50px }  
+ { line-height: 50px; padding: 16px 0px 16px 50px; }  
 
 li.email { background: transparent url(images/email_48.png) no-repeat top left; }
 
@@ -340,6 +340,13 @@ a.directory   { background: transparent url(images/directory_48.png)   no-repeat
 a.my-site     { background: transparent url(images/favicon-48.png) no-repeat top left ; }
 a.post        { background: transparent url(images/post_48.png) no-repeat top left ; }
 a.page        { background: transparent url(images/page_48.png) no-repeat top left ; }
+
+
+/* CSS for Views forms buttons */
+/* .views-exposed-form .views-exposed-widget .form-submit { margin-top:0; } */
+/* form#views-ui-preview-form input#preview-submit { margin-top:0; } */
+/* #edit-views-apply, #edit-views-reset { margin-top:0; } */
+
 
 
 

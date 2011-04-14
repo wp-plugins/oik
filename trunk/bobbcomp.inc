@@ -1,94 +1,74 @@
 <?php // (C) Copyright Bobbing Wide 2010, 2011
 // bobbcomp.inc - Company Information
 
-function bw_get_company( $field ) 
-{
-   global $company;
-   
- 
-   /* WordPress code */
-   global $bw_options;
-   
-   /* Need to put some code here to see if it's been loaded */
-   
-   $bw_options = get_option( "bw_options" );
-   
-   if ( $bw_options === FALSE )
+function bw_get_cms_type() {
+  global $bw_cms_type, $bw_cms_version;
+  $bw_cms_type = "unknown";
+  if ( function_exists( 'is_blog_installed' )) {
+    $bw_cms_type = 'WordPress';
+    
+  }   
+  if ( function_exists( 'drupal_bootstrap' )) {
+    $bw_cms_type = "Drupal"; 
+    if (defined( VERSION ) ) {
+      $bw_cms_version = VERSION;
+    }  
+  }
+  return( $bw_cms_type );       
+}
+
+function bw_is_wordpress() {
+  return( bw_get_cms_type() == "WordPress" );
+}
+  
+function bw_is_drupal() {
+  return( bw_get_cms_type() == "Drupal" );
+} 
+
+
+
+if ( bw_is_wordpress() ) {
+  function bw_get_company( $field ) {
+    global $company;
+    /* WordPress code */
+    global $bw_options;
+    /* Need to put some code here to see if it's been loaded */
+    $bw_options = get_option( "bw_options" );
+    if ( $bw_options === FALSE )
       $option = $company[ $field ] ; 
-   else
+    else
       $option = $bw_options[ $field ] ;   
-   return( $option ); 
+    return( $option ); 
+  }
 }
+else {
+  /** 
+   * I need to decide if I should prefix each field with bw_
+   * Decision: I didn't prefix the fields in Drupal settings
+   */
+  function bw_get_company( $field ) {
+    return( variable_get( $field, "" ) );
+  }
    
-function bw_set_company( $field, $value=NULL ) 
-{
-   global $company;
-   $company[ $field ] = $value; 
-}   
+  /** 
+   * Dummy implementation of add_filter() so that shortcodes.php can be copied unchanged from WordPress.
+   */
+  function add_filter() {
+   // Dummy implementation of add_filter() so that shortcodes.php can be copied unchanged from WordPress.
+  } 
 
-function bw_company_tel( $telephone = NULL, $fax = NULL, $mobile= NULL )   
-{
+  /**
+   * Dummy implementation of add_action so that oik-paypal-shortcodes.inc can be included in Drupal as well as WordPress
+   */
+  function add_action( $tag, $function_to_add, $priority=NULL, $accepted_args=NULL ) {
+  // e.g. add_action( admin_init', array($this, 'bw_pp_admin_init'));
+  }
+  require_once( "shortcodes.php" );  // This is a copy of the WordPress include specifically for the Drupal version of oik.
 
-   bw_set_company( "telephone", $telephone );
-   bw_set_company( "fax", $fax );
-   bw_set_company( "mobile", $mobile );
 }
 
-function bw_company_job( $company = NULL, $business = NULL, $formal = NULL )   
-{
-   //global $header_title, $header_subtitle;
 
-   bw_set_company( "company", $company );
-   bw_set_company( "business", $business );
-   bw_set_company( "formal", $formal );
    
-   //$header_title = bw_get_company( "company" );
-   //$header_subtitle = bw_get_company( "business" );
-     
-}
-
-function bw_company_slogans( $main_slogan                     // "main-slogan" 
-                           , $alt_slogan                      // "alt-slogan "
-                           )
-{
-   bw_set_company( "main-slogan", $main_slogan );
-   bw_set_company( "alt-slogan", $alt_slogan );
-}
-
-function bw_company_contacts( $contact = NULL, $email = NULL, $admin= NULL )
-{
-   bw_set_company( "contact", $contact );
-   bw_set_company( "email", $email );
-   bw_set_company( "admin", $admin ); 
-}
-
-                                   
-// extended-address e.g.  1 Fernwood House
-// street-address   e.g.  45-47 London Road                            
-// locality         e.g   Cowplain
-// region           e.g.  WATERLOOVILLE, HANTS                         
-// postal-code      e.g.  PO8 8H                        
-// country-name     e.g.  UK                          
-
-
-function bw_company_address( $extended_address=NULL, $street_address=NULL, $locality=NULL, $region=NULL, $postal_code=NULL, $country_name=NULL )
-{
-  bw_set_company( "extended-address", $extended_address );
-  bw_set_company( "street-address", $street_address  );
-  bw_set_company( "locality", $locality  );
-  bw_set_company( "region", $region );
-  bw_set_company( "postal-code", $postal_code );   
-  bw_set_company( "country-name", $country_name );
-
-}
-
-function bw_company_geo( $lat, $long, $google_api_key, $betterbyfar="betterbyfar" )
-{
-  bw_set_company( "lat", $lat );
-  bw_set_company( "long", $long );
-  bw_set_company( "google_maps_api_key", $google_api_key );
-  bw_set_company( "betterbyfar", $betterbyfar );
-}
 
 
 function bw_get_geo( $separator )
@@ -119,37 +99,29 @@ function bw_geo()
 }
 
 
-function bw_set_servers( $domain, $parked )
-{
-  bw_set_company( "domain", $domain );
-  bw_set_company( "parked", $parked );
-}   
-  
-function bw_set_verification( $domain, $google, $yahoo, $bing )
-{
-  // we pass domain in case we need to set domain specific values - save this as vdomain rather than overwrite domain
-  bw_set_company( "vdomain", $domain );
-  bw_set_company( "google", $google );
-  bw_set_company( "yahoo", $yahoo );
-  bw_set_company( "bing", $bing );
-}   
-  
-  
-
 
 // **?** use Microformats <br/>t: +44 (0)23 92 410090</p>
 
-function bw_telephone( $prefix = "Tel")
-{
+function bw_telephone( $atts )
+{ 
+  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
+  extract( shortcode_atts( array(
+      'prefix' => 'Tel',
+      'sep' => ': ',
+      ), $atts ) );
+      
+  bw_trace( $prefix, __FUNCTION__, __LINE__, __FILE__, "prefix" );
+  bw_trace( $sep, __FUNCTION__, __LINE__, __FILE__, "sep" );
+ 
+     
    $tel =  bw_get_company( "telephone" );
    if ( $tel <> "" )
    {
      sdiv( "tel" );
      span( "type");
-     $prefix = "Tel";
      e( $prefix );
      epan();
-     e(":");
+     e( $sep );
      span( "value" );
      e( $tel );
      epan();
@@ -158,17 +130,22 @@ function bw_telephone( $prefix = "Tel")
    return( bw_ret());
 }
 
-function bw_fax( $prefix = "Fax")
+function bw_fax( $atts )
 {
+  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
+  extract( shortcode_atts( array(
+      'prefix' => 'Fax',
+      'sep' => ': ',
+      ), $atts ) );
+      
   $fax = bw_get_company( "fax" );
   if ( $fax <> "" )
   { 
     sdiv( "tel" );
     span( "type");
-    $prefix = "Fax";
     e( $prefix );
     epan();
-    e(":");
+    e( $sep );
     span( "value" );
     e( $fax );
     epan();
@@ -177,17 +154,23 @@ function bw_fax( $prefix = "Fax")
   return( bw_ret());
 }
 
-function bw_mobile( $prefix = NULL )
+function bw_mobile( $atts )
 {
+
+  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
+  extract( shortcode_atts( array(
+      'prefix' => 'Mobile',
+      'sep' => ': ',
+      ), $atts ) );
+      
   $mobile = bw_get_company( "mobile" ) ;
   if ( $mobile <> "" )
   {
     sdiv( "tel" );
     span( "type");
-    $prefix = "Mobile";
     e( $prefix );
     epan();
-    e(":&nbsp;");
+    e( $sep );
     span( "value" );
     e( $mobile );
     epan();
@@ -202,16 +185,20 @@ function bw_mobile( $prefix = NULL )
    or [bw_mailto] for a more formal mailto link
 */   
 
-function bw_email( $prefix = NULL, $primary=TRUE )
+function bw_email( $atts )
 {
+  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
+  extract( shortcode_atts( array(
+      'prefix' => 'Email',
+      'sep' => ': ',
+      'index' => 'email',
+      ), $atts ) );
+
   span("email");
   
-  //$prefix = "Email:&nbsp;";
-  //e( $prefix );
-  //if ( $primary )
-     $email = bw_get_company( "email" ); 
-  //else
-  //   $email = bw_get_company( "admin" );   
+  e( $prefix );
+  e( $sep );
+  $email = bw_get_company( $index ); 
   alink( NULL, "mailto:". $email, $email, "Send email to: " . $email );
   epan();
   
@@ -296,36 +283,44 @@ function bw_contact() {
 } 
 
 
-function bw_follow( $social_network = "Facebook" ) {
+function bw_follow( $atts ) {
+  $social_network = $atts['network'];
+  $text = $atts['text'];
+  
   $lc_social = strtolower( $social_network );
   $social = bw_get_company( $lc_social );
-  
-  alink( $social_network, $social, $social_network, "Follow me on ".$social_network );
+  bw_trace( $text, __FUNCTION__, __LINE__, __FILE__ , "text" );
+  if ( $text ) {
+    $text = $social_network;
+  }  
+  alink( $social_network, $social, $text, "Follow me on ".$social_network );
+       
   return( bw_ret());
 }  
 
-function bw_twitter() {
-  return( bw_follow( "Twitter" ));  
+function bw_twitter( $atts ) {
+  $atts['network'] = "Twitter" ;
+  return( bw_follow( $atts ));  
 }
 
-function bw_facebook() {
-  return( bw_follow( "Facebook" ));
+function bw_facebook( $atts ) {
+  $atts['network'] = "Facebook" ;
+  return( bw_follow( $atts ));
 }
 
-function bw_linkedin() {  
-  return( bw_follow( "LinkedIn" ));
+function bw_linkedin( $atts ) { 
+  $atts['network'] = "LinkedIn";  
+  return( bw_follow( $atts ));
 } 
    
-function bw_youtube() {  
-  return( bw_follow( "YouTube" ));
+function bw_youtube( $atts ) { 
+  $atts['network'] = "YouTube";  
+  return( bw_follow( $atts ));
 }
     
-function bw_flickr() {  
-  return( bw_follow( "Flickr" ));
-}
-    
-function bw_picasa() {  
-  return( bw_follow( "Picasa" ));
+function bw_flickr( $atts) {
+  $atts['network'] = "Flickr";  
+  return( bw_follow( $atts ));
 }    
 
 function bw_output( $field ) {
@@ -369,5 +364,65 @@ function bw_clear() {
   return( bw_ret());
 }  
 
-  
 
+/**
+ * Skype Online Material: the Skype buttons and widgets available for download on the 
+ * Skype Website at http://www.skype.com/share/buttons/ 
+ * as such may be changed from time to time by Skype in its sole discretion.  
+*/
+function bw_skype( $atts ) {
+  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
+  extract( shortcode_atts( array(
+      'prefix' => 'Skype name',
+      'sep' => ': ',
+      ), $atts ) );
+      
+  bw_trace( $prefix, __FUNCTION__, __LINE__, __FILE__, "prefix" );
+  bw_trace( $sep, __FUNCTION__, __LINE__, __FILE__, "sep" );
+ 
+     
+   $tel =  bw_get_company( "skype" );
+   if ( $tel <> "" )
+   {
+     sdiv( "skype" );
+     span( "type");
+     e( $prefix );
+     epan();
+     e( $sep );
+     span( "value" );
+     e( $tel );
+     epan();
+     ediv();
+   }
+   return( bw_ret());
+}
+
+function bw_tel()
+{
+   $tel =  bw_get_company( "telephone" );
+   if ( $tel <> "" )
+   {
+     span( "tel" );
+     sepan( "type", "work" );
+     span( "value" );
+     e( $tel );
+     epan();
+     epan();
+   }
+   return( bw_ret());
+}
+
+function bw_mob()
+{
+   $mob =  bw_get_company( "mobile" );
+   if ( $mob <> "" )
+   {
+     span( "tel" );
+     sepan( "type", "cell" );
+     span( "value" );
+     e( $mob );
+     epan();
+     epan();
+   }
+   return( bw_ret());
+}

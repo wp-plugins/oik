@@ -4,8 +4,8 @@
 Plugin Name: oik base plugin 
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use shortcode macros for often included key-information 
+Version: 0.5
 Author: bobbingwide
-Version: 0.4
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
@@ -31,15 +31,16 @@ global $bw_options;
 
 //echo '<p>BATa='.$bwapi_trace_test.'=aBAT</p>';
 
-function oik_version() {
-  return '0.4';
-}
 
   require_once( "bobbfunc.inc" );
   require_once( "bobblink.inc" );
   require_once( "bobbcomp.inc" );
   require_once( "bwlink.inc" );
   require_once( "bobbgoog.inc" ); 
+  
+function oik_version() {
+  return bw_oik_version();
+}
   
   $bobb_prefix = NULL;
   $bw_echo = NULL;
@@ -87,6 +88,8 @@ add_shortcode( 'bw_domain', 'bw_domain' );
 // add_shortcode( 'ediv', 'bw_ediv' );
 
 add_shortcode( 'clear', 'bw_clear' );
+add_shortcode( 'bw_tel', 'bw_tel' );
+add_shortcode( 'bw_mob', 'bw_mob' );
 
 
 add_filter('widget_text', 'do_shortcode');
@@ -138,9 +141,9 @@ function oik_options_do_page() {
   bw_flush();
   settings_fields('oik_options_options'); 
   
-    textfield( "bw_options[telephone]", 50, "Telephone [bw_telephone]", $options['telephone']  );
+    textfield( "bw_options[telephone]", 50, "Telephone [bw_telephone] / [bw_tel]", $options['telephone']  );
     textfield( "bw_options[fax]", 50, "Fax [bw_fax]", $options['fax']  );
-    textfield( "bw_options[mobile]", 50, "Mobile [bw_mobile]", $options['mobile']  );
+    textfield( "bw_options[mobile]", 50, "Mobile [bw_mobile] / [bw_mob]", $options['mobile']  );
     
     textfield( "bw_options[company]", 50, "Company [bw_company]", $options['company']  );
     textfield( "bw_options[business]", 50, "Business [bw_business]", $options['business']  );

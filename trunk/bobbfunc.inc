@@ -1,6 +1,10 @@
 <?php // Copyright Bobbing Wide 2009, 2011
 // bobbfunc.inc
 
+function bw_oik_version() {  
+  return( '0.5' );
+}  
+
 function bw_echo( $string ) {
   global $bwecho;
   $bwecho.=$string;
@@ -608,22 +612,50 @@ function bw( $bw_class_prefix=NULL ) {
   
 
   
-function ebw( $bw_class_prefix=NULL ) {
-     bw_echo( bw( $bw_class_prefix ) );
-}
+//function ebw( $bw_class_prefix=NULL ) {
+//     bw_echo( bw( $bw_class_prefix ) );
+//}
 
-
-
-function art_button( $linkurl, $text, $title=NULL, $class=NULL  )
+/** 
+ * echo Bobbing Wide inside a theme's template file
+ */
+function ebw( $bw_class_prefix=NULL )
 {
-  sp();
-  span("art-button-wrapper" );
-  sepan("art-button-l l");
-  sepan("art-button-r r");
-  alink( "button art-button " . $class , $linkurl, $text, $title ) ;
-  epan();
-  ep();
+   echo bw( $bw_class_prefix );
 }
 
-  
+require_once( "bobbcomp.inc" );
 
+if ( bw_is_wordpress() ) {
+  /**
+    * In WordPress Artisteer provides code to deal with buttons
+    * but in Drupal it needs more wrapping.
+    * **?** TRUE or FALSE 2011/03/05
+    */
+  function art_button( $linkurl, $text, $title=NULL, $class=NULL  )
+  {
+    //sp();
+    //span("art-button-wrapper" );
+    //sepan("art-button-l l");
+    //sepan("art-button-r r");
+    //alink( "button art-button " . $class , $linkurl, $text, $title ) ;
+    //epan();
+    //ep();
+    alink( "button " . $class , $linkurl, $text, $title ) ;
+
+  }
+}
+else {
+  function art_button( $linkurl, $text, $title=NULL, $class=NULL  )
+  {
+    //sp();
+    span("art-button-wrapper" );
+    sepan("art-button-l l");
+    sepan("art-button-r r");
+    //alink( "art-button", "contact-us.php", "Contact " .bw_get_company( "company" ) . "  now" ) ;
+    //$linkurl = bw_expand_link( $linkurl );
+    alink( "button art-button " . $class , $linkurl, $text, $title ) ;
+    epan();
+    //ep();
+  }
+}
