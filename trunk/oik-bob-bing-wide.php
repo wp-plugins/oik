@@ -4,7 +4,7 @@
 Plugin Name: oik bob bing wide shortcodes
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, etcetera
-Version: 0.5
+Version: 0.6
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -54,4 +54,4 @@ add_shortcode( 'loik', 'bw_loik' ); // Link to the plugin
 add_shortcode( 'bw_page', 'bw_page' );
 add_shortcode( 'bw_post', 'bw_post' );
 add_shortcode( 'bw_plug', 'bw_plug' );
-add_shortcode( 'bw_mod',  'bw_module' );
+add_shortcode( 'bw_module',  'bw_module' );

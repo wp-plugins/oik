@@ -4,7 +4,7 @@ Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
 Requires: 3.0.4
 Tested up to: 3.1.1
-Stable tag: trunk
+Stable tag: 0.6
 
 Often included key-information. 
 
@@ -63,6 +63,10 @@ I want to get the plugin hosted first, then I'll get back to the FAQ.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 0.6 =
+* Added: Ability to select [bw_tel] and [bw_mob] from the oik shortcode button in Tiny MCE
+* Added: [bw_module] shortcode - similar to [bw_plugin] but for Drupal modules
+* Fixed: Correct version numbers for the Drupal module version
 = 0.5 =
 * Added: [bw_tel] and [bw_mob] - inline versions of [bw_telephone] and [bw_mobile]
 * Fixed: plugin versions should be correct
@@ -94,6 +98,8 @@ Needed for Bobbing Wide's Wonder of WordPress websites
 If you want to read more about the oik plugins then please visit the
 [oik plugin](http://www.bobbingwidewebdesign.com/oik) 
 **"the oik plugin - for often included key-information"**
+If you're interested in the Drupal version then please visit the 
+[oik module](http://www.bobbingwidewebdevelopment.com/content/often-included-key-information-oik-drupal-module
 
 
 
