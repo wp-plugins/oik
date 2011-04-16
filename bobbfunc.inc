@@ -2,7 +2,7 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '0.5' );
+  return( '0.6' );
 }  
 
 function bw_echo( $string ) {

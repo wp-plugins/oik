@@ -47,9 +47,11 @@
                            <option value="bw_formal">Formal company name [bw_formal]</option>\
                            <option value="bw_geo">Lat. and Long. [bw_geo]</option>\
                            <option value="bw_mailto">Mailto (inline) [bw_mailto]</option>\
+                           <option value="bw_mob">Mobile phone [bw_mobile] (inline) </option>\
                            <option value="bw_mobile">Mobile phone [bw_mobile]</option>\
                            <option value="bw_show_googlemap">Show Google map [bw_show_googlemap]</option>\
                            <option value="bw_slogan">Slogan [bw_slogan]</option>\
+                           <option value="bw_tel">Telephone number [bw_tel] (inline) /option>\
                            <option value="bw_telephone">Telephone number [bw_telephone]</option>\
                            <option value="bw_wpadmin">wp-admin link [bw_wpadmin]</option>\
                            <option value="bw_facebook">Facebook link [bw_facebook]</option>\
