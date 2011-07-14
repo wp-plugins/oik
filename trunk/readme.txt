@@ -3,8 +3,8 @@ Contributors: bobbingwide
 Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
 Requires: 3.0.4
-Tested up to: 3.1.1
-Stable tag: 0.6
+Tested up to: 3.2.1
+Stable tag: 0.7
 
 Often included key-information. 
 
@@ -17,15 +17,17 @@ There are a number of component modules which can be activated as and when you n
 The oik base plugin provides a series of WordPress shortcodes that take the pain out of producing commonly used information.
 You provide this information once on the oik options panel, then use shortcodes to include the information on your website; in pages, posts,
 titles and widgets. 
-Each of the shortcodes is prefixed bw_ (for Bobbing Wide) e.g. [ bw_mailto], which produces a "send email to" link.
+Most of the shortcodes are prefixed bw_ (for Bobbing Wide) e.g. [ bw_mailto], which produces a "send email to" link.
 
 
 Other plugins extend the functionality: 
 
 * oik-paypal-shortcodes to provide PayPal buttons, 
-* oik-button-shortcodes to provide call-to-action button links
+* oik-button-shortcodes to provide call-to-action button style links for Artisteer themes
 * oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
 * oik-bwtrace provides a rudimentary trace function, which logs trace information to a file, rather than including it within the web page output. 
+* oik-tides - shortcode for tide times in the UK
+* oik-bob-bing-wide to provide easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, etcetera
 
 The plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
 
@@ -63,6 +65,13 @@ I want to get the plugin hosted first, then I'll get back to the FAQ.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 0.7 = 
+* Added: [bw_skype] shortcode to display your skype name
+* Added: [bw_tides] shortcode - tide times in the UK
+* Added: [bw_directions] shortcode - get Google directions to your chosen location
+* Added: [ngslideshow] and [gpslideshow] shortcodes for co-existence of NextGen gallery and Slideshow Gallery Pro
+* Fixed: invalid XHTML generated for fob, bong hide shortcodes
+* Added: Support for Drupal versions of Add post and Add page buttons
 = 0.6 =
 * Added: Ability to select [bw_tel] and [bw_mob] from the oik shortcode button in Tiny MCE
 * Added: [bw_module] shortcode - similar to [bw_plugin] but for Drupal modules

@@ -63,6 +63,19 @@ else {
   function add_action( $tag, $function_to_add, $priority=NULL, $accepted_args=NULL ) {
   // e.g. add_action( admin_init', array($this, 'bw_pp_admin_init'));
   }
+  
+  /** 
+   * Drupal implementation of site_url using the 'domain' variable 
+   * This is to allow for local implementations e.g. qw/contacts
+   */
+  function site_url( $path=NULL, $scheme='http:' ) {
+    $url  = $scheme; 
+    $url .= '//';
+    $url .= bw_get_company( 'domain' );
+    $url .= $path;
+    return( $url );
+  }  
+     
   require_once( "shortcodes.php" );  // This is a copy of the WordPress include specifically for the Drupal version of oik.
 
 }
@@ -425,4 +438,28 @@ function bw_mob()
      epan();
    }
    return( bw_ret());
+}
+
+
+/**
+ * Generate a button to get directions from Google Maps e.g.
+ * http://maps.google.co.uk/maps?f=d&hl=en&daddr=50.887856,-0.965113
+ *
+ */
+function bw_directions() {
+  $lat = bw_get_company( "lat" );
+  $long = bw_get_company( "long");
+  $company = bw_get_company( "company" );
+  $extended = bw_get_company( "extended-address" );
+  $postcode = bw_get_company( "postal-code" );
+  $link = "http://maps.google.co.uk/maps?f=d&hl=en&daddr=" . $lat . "," . $long;  
+  $text = "Google directions";
+  $title = "Get directions to " . $company;
+  if ( $extended && ($company <> $extended) )
+    $title .= " - " . $extended;
+  if ( $postcode )
+    $title .= " - " . $postcode;
+  $class = NULL;
+  art_button( $link, $text, $title, $class ); 
+  return( bw_ret());
 }

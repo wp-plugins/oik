@@ -630,32 +630,17 @@ if ( bw_is_wordpress() ) {
   /**
     * In WordPress Artisteer provides code to deal with buttons
     * but in Drupal it needs more wrapping.
-    * **?** TRUE or FALSE 2011/03/05
     */
-  function art_button( $linkurl, $text, $title=NULL, $class=NULL  )
-  {
-    //sp();
-    //span("art-button-wrapper" );
-    //sepan("art-button-l l");
-    //sepan("art-button-r r");
-    //alink( "button art-button " . $class , $linkurl, $text, $title ) ;
-    //epan();
-    //ep();
+  function art_button( $linkurl, $text, $title=NULL, $class=NULL  ) {
     alink( "button " . $class , $linkurl, $text, $title ) ;
-
   }
 }
 else {
-  function art_button( $linkurl, $text, $title=NULL, $class=NULL  )
-  {
-    //sp();
+  function art_button( $linkurl, $text, $title=NULL, $class=NULL  ) {
     span("art-button-wrapper" );
     sepan("art-button-l l");
     sepan("art-button-r r");
-    //alink( "art-button", "contact-us.php", "Contact " .bw_get_company( "company" ) . "  now" ) ;
-    //$linkurl = bw_expand_link( $linkurl );
     alink( "button art-button " . $class , $linkurl, $text, $title ) ;
     epan();
-    //ep();
   }
 }
