@@ -31,7 +31,7 @@ function bw_bing( $class = NULL)
   $bw .= '<span class="i1 bold">i</span>';
   $bw .= '<span class="n bold">n</span>';
   $bw .= '<span class="g bold">g</span>';
-  $bw .= nullretstag( "span", $class ); 
+  $bw .= nullretetag( "span", $class ); 
 
   return( $bw );
 
@@ -44,7 +44,7 @@ function bw_wide( $class=NULL )
   $bw .= '<span class="i2">i</span>';
   $bw .= '<span class="d">d</span>';
   $bw .= '<span class="e">e</span>';
-  $bw .= nullretstag( "span", $class ); 
+  $bw .= nullretetag( "span", $class ); 
   return( $bw );
 } 
 
@@ -55,7 +55,7 @@ function bw_bong( $class = NULL)
   $bw .= '<span class="i2">o</span>';
   $bw .= '<span class="d">n</span>';
   $bw .= '<span class="e">g</span>';
-  $bw .= nullretstag( "span", $class ); 
+  $bw .= nullretetag( "span", $class ); 
 
   return( $bw );
 
@@ -67,7 +67,7 @@ function bw_hide( $class = NULL)
   $bw .= '<span class="i2">i</span>';
   $bw .= '<span class="d">d</span>';
   $bw .= '<span class="e">e</span>';
-  $bw .= nullretstag( "span", $class ); 
+  $bw .= nullretetag( "span", $class ); 
 
   return( $bw );
 
@@ -79,19 +79,22 @@ function bw_wow ( $class = NULL )
   $bw .= '<span class="B1">W</span>';
   $bw .= '<span class="o">o</span>';
   $bw .= '<span class="B2">W</span>';
-  $bw .= nullretstag( "span", $class ); 
+  $bw .= nullretetag( "span", $class ); 
 
   return( $bw );
 
 }
 
+/* These are non-translatable */
 function bw_wow_long ( $class = NULL )
 {
   $bw = nullretstag( "span", $class ); 
   $bw .= '<span class="B1">Wonder</span>';
+  $bw .= ' ';
   $bw .= '<span class="o">of</span>';
+  $bw .= ' ';
   $bw .= '<span class="B2">WordPress</span>';
-  $bw .= nullretstag( "span", $class ); 
+  $bw .= nullretetag( "span", $class ); 
 
   return( $bw );
 
@@ -104,7 +107,7 @@ function bw_oik ( $class = NULL )
   $bw .= '<span class="b1">o</span>';
   $bw .= '<span class="o">i</span>';
   $bw .= '<span class="b2">k</span>';
-  $bw .= nullretstag( "span", $class ); 
+  $bw .= nullretetag( "span", $class ); 
 
   return( $bw );
 
@@ -122,7 +125,10 @@ function bw_loik() {
 function bw_post( $atts ) {
   $text = $atts['text'];
   
-  $url = site_url( "/wp-admin/post-new.php" );
+  if ( bw_is_wordpress() )
+     $url = site_url( "/wp-admin/post-new.php" );
+  else 
+     $url = site_url( '/node/add/blog' );   
   if ( $text ) {
     $text = "Add Post";
   }    
@@ -136,10 +142,13 @@ function bw_post( $atts ) {
 function bw_page( $atts ) {
   $text = $atts['text'];
 
-  $url = site_url( "/wp-admin/post-new.php?post_type=page" );
-  if ( $text )
+  if ( bw_is_wordpress() )
+    $url = site_url( "/wp-admin/post-new.php?post_type=page" );
+  else
+    $url = site_url( '/node/add/page' );  
+  if ( $text ) {
     $text = "Add Page";
-
+  }
   alink( "page", $url, $text, "Add New Page", "" );
   return( bw_ret());
 }

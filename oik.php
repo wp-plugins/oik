@@ -4,7 +4,7 @@
 Plugin Name: oik base plugin 
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use shortcode macros for often included key-information 
-Version: 0.6
+Version: 0.7
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -50,46 +50,10 @@ function oik_version() {
   $bobb_theme = NULL;    
   
   require_once( "oik-shortc-shortcodes.php" );
+  require_once( "oik-add-shortcodes.php" );
 
 
 
-/* Shortcodes for each of the more useful "often included key-information" fields 
-   in Bobbing Wide's Wonder of WordPress websites
-*/
-add_shortcode( 'bw', 'bw' );
-add_shortcode( 'bw_address', 'bw_address');
-add_shortcode( 'bw_mailto', 'bw_mailto' );
-add_shortcode( 'bw_email', 'bw_email' );
-add_shortcode( 'bw_geo', 'bw_geo' );
-add_shortcode( 'bw_telephone', 'bw_telephone' );
-add_shortcode( 'bw_fax', 'bw_fax' );
-add_shortcode( 'bw_mobile', 'bw_mobile' );
-add_shortcode( 'bw_wpadmin', 'bw_wpadmin' );
-add_shortcode( 'bw_show_googlemap', 'bw_show_googlemap');
-add_shortcode( 'bw_contact', 'bw_contact' );
-
-add_shortcode( 'bw_twitter', 'bw_twitter' );
-add_shortcode( 'bw_facebook', 'bw_facebook' );
-add_shortcode( 'bw_linkedin', 'bw_linkedin' );
-add_shortcode( 'bw_youtube', 'bw_youtube' );
-add_shortcode( 'bw_flickr', 'bw_flickr' );
-add_shortcode( 'bw_picasa', 'bw_picasa' );
-
-
-add_shortcode( 'bw_company', 'bw_company' );
-add_shortcode( 'bw_business', 'bw_business' );
-add_shortcode( 'bw_formal', 'bw_formal' );
-add_shortcode( 'bw_slogan', 'bw_slogan' );
-add_shortcode( 'bw_alt_slogan', 'bw_alt_slogan' );
-add_shortcode( 'bw_admin', 'bw_admin' );
-add_shortcode( 'bw_domain', 'bw_domain' );
-
-// add_shortcode( 'div', 'bw_div' );
-// add_shortcode( 'ediv', 'bw_ediv' );
-
-add_shortcode( 'clear', 'bw_clear' );
-add_shortcode( 'bw_tel', 'bw_tel' );
-add_shortcode( 'bw_mob', 'bw_mob' );
 
 
 add_filter('widget_text', 'do_shortcode');
@@ -171,7 +135,7 @@ function oik_options_do_page() {
     textfield( "bw_options[postal-code]", 50, "Post code", $options['postal-code']  );
     textfield( "bw_options[country-name]", 50, "Country name", $options['country-name']  );
                          
-    textfield( "bw_options[lat]", 50, "Latitude [bw_geo]", $options['lat']  );
+    textfield( "bw_options[lat]", 50, "Latitude [bw_geo] [bw_directions]", $options['lat']  );
     textfield( "bw_options[long]", 50, "Longitude", $options['long']  );
     
     // ABQIAAAAEraXBMl-kX5b-Swk0AR98BQiFdr9vy7axdrApFjkJGV6ZRaqtxRqjZfTaNvU9q3jxZ50yMHK-mrzag
@@ -189,6 +153,8 @@ function oik_options_do_page() {
     textfield( "bw_options[youtube]", 50, "YouTube URL [bw_youtube]", $options['youtube'] );
     textfield( "bw_options[flickr]", 50, "Flickr URL [bw_flickr]", $options['flickr'] );
     textfield( "bw_options[picasa]", 50, "Picasa URL [bw_picasa]", $options['picasa'] );
+    textfield( "bw_options[skype]", 50, "Skype Name [bw_skype]", $options['skype'] );
+    
     
     textfield( "bw_options[paypal-email]", 50, "PayPal email [bw_paypal]", $options['paypal-email'] );
     
