@@ -6,7 +6,7 @@ Requires: 3.0.4
 Tested up to: 3.2.1
 Stable tag: 0.7
 
-Often included key-information. 
+Often Included Key-information. 
 
 == Description ==
 oik is a set of plugins that ease the day to day creation of the very important but rather tedious content that is information about you, 
@@ -69,7 +69,7 @@ I want to get the plugin hosted first, then I'll get back to the FAQ.
 * Added: [bw_skype] shortcode to display your skype name
 * Added: [bw_tides] shortcode - tide times in the UK
 * Added: [bw_directions] shortcode - get Google directions to your chosen location
-* Added: [ngslideshow] and [gpslideshow] shortcodes for co-existence of NextGen gallery and Slideshow Gallery Pro
+* Added: [ngslideshow] shortcode for co-existence of NextGen gallery and Slideshow Gallery Pro
 * Fixed: invalid XHTML generated for fob, bong hide shortcodes
 * Added: Support for Drupal versions of Add post and Add page buttons
 = 0.6 =
