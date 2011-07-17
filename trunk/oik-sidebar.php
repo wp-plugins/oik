@@ -50,10 +50,10 @@ function oik_sidebar_api_version() {
 
 function bw_dynamic_sidebar( $name ) {
   
-  global $art_widget_args, $art_sidebars;
+  global $art_widget_args, $art_sidebars, $theme_sidebars;
   // Add Widget Wrangler sidebars: _before and _after
   // Note: We believe that dynamic_sidebar exists as this was pre-requisite to calling this routine
-  // but we can';t be sure that widget wrangler is activated so don't call it if it's not.
+  // but we can't be sure that widget wrangler is activated so don't call it if it's not.
    
   $wwsb = function_exists( 'ww_dynamic_sidebar' );
   
@@ -67,7 +67,16 @@ function bw_dynamic_sidebar( $name ) {
     bw_trace( $success_b, __FUNCTION__, __LINE__, __FILE__ );
     
   }
-  $success = dynamic_sidebar($art_sidebars[$name]['id']);
+  
+  // Note: As of Artisteer version v3.0.0.39952 the global variable is called $theme_sidebars not $art_sidebars
+  // use $theme_sidebars if theme_include_lib is defined
+  // in previous versions the function was art_include_lib
+  
+  if ( function_exists( 'theme_include_lib' ))
+    $success = dynamic_sidebar($theme_sidebars[$name]['id']);
+  else
+    $success = dynamic_sidebar($art_sidebars[$name]['id']);
+    
   
   if ( $wwsb ) {
     $success_a = ww_dynamic_sidebar($name.'_after');
