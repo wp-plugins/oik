@@ -1,0 +1,75 @@
+/* (C) Copyright Bobbing Wide 2010, 2011 */
+/* bwlink.css */
+
+         
+
+em.hB1 { color:  #213623; color: #36e2b7; font-size: 1.9em; vertical-align: -0.1em; text-transform: uppercase}
+em.hb1 { color:  #213623; color: #36e2b7; font-size: 1.9em; vertical-align: -0.1em; text-transform: lowercase;}
+em.ho { color: #61e236;  font-size: 1.8em; vertical-align: -0.2em;} 
+em.hb2  { color: #e2b736; font-size: 1.7em; vertical-align: -0.1em;} 
+em.hb3  { color: #e23661; font-size: 1.6em; vertical-align: 0.1em;} 
+em.hi1  { color: #3661e2; vertical-align: 0.3em;} 
+em.hn  { color: #6136e2; } 
+em.hg { color: #b736e2; vertical-align: -0.2em;}
+em.hW { font-weight: bold; color: #555; letter-spacing: 2pt; font-size: 1.5em; text-transform: lowercase;}
+em.hi2 { font-weight: bold; color: #666; letter-spacing: 3pt; font-size: 1.5em; }
+em.hd { font-weight: bold; color: #777; letter-spacing: 4pt; font-size: 1.5em; }
+em.he { font-weight: bold; color: #888; letter-spacing: 5pt; font-size: 1.6em; /* font-variant: small-caps; */}
+
+
+em.B1 { color:  #213623; color: #36e2b7; text-transform: uppercase; }
+em.b1 { color:  #213623; color: #36e2b7; text-transform: lowercase; }
+em.o { color: #61e236;  } 
+em.B2  { color: #e2b736; text-transform: uppercase; } 
+em.b2  { color: #e2b736; } 
+em.b3  { color: #e23661; } 
+em.i1  { color: #3661e2; } 
+em.n  { color: #6136e2; } 
+em.g { color: #b736e2; }
+em.space { }
+em.W { font-weight: bold; color: #555; text-transform: lowercase;}
+em.i2 { font-weight: bold; color: #666;  }
+em.d { font-weight: bold; color: #777;  }
+em.e { font-weight: bold; color: #888; }
+
+span.B1, span.B1 a { color:  #213623; color: #36e2b7; text-transform: uppercase; }
+span.b1, span.b1 a { color:  #213623; color: #36e2b7; text-transform: lowercase; }
+span.o, span.o a { color: #61e236;  } 
+span.B2, span.B2 a  { color: #e2b736; text-transform: uppercase; } 
+span.b2, span.b2 a  { color: #e2b736; } 
+span.b3, span.b3 a  { color: #e23661; } 
+span.i1, span.i1 a  { color: #3661e2; } 
+span.n, span.n a  { color: #6136e2; } 
+span.g, span.g a { color: #b736e2; }
+span.W, span.W a { font-weight: bold; color: #555; text-transform: lowercase;}
+span.i2, span.i2 a { font-weight: bold; color: #666;  }
+span.d, span.d a { font-weight: bold; color: #777;  }
+span.e, span.e a { font-weight: bold; color: #888; }
+
+
+/* This is to remove the italics from bobbing wide when used in a link */
+.url em, a em { font-style: normal; font-weight: bold; }
+h1 a em { font-style: italic; font-weight: normal; }
+.header h1 { margin: 0px; }
+.url a { color: black; text-decoration: none; }  
+.url em, a em { text-shadow: black 0px 1px 1px; }
+
+
+/* This is to remove the space between bobbing and wide when used in an URL */
+/* bc is abbreviation for business card - see also business_card.css */
+
+/* Removal of the space can also be done in a link or when the whole domain name is within the url class */
+.bc em.B1 { color:  #213623; color: #36e2b7; text-transform: uppercase; }
+.bc em.b1 { color:  #213623; color: #36e2b7; text-transform: lowercase; }
+.bc em.o { color: #61e236;  } 
+.bc em.b2  { color: #e2b736; } 
+.bc em.b3  { color: #e23661; } 
+.bc em.i1  { color: #3661e2; } 
+.bc em.n  { color: #6136e2; } 
+.bc em.g { color: #b736e2; }
+.bc em.space, .url em.space , a em.space { font-size: 1px; margin-right: -1px; }
+.bc em.W { font-weight: bold; color: #555; text-transform: lowercase;}
+.bc em.i2 { font-weight: bold; color: #666;  }
+.bc em.d { font-weight: bold; color: #777;  }
+.bc em.e { font-weight: bold; color: #888; }
+
