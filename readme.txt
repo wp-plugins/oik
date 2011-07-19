@@ -4,7 +4,7 @@ Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
 Requires: 3.0.4
 Tested up to: 3.2.1
-Stable tag: 0.7
+Stable tag: 0.8
 
 Often Included Key-information. 
 
@@ -27,7 +27,7 @@ Other plugins extend the functionality:
 * oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
 * oik-bwtrace provides a rudimentary trace function, which logs trace information to a file, rather than including it within the web page output. 
 * oik-tides - shortcode for tide times in the UK
-* oik-bob-bing-wide to provide easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, etcetera
+* oik-bob-bing-wide to provide easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, bw_plug
 
 The plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
 
@@ -65,6 +65,10 @@ I want to get the plugin hosted first, then I'll get back to the FAQ.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 0.8=
+* Added: [bw_googleplus] shortcode - follow me on GooglePlus
+* Added: [bw_contact_button] shortcode - for Contact me buttons
+* Added: [gpslides] 
 = 0.7 = 
 * Added: [bw_skype] shortcode to display your skype name
 * Added: [bw_tides] shortcode - tide times in the UK
