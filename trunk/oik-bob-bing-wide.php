@@ -4,7 +4,7 @@
 Plugin Name: oik bob bing wide shortcodes
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, etcetera
-Version: 0.7
+Version: 0.8
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -26,6 +26,10 @@ License: GPL2
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
+// If we include oik.php then we effectively activate the oik plugin
+// is this a good or a bad thing? 
+
+// require_once( 'oik.php') ;
 require_once( 'bobbfunc.inc' );
 require_once( 'bobbingwide.inc' );
 

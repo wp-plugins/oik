@@ -60,6 +60,7 @@
                            <option value="bw_picasa">Picase link[bw_picasa]</option>\
                            <option value="bw_twitter">Twitter link [bw_twitter]</option>\
                            <option value="bw_youtube">YouTube link [bw_youtube]</option>\
+                           <option value="bw_google_plus">Google Plus link [bw_google_plus]</option>\
                            <option value="bw">Bobbing Wide [bw]</option>\
                            </select><br />\
                         <small>select the shortcode</small></td>\
