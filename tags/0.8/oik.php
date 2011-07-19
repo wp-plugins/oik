@@ -4,7 +4,7 @@
 Plugin Name: oik base plugin 
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use shortcode macros for often included key-information 
-Version: 0.7
+Version: 0.8
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -30,6 +30,12 @@ global $bw_options;
 
 
 //echo '<p>BATa='.$bwapi_trace_test.'=aBAT</p>';
+/* All of the oik plugins and many of the common functions include calls to bw_trace so we
+   need to include it
+*/   
+    
+require_once( 'bwtrace.inc' );
+
 
 
   require_once( "bobbfunc.inc" );
@@ -89,7 +95,7 @@ function oik_options_init(){
 
 // Add the options page
 function oik_options_add_page() {
-	add_options_page('[bw] Options', 'oik options', 'manage_options', 'bw_options', 'oik_options_do_page');
+	add_options_page('[oik] Options', 'oik options', 'manage_options', 'bw_options', 'oik_options_do_page');
 }
 
 
@@ -98,7 +104,7 @@ function oik_options_add_page() {
 function oik_options_do_page() {
   require_once( "bobbforms.inc" );
   sdiv( "column span-15 wrap" );
-  h2( bw(). " shortcode options" );
+  h2( bw_oik(). " shortcode options" );
   e( '<form method="post" action="options.php">' ); 
   $options = get_option('bw_options');     
   stag( "table" );
@@ -119,6 +125,10 @@ function oik_options_do_page() {
     textfield( "bw_options[contact]", 50, "Contact [bw_contact]", $options['contact']  );
     textfield( "bw_options[email]", 50, "Email [bw_mailto]/[bw_email]", $options['email']  );
     textfield( "bw_options[admin]", 50, "Admin [bw_admin]", $options['admin']  );
+    textfield( "bw_options[contact-link]", 50, "Contact button page permalink [bw_contact_button]", $options['contact-link'] );
+    textfield( "bw_options[contact-text]", 50, "Contact button text ", $options['contact-text'] );
+    textfield( "bw_options[contact-title]", 50, "Contact button tooltip", $options['contact-title'] );
+
     
     // extended-address e.g.  Bobbing Wide
     // street-address   e.g.  41 Redhill Road
@@ -150,6 +160,7 @@ function oik_options_do_page() {
     textfield( "bw_options[twitter]", 50, "Twitter URL [bw_twitter]", $options['twitter'] );
     textfield( "bw_options[facebook]", 50, "Facebook URL [bw_facebook]", $options['facebook'] );
     textfield( "bw_options[linkedin]", 50, "LinkedIn URL [bw_linkedin]", $options['linkedin'] );
+    textfield( "bw_options[googleplus]", 50, "Google Plus URL [bw_googleplus]", $options['googleplus'] );
     textfield( "bw_options[youtube]", 50, "YouTube URL [bw_youtube]", $options['youtube'] );
     textfield( "bw_options[flickr]", 50, "Flickr URL [bw_flickr]", $options['flickr'] );
     textfield( "bw_options[picasa]", 50, "Picasa URL [bw_picasa]", $options['picasa'] );
@@ -188,10 +199,8 @@ function oik_options_validate($input) {
 	return $input;
 }
 
-    
-require_once( 'bwtrace.inc' );
 //echo '<p>BAT='.$bwapi_trace_test.'=BAT</p>';
-bwapi_trace_test( 'oik' );
+//bwapi_trace_test( 'oik' );
 
 
 
