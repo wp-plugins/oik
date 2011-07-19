@@ -4,8 +4,8 @@
 /*
 Plugin Name: oik tides
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
-Description: Easy to use shortcode macro for tide times
-Version: 0.7
+Description: Easy to use shortcode macro for tide times [bw_tides]
+Version: 0.8
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -130,7 +130,8 @@ function bw_tides( $atts ) {
   $desc = $channel->item->description;
   
   bw_trace( $desc, __FUNCTION__, __LINE__, __FILE__, 'desc');
-  // $desc = wp_strip_all_tags( $desc );
+  /* We may need to strip some unwanted advertising which appears in an anchor tag <a */
+  $desc = preg_replace('/<a (.*?)<\/a>/', "\\2", $desc);
   $allowed = array( 'b' => array(),
                     'br' =>  array()
                   );  
@@ -138,6 +139,7 @@ function bw_tides( $atts ) {
   
 
   bw_trace( $desc, __FUNCTION__, __LINE__, __FILE__, 'desc');
+  
   
   
   alink( "tides", $channel->link, $desc , $channel->item->title );  

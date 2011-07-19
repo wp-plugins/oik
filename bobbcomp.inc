@@ -6,14 +6,19 @@ function bw_get_cms_type() {
   $bw_cms_type = "unknown";
   if ( function_exists( 'is_blog_installed' )) {
     $bw_cms_type = 'WordPress';
+     return( $bw_cms_type );       
     
   }   
   if ( function_exists( 'drupal_bootstrap' )) {
     $bw_cms_type = "Drupal"; 
     if (defined( VERSION ) ) {
       $bw_cms_version = VERSION;
+      
+    return( $bw_cms_type );       
     }  
   }
+  exit( "Unknown CMS");
+  
   return( $bw_cms_type );       
 }
 
@@ -334,8 +339,8 @@ function bw_youtube( $atts ) {
 function bw_flickr( $atts) {
   $atts['network'] = "Flickr";  
   return( bw_follow( $atts ));
-}    
-
+}  
+  
 function bw_output( $field ) {
   $fieldvalue = bw_get_company( $field );
   span( $field );
@@ -463,3 +468,10 @@ function bw_directions() {
   art_button( $link, $text, $title, $class ); 
   return( bw_ret());
 }
+
+
+function bw_google_plus( $atts ) { 
+  $atts['network'] = "GooglePlus";  
+  return( bw_follow( $atts ));
+} 
+

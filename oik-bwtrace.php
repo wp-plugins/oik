@@ -4,7 +4,7 @@
 Plugin Name: oik-bwtrace 
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use trace macros for oik plugins
-Version: 0.7
+Version: 0.8
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -40,9 +40,7 @@ function oik_bwtrace_version() {
   
 }
 
-
-
-function this_plugin_first() {
+function bw_this_plugin_first() {
 	// ensure path to this file is via main wp plugin path
 	$wp_path_to_this_file = preg_replace('/(.*)plugins\/(.*)$/', WP_PLUGIN_DIR."/$2", __FILE__);
 	$this_plugin = plugin_basename(trim($wp_path_to_this_file));
@@ -63,8 +61,8 @@ if (function_exists( "add_action" )) {
 
 function bw_trace_plugin_startup() {
 
-
-  add_action("activated_plugin", "this_plugin_first");
+  global $bw_trace_options;
+  add_action("activated_plugin", "bw_this_plugin_first");
 
 
   /* Shortcodes for each of the more useful APIs */
@@ -95,15 +93,16 @@ function bw_trace_plugin_startup() {
   } 
 
 
+
   //$bw_trace_errors = $bw_trace_options[ 'errors']; 
   //bw_trace_errors( $bw_trace_errors );
 
   // bw_trace_log( "Trace log starting"  );
 
   if ( $bw_trace_level > '0' ) {
-    bw_trace( ABSPATH . $bw_trace_options['file'], __FUNCTION__, __LINE__, __FILE__ );
-    bw_trace( bw_getlocale(), __FUNCTION__, __LINE__, __FILE__ );
-    bw_trace( $_GET, __FUNCTION__, __LINE__, __FILE__ );  
+    bw_trace( ABSPATH . $bw_trace_options['file'], __FUNCTION__, __LINE__, __FILE__, 'tracelog' );
+    bw_trace( bw_getlocale(), __FUNCTION__, __LINE__, __FILE__, "locale" );
+    bw_trace( $_GET, __FUNCTION__, __LINE__, __FILE__, "_GET" );  
   } 
 
   add_action('admin_init', 'bw_trace_options_init' );
@@ -118,7 +117,7 @@ function bw_trace_options_init(){
 
 // Add menu page
 function bw_trace_options_add_page() {
-	add_options_page('[bw] Trace Options', 'BW Trace Options', 'manage_options', 'bw_trace_options', 'bw_trace_options_do_page');
+	add_options_page('oik trace options', 'oik trace options', 'manage_options', 'bw_trace_options', 'bw_trace_options_do_page');
 }
 
 
@@ -127,8 +126,8 @@ function bw_trace_options_add_page() {
 function bw_trace_options_do_page() { 
   require_once( "bobbforms.inc" );
 
-  sdiv( "column span-10 wrap" );
-  h2( bw(). " trace options" );
+  sdiv( "column span-14 wrap" );
+  h2( bw_oik(). " trace options" );
   e( '<form method="post" action="options.php">' ); 
   $options = get_option('bw_trace_options');     
   stag( "table" );
@@ -138,7 +137,8 @@ function bw_trace_options_do_page() {
   textfield( "bw_trace_options[file]", 60, "Trace file", $options['file']  );
   textfield( "bw_trace_options[trace]", 1 ,"Trace level (1=on)", $options['trace'] );
   textfield( "bw_trace_options[reset]", 1 ,"Trace reset (1=each txn)", $options['reset'] );
-  textfield( "bw_trace_options[errors]", 1 ,"Trace errors (0=no,-1=all,1=E_ERROR,2=E_WARNING,4=E_PARSE, etc)", $options['errors'] );
+  // Trace error processing is not yet enabled.
+  // textfield( "bw_trace_options[errors]", 1 ,"Trace errors (0=no,-1=all,1=E_ERROR,2=E_WARNING,4=E_PARSE, etc)", $options['errors'] );
   
     
   tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" ); 
@@ -147,8 +147,28 @@ function bw_trace_options_do_page() {
   etag( "form" );
   
   ediv(); 
-  sdiv("column span-5 last");
+  sediv( "clear" );
+  sdiv("column span-14 wrap");
+  
+  h2( "Notes about " . bw_oik() . " trace" );
+  p("The tracing output produced by " .bw_oik(). " trace can be used for problem determination.");
+  p("It's not for the faint hearted.");
+  p("The oik plugin should <b>not</b> need to be activated on a live site");
+  p("If you do need to activate it, only do so for a short period of time." );
+ 
+  p("You will need to specify the trace file name (e.g. bwtrace.log )" );
+  p("Set trace level to 1 when you want to trace processing. 0 otherwise");
+  p("If you want to clear the trace output set trace reset to 1, save changes, then set it back to 0");
+  
+  p("You may find the most recent trace output at..." );
+  $bw_trace_url = bw_trace_url();
+  
+  alink( NULL, $bw_trace_url, $bw_trace_url, "View trace output in your browser.");
+  p("If you want to trace processing within some content you can use two shortcodes");
   p("Use [bwtron] to turn trace on and [bwtroff] to turn it off" );
+  
+  p("For more information:" );
+  art_button( "http://www.bobbingwidewebdesign.com/oik", bw_oik() . " documentation", "Read the documentation for the oik plugin" );
   ediv();      
   bw_flush();
 }
@@ -164,6 +184,16 @@ function bw_trace_options_validate($input) {
 	
 	return $input;
 }
+
+function bw_trace_url() {
+  
+  $options = get_option('bw_trace_options');     
+  
+  $bw_trace_url = get_site_url( NULL, $options['file'] );
+  return( $bw_trace_url );
+
+}
+
 
 
 

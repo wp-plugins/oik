@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------
 
- oik.css is an extract of the blueprint.css for use with artisteer generated stylesheets
+ oik.css is an extract of the blueprint.css for use with Artisteer generated stylesheets
  
  blueprint      used in oik   brief overview
  ---------      -----------   ---------------------
@@ -306,6 +306,7 @@ a.Digg        ,
 a.Drupal      , 
 a.Flickr      , 
 a.Google      , 
+a.GooglePlus  ,
 a.Picasa      , 
 a.Stumbleupon , 
 a.Technorati  , 
@@ -330,6 +331,8 @@ a.Digg        { background: transparent url(images/digg_48.png)        no-repeat
 a.Drupal      { background: transparent url(images/Drupal_48.png)      no-repeat top left ; }
 a.Flickr      { background: transparent url(images/flickr_48.png)      no-repeat top left ; }
 a.Google      { background: transparent url(images/google_48.png)      no-repeat top left ; }
+a.GooglePlus  { background: transparent url(images/google_plus_48.png) no-repeat top left ; }
+a.LinkedIn    { background: transparent url(images/linkedin_48.png)    no-repeat top left ; }
 a.Picasa      { background: transparent url(images/picasa_48.png)      no-repeat top left ; }
 a.Stumbleupon { background: transparent url(images/stumbleupon_48.png) no-repeat top left ; }
 a.Technorati  { background: transparent url(images/technorati_48.png)  no-repeat top left ; }
@@ -347,6 +350,7 @@ a.page        { background: transparent url(images/page_48.png) no-repeat top le
 /* form#views-ui-preview-form input#preview-submit { margin-top:0; } */
 /* #edit-views-apply, #edit-views-reset { margin-top:0; } */
 
-
+/* Class for styling the contact style button created using [bw_contact_button] */
+a.contact { }
 
 
