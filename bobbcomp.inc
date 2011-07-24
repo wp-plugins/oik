@@ -314,7 +314,7 @@ function bw_follow( $atts ) {
   alink( $social_network, $social, $text, "Follow me on ".$social_network );
        
   return( bw_ret());
-}  
+} 
 
 function bw_twitter( $atts ) {
   $atts['network'] = "Twitter" ;
@@ -475,3 +475,32 @@ function bw_google_plus( $atts ) {
   return( bw_follow( $atts ));
 } 
 
+
+
+function bw_follow_e( $atts ) {
+  $social_network = $atts['network'];
+  $text = $atts['text'];
+  $email = $atts['email'];
+  
+  $lc_social = strtolower( $social_network );
+  $social = bw_get_company( $lc_social );
+  if ( $social ) {
+    bw_trace( $text, __FUNCTION__, __LINE__, __FILE__ , "text" );
+    $imagefile = plugins_url( 'images/'. $lc_social . '_48.png', __FILE__ );
+    
+    $image = retimage( NULL, $imagefile, $social_network );
+    alink( NULL, $social, $image, "Follow me on ".$social_network );
+  }     
+  //return( bw_ret());
+} 
+
+
+
+function bw_follow_me( $atts ) {
+  $networks = array( 'Twitter', 'Facebook', 'LinkedIn', 'GooglePlus', 'YouTube', 'Flickr' );
+  foreach ( $networks as $network ) {
+    $atts['network'] = $network;
+    bw_follow_e( $atts );
+  }
+  return( bw_ret());
+} 

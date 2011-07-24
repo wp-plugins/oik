@@ -52,6 +52,7 @@ add_shortcode( 'ngslideshow', 'NextGEN_shortcodes::show_slideshow' );
 
 add_shortcode( 'gpslides', 'bw_gp_slideshow' );
 //add_shortcode( 'clever', 'bw_clever' );
+add_shortcode( 'bw_follow_me', 'bw_follow_me' );
 
 
 function bw_gp_slideshow( $atts, $hmm=NULL, $tag=NULL ) {

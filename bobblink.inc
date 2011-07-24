@@ -46,6 +46,7 @@ function aalt( $alt = NULL )
 
 function atitle( $title = NULL )
 {
+  $title = wp_strip_all_tags( $title );
   kv( "title", $title );
 } 
 
