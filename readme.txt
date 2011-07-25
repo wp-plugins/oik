@@ -30,7 +30,7 @@ Other plugins extend the functionality:
 * oik-bob-bing-wide to provide easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, bw_plug
 * oik-email-signature to help generate an email signature file for all your email messages
 
-The plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
+The plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. These are known as the bw API.
 
 == Installation ==
 
