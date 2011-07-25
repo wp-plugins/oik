@@ -105,7 +105,8 @@ function bw_geo()
     span( "latitude" );
     e( bw_get_company( "lat" ));
     epan();
-    //br();
+    // I think we should have a space between the lat. and long. values
+    e( "&nbsp;");
     e( "Long." );
     span( "longitude" );
     e( bw_get_company( "long") );
@@ -421,7 +422,7 @@ function bw_tel()
    if ( $tel <> "" )
    {
      span( "tel" );
-     sepan( "type", "work" );
+     sepan( "type", "work " );
      span( "value" );
      e( $tel );
      epan();
@@ -436,7 +437,7 @@ function bw_mob()
    if ( $mob <> "" )
    {
      span( "tel" );
-     sepan( "type", "cell" );
+     sepan( "type", "cell " );
      span( "value" );
      e( $mob );
      epan();
@@ -474,4 +475,37 @@ function bw_google_plus( $atts ) {
   $atts['network'] = "GooglePlus";  
   return( bw_follow( $atts ));
 } 
+
+
+
+
+function bw_follow_e( $atts ) {
+  $social_network = $atts['network'];
+  $text = $atts['text'];
+  $email = $atts['email'];
+  
+  $lc_social = strtolower( $social_network );
+  $social = bw_get_company( $lc_social );
+  if ( $social ) {
+    bw_trace( $text, __FUNCTION__, __LINE__, __FILE__ , "text" );
+    $imagefile = plugins_url( 'images/'. $lc_social . '_48.png', __FILE__ );
+    
+    $image = retimage( NULL, $imagefile, $social_network );
+    alink( NULL, $social, $image, "Follow me on ".$social_network );
+  }     
+  //return( bw_ret());
+} 
+
+
+
+function bw_follow_me( $atts ) {
+  $networks = array( 'Twitter', 'Facebook', 'LinkedIn', 'GooglePlus', 'YouTube', 'Flickr' );
+  foreach ( $networks as $network ) {
+    $atts['network'] = $network;
+    bw_follow_e( $atts );
+  }
+  return( bw_ret());
+}
+
+
 
