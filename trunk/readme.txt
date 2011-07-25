@@ -4,7 +4,7 @@ Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
 Requires: 3.0.4
 Tested up to: 3.2.1
-Stable tag: 0.8
+Stable tag: 0.9
 
 Often Included Key-information. 
 
@@ -28,8 +28,9 @@ Other plugins extend the functionality:
 * oik-bwtrace provides a rudimentary trace function, which logs trace information to a file, rather than including it within the web page output. 
 * oik-tides - shortcode for tide times in the UK
 * oik-bob-bing-wide to provide easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, bw_plug
+* oik-email-signature to help generate an email signature file for all your email messages
 
-The plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
+The plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. These are known as the bw API.
 
 == Installation ==
 
@@ -50,8 +51,12 @@ Don't forget to remove this line before deleting the plugin.
 = Where is the FAQ? =
 [oik FAQ](http://www.bobbingwidewebdesign.com/oik/oik-faq)
 
-= Why isn't the FAQ here =
-I want to get the plugin hosted first, then I'll get back to the FAQ.
+= Is there a forum? =
+Yes - see above
+
+= Can I get support? = 
+Yes - see above 
+
  
 
 == Screenshots ==
@@ -65,7 +70,11 @@ I want to get the plugin hosted first, then I'll get back to the FAQ.
 8. oik shortcode selection dialog
 
 == Changelog ==
-= 0.8=
+= 0.9 =
+* Added: oik-email-signature to help you generate an email signature file for your email client
+* Added: [bw_follow_me] shortcode for easy to include Follow me links for Twitter, Facebook, LinkedIn, GooglePlus, YouTube, Flickr
+* Added: bw_gallery() function for use in customised themes 
+= 0.8 =
 * Added: [bw_googleplus] shortcode - follow me on GooglePlus
 * Added: [bw_contact_button] shortcode - for Contact me buttons
 * Added: [gpslides] 
