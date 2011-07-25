@@ -51,8 +51,12 @@ Don't forget to remove this line before deleting the plugin.
 = Where is the FAQ? =
 [oik FAQ](http://www.bobbingwidewebdesign.com/oik/oik-faq)
 
-= Why isn't the FAQ here =
-I want to get the plugin hosted first, then I'll get back to the FAQ.
+= Is there a forum? =
+Yes - see above
+
+= Can I get support? = 
+Yes - see above 
+
  
 
 == Screenshots ==
