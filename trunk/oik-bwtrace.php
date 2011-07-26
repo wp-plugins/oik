@@ -4,7 +4,7 @@
 Plugin Name: oik-bwtrace 
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use trace macros for oik plugins
-Version: 0.8
+Version: 0.9
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -130,7 +130,8 @@ function bw_trace_options_do_page() {
   h2( bw_oik(). " trace options" );
   e( '<form method="post" action="options.php">' ); 
   $options = get_option('bw_trace_options');     
-  stag( "table" );
+ 
+  stag( 'table class="form-table"' );
   bw_flush();
   settings_fields('bw_trace_options_options'); 
   

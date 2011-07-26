@@ -2,7 +2,7 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '0.6' );
+  return( '0.9' );
 }  
 
 function bw_echo( $string ) {
@@ -643,4 +643,53 @@ else {
     alink( "button art-button " . $class , $linkurl, $text, $title ) ;
     epan();
   }
+}
+
+
+
+/*  default logic
+  set a default value if the value is not set
+*/
+function bw_default( $value, $default=NULL ) {
+  $val = $value;
+  
+  bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value before" );
+  if ( empty( $val ))
+    $val = $default;
+  bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value returned" );
+  return( $val );
+}    
+  
+/* 
+  Gallery logic
+  
+  The gallery shortcode allows media to be displayed
+  Here we take values from the page's metadata
+   gallery-columns = 1,2, etc
+   gallery-size = 'thumbnail', 'medium', 'large', 'full'
+  and apply them to the gallery shortcode
+  If the meta data is not set in the post the default values are:
+  
+  
+  [gallery columns="1" size="medium"] 
+  
+  For more information on gallery see http://codex.wordpress.org/Gallery_Shortcode
+  For more information on sizes see WordPress admin panel under Settings > Media
+  
+*/
+function bw_gallery() {
+
+  c( "gallery processing");
+  global $post;
+  bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
+ 
+  $columns = get_post_meta( $post->ID, "gallery-columns", true );
+  $columns = bw_default( $columns, "1");
+  $size = get_post_meta( $post->ID, "gallery-size", true );
+  $size = bw_default( $size, "medium" );
+   
+  $gallery_options = array( 'columns' => $columns, 'size' => $size );
+  e( gallery_shortcode( $gallery_options ));
+
+
 }
