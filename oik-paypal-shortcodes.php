@@ -19,7 +19,7 @@ Notes & Limitations
 - This code was based on the jw-paypal-shortcodes plugin (designed for use in the US)
 - The plugins (this one and jw-paypal-shortcodes) should co-exist peacefully.
 - I had no idea what the purpose of this image was https://www.paypal.com/en_GB/i/scr/pixel.gif
-  but having read the forums I now see that it's now particularly important so I've eliminated it
+  but having read the forums I now see that it's not particularly important so I've eliminated it
   from the generated code.
 - The generated code is for NonHostedGuest buttons - not buttons that are saved in your PayPal account.
   see https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_html_paypal_shopping_cart
