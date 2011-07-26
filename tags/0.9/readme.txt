@@ -57,8 +57,6 @@ Yes - see above
 = Can I get support? = 
 Yes - see above 
 
- 
-
 == Screenshots ==
 1. oik options (also known as bobbing wide shortcode options)
 2. oik PayPal buttons and their shortcodes
