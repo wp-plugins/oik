@@ -39,7 +39,7 @@ em.B1 { color:  #213623; color: #159374; text-transform: uppercase; }
 em.b1 { color:  #213623; color: #159374; text-transform: lowercase; }
 em.o { color: #359315;  } 
 em.B2  { color: #937415; text-transform: uppercase; } 
-em.b2  { color: #937415; } 
+em.b2  { color: #937415; text-transform: lowercase; } 
 em.b3  { color: #931535; } 
 em.i1  { color: #153593; } 
 em.n  { color: #351593; } 

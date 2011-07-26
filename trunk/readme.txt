@@ -4,7 +4,7 @@ Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
 Requires: 3.0.4
 Tested up to: 3.2.1
-Stable tag: 0.9
+Stable tag: trunk
 
 Often Included Key-information. 
 
@@ -57,6 +57,9 @@ Yes - see above
 = Can I get support? = 
 Yes - see above 
 
+= Do you know the screenshots are out of date? =
+Yes. I'm concentrating on getting version 1.x properly released.
+
 == Screenshots ==
 1. oik options (also known as bobbing wide shortcode options)
 2. oik PayPal buttons and their shortcodes
@@ -68,6 +71,8 @@ Yes - see above
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 1.0 =
+* Fixed: Hopefully this contains what should have been in 0.9
 = 0.9 =
 * Added: oik-email-signature to help you generate an email signature file for your email client
 * Added: [bw_follow_me] shortcode for easy to include Follow me links for Twitter, Facebook, LinkedIn, GooglePlus, YouTube, Flickr
