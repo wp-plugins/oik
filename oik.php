@@ -4,7 +4,7 @@
 Plugin Name: oik base plugin 
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use shortcode macros for often included key-information 
-Version: 0.8
+Version: 0.9
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -107,7 +107,8 @@ function oik_options_do_page() {
   h2( bw_oik(). " shortcode options" );
   e( '<form method="post" action="options.php">' ); 
   $options = get_option('bw_options');     
-  stag( "table" );
+  
+  stag( 'table class="form-table"' );
   bw_flush();
   settings_fields('oik_options_options'); 
   
