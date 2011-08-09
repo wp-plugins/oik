@@ -16,7 +16,7 @@ There are a number of component modules which can be activated as and when you n
 
 The oik base plugin provides a series of WordPress shortcodes that take the pain out of producing commonly used information.
 You provide this information once on the oik options panel, then use shortcodes to include the information on your website; in pages, posts,
-titles and widgets. 
+titles, widgets and the footer.
 Most of the shortcodes are prefixed bw_ (for Bobbing Wide) e.g. [ bw_mailto], which produces a "send email to" link.
 
 
@@ -71,6 +71,15 @@ Yes. I'm concentrating on getting version 1.x properly released.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 1.1 =
+* Added: Safe shortcode expansion. Shortcode expansion is now sensitive to the current filter. 
+* Added: Dummy handling of wp_footer when current_filter() does not return a filter name
+* Added: cacheing of plugin information pulled from WordPress.org
+* Added: [bw_plug] supports multiple plugin names to automatically create a table of different WordPress plugins
+* Added: [bw_plug option='active_plugins'] to list active plugins
+* Added: [OIK] expands to Often Included Key-information
+* Fixed: Problem with missing bw_oik() function 
+* Fixed: Renamed "oik-bwtrace" to "oik bwtrace" to allow "oik" to be the plugin that gets activated by default
 = 1.0 =
 * Fixed: Hopefully this contains what should have been in 0.9
 = 0.9 =

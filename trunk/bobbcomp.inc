@@ -507,5 +507,29 @@ function bw_follow_me( $atts ) {
   return( bw_ret());
 }
 
+/** 
+ * bw_oik() is needed here since it's used in the oik admin pages
+ *   
+ */
+function bw_oik ( $class = NULL ) {
+  $bw = nullretstag( "span", $class ); 
+  $bw .= '<span class="b1">o</span>';
+  $bw .= '<span class="o">i</span>';
+  $bw .= '<span class="b2">k</span>';
+  $bw .= nullretetag( "span", $class ); 
+  return( $bw );
+}
 
-
+/** 
+ * bw_oik_long - spells out Often Included Key-information
+ *   
+ */
+function bw_oik_long( $class = NULL ) {
+  $bw = nullretstag( "span", $class ); 
+  $bw .= '<span class="B1">O</span>';
+  $bw .= '<span class="b1">ften </span>';
+  $bw .= '<span class="o">Included </span>';
+  $bw .= '<span class="b2">Key-information</span>';
+  $bw .= nullretetag( "span", $class ); 
+  return( $bw );
+}

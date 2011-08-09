@@ -3,7 +3,7 @@
 Plugin Name: oik Paypal Shortcodes
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: [oik] PayPal Shortcodes - Pay Now, Buy Now, Donate, Add to Cart and View Cart buttons
-Version: 1.0
+Version: 1.1
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com/content/herb-miller
 
