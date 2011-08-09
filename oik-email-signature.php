@@ -1,10 +1,10 @@
 <?php
 
 /*
-Plugin Name: oik-email-signature 
+Plugin Name: oik email signature 
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Generate an email signature file for your email client
-Version: 1.0
+Version: 1.1
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
