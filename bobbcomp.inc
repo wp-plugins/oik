@@ -533,3 +533,63 @@ function bw_oik_long( $class = NULL ) {
   $bw .= nullretetag( "span", $class ); 
   return( $bw );
 }
+
+
+/**
+ * Display the company logo with a link if required
+ * Notes: the attribute defaulting needs to be improved 
+*/ 
+function bw_logo( $atts ) {
+  $link = $atts['link'];
+  $text = $atts['text'];
+  $width = $atts['width'];
+  $height = $atts['height'];
+
+
+  $upload_dir = wp_upload_dir();
+  $baseurl = $upload_dir['baseurl'];
+  
+  $logo_image = bw_get_company( "logo-image" );
+  $company = bw_get_company( "company" );
+  $image_url = $baseurl . $logo_image;
+  
+  $image = retimage( NULL, $image_url, $company, $width, $height );
+  if ( $link ) {
+    alink( NULL, $link, $image, $company );
+  }  
+  else {
+    e( $image );  
+  }  
+  return( bw_ret());
+    
+}
+
+
+/**
+ * Display the QR code file with a link if required
+ * Notes: the attribute defaulting needs to be improved 
+*/ 
+function bw_qrcode( $atts ) {
+  $link = $atts['link'];
+  $text = $atts['text'];
+  $width = $atts['width'];
+  $height = $atts['height'];
+
+
+  $upload_dir = wp_upload_dir();
+  $baseurl = $upload_dir['baseurl'];
+  
+  $logo_image = bw_get_company( "qrcode-image" );
+  $company = bw_get_company( "company" );
+  $image_url = $baseurl . $logo_image;
+  
+  $image = retimage( NULL, $image_url, "QR code for " . $text , $width, $height );
+  if ( $link ) {
+    alink( NULL, $link, $image, $company );
+  }  
+  else {
+    e( $image );  
+  }  
+  return( bw_ret());
+    
+}

@@ -34,10 +34,7 @@ global $bw_options;
    need to include it
 */   
     
-require_once( 'bwtrace.inc' );
-
-
-
+  require_once( 'bwtrace.inc' );
   require_once( "bobbfunc.inc" );
   require_once( "bobblink.inc" );
   require_once( "bobbcomp.inc" );
@@ -151,7 +148,7 @@ function oik_options_do_page() {
   
 
   textfield( "bw_options[domain]", 50, "Domain [bw_domain] [bw_wpadmin]", $options['domain']  );
-  textfield( "bw_options[customCSS]", 50, "Custom CSS (in theme directory " . get_theme_root_uri(), $options['customCSS'] );
+  textfield( "bw_options[customCSS]", 50, "Custom CSS in theme directory " . get_theme_root_uri(), $options['customCSS'] );
   
   textfield( "bw_options[twitter]", 50, "Twitter URL [bw_twitter]", $options['twitter'] );
   textfield( "bw_options[facebook]", 50, "Facebook URL [bw_facebook]", $options['facebook'] );
@@ -164,7 +161,12 @@ function oik_options_do_page() {
   
   
   textfield( "bw_options[paypal-email]", 50, "PayPal email [bw_paypal]", $options['paypal-email'] );
+  
+  $upload_dir = wp_upload_dir();
+  $baseurl = $upload_dir['baseurl'];
     
+  textfield( "bw_options[logo-image]", 50, "Logo image [bw_logo] in uploads: " . $baseurl, $options['logo-image'] );
+  textfield( "bw_options[qrcode-image]", 50, "QR code image [bw_qrcode] in uploads", $options['qrcode-image'] );
     
   tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" ); 
 
@@ -172,10 +174,16 @@ function oik_options_do_page() {
   etag( "form" );
   
   ediv(); 
-  sdiv("column span-6 last");
+  sdiv("column span-6 wrap last");
+  
+  h2( "Usage notes" );
   p("Use the shortcode options in your pages, widgets and titles. e.g." );
+  p("[bw_telephone] for your telephone number" );
+  p( bw_telephone() );
   p("[bw_address] to print your address" );
   p( bw_address());
+  p( "[bw_follow_me] for ALL your Follow me buttons" );
+  p( bw_follow_me() );
   p("For more information:" );
   art_button( "http://www.bobbingwidewebdesign.com/oik", "oik documentation", "Read the documentation for the oik plugin" );
    
