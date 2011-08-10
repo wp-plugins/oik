@@ -72,6 +72,7 @@ Yes. I'm concentrating on getting version 1.x properly released.
 
 == Changelog ==
 = 1.1 =
+* Added: [bw_logo] and [bw_qrcode] for use in [bw_email_signature] and elsewhere
 * Added: Safe shortcode expansion. Shortcode expansion is now sensitive to the current filter. 
 * Added: Dummy handling of wp_footer when current_filter() does not return a filter name
 * Added: cacheing of plugin information pulled from WordPress.org
