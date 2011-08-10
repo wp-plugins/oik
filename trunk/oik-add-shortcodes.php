@@ -260,6 +260,9 @@ bw_add_shortcode( 'gpslides', 'bw_gp_slideshow' );
 bw_add_shortcode( 'bw_follow_me', 'bw_follow_me' );
 
 
+//bw_add_shortcode( 'bw_logo', 'bw_logo' );
+bw_add_shortcode_event( 'bw_logo', 'bw_logo', 'the_content,widget_text,settings_page_bw_email_signature' );
+bw_add_shortcode_event( 'bw_qrcode', 'bw_qrcode', 'the_content,widget_text,settings_page_bw_email_signature');
 
 
 
