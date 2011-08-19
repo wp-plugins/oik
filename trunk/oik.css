@@ -354,3 +354,23 @@ a.page        { background: transparent url(images/page_48.png) no-repeat top le
 a.contact { }
 
 
+/* Classes for the [bw_block] shortcode to set the minimum height for a block 
+   e.g.
+   [bw_block class="column span-6 bd-200"]
+   If these are not sufficient you can add more to your custom stylesheet
+*/   
+div.bd-100 .art-blockcontent { min-height: 100px; }
+div.bd-150 .art-blockcontent { min-height: 150px; }
+div.bd-200 .art-blockcontent { min-height: 200px; }
+div.bd-250 .art-blockcontent { min-height: 250px; }
+div.bd-300 .art-blockcontent { min-height: 300px; }
+div.bd-350 .art-blockcontent { min-height: 350px; }
+div.bd-400 .art-blockcontent { min-height: 400px; }
+div.bd-450 .art-blockcontent { min-height: 450px; }
+div.bd-500 .art-blockcontent { min-height: 500px; }
+div.bd-550 .art-blockcontent { min-height: 550px; }
+
+
+
+
+

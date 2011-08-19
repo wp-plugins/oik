@@ -69,7 +69,8 @@ span.e, span.e a { font-weight: bold; color: #888; }
 .url em, a em { font-style: normal; font-weight: bold; }
 h1 a em { font-style: italic; font-weight: normal; }
 .header h1 { margin: 0px; }
-.url a { color: black; text-decoration: none; }  
+.url a, a.url, .art-postcontent a.url:link, .art-postcontent a.url:visited  { color: black; text-decoration: none; }  
+.art-postcontent a.url:hover { text-decoration: underline; }
 .url em, a em { text-shadow: black 0px 1px 1px; }
 
 

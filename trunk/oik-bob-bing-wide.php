@@ -4,7 +4,7 @@
 Plugin Name: oik bob bing wide shortcodes
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, etcetera
-Version: 1.1
+Version: 1.2
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -32,6 +32,7 @@ License: GPL2
 // require_once( 'oik.php') ;
 require_once( 'bobbfunc.inc' );
 require_once( 'bobbingwide.inc' );
+require_once( 'oik-add-shortcodes.php' );
 
 function oik_bob_bing_wide_api_version() {
   return bw_oik_version();
@@ -39,24 +40,33 @@ function oik_bob_bing_wide_api_version() {
 
 
 /* Shortcodes for each of the more useful bobbingwide babbles  */
-add_shortcode( 'bob', 'bw_bob' );
-add_shortcode( 'fob', 'bw_fob' );
+bw_add_shortcode( 'bob', 'bw_bob' );
+bw_add_shortcode( 'fob', 'bw_fob' );
 
-add_shortcode( 'bing', 'bw_bing' );
-add_shortcode( 'bong', 'bw_bong' );
+bw_add_shortcode( 'bing', 'bw_bing' );
+bw_add_shortcode( 'bong', 'bw_bong' );
 
-add_shortcode( 'wide', 'bw_wide' );
-add_shortcode( 'hide', 'bw_hide' );
+bw_add_shortcode( 'wide', 'bw_wide' );
+bw_add_shortcode( 'hide', 'bw_hide' );
 
-add_shortcode( 'wow', 'bw_wow' );
-add_shortcode( 'WoW', 'bw_wow' );
-add_shortcode( 'WOW', 'bw_wow_long');
+bw_add_shortcode( 'wow', 'bw_wow' );
+bw_add_shortcode( 'WoW', 'bw_wow' );
+bw_add_shortcode( 'WOW', 'bw_wow_long');
 
-add_shortcode( 'oik', 'bw_oik' );  
-add_shortcode( 'loik', 'bw_loik' ); // Link to the plugin  
-add_shortcode( 'OIK', 'bw_oik_long'); // Spells out often included key-information
+bw_add_shortcode( 'oik', 'bw_oik' );  
+bw_add_shortcode( 'loik', 'bw_loik' ); // Link to the plugin  
+bw_add_shortcode( 'OIK', 'bw_oik_long'); // Spells out often included key-information
 
-add_shortcode( 'bw_page', 'bw_page' );
-add_shortcode( 'bw_post', 'bw_post' );
-add_shortcode( 'bw_plug', 'bw_plug' );
-add_shortcode( 'bw_module',  'bw_module' );
+bw_add_shortcode( 'bw_page', 'bw_page' );
+bw_add_shortcode( 'bw_post', 'bw_post' );
+bw_add_shortcode( 'bw_plug', 'bw_plug' );
+bw_add_shortcode( 'bw_module',  'bw_module' );
+
+bw_add_shortcode( 'wp', 'bw_wp' );   // WordPress
+bw_add_shortcode( 'lwp', 'bw_lwp' ); // Link to WordPress.org 
+bw_add_shortcode( 'wpms', 'bw_wpms' );   // WordPress Mu;tisite
+bw_add_shortcode( 'lwpms', 'bw_lwpms' ); // Link to WordPress multisite - .org
+bw_add_shortcode( 'drupal', 'bw_drupal' );   // Drupa;
+bw_add_shortcode( 'ldrupal', 'bw_ldrupal' ); // Link to Drupal.org
+
+bw_add_shortcode( 'lbw', 'bw_lbw'); // Link to Bobbing Wide

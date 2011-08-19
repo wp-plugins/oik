@@ -62,7 +62,9 @@ function bw_gp_slides( $atts ) {
 
 }
 
-
+/**
+ * Set a default value for an empty attribute value from the oik option or a hardcoded value
+*/
 function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL ) {
   $val = $bw_value;
   bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "field" );
@@ -78,7 +80,9 @@ function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL 
 }
 
 
-/* These are dummy functions to demonstrate my appaling understanding of php's OO implementation */
+/** 
+ * These are dummy functions to demonstrate my appaling understanding of php's OO implementation 
+*/
 function bw_nobbut() {
   return "";
 }
@@ -263,6 +267,8 @@ bw_add_shortcode( 'bw_follow_me', 'bw_follow_me' );
 //bw_add_shortcode( 'bw_logo', 'bw_logo' );
 bw_add_shortcode_event( 'bw_logo', 'bw_logo', 'the_content,widget_text,settings_page_bw_email_signature' );
 bw_add_shortcode_event( 'bw_qrcode', 'bw_qrcode', 'the_content,widget_text,settings_page_bw_email_signature');
+
+
 
 
 

@@ -5,7 +5,7 @@
 Plugin Name: oik tides
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use shortcode macro for tide times [bw_tides]
-Version: 1.1
+Version: 1.2
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -112,37 +112,71 @@ C:\apache\htdocs\wordpress\wp-content\plugins\oik\oik-tides.php(45:0) 2011-05-04
 )
  
 */
+
+function bw_time_of_day_secs() {
+  extract( localtime( time(), true ));
+  $secs = ((($tm_hour * 60) + $tm_min) * 60) + $tm_sec;
+  bw_trace( $secs, __FUNCTION__, __LINE__, __FILE__, 'secs' );
+  return( $secs );
+}  
+
+
+/**
+ * display information about high and low tides obtained from www.tidetimes.org.uk
+ * the data is stored as transient data until midnight, after which we expect new figures for the next day
+ * If the site is going to display more than one set of tide information then you will need to indicate
+ * a special code for storing the information. I would have liked to have extracted the location from the
+ * tideurl but got distracted with set_transient crashing when passed a SimpleXML object.
+ */                                                                        
 function bw_tides( $atts ) {
 
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, 'atts');
   extract( shortcode_atts( array(
       'tideurl' => 'http://www.tidetimes.org.uk/Chichester_Harbour.rss',
+      'store' => '1', 
       ), $atts ) );
       
-
-      
-  bw_trace( $tideurl, __FUNCTION__, __LINE__, __FILE__, 'tideurl');
-
-  $tideinfo = bw_get_tide_info( $tideurl );
-  $channel = $tideinfo->channel;
-  bw_trace( $channel, __FUNCTION__, __LINE__, __FILE__, 'channel');
+  bw_trace( $tideurl, __FUNCTION__, __LINE__, __FILE__, 'tideurl' );
+  bw_trace( $store, __FUNCTION__, __LINE__, __FILE__, 'store' ); 
   
-  $desc = $channel->item->description;
+  $desc = get_transient( 'bw_tides_desc_'. $store );
+  $title = get_transient( 'bw_tides_title_'. $store );      
+  $link = get_transient( 'bw_tides_link_'. $store );
   
+  if ( $desc === FALSE || $title === FALSE || $link === FALSE  ) {
+    $tideinfo = bw_get_tide_info( $tideurl );
+    $channel = $tideinfo->channel;    
+    bw_trace( $channel, __FUNCTION__, __LINE__, __FILE__, 'channel');
+    $link = (string) $channel->link;   
+    bw_trace( $desc, __FUNCTION__, __LINE__, __FILE__, 'desc');
+
+    /* We may need to strip some unwanted advertising which appears in an anchor tag <a */
+    $desc = $channel->item->description;
+    $desc = preg_replace('/<a (.*?)<\/a>/', "\\2", $desc);
+    $allowed = array( 'b' => array(),
+                      'br' =>  array()
+                    );  
+    $desc = wp_kses( $desc, $allowed );
+    $title = (string) $channel->item->title;  
+    // $title = $channel->item->title;   uncomment this to cause set_transient to fail
+    
+    $secs = bw_time_of_day_secs();
+    $secs = 86400 - $secs;
+    set_transient( "bw_tides_desc_" . $store, $desc, $secs);
+    set_transient( "bw_tides_title_" . $store, $title, $secs);
+    set_transient( "bw_tides_link_" . $store, $link, $secs);
+  }
+  else {
+     // We got all the data from the transient store     
+  }  
+
   bw_trace( $desc, __FUNCTION__, __LINE__, __FILE__, 'desc');
-  /* We may need to strip some unwanted advertising which appears in an anchor tag <a */
-  $desc = preg_replace('/<a (.*?)<\/a>/', "\\2", $desc);
-  $allowed = array( 'b' => array(),
-                    'br' =>  array()
-                  );  
-  $desc = wp_kses( $desc, $allowed );
-  
+  bw_trace( $title, __FUNCTION__, __LINE__, __FILE__, 'title');
+  bw_trace( $link, __FUNCTION__, __LINE__, __FILE__, 'link');
 
-  bw_trace( $desc, __FUNCTION__, __LINE__, __FILE__, 'desc');
+  alink( "tides", $link , $desc , $title ); 
   
   
-  
-  alink( "tides", $channel->link, $desc , $channel->item->title );  
   return( bw_ret());
 
 }
