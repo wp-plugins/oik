@@ -4,7 +4,7 @@
 Plugin Name: oik email signature 
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Generate an email signature file for your email client
-Version: 1.1
+Version: 1.2
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -28,6 +28,7 @@ License: GPL2
 */
 require_once( 'bwtrace.inc');
 require_once( 'bobbfunc.inc' );
+require_once( 'oik-add-shortcodes.php' );
 
 function oik_email_signature_version() {
   return oik_version();
@@ -37,7 +38,7 @@ function oik_email_signature_version() {
 
   add_action('admin_init', 'bw_email_signature_init' );
   add_action('admin_menu', 'bw_email_signature_add_page');
-  add_shortcode( 'bw_email_signature', 'bw_email_signature' );
+  bw_add_shortcode( 'bw_email_signature', 'bw_email_signature' );
 
 
 // Init plugin options to white list our options

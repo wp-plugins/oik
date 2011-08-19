@@ -87,8 +87,7 @@ function bw_wow ( $class = NULL )
 }
 
 /* These are non-translatable */
-function bw_wow_long ( $class = NULL )
-{
+function bw_wow_long ( $class = NULL ) {
   $bw = nullretstag( "span", $class ); 
   $bw .= '<span class="B1">Wonder</span>';
   $bw .= ' ';
@@ -101,12 +100,67 @@ function bw_wow_long ( $class = NULL )
 
 }
 
+function bw_lbw( $atts ) {
+  $sites = array( 'bw' => "" ,
+                  'des' => "webdesign",
+                  'dev' => "webdevelopment"
+                );   
+  $s = bw_default_empty_att( $atts['s'], NULL, "bw" );
+  $tld = bw_default_empty_att( $atts['t'], NULL, ".com" );
+  $site = "www.bobbingwide";
+  $site .= $sites[ $s ];
+  $site .= $tld;
+  
+  $text = "www." . bw();
+  if ( $sites[ $s ] ) 
+    $text .= '<b>' . $sites[ $s ] . '</b>';
+  $text .= $tld;  
+   
+  alink( 'url', "http://" . $site, $text, "Visit the Bobbing Wide website: " . $site ) ;
+  return( bw_ret());
 
+}
 
 function bw_loik() {
   alink( NULL, "http://www.bobbingwidewebdesign.com/oik", bw_oik(), "Link to the oik plugin") ;
   return( bw_ret());
 } 
+
+function bw_wp( ) {
+  $bw = nullretstag( "span", "wordpress"); 
+  $bw .= '<span class="word">Word</span>';
+  $bw .= '<span class="press">Press</span>';
+  $bw .= nullretetag( "span", "wordpress" ); 
+  return( $bw );
+}
+
+function bw_lwp() {
+  alink( NULL, "http://www.wordpress.org", bw_wp(), "Visit WordPress.org" ); 
+  return( bw_ret());
+}
+
+function bw_lwpms() {
+  alink( NULL, "http://www.wordpress.org", bw_wpms(), "Visit WordPress.org for MultiSite" ); 
+  return( bw_ret());
+}
+
+function bw_ldrupal() {
+  alink( NULL, "http://www.drupal.org", bw_drupal(), "Visit Drupal.org" ); 
+  return( bw_ret());
+}
+
+
+function bw_wpms() {
+  $bw = bw_wp();
+  $bw .= ' ';
+  $bw .= '<span class="multisite">Multisite</span>';
+  return( $bw );
+}
+  
+function bw_drupal() {
+  $bw .= '<span class="drupal">Drupal</span>';
+  return( $bw );
+}  
 
 
 /** 
@@ -144,11 +198,12 @@ function bw_page( $atts ) {
 }
 
 
-/* Others we can do are:
+/* Others we can consider doing are:
  links
  plugins
  users
  dashboard
+ but its not really necessary with WordPress 3.2.1 since there's an admin menu once you're logged in.
  
 */
 
@@ -309,7 +364,7 @@ function bw_format_default( $name, $link ) {
     $link = "http://www.bobbingwidewebdesign.com/plugins/$name";
   }
   e( "(" );
-  alink( "bwlink", $link, "...", "Link to bobbing wide's notes on ".$name );
+  alink( "bwlink", $link, "...", "Read bobbing wide's notes on ".$name );
   e( ")" ); 
 }
 

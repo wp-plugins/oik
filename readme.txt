@@ -4,7 +4,7 @@ Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
 Requires: 3.0.4
 Tested up to: 3.2.1
-Stable tag: 1.1
+Stable tag: trunk
 
 Often Included Key-information. 
 
@@ -27,8 +27,9 @@ Other plugins extend the functionality:
 * oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
 * oik-bwtrace provides a rudimentary trace function, which logs trace information to a file, rather than including it within the web page output. 
 * oik-tides - shortcode for tide times in the UK
-* oik-bob-bing-wide to provide easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, bw_plug
+* oik-bob-bing-wide to provide easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, bw_plug, bw_module
 * oik-email-signature to help generate an email signature file for all your email messages
+* oik-blocks to create Artisteer style blocks within your pages, posts and even widgets
 
 The plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. These are known as the bw API.
 
@@ -71,8 +72,13 @@ Yes. I'm concentrating on getting version 1.x properly released.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 1.2 =
+* Added: oik-blocks - [bw_block] and [bw_eblock] shortcodes for creating Artisteer style blocks within your content
+* Added: [bw_logo] and [bw_qrcode] shortcodes - to include your logo image and QR code images on your pages.
+* Added: [lbw] shortcode - Links to various Bobbing Wide websites
+* Added: [wp] [wpms] and [drupal] shortcodes - for WordPress, WordPress Multisite and Drupal 
+* Added: [lwp] [lwpms] and [ldrupal] shortcodes - links to WordPress.org and Drupal.org
 = 1.1 =
-* Added: [bw_logo] and [bw_qrcode] for use in [bw_email_signature] and elsewhere
 * Added: Safe shortcode expansion. Shortcode expansion is now sensitive to the current filter. 
 * Added: Dummy handling of wp_footer when current_filter() does not return a filter name
 * Added: cacheing of plugin information pulled from WordPress.org
