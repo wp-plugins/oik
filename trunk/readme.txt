@@ -140,6 +140,8 @@ Needed for Bobbing Wide's Wonder of WordPress websites
 == Further reading ==
 If you want to read more about the oik plugins then please visit the
 [oik plugin](http://www.bobbingwidewebdesign.com/oik) 
+In time information about oik will be moved to 
+[oik plugins](http://www.oik-plugins.com)
 **"the oik plugin - for often included key-information"**
 If you're interested in the Drupal version then please visit the 
 [oik module](http://www.bobbingwidewebdevelopment.com/content/often-included-key-information-oik-drupal-module
