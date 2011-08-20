@@ -1,4 +1,6 @@
 <?php 
+
+  require_once( 'bwtrace.inc' );
 /* Shortcodes for each of the more useful "often included key-information" fields 
    in Bobbing Wide's Wonder of WordPress websites
 */
