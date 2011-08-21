@@ -4,7 +4,7 @@ Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
 Requires: 3.0.4
 Tested up to: 3.2.1
-Stable tag: 1.2
+Stable tag: trunk
 
 Often Included Key-information. 
 
@@ -26,7 +26,7 @@ For general use
 * oik-blocks to create Artisteer style blocks within your pages, posts and even widgets
 * oik-button-shortcodes to provide call-to-action button style links for Artisteer themes
 * oik-email-signature to help generate an email signature file for all your email messages
-* oik-paypal-shortcodes to provide PayPal buttons, 
+* oik-paypal-shortcodes to provide PayPal buttons
 * oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
 * oik-tides - shortcode for tide times in the UK
 
@@ -34,7 +34,8 @@ For bobbing wide and other WordPress plugin developers
 * oik-bob-bing-wide to provide easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, bw_plug, bw_module
 * oik-bwtrace provides a rudimentary trace function, which logs trace information to a file, rather than including it within the web page output. 
 
-ALL of the plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. These are known as the bw API.
+ALL of the plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
+These are known as the bobbing wide application programming interface (bw API).
 
 == Installation ==
 1. Upload the contents of the oik plugin to the `/wp-content/plugins/oik' directory
@@ -74,6 +75,11 @@ Yes. I'm concentrating on getting version 1.x properly released.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 1.3 = 
+* Added: [div]/[sdiv], [ediv] and [sediv] shortcodes for <div> tags
+* Added: support for Artisteer art-blockcontent and heading background images
+* Testing: See what happens when a sub-module doesn't have a version tag ( oik-button-shortcodes.php )
+* includes the emergency fix applied to oik version 1.2
 = 1.2 =
 * Added: oik-blocks - [bw_block] and [bw_eblock] shortcodes for creating Artisteer style blocks within your content
 * Added: [bw_logo] and [bw_qrcode] shortcodes - to include your logo image and QR code images on your pages.

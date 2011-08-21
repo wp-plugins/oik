@@ -4,7 +4,7 @@
 Plugin Name: oik base plugin 
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: Easy to use shortcode macros for often included key-information 
-Version: 1.2
+Version: 1.3
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2

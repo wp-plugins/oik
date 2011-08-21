@@ -593,3 +593,34 @@ function bw_qrcode( $atts ) {
   return( bw_ret());
     
 }
+
+/**
+ * Start a div tag
+ * Use in conjunction with ediv to add custom divs in pages, posts or blocks
+ * e.g. [div class="blah"]blah goes here[ediv]
+ */
+function bw_sdiv( $atts ) {
+  $class = $atts['class'];
+  $id = $atts['id'];
+  sdiv( $class, $id );
+  return( bw_ret());
+}
+
+/**
+ * End a div tag 
+ */ 
+function bw_ediv( $atts ) {
+  ediv();
+  return( bw_ret());
+}
+
+/**  
+ * Create an empty div for a particular set of classes, id or both
+ * e.g. [sediv class="bd-100"] 
+ */
+function bw_sediv( $atts ) {
+  $class = $atts['class'];
+  $id = $atts['id'];
+  sediv( $class, $id );
+  return( bw_ret());
+}
