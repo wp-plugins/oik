@@ -3,6 +3,7 @@
 Plugin Name: oik [bw_button] shortcodes
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
 Description: [oik] button shortcodes - Call to action style buttons for Artisteer themes
+Version: 1.3
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com/content/herb-miller
 

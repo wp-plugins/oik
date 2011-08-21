@@ -273,8 +273,8 @@ bw_add_shortcode_event( 'bw_qrcode', 'bw_qrcode', 'the_content,widget_text,setti
 // Include [div]/[sdiv], [ediv] and [sediv] 
 bw_add_shortcode( 'div', 'bw_sdiv' );
 bw_add_shortcode( 'sdiv', 'bw_sdiv' );
-bw_add_shortcode( 'ediv, 'bw_ediv' );
-bw_add_shortcode( 'sediv' 'bw_sediv' );
+bw_add_shortcode( 'ediv', 'bw_ediv' );
+bw_add_shortcode( 'sediv', 'bw_sediv' );
 
 
 
