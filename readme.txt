@@ -78,7 +78,6 @@ Yes. I'm concentrating on getting version 1.x properly released.
 = 1.3 = 
 * Added: [div]/[sdiv], [ediv] and [sediv] shortcodes for <div> tags
 * Added: support for Artisteer art-blockcontent and heading background images
-* Testing: See what happens when a sub-module doesn't have a version tag ( oik-button-shortcodes.php )
 * includes the emergency fix applied to oik version 1.2
 = 1.2 =
 * Added: oik-blocks - [bw_block] and [bw_eblock] shortcodes for creating Artisteer style blocks within your content
