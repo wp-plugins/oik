@@ -3,8 +3,8 @@
 /*
 Plugin Name: oik blocks
 Plugin URI: http://www.bobbingwidewebdesign.com/oik
-Description: Easy to use shortcode macro for blocks in content [bw_block] [bw_eblock]
-Version: 1.2
+Description: Easy to use shortcode macro for blocks in content [bw_block] [bw_eblock] 
+Version: 1.3
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -37,6 +37,12 @@ bw_add_shortcode( 'bw_block', 'bw_block' );
 bw_add_shortcode( 'bw_eblock', 'bw_eblock' );
 
 
+/**
+ * Syntax [bw_block class="classes" title="title text" framed="y/n,t/f,1/0"]
+ * Future use parameters are
+ *  prefix="art-"
+ *  level="h3" - heading level for the block title
+ */
 function bw_block( $atts ) { 
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
   extract( shortcode_atts( array(
@@ -63,11 +69,20 @@ function bw_block( $atts ) {
 
 }
 
+/**
+ * Syntax for [bw_eblock] 
+ * There are no parameters. We use this shortcode to end a block
+ * Using this technique means we can nest blocks within blocks.
+   
+*/ 
 function bw_eblock( $atts ) {
   eartblock();
   return( bw_ret());
 }
 
+/**
+ * Future use function
+ */
 function bw_header( $atts ) {
   extract( shortcode_atts( array(
       'prefix' => 'art-',
@@ -80,11 +95,15 @@ function bw_header( $atts ) {
 }
 
 
-
+/**
+ * Create a block header if the title text is specified 
+ */
 function artblockheader( $title=NULL, $link=NULL, $icon=NULL ) {
   if ( $title ) {  
     sdiv( "art-blockheader");
     //sdivslr( "art-header-tag-icon" );
+    sediv( 'l' );
+    sediv( 'r' );
     h3( $title, "t" );
     //sdiv( "t" );
     //t( $title );
@@ -92,6 +111,9 @@ function artblockheader( $title=NULL, $link=NULL, $icon=NULL ) {
   }
 } 
 
+/** 
+ * Future use - 
+ */
 function artblockheaderNoIcon( $title ) {  
   sdiv( "art-blockheader");
   sdivslr( "t" );
@@ -101,9 +123,10 @@ function artblockheaderNoIcon( $title ) {
   ediv();
 }      
 
-
-function artblockframe()
-{
+/**
+ * draw the frame around the block header
+ */
+function artblockframe() {
   sediv( "art-block-tl" );
   sediv( "art-block-tr" );
   sediv( "art-block-bl" );
@@ -114,10 +137,27 @@ function artblockframe()
   sediv( "art-block-cr" );
   sediv( "art-block-cc" );
 } 
+
+/**
+ * draw the frame around the block content
+ */
+function artblockcontentframe() {
+  sediv( "art-blockcontent-tl" );
+  sediv( "art-blockcontent-tr" );
+  sediv( "art-blockcontent-bl" );
+  sediv( "art-blockcontent-br" );
+  sediv( "art-blockcontent-tc" );
+  sediv( "art-blockcontent-bc" );
+  sediv( "art-blockcontent-cl" );
+  sediv( "art-blockcontent-cr" );
+  sediv( "art-blockcontent-cc" );
+} 
  
-  
-function sartblock( $title=NULL, $framed=TRUE )
-{
+
+/**
+ * start an Artisteer style block
+ */
+function sartblock( $title=NULL, $framed=TRUE ) {
    sdiv( "art-block" );
      if ($framed )
      {
@@ -125,18 +165,23 @@ function sartblock( $title=NULL, $framed=TRUE )
      }   
      artblockheader( $title );
      sdiv( "art-blockcontent" );
+     if ( $framed ) {
+       artblockcontentframe();
+     }  
      sdiv( "art-blockcontent-body ");
 }
 
 
-function eartblock( $contentFunc = NULL ) 
-{
+/**
+ * end an Artisteer style block
+ */
+function eartblock( $contentFunc = NULL ) {
 
    if ( !is_null( $contentFunc ))      
      $contentFunc();
-   ediv();
-   ediv();
-   ediv();
+   ediv(); // art-blockcontent-body
+   ediv(); // art-blockcontent
+   ediv(); // art-block
     global $div_class;
    ediv( $div_class );
    

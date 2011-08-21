@@ -1,4 +1,6 @@
 <?php 
+
+ require_once( 'bwtrace.inc' );
 /* Shortcodes for each of the more useful "often included key-information" fields 
    in Bobbing Wide's Wonder of WordPress websites
 */
@@ -267,6 +269,15 @@ bw_add_shortcode( 'bw_follow_me', 'bw_follow_me' );
 //bw_add_shortcode( 'bw_logo', 'bw_logo' );
 bw_add_shortcode_event( 'bw_logo', 'bw_logo', 'the_content,widget_text,settings_page_bw_email_signature' );
 bw_add_shortcode_event( 'bw_qrcode', 'bw_qrcode', 'the_content,widget_text,settings_page_bw_email_signature');
+
+// Include [div]/[sdiv], [ediv] and [sediv] 
+bw_add_shortcode( 'div', 'bw_sdiv' );
+bw_add_shortcode( 'sdiv', 'bw_sdiv' );
+bw_add_shortcode( 'ediv, 'bw_ediv' );
+bw_add_shortcode( 'sediv' 'bw_sediv' );
+
+
+
 
 
 
