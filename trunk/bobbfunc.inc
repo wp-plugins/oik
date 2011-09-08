@@ -513,6 +513,35 @@ function quote( $text, $class=NULL, $id=NULL )
    etag( "quote" );    
 }
 
+/** 
+ * Create an <abbr> tag 
+ */
+function abbr( $title="Often Included Key-information wide", $abbrev="oik" ) {
+  if ( $abbrev ) {
+    $abbr = '<abbr title="';
+    $abbr .= $title;
+    $abbr .= '">';
+    $abbr .= $abbrev; 
+    $abbr .= '</abbr>';
+    e( $abbr );
+  }  
+}
+ 
+/** 
+ * Create an <acronym> tag 
+ */
+function acronym( $title="Often Included Key-information wide", $acronym="oik" ) {
+  if ( $acronym ) {
+    $acro = '<acronym title="';
+    $acro .= $title;
+    $acro .= '">';
+    $acro .= $acronym; 
+    $acro .= '</acronym>';
+    e( $acro );
+  }  
+} 
+
+
   
 function c( $text )
 {

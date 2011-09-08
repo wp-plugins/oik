@@ -62,7 +62,7 @@
  em, dfn {font-style:italic;} 
 /* dfn {font-weight:bold;} */
 /* sup, sub {line-height:0;} */
-/* abbr, acronym {border-bottom:1px dotted #666;} */
+abbr, acronym {border-bottom:1px dotted #666;} 
 /* address {margin:0 0 1.5em;font-style:italic;} */
 /* del {color:#666;} */
 /* pre {margin:1.5em 0;white-space:pre;} */
@@ -370,7 +370,12 @@ div.bd-450 .art-blockcontent { min-height: 450px; }
 div.bd-500 .art-blockcontent { min-height: 500px; }
 div.bd-550 .art-blockcontent { min-height: 550px; }
 
+/* Classes for the emergency telephone number - darkish red */
+   
+div.emergency { color: #b53030 }
 
+/* For [bw_show_googlemap] */
+#map_canvas { height: 100%; min-height: 100% } 
 
 
 

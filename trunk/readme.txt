@@ -4,7 +4,7 @@ Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
 Requires: 3.0.4
 Tested up to: 3.2.1
-Stable tag: 1.2
+Stable tag: trunk
 
 Often Included Key-information. 
 
@@ -76,8 +76,12 @@ Yes. I'm concentrating on getting version 1.x properly released.
 
 == Changelog ==
 = 1.3 = 
+* Changed: [bw_show_googlemap] now uses V3 of the GoogleMap API so a GoogleMap API key is no longer needed
+* Added: Parameters to [bw_show_googlemap] allowing more than one GoogleMap. 
 * Added: [div]/[sdiv], [ediv] and [sediv] shortcodes for <div> tags
 * Added: support for Artisteer art-blockcontent and heading background images
+* Added: [bw_emergency] for Emergency phone number
+* Added: [bw_abbr] for company abbreviation e.g. bw = bobbing wide
 * includes the emergency fix applied to oik version 1.2
 = 1.2 =
 * Added: oik-blocks - [bw_block] and [bw_eblock] shortcodes for creating Artisteer style blocks within your content
