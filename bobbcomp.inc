@@ -97,8 +97,7 @@ function bw_get_geo( $separator )
   return( $geo );
 }  
 
-function bw_geo()
-{
+function bw_geo() {
   sp("geo");
   span( "geo");
     e( "Lat." ); 
@@ -121,8 +120,7 @@ function bw_geo()
 
 // **?** use Microformats <br/>t: +44 (0)23 92 410090</p>
 
-function bw_telephone( $atts )
-{ 
+function bw_telephone( $atts = NULL ) { 
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
   extract( shortcode_atts( array(
       'prefix' => 'Tel',
@@ -149,8 +147,7 @@ function bw_telephone( $atts )
    return( bw_ret());
 }
 
-function bw_fax( $atts )
-{
+function bw_fax( $atts = NULL ) {
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
   extract( shortcode_atts( array(
       'prefix' => 'Fax',
@@ -173,9 +170,7 @@ function bw_fax( $atts )
   return( bw_ret());
 }
 
-function bw_mobile( $atts )
-{
-
+function bw_mobile( $atts = NULL ) {
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
   extract( shortcode_atts( array(
       'prefix' => 'Mobile',
@@ -198,13 +193,37 @@ function bw_mobile( $atts )
   return( bw_ret());
 }
 
+function bw_emergency( $atts = NULL ) {
+  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
+  extract( shortcode_atts( array(
+      'prefix' => 'Emergency',
+      'sep' => ': ',
+      'class' => 'emergency'
+      ), $atts ) );
+      
+  $emergency = bw_get_company( "emergency" ) ;
+  if ( $emergency <> "" )
+  {
+    sdiv( "tel " . $class );
+    span( "type");
+    e( $prefix );
+    epan();
+    e( $sep );
+    span( "value" );
+    e( $emergency );
+    epan();
+    ediv();
+  }
+  return( bw_ret());
+}
+
 // Notes: Using class=email for Microformat
 
 /* use [bw_email] - for an inline mailto link 
    or [bw_mailto] for a more formal mailto link
 */   
 
-function bw_email( $atts )
+function bw_email( $atts = NULL )
 {
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
   extract( shortcode_atts( array(
@@ -624,3 +643,52 @@ function bw_sediv( $atts ) {
   sediv( $class, $id );
   return( bw_ret());
 }
+
+ 
+/** 
+ * Display the company abbreviation using an abbr tag
+ */
+function bw_abbr( $atts = NULL ) {
+  $abbr = bw_get_company( "abbr" );
+  $company = bw_get_company( "company" );
+  abbr( $company, $abbr );
+  return( bw_ret());
+}
+  
+/** 
+ * Display the company abbreviation using an acronym tag
+ * there is a subtle difference between the two: abbr and acronym
+ * see (for example) http://www.benmeadowcroft.com/webdev/articles/abbr-vs-acronym/   
+ */
+function bw_acronym( $atts = NULL ) {
+  $abbr = bw_get_company( "abbr" );
+  $company = bw_get_company( "company" );
+  acronym( $company, $abbr );
+  return( bw_ret());
+}
+
+
+/**
+ * Set a default value for an empty attribute value from the oik option or a hardcoded value
+ * @param bw_value - value passed... if not set then
+ * @param bw_field - get the oik option value - this is the field name of the oik option - e.g. 'company'
+ * @param bw_default - the (hardcoded) default value if the oik option is not set
+ *
+ * e.g. 
+ * $width = bw_default_empty_att( $width, "width", "100%" );
+ * 
+*/
+function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL ) {
+  $val = $bw_value;
+  bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "field" );
+  if ( empty( $val )) {
+    bw_trace( $bw_field, __FUNCTION__, __LINE__, __FILE__, "bw_field" );
+    $val = bw_get_company( $bw_field );
+    bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value" );
+    if ( empty( $val ))
+      $val = $bw_default;
+  } 
+  bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value" );
+  return( $val );
+}
+

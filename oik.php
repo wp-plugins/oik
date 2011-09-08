@@ -107,10 +107,13 @@ function oik_options_do_page() {
   textfield( "bw_options[telephone]", 50, "Telephone [bw_telephone] / [bw_tel]", $options['telephone']  );
   textfield( "bw_options[fax]", 50, "Fax [bw_fax]", $options['fax']  );
   textfield( "bw_options[mobile]", 50, "Mobile [bw_mobile] / [bw_mob]", $options['mobile']  );
+  textfield( "bw_options[emergency]", 50, "Emergency [bw_emergency]", $options['emergency']  );
   
   textfield( "bw_options[company]", 50, "Company [bw_company]", $options['company']  );
   textfield( "bw_options[business]", 50, "Business [bw_business]", $options['business']  );
   textfield( "bw_options[formal]", 50, "Formal [bw_formal]", $options['formal']  );
+  textfield( "bw_options[abbr]", 50, "Abbreviation [bw_abbr]", $options['abbr']  );
+  
   
   textfield( "bw_options[main-slogan]", 50, "Main slogan [bw_slogan]", $options['main-slogan']  );
   textfield( "bw_options[alt-slogan]", 50, "Alt. slogan [bw_alt_slogan]", $options['alt-slogan']  );

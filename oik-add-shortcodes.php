@@ -64,23 +64,6 @@ function bw_gp_slides( $atts ) {
 
 }
 
-/**
- * Set a default value for an empty attribute value from the oik option or a hardcoded value
-*/
-function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL ) {
-  $val = $bw_value;
-  bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "field" );
-  if ( empty( $val )) {
-    bw_trace( $bw_field, __FUNCTION__, __LINE__, __FILE__, "bw_field" );
-    $val = bw_get_company( $bw_field );
-    bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value" );
-    if ( empty( $val ))
-      $val = $bw_default;
-  } 
-  bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value" );
-  return( $val );
-}
-
 
 /** 
  * These are dummy functions to demonstrate my appaling understanding of php's OO implementation 
@@ -275,6 +258,10 @@ bw_add_shortcode( 'div', 'bw_sdiv' );
 bw_add_shortcode( 'sdiv', 'bw_sdiv' );
 bw_add_shortcode( 'ediv', 'bw_ediv' );
 bw_add_shortcode( 'sediv', 'bw_sediv' );
+
+bw_add_shortcode( 'bw_emergency', 'bw_emergency' );
+bw_add_shortcode( 'bw_abbr', 'bw_abbr' );
+bw_add_shortcode( 'bw_acronym', 'bw_acronym' );
 
 
 
