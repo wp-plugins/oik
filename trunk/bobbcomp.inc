@@ -321,7 +321,7 @@ function bw_contact() {
 } 
 
 
-function bw_follow( $atts ) {
+function bw_follow( $atts = NULL ) {
   $social_network = $atts['network'];
   $text = $atts['text'];
   
@@ -516,8 +516,10 @@ function bw_follow_e( $atts ) {
 } 
 
 
-
-function bw_follow_me( $atts ) {
+/**
+ * Produce a Follow me button for each of these social networks:  Twitter, Facebook, LinkedIn, GooglePlus, YouTube, Flickr
+*/
+function bw_follow_me( $atts = NULL ) {
   $networks = array( 'Twitter', 'Facebook', 'LinkedIn', 'GooglePlus', 'YouTube', 'Flickr' );
   foreach ( $networks as $network ) {
     $atts['network'] = $network;

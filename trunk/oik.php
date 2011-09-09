@@ -177,7 +177,7 @@ function oik_options_do_page() {
   etag( "form" );
   
   ediv(); 
-  sdiv("column span-6 wrap last");
+  sdiv("column span-9 wrap last");
   
   h2( "Usage notes" );
   p("Use the shortcode options in your pages, widgets and titles. e.g." );
