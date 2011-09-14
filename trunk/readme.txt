@@ -4,7 +4,7 @@ Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
 Requires: 3.0.4
 Tested up to: 3.2.1
-Stable tag: 1.2
+Stable tag: 1.3
 
 Often Included Key-information. 
 
