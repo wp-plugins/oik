@@ -63,10 +63,14 @@ bw_add_shortcode( 'bw_plug', 'bw_plug' );
 bw_add_shortcode( 'bw_module',  'bw_module' );
 
 bw_add_shortcode( 'wp', 'bw_wp' );   // WordPress
+bw_add_shortcode( 'bp', 'bw_bp' );   // BuddyPress
 bw_add_shortcode( 'lwp', 'bw_lwp' ); // Link to WordPress.org 
+bw_add_shortcode( 'lbp', 'bw_lbp' ); // Link to BuddyPress.org 
 bw_add_shortcode( 'wpms', 'bw_wpms' );   // WordPress Mu;tisite
 bw_add_shortcode( 'lwpms', 'bw_lwpms' ); // Link to WordPress multisite - .org
 bw_add_shortcode( 'drupal', 'bw_drupal' );   // Drupa;
 bw_add_shortcode( 'ldrupal', 'bw_ldrupal' ); // Link to Drupal.org
+bw_add_shortcode( 'artisteer', 'bw_art' ); // Artisteer
+bw_add_shortcode( 'lartisteer', 'bw_lart' ); // Link to artisteer.com 
 
 bw_add_shortcode( 'lbw', 'bw_lbw'); // Link to Bobbing Wide

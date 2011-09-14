@@ -82,9 +82,12 @@ Yes. I'm concentrating on getting version 1.x properly released.
 * Added: support for Artisteer art-blockcontent and heading background images
 * Added: [bw_emergency] for Emergency phone number
 * Added: [bw_abbr] for company abbreviation e.g. bw = bobbing wide
-* includes the emergency fix applied to oik version 1.2
 * Fixed: [gpslides] - safer invocation of Slideshow Gallery Pro
 * Fixed: bw_shortcode_event() will only call the shortcode expansion and post processing function if it exists
+* Added: [art] and [lart] shortcodes for Artisteer
+* Added: [bp] and [lbp] shortcodes for BuddyPress
+* Fixed: includes the emergency fix applied to oik version 1.2
+* Added: Styling for [wp], [bp], [drupal] and [art] shortcodes
 = 1.2 =
 * Added: oik-blocks - [bw_block] and [bw_eblock] shortcodes for creating Artisteer style blocks within your content
 * Added: [bw_logo] and [bw_qrcode] shortcodes - to include your logo image and QR code images on your pages.

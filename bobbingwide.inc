@@ -134,6 +134,15 @@ function bw_wp( ) {
   return( $bw );
 }
 
+function bw_bp( ) {
+  $bw = nullretstag( "span", "buddypress"); 
+  $bw .= '<span class="buddy">Buddy</span>';
+  $bw .= '<span class="bpress">Press</span>';
+  $bw .= nullretetag( "span", "buddypress" ); 
+  return( $bw );
+}
+
+
 function bw_lwp() {
   alink( NULL, "http://www.wordpress.org", bw_wp(), "Visit WordPress.org" ); 
   return( bw_ret());
@@ -144,11 +153,21 @@ function bw_lwpms() {
   return( bw_ret());
 }
 
+function bw_lbp() {
+  alink( NULL, "http://www.buddypress.org", bw_bp(), "Visit BuddyPress.org" ); 
+  return( bw_ret());
+}
+
+
 function bw_ldrupal() {
   alink( NULL, "http://www.drupal.org", bw_drupal(), "Visit Drupal.org" ); 
   return( bw_ret());
 }
 
+function bw_lart() {
+  alink( NULL, "http://www.artisteer.com", bw_art(), "Visit Artisteer.com" ); 
+  return( bw_ret());
+}
 
 function bw_wpms() {
   $bw = bw_wp();
@@ -159,6 +178,11 @@ function bw_wpms() {
   
 function bw_drupal() {
   $bw .= '<span class="drupal">Drupal</span>';
+  return( $bw );
+} 
+ 
+function bw_art() {
+  $bw .= '<span class="artisteer">Artisteer</span>';
   return( $bw );
 }  
 
