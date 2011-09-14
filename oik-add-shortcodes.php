@@ -5,19 +5,41 @@
    in Bobbing Wide's Wonder of WordPress websites
 */
 
+
+/**
+ * Safely invoke SlideShow Gallery Pro
+*/ 
 function bw_gp_slideshow( $atts, $hmm=NULL, $tag=NULL ) {
-  if ( 'the_content' == current_filter() )
-  {
+  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
+  bw_trace( $tag, __FUNCTION__, __LINE__, __FILE__, "tag" ); 
+  $continue = true; 
+   
+  if ( $continue && ( 'the_content' != current_filter() ) ) {
+    $content = '&#91;' . $tag . ']';  
+    $continue = FALSE;
+      // $content .= ' !?#';
+  }  
+  
+  if ( $continue && !class_exists( "Gallery" ) ) {
+    $content = '&#91;' . $tag . '] <b>Slideshow Gallery Pro not activated</b>';
+    $continue = FALSE;
+  }
+    
+  if ( $continue ) {
     $Gallery = new Gallery();
     $content = $Gallery->embed( $atts );
   }
-  else
-    $content = '[' . $tag . ']';  
+  
+  bw_trace( $content,  __FUNCTION__, __LINE__, __FILE__, "content" );
+  
   return $content;
 }
 
 
-/* An advanced shortcode processor needs to know the context in which 
+/**
+ * This is a prototype function used to investigate what's necessary to make shortcode expansion "safe"
+ 
+  An advanced shortcode processor needs to know the context in which 
    the shortcode is being expanded. There are times when we don't want to show the
    HTML since this may include information that would cause CSS to
    do some unexpected styling - so that needs to be stripped
@@ -39,56 +61,33 @@ function bw_clever( $atts, $hmm=NULL, $tag=NULL ) {
   bw_trace( $cf, __FUNCTION__, __LINE__, __FILE__, "current_filter" );
  
   $admin = is_admin();
+  // as you can see it's incomplete
   return( $tag );
 }  
 
-
-
-
-function bw_gp_slides( $atts ) {
-  $content = __FUNCTION__;
-  $content .= __LINE__;
-  $content .= function_exists( 'embed' );
-  
-  $content .= __LINE__;
-  
-  // $content = Gallery::embed( $atts );
-  
-  $Gallery = new Gallery();
-  
-  $content .= __LINE__;
-  $content .= $Gallery->embed( $atts );
-  
-  $content .= __LINE__;
-  return $content;
-
-}
-
-
 /** 
- * These are dummy functions to demonstrate my appaling understanding of php's OO implementation 
+ * These are dummy functions to demonstrate my appalling understanding of php's OO implementation 
 */
 function bw_nobbut() {
   return "";
 }
 
-
-
 function bw_wtf() {
-
   bw_trace( "wtf", __FUNCTION__, __LINE__, __FILE__, "wtf" );
   return( "what the f*ck");
-
 }
 
 /** 
  * Expand a shortcode if the function is defined for the event
  *
  * If the function is not defined then simply return the tag inside []'s
+ * Note: We use the HTML symbol for [ (&#91;) to prevent the shortcode being expanded multiple times
+ 
 */ 
 function bw_shortcode_event( $atts, $hmm=NULL, $tag=NULL ) {
   global $bw_sc_ev, $bw_sc_ev_pp;
   
+  $result = '&#91;' . $tag . ']';
   $cf = current_filter();
   if ( empty( $cf ) ) { $cf = 'wp_footer'; }
   
@@ -96,22 +95,26 @@ function bw_shortcode_event( $atts, $hmm=NULL, $tag=NULL ) {
   bw_trace( $tag, __FUNCTION__, __LINE__, __FILE__, "tag" ); 
   if ( isset( $bw_sc_ev[ $tag ][ $cf ] ))  {
     $shortcodefunc = $bw_sc_ev[ $tag ][ $cf ];
-    $result = $shortcodefunc( $atts, $hmm, $tag );   
-  } else {
-    $result = '[' . $tag . ']';
-  }
-  
-
+    if ( function_exists( $shortcodefunc ) )
+      $result = $shortcodefunc( $atts, $hmm, $tag );   
+    else {
+      $result .= "<b>missing function to expand shortcode: $shortcodefunc</b>";
+    }
+  } 
   bw_trace( $result, __FUNCTION__, __LINE__, __FILE__, "result" );
   if ( isset( $bw_sc_ev_pp[ $tag ][ $cf ] ))  {
     $ppfunc = $bw_sc_ev_pp[ $tag ][ $cf ];
-    $result = $ppfunc( $result, $cf ); 
-      
+    if ( function_exists( $ppfunc ) ) {
+      $result = $ppfunc( $result, $cf ); 
+    }
+    else {
+      $result .= "<b>missing post processing function: $ppfunc</b>";
+    }
+       
     bw_trace( $result, __FUNCTION__, __LINE__, __FILE__, "result" );
   }
   
   return $result;  
-  
 }
 
 /** 
@@ -148,9 +151,10 @@ function bw_admin_strip_tags( $string, $current_filter=NULL ) {
  * Instead of calling the shortcode expansion function directly we always invoke bw_shortcode_event()
  * bw_shortcode_event() checks to see if the shortcode should be expanded in the context.
  * The $postprocess parameter is a function name for performing post processing of the $result in certain contexts
- * Possible functions are
- *   bw_strip_tags 
- *   tbc
+ * Possible functions are:
+ *   bw_strip_tags
+ *   bw_admin_strip_tags  
+ *   etcetara tbc
 */
 function bw_add_shortcode_event( $shortcode, $function=NULL, $eventlist='the_content,widget_text,the_title', $postprocess=NULL ) {
   global $bw_sc_ev, $bw_sc_ev_pp;
@@ -170,8 +174,6 @@ function bw_add_shortcode_event( $shortcode, $function=NULL, $eventlist='the_con
   // bw_trace( $bw_sc_ev, __FUNCTION__, __LINE__, __FILE__, "bw_sc_ev" );
 
   add_shortcode( $shortcode, "bw_shortcode_event" );
-  
-  
 }
 
 /**
@@ -192,7 +194,7 @@ bw_add_shortcode_event( 'bw_ngslideshow', 'NextGEN_shortcodes::show_slideshow', 
 bw_add_shortcode_event( 'bw_directions', 'bw_directions', 'the_content,widget_text' );
 
 //add_shortcode( 'bw', 'bw' );
-bw_add_shortcode_event( "bw", "bw", 'the_content,widget_text,wp_footer' );
+bw_add_shortcode_event( "bw", "bw" );
 bw_add_shortcode_event( "bw", "bw", 'the_title', 'bw_admin_strip_tags' );
 
 bw_add_shortcode_event( 'oik', 'bw_oik' );
@@ -232,17 +234,15 @@ bw_add_shortcode( 'bw_alt_slogan', 'bw_alt_slogan' );
 bw_add_shortcode( 'bw_admin', 'bw_admin' );
 bw_add_shortcode( 'bw_domain', 'bw_domain' );
 
-// bw_add_shortcode( 'div', 'bw_div' );
-// bw_add_shortcode( 'ediv', 'bw_ediv' );
 
 bw_add_shortcode( 'clear', 'bw_clear' );
 bw_add_shortcode( 'bw_tel', 'bw_tel' );
 bw_add_shortcode( 'bw_mob', 'bw_mob' );
-//add_shortcode( 'bw_directions', 'bw_directions' );
+
 
 bw_add_shortcode( 'ngslideshow', 'NextGEN_shortcodes::show_slideshow' );
 
-//add_shortcode( 'gpslideshow', 'bw_gp_slideshow' );
+//add_shortcode( 'gpslideshow', 'bw_gp_slideshow' ); 
 
 bw_add_shortcode( 'gpslides', 'bw_gp_slideshow' );
 //add_shortcode( 'clever', 'bw_clever' );
@@ -262,16 +262,3 @@ bw_add_shortcode( 'sediv', 'bw_sediv' );
 bw_add_shortcode( 'bw_emergency', 'bw_emergency' );
 bw_add_shortcode( 'bw_abbr', 'bw_abbr' );
 bw_add_shortcode( 'bw_acronym', 'bw_acronym' );
-
-
-
-
-
-
-
-
-
-
-
-
-
