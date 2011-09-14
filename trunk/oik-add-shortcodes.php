@@ -193,9 +193,9 @@ bw_add_shortcode_event( 'bw_ngslideshow', 'NextGEN_shortcodes::show_slideshow', 
 
 bw_add_shortcode_event( 'bw_directions', 'bw_directions', 'the_content,widget_text' );
 
-//add_shortcode( 'bw', 'bw' );
-bw_add_shortcode_event( "bw", "bw" );
-bw_add_shortcode_event( "bw", "bw", 'the_title', 'bw_admin_strip_tags' );
+bw_add_shortcode( 'bw', 'bw' );
+//bw_add_shortcode_event( "bw", "bw" );
+//bw_add_shortcode_event( "bw", "bw", 'the_title', 'bw_admin_strip_tags' );
 
 bw_add_shortcode_event( 'oik', 'bw_oik' );
 bw_add_shortcode_event( "oik", "bw_oik", 'the_title', 'bw_admin_strip_tags' );
