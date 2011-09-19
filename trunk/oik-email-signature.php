@@ -2,9 +2,9 @@
 
 /*
 Plugin Name: oik email signature 
-Plugin URI: http://www.bobbingwidewebdesign.com/oik
+Plugin URI: http://www.oik-plugins.com/oik
 Description: Generate an email signature file for your email client
-Version: 1.3
+Version: 1.4
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -111,7 +111,7 @@ function bw_email_signature_do_page() {
  
   h2("More about " . bw_oik());
   p("For more information:" );
-  art_button( "http://www.bobbingwidewebdesign.com/oik", bw_oik() . " documentation", "Read the documentation for the oik plugin" );
+  art_button( "http://www.oik-plugins.com/oik", bw_oik() . " documentation", "Read the documentation for the oik plugin" );
   ediv();      
   bw_flush();
 }

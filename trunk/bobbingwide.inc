@@ -122,7 +122,7 @@ function bw_lbw( $atts ) {
 }
 
 function bw_loik() {
-  alink( NULL, "http://www.bobbingwidewebdesign.com/oik", bw_oik(), "Link to the oik plugin") ;
+  alink( NULL, "http://www.oik-plugins.com/oik", bw_oik(), "Link to the oik plugin") ;
   return( bw_ret());
 } 
 
