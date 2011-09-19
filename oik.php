@@ -2,9 +2,9 @@
 
 /*
 Plugin Name: oik base plugin 
-Plugin URI: http://www.bobbingwidewebdesign.com/oik
+Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use shortcode macros for often included key-information 
-Version: 1.3
+Version: 1.4
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -170,6 +170,7 @@ function oik_options_do_page() {
     
   textfield( "bw_options[logo-image]", 50, "Logo image [bw_logo] in uploads: " . $baseurl, $options['logo-image'] );
   textfield( "bw_options[qrcode-image]", 50, "QR code image [bw_qrcode] in uploads", $options['qrcode-image'] );
+  textfield( "bw_options[art-version]", 50, "Artisteer version 31/30/25/na [bw_art_version]", $options['art-version'] );
     
   tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" ); 
 
@@ -188,7 +189,7 @@ function oik_options_do_page() {
   p( "[bw_follow_me] for ALL your Follow me buttons" );
   p( bw_follow_me() );
   p("For more information:" );
-  art_button( "http://www.bobbingwidewebdesign.com/oik", "oik documentation", "Read the documentation for the oik plugin" );
+  art_button( "http://www.oik-plugins.com/oik", "oik documentation", "Read the documentation for the oik plugin" );
    
   ediv(); 
   bw_flush();
@@ -206,8 +207,6 @@ function oik_options_validate($input) {
 	return $input;
 }
 
-//echo '<p>BAT='.$bwapi_trace_test.'=BAT</p>';
-//bwapi_trace_test( 'oik' );
 
 
 

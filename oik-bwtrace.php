@@ -2,9 +2,9 @@
 
 /*
 Plugin Name: oik bwtrace 
-Plugin URI: http://www.bobbingwidewebdesign.com/oik
+Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use trace macros for oik plugins
-Version: 1.3
+Version: 1.4
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -169,7 +169,7 @@ function bw_trace_options_do_page() {
   p("Use [bwtron] to turn trace on and [bwtroff] to turn it off" );
   
   p("For more information:" );
-  art_button( "http://www.bobbingwidewebdesign.com/oik", bw_oik() . " documentation", "Read the documentation for the oik plugin" );
+  art_button( "http://www.oik-plugins.com/oik", bw_oik() . " documentation", "Read the documentation for the oik plugin" );
   ediv();      
   bw_flush();
 }

@@ -1,10 +1,10 @@
 === oik ===
 Contributors: bobbingwide
-Donate link: http://www.bobbingwidewebdesign.com/oik/oik-donate/
-Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide
+Donate link: http://www.oik-plugins.com/oik/oik-donate/
+Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide, key information, tide, trace, blocks
 Requires: 3.0.4
 Tested up to: 3.2.1
-Stable tag: trunk
+Stable tag: 1.3
 
 Often Included Key-information. 
 
@@ -41,8 +41,8 @@ These are known as the bobbing wide application programming interface (bw API).
 1. Upload the contents of the oik plugin to the `/wp-content/plugins/oik' directory
 1. Activate the oik base plugin through the 'Plugins' menu in WordPress
 1. Go to Settings > oik options to fill in your **o**ften **i**ncluded **k**ey information
+1. Use the shortcodes when writing your content
 1. Activate other oik plugins when you need them
-
 
 If you are a developer and want to try the oik-bwtrace plugin then you may find you need to add a line to your wp-config.php file.
 Put this before the require_once for wp-settings.php
@@ -53,10 +53,10 @@ Don't forget to remove this line before deleting the plugin.
 
 == Frequently Asked Questions ==
 = Where is the FAQ? =
-[oik FAQ](http://www.bobbingwidewebdesign.com/oik/oik-faq)
+[oik FAQ](http://www.oik-plugins.com/oik/oik-faq)
 
 = Is there a forum? =
-Yes - see above
+Yes - see above - plus the standard WordPress forum - http://wordpress.org/tags/oik?forum_id=10
 
 = Can I get support? = 
 Yes - see above 
@@ -75,6 +75,12 @@ Yes. I'm concentrating on getting version 1.x properly released.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 1.4 =
+* Added: [bw_block]/[bw_eblock] now supports themes generated with Artisteer 3.1 beta 1
+* Added: option to specify which version of Artisteer was used to generate your theme: 31, 30, 25, or na
+* Changed: Documentation has been migrated to www.oik-plugins.com/oik
+= 1.3.1 =
+* Changed: Lost another fight with SVN :-( 
 = 1.3 = 
 * Changed: [bw_show_googlemap] now uses V3 of the GoogleMap API so a GoogleMap API key is no longer needed
 * Added: Parameters to [bw_show_googlemap] allowing more than one GoogleMap. 
@@ -153,9 +159,7 @@ Needed for Bobbing Wide's Wonder of WordPress websites
 
 == Further reading ==
 If you want to read more about the oik plugins then please visit the
-[oik plugin](http://www.bobbingwidewebdesign.com/oik) 
-In time information about oik will be moved to 
-[oik plugins](http://www.oik-plugins.com)
+[oik plugin](http://www.oik-plugins.com/oik) 
 **"the oik plugin - for often included key-information"**
 If you're interested in the Drupal version then please visit the 
 [oik module](http://www.bobbingwidewebdevelopment.com/content/often-included-key-information-oik-drupal-module
