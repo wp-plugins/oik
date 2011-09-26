@@ -39,10 +39,15 @@ function bw_block_func( $shortcode ) {
   if ( function_exists( 'bw_artisteer_version' ) ) {
     $art_version = bw_artisteer_version();
   } else {
-    $art_version = ''; 
+    $art_version = FALSE; 
   }
   
-  if ( $art_version == '' ) {
+  //if ( $art_version == FALSE ) 
+  //  bw_trace( $art_version, __FUNCTION__,  __LINE__, __FILE__, "art_version is FALSE" ); 
+  //else   
+  //  bw_trace( $art_version, __FUNCTION__,  __LINE__, __FILE__, "art_version is not FALSE" );  
+  
+  if ( $art_version == FALSE ) {
     require_once( "bw_block.inc" );
   } else {
     require_once( "bw_block_" . $art_version. ".inc" );
