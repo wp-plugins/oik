@@ -39,10 +39,15 @@ if ( bw_is_wordpress() ) {
     global $bw_options;
     /* Need to put some code here to see if it's been loaded */
     $bw_options = get_option( "bw_options" );
+    
+    // bw_trace( $bw_options, __FUNCTION__,  __LINE__, __FILE__, "bw_options" );  
     if ( $bw_options === FALSE )
       $option = $company[ $field ] ; 
     else
-      $option = $bw_options[ $field ] ;   
+      $option = $bw_options[ $field ] ; 
+      
+    // Note: A value that appears to be blank ( == '') may actually be FALSE ( == FALSE )
+    // bw_trace( '!' .$option.'!', __FUNCTION__,  __LINE__, __FILE__, "option" );  
     return( $option ); 
   }
 }
