@@ -26,6 +26,7 @@ For general use
 * oik-blocks to create Artisteer style blocks within your pages, posts and even widgets
 * oik-button-shortcodes to provide call-to-action button style links for Artisteer themes
 * oik-email-signature to help generate an email signature file for all your email messages
+* oik-pages to list subpages - [bw_pages] shortcode
 * oik-paypal-shortcodes to provide PayPal buttons
 * oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
 * oik-tides - shortcode for tide times in the UK
@@ -76,10 +77,14 @@ Yes. I'm concentrating on getting version 1.x properly released.
 
 == Changelog ==
 = 1.4 =
+* Added: oik-pages plugin for [bw_pages] shortcode to list subpages, optionally within [bw_block]s
 * Added: [bw_block]/[bw_eblock] now supports themes generated with Artisteer 3.1 beta 1
 * Added: option to specify which version of Artisteer was used to generate your theme: 31, 30, 25, or na
 * Added: Basic support for using [bw_block] when NOT using an Artisteer theme
 * Changed: Documentation has been migrated to www.oik-plugins.com/oik
+* Changed: some improvements to the bw API
+* Fixed: reduced some warnings that were produced when WP_DEBUG is set
+* Changed: oik-bwtrace changes to aid problem determination after a change has been made
 = 1.3.1 =
 * Changed: Lost another fight with SVN :-( 
 = 1.3 = 

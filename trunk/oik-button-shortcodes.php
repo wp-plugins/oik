@@ -76,18 +76,18 @@ function bw_button_shortcodes($atts) {
   
   
 */  
-function bw_contact_button($atts) {
+function bw_contact_button( $atts ) {
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
   $contact = bw_default_empty_att( NULL, "contact", "me" );
   
 
-  $link = bw_default_empty_att( $atts['link'], "contact-link", "/contact/" ); 
+  $link = bw_default_empty_arr( $atts, 'link', "contact-link", "/contact/" ); 
   
   bw_trace( $link, __FUNCTION__, __LINE__, __FILE__, "link" );
-  $text = bw_default_empty_att( $atts['text'], "contact-text", "Contact" );
-  $title = bw_default_empty_att( $atts['title'], "contact-title", "Contact " . $contact);
+  $text = bw_default_empty_arr( $atts, 'text', "contact-text", "Contact" );
+  $title = bw_default_empty_arr( $atts, 'title', "contact-title", "Contact " . $contact);
    
-  $class = $atts['class'] . "contact" ;
+  $class = bw_array_get( $atts, 'class', NULL ) . "contact" ;
   art_button( $link, $text, $title, $class ); 
   
   return( bw_ret());  
