@@ -86,6 +86,7 @@ function bw_wtf() {
 */ 
 function bw_shortcode_event( $atts, $hmm=NULL, $tag=NULL ) {
   global $bw_sc_ev, $bw_sc_ev_pp;
+  // bw_backtrace();
   
   $result = '&#91;' . $tag . ']';
   $cf = current_filter();
@@ -158,7 +159,7 @@ function bw_admin_strip_tags( $string, $current_filter=NULL ) {
 */
 function bw_add_shortcode_event( $shortcode, $function=NULL, $eventlist='the_content,widget_text,the_title', $postprocess=NULL ) {
   global $bw_sc_ev, $bw_sc_ev_pp;
-  bw_trace( $shortcode, __FUNCTION__, __LINE__, __FILE__, "shortcode" );
+  //bw_trace( $shortcode, __FUNCTION__, __LINE__, __FILE__, "shortcode" );
  
   
   if ( $function == NULL ) {
@@ -180,9 +181,10 @@ function bw_add_shortcode_event( $shortcode, $function=NULL, $eventlist='the_con
  * Add a shortcode that safely expands in admin page titles
  * but is properly expanded in content and widget text
  * Note: settings_page_bw_email_signature is included to allow the shortcodes to be shown on the "oik email signature" page
+ * bp_screens is included to support BuddyPress
 */
 function bw_add_shortcode( $shortcode, $function=NULL ) {
-  bw_add_shortcode_event( $shortcode, $function, 'the_content,widget_text,wp_footer,settings_page_bw_email_signature' );
+  bw_add_shortcode_event( $shortcode, $function, 'the_content,widget_text,wp_footer,settings_page_bw_email_signature,bp_screens' );
   bw_add_shortcode_event( $shortcode, $function, 'the_title', 'bw_admin_strip_tags' );
 }  
 
@@ -262,3 +264,5 @@ bw_add_shortcode( 'sediv', 'bw_sediv' );
 bw_add_shortcode( 'bw_emergency', 'bw_emergency' );
 bw_add_shortcode( 'bw_abbr', 'bw_abbr' );
 bw_add_shortcode( 'bw_acronym', 'bw_acronym' );
+
+// bw_backtrace();

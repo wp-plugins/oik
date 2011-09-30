@@ -34,6 +34,7 @@ $bwapi_trace_test = 'bw_trace';
 
 require_once( 'bwtrace.inc');
 require_once( 'bobbfunc.inc' );
+require_once( 'bobblink.inc' );
 
 function oik_bwtrace_version() {
   return oik_version();
@@ -102,7 +103,12 @@ function bw_trace_plugin_startup() {
   if ( $bw_trace_level > '0' ) {
     bw_trace( ABSPATH . $bw_trace_options['file'], __FUNCTION__, __LINE__, __FILE__, 'tracelog' );
     bw_trace( bw_getlocale(), __FUNCTION__, __LINE__, __FILE__, "locale" );
-    bw_trace( $_GET, __FUNCTION__, __LINE__, __FILE__, "_GET" );  
+    //bw_trace( $_GET, __FUNCTION__, __LINE__, __FILE__, "_GET" );
+    //bw_trace( $_POST, __FUNCTION__, __LINE__, __FILE__, "_POST" );
+    bw_trace( $_REQUEST, __FUNCTION__, __LINE__, __FILE__, "_REQUEST" );
+    bw_trace( ABSPATH,  __FUNCTION__, __LINE__, __FILE__, "ABSPATH" );
+
+      
   } 
 
   add_action('admin_init', 'bw_trace_options_init' );

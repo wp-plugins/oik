@@ -58,12 +58,12 @@ function bw_block_func( $shortcode ) {
 bw_add_shortcode( 'bw_block', 'bw_block' );
 bw_add_shortcode( 'bw_eblock', 'bw_eblock' );
 
-function bw_block( $atts ) {
+function bw_block( $atts=NULL ) {
   $func = bw_block_func( "bw_block" );
   return( $func( $atts ) );
 }
 
-function bw_eblock( $atts ) {
+function bw_eblock( $atts=NULL ) {
   $func = bw_block_func( "bw_eblock" );
   return( $func( $atts ) );
 }

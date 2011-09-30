@@ -177,12 +177,12 @@ function bw_wpms() {
 }
   
 function bw_drupal() {
-  $bw .= '<span class="drupal">Drupal</span>';
+  $bw = '<span class="drupal">Drupal</span>';
   return( $bw );
 } 
  
 function bw_art() {
-  $bw .= '<span class="artisteer">Artisteer</span>';
+  $bw = '<span class="artisteer">Artisteer</span>';
   return( $bw );
 }  
 

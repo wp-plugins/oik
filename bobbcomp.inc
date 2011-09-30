@@ -699,3 +699,45 @@ function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL 
   return( $val );
 }
 
+
+
+/** 
+ * Return the array[index] or a default value if not set
+ */
+if ( !function_exists( 'bw_array_get' ) ) { 
+  function bw_array_get( $array = array(), $index, $default=NULL ) {
+    if ( isset( $array[$index] ) || ( is_array( $array) && array_key_exists( $index, $array ) ) )  {
+      $value = $array[$index];
+    } else {
+      $value = $default;
+    } 
+    // bw_trace( $value, __FUNCTION__,  __LINE__, __FILE__, "value" ); 
+    return( $value );
+  }
+}
+
+
+/**
+ * Set a default value for an empty array[ index]
+ * @param bw_array - array containing the value
+ * @param bw_index - index to check... if not set then 
+ * @param bw_field - get the oik option value - this is the field name of the oik option - e.g. 'company'
+ * @param bw_default - the (hardcoded) default value if the oik option is not set
+ *
+ * e.g. 
+ * $width = bw_default_empty_arr( $atts, "width", "width", "100%" );
+ * 
+*/
+function bw_default_empty_arr( $bw_array=NULL, $bw_index=NULL, $bw_field=NULL, $bw_default=NULL ) {
+  $val = bw_array_get( $bw_array, $bw_index, NULL );
+  if ( empty( $val )) {
+    bw_trace( $bw_field, __FUNCTION__, __LINE__, __FILE__, "bw_field" );
+    $val = bw_get_company( $bw_field );
+    bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value" );
+    if ( empty( $val ))
+      $val = $bw_default;
+  } 
+  bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value" );
+  return( $val );
+}
+

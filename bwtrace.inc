@@ -43,37 +43,84 @@ function bw_trace_inc_init() {
 
 
 
-function bw_trace_on()
-{
+function bw_trace_on() {
   global $bw_trace_on;
   $bw_trace_on = TRUE;
 }
 
-function bw_trace_off()
-{
+function bw_trace_off() {
   global $bw_trace_on;
   $bw_trace_on = FALSE;
 } 
-
 
 function bw_getlocale($category=LC_ALL) {
   return setlocale($category, NULL);
 }
 
+function bw_trace_file_part( $file ) {
+  global $bw_trace_anonymous;
+  $bw_trace_anonymous = TRUE;
+  
+  if ( $bw_trace_anonymous ) {
+    $lose = str_replace( "/", "\\", ABSPATH );
+    $file = str_replace( "/", "\\", $file );
+    $fil = str_replace( $lose , '', $file );
+  } 
+  else
+    $fil = $file; 
+  return( $fil );
+}
 
+
+
+/**
+ * Return the date for the trace record
+ * 
+ * Sometimes, when we want to compare trace output it helps if we eliminate dates from the trace output
+ * This function allows that. 
+ * $bw_trace_date is supposed to be an option field.
+ */
+function bw_trace_date( $format=DATE_W3C ) {
+  global $bw_trace_date;
+  
+  $bw_trace_date = FALSE;
+  if ( $bw_trace_date )
+    $ret = date( $format );
+  else
+    $ret = '';      
+  return( $ret ) ;
+}
+
+
+/**
+ * Return the trace record count if required
+ * 
+ * Sometimes, when we want to compare trace output it helps if we eliminate the trace counter from the trace output
+ */
+function bw_trace_count( $count ) {
+  global $bw_include_trace_count;
+  $bw_include_trace_count = FALSE;
+  
+ if ( $bw_include_trace_count )
+    $ret = $count;
+  else
+    $ret = '';      
+  return( $ret ) ;
+}
+
+  
 /* Format required for the trace record is something like this
  
 C:\apache\htdocs\wordpress\wp-content\plugins\bwtrace\bwtrace.php(116:0)  1 2011-01-05T22:43:13+00:00
 */
-function bw_flf( $function, $lineno, $file, $level,  $text, $text_label = NULL ) {
-
-  $ref = $file;
+function bw_flf( $function, $lineno, $file, $count,  $text, $text_label = NULL ) {
+  $ref = bw_trace_file_part( $file );
   $ref .= '('.$lineno.':0) ';
-  $ref .= date( DATE_W3C );
+  $ref .= bw_trace_date( DATE_W3C );
+  $ref .= " ";
+  $ref .= bw_trace_count( $count );
   $ref .= " ";
   $ref .= $function;
-  $ref .= " ";
-  $ref .= $level;
   $ref .= " ";
   $ref .= $text_label;
   $ref .= " ";
@@ -84,12 +131,15 @@ function bw_flf( $function, $lineno, $file, $level,  $text, $text_label = NULL )
 
   
 function bw_trace( $text, $function=__FUNCTION__, $lineno=__LINE__, $file=__FILE__, $text_label=NULL) {
-  global $oktop, $bw_trace_on, $bw_trace_level;
+  global $oktop, $bw_trace_on, $bw_trace_count;
   $oktop = TRUE;
   
   if ($bw_trace_on)
   {
-    $line = bw_flf( $function, $lineno, $file, $bw_trace_level, $text, $text_label );  
+    if ( empty( $bw_trace_count ) )
+      $bw_trace_count = 0;
+    $bw_trace_count++;
+    $line = bw_flf( $function, $lineno, $file, $bw_trace_count, $text, $text_label );  
     bw_trace_log( $line );  
       
   }  
@@ -188,4 +238,118 @@ function bw_trace_errors( $level ) {
 
 bw_trace_inc_init();  
 // bw_trace_on();
+
+
+/** 
+ * Return the array[index] or a default value if not set
+ */
+function bw_array_get( $array = array(), $index, $default=NULL ) {
+  if ( isset( $array[$index] ) || ( is_array( $array) && array_key_exists( $index, $array ) ) )  {
+    $value = $array[$index];
+  } else {
+    $value = $default;
+  } 
+  // bw_trace( $value, __FUNCTION__,  __LINE__, __FILE__, "value" ); 
+  return( $value );
+}
+
+
+/** 
+ * print a backtrace to help find out where something is called from and how to debug it
+ *
+ * The output from debug_backtrace() is an array - from 0 to n of the calls
+ * [file] is the file name
+ * [line] is the line number
+ * [function] is the method used to get the file: include, require_once
+ * [args] are parameters
+ * [class]
+ * [object]
+ * [type] -> = method call,  :: = static method call, nothing for function call
+ * 
+
+ C:\apache\htdocs\wordpress\wp-content\themes\hsoh0922bp\functions.php(12:0) 2011-09-27T16:22:49+00:00   backtrace Array
+(
+    [0] => Array
+        (
+            [file] => C:\apache\htdocs\wordpress\wp-settings.php
+            [line] => 280
+            [function] => include
+        )
+
+    [1] => Array
+        (
+            [file] => C:\apache\htdocs\wordpress\wp-config.php
+            [line] => 130
+            [args] => Array
+                (
+                    [0] => C:\apache\htdocs\wordpress\wp-settings.php
+                )
+
+            [function] => require_once
+        )
+
+    [2] => Array
+        (
+            [file] => C:\apache\htdocs\wordpress\wp-load.php
+            [line] => 29
+            [args] => Array
+                (
+                    [0] => C:\apache\htdocs\wordpress\wp-config.php
+                )
+
+            [function] => require_once
+        )
+
+    [3] => Array
+        (
+            [file] => C:\apache\htdocs\wordpress\wp-blog-header.php
+            [line] => 12
+            [args] => Array
+                (
+                    [0] => C:\apache\htdocs\wordpress\wp-load.php
+                )
+
+            [function] => require_once
+        )
+
+    [4] => Array
+        (
+            [file] => C:\apache\htdocs\wordpress\index.php
+            [line] => 17
+            [args] => Array
+                (
+                    [0] => C:\apache\htdocs\wordpress\wp-blog-header.php
+                )
+
+            [function] => require
+        )
+
+)
+*/
+ 
+function bw_backtrace() {
+  $backtrace = debug_backtrace();
+  foreach ( $backtrace as $i => $call ) {
+    $function = $call['function'];
+    
+    $file = bw_array_get( $call, 'file', NULL) ;
+    $file = bw_trace_file_part( $file );
+    $line = bw_array_get( $call, 'line', 0 );
+    $args = $call['args'];
+    $cargs = count( $args );
+    switch ( $cargs ) {
+      case 0: 
+        $targs = NULL;
+        break;
+      case 1:
+        $targs = $args[0]; 
+        break;
+      default:
+        $targs = $args;
+    }      
+    bw_trace( $targs, $function, $line, $file, $i );
+  }
+}    
+   
+
 
