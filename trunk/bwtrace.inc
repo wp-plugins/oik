@@ -243,14 +243,17 @@ bw_trace_inc_init();
 /** 
  * Return the array[index] or a default value if not set
  */
-function bw_array_get( $array = array(), $index, $default=NULL ) {
-  if ( isset( $array[$index] ) || ( is_array( $array) && array_key_exists( $index, $array ) ) )  {
-    $value = $array[$index];
-  } else {
-    $value = $default;
-  } 
-  // bw_trace( $value, __FUNCTION__,  __LINE__, __FILE__, "value" ); 
-  return( $value );
+ 
+if ( !function_exists( 'bw_array_get' ) ) { 
+  function bw_array_get( $array = array(), $index, $default=NULL ) {
+    if ( isset( $array[$index] ) || ( is_array( $array) && array_key_exists( $index, $array ) ) )  {
+      $value = $array[$index];
+    } else {
+      $value = $default;
+    } 
+    // bw_trace( $value, __FUNCTION__,  __LINE__, __FILE__, "value" ); 
+    return( $value );
+  }  
 }
 
 
@@ -352,4 +355,36 @@ function bw_backtrace() {
 }    
    
 
-
+/**
+ * Shortcode for togglingor setting trace options 
+ * Provide a button for controlling trace
+ *
+ * @param $atts
+ *  option= 
+ *  
+ */
+function bw_trace_button( $atts = NULL ) {
+  $text = bw_array_get( $atts, 'text', " " );
+  $option = bw_array_get( $atts, 'option', NULL );
+  
+  $url = get_site_url( NULL, 'wp-admin/options-general.php?page=bw_trace_options' );
+  
+  //if ( bw_is_wordpress() )
+  //   $url = site_url( "/wp-admin/post-new.php" );
+  //else 
+  //   $url = site_url( '' );   
+  if ( $text ) {
+    $text = "Trace options";
+  }
+  switch ( $option ) {
+    case 'view':
+      $bw_trace_url = bw_trace_url();
+      alink( NULL, $bw_trace_url, "View trace log", "View trace output in your browser. $bw_trace_url");
+      break; 
+      
+    default:   
+      alink( "bwtrace", $url, $text, "Trace options", "" );
+      break;
+  }    
+  return( bw_ret());  
+}

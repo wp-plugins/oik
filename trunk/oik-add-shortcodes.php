@@ -182,9 +182,10 @@ function bw_add_shortcode_event( $shortcode, $function=NULL, $eventlist='the_con
  * but is properly expanded in content and widget text
  * Note: settings_page_bw_email_signature is included to allow the shortcodes to be shown on the "oik email signature" page
  * bp_screens is included to support BuddyPress
+ * get_the_excerpt is to support Artisteer 3.1 beta 1
 */
 function bw_add_shortcode( $shortcode, $function=NULL ) {
-  bw_add_shortcode_event( $shortcode, $function, 'the_content,widget_text,wp_footer,settings_page_bw_email_signature,bp_screens' );
+  bw_add_shortcode_event( $shortcode, $function, 'the_content,widget_text,wp_footer,get_the_excerpt,settings_page_bw_email_signature,bp_screens' );
   bw_add_shortcode_event( $shortcode, $function, 'the_title', 'bw_admin_strip_tags' );
 }  
 

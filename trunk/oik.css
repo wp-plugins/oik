@@ -343,6 +343,8 @@ a.directory   { background: transparent url(images/directory_48.png)   no-repeat
 a.my-site     { background: transparent url(images/favicon-48.png) no-repeat top left ; }
 a.post        { background: transparent url(images/post_48.png) no-repeat top left ; }
 a.page        { background: transparent url(images/page_48.png) no-repeat top left ; }
+a.bwtrace     { background: transparent url(images/oik_trace_48.png) no-repeat top left ; }
+
 
 
 /* CSS for Views forms buttons */
