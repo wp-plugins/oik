@@ -69,6 +69,7 @@ function bw_trace_plugin_startup() {
   /* Shortcodes for each of the more useful APIs */
   add_shortcode( 'bwtron', 'bw_trace_on' );
   add_shortcode( 'bwtroff', 'bw_trace_off');
+  add_shortcode( 'bwtrace', 'bw_trace_button' );
 
   add_filter('widget_text', 'do_shortcode');
   add_filter('the_title', 'do_shortcode' ); 
@@ -102,11 +103,12 @@ function bw_trace_plugin_startup() {
 
   if ( $bw_trace_level > '0' ) {
     bw_trace( ABSPATH . $bw_trace_options['file'], __FUNCTION__, __LINE__, __FILE__, 'tracelog' );
+    bw_trace( $_SERVER, __FUNCTION__, __LINE__, __FILE__, "_SERVER" ); 
     bw_trace( bw_getlocale(), __FUNCTION__, __LINE__, __FILE__, "locale" );
     //bw_trace( $_GET, __FUNCTION__, __LINE__, __FILE__, "_GET" );
     //bw_trace( $_POST, __FUNCTION__, __LINE__, __FILE__, "_POST" );
     bw_trace( $_REQUEST, __FUNCTION__, __LINE__, __FILE__, "_REQUEST" );
-    bw_trace( ABSPATH,  __FUNCTION__, __LINE__, __FILE__, "ABSPATH" );
+    //bw_trace( ABSPATH,  __FUNCTION__, __LINE__, __FILE__, "ABSPATH" );
 
       
   } 

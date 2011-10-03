@@ -60,6 +60,24 @@ function bw_excerpt( $post_id ) {
   }
   return( $excerpt );
 }
+
+/**
+ * Return an array suitable for passing to image functions to determine the size
+ 
+ * @param mixed string representing the size.
+ * if a single integer then make the array square
+ * otherwise it's widthxheight or width,height or some other way of specifying width and height
+ * so we split at the non numeric value(s) and take the first two integer bits
+ */
+function bw_get_image_size( $size=100 ) {
+  $pattern = "/([\d]+)/";
+  preg_match_all($pattern, $size, $thumbnail);
+  if ( count( $thumbnail ) < 2 ) 
+    $thumbnail[1] = $thumbnail[0];
+
+  bw_trace( $thumbnail, __FUNCTION__, __LINE__, __FILE__, "thumbnail" );
+  return( $thumbnail ); 
+}
  
 /**
  * get the thumbnail of the specified size
@@ -67,6 +85,25 @@ function bw_excerpt( $post_id ) {
  * Note: There is no code to control the size yet.
  */
 function bw_thumbnail( $post_id, $atts=NULL ) {
+
+  $thumbnail = bw_array_get( $atts, 'thumbnail', 'thumbnail' );
+  switch ( $thumbnail ) {
+    case 'thumbnail':
+    case 'medium':
+    case 'large':
+      $torf = TRUE;
+      break;
+           
+    default:
+      $torf = bw_validate_torf( $thumbnail );
+      if ( $torf ) {
+        $thumbnail = 'thumbnail';
+      } else {
+        $thumbnail = bw_get_image_size( $thumbnail ); 
+      }
+      break;
+  }
+    
   if ( function_exists( 'theme_get_post_thumbnail') ) {
     global $post;
     $save_post = $post;
@@ -76,14 +113,12 @@ function bw_thumbnail( $post_id, $atts=NULL ) {
     $post = $save_post;
     
   } else {
-    $thumbnail = bw_get_thumbnail( $post );
+    $thumbnail = bw_get_thumbnail( $post, $thumbnail );
   } 
    
   return( $thumbnail ); 
   // $thumb = get_the_post_thumbnail( $post->ID,
 }
-
-
 
 /**
  * Format the "post" - basic first version
@@ -98,15 +133,30 @@ function bw_format_post( $post, $atts ) {
   $read_more = bw_array_get( $atts, "read_more", "read more" );
   
   $in_block = bw_validate_torf( bw_array_get( $atts, "block", TRUE ));
-  if ( $in_block ) 
+  if ( $in_block ) { 
     e( bw_block( $atts ));
-  e( bw_thumbnail( $post, $atts ) );
+    e( bw_thumbnail( $post, $atts ) );
+  }
+  else {
+    $class = bw_array_get( $atts, "class", "" );
+    sdiv( $class );
+    e( bw_thumbnail( $post, $atts ) );
+    span( "title" );
+    strong( $atts['title'] );
+    epan();
+    br();
+  }  
 
   e( bw_excerpt( $post ) );
-  
-  art_button( get_permalink( $post->ID ), $read_more, $read_more );  
+  sp();
+  art_button( get_permalink( $post->ID ), $read_more, $read_more ); 
+  ep(); 
   if ( $in_block )
     e( bw_eblock() ); 
+  else {  
+    sediv( "cleared" );
+    ediv();  
+  }    
 }
 
 
@@ -122,9 +172,10 @@ function bw_format_post( $post, $atts ) {
  *   orderby='title'
  *   order='ASC'
  *   posts_per_page=-1
+ *   block=true or false
+ *   thumbnail=specification - see bw_thumbnail
  */
 function bw_pages( $atts = NULL ) {
-  $class = bw_array_get( $atts, "class", NULL );
   
   // $block_atts = array( "class"=> $class, );
   
@@ -145,16 +196,11 @@ function bw_pages( $atts = NULL ) {
   $attr['numberposts'] = bw_array_get( $attr, "numberposts", -1 );
   $attr['orderby'] = bw_array_get( $attr, "orderby", "title" );
   $attr['order'] = bw_array_get( $attr, "order", "ASC" );
-  
-  
-  //query_posts( $attr );
-  
+ 
   $posts = get_posts( $attr );
   bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
   
   foreach ( $posts as $post ) {
-
-  
     bw_format_post( $post, $atts );
     //p( "this is a post" );
     //e( $post->ID );
@@ -180,7 +226,7 @@ function bw_get_thumbnail( $post_id = null, $size = 'thumbnail' ) {
   
   If (Function_Exists('get_post_thumbnail_id') && $thumb_id = get_post_thumbnail_id($post_id) )
     return Array_Merge ( Array($thumb_id), (Array) wp_get_attachment_image_src($thumb_id, $size) );
-  ElseIf ($arr_thumb = self::get_post_attached_image($post_id, 1, 'rand', $size))
+  ElseIf ($arr_thumb = bw_get_attached_image($post_id, 1, 'rand', $size))
     return $arr_thumb[0];
   Else
     return False;

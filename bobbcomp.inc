@@ -91,9 +91,6 @@ else {
 }
 
 
-   
-
-
 function bw_get_geo( $separator )
 {
   $geo = bw_get_company( "lat" );
@@ -121,25 +118,38 @@ function bw_geo() {
 
 }
 
-
-
-// **?** use Microformats <br/>t: +44 (0)23 92 410090</p>
-
-function bw_telephone( $atts = NULL ) { 
+/**
+ * return the telephone number in desired HTML markup, if set or passed as number=
+ 
+ * @param array atts
+ *   prefix = type of number: free form e.g. Tel, Home, Work, Mob, Cell
+ *   sep = separator default ': '
+ *   number = telephone number override
+ *   tag = 'div' or 'span' or other HTML wrapping tag - with start and and
+ *
+ * Example:
+ * [bw_telephone]
+ * [bw_telephone number="023 92 410090" prefix="Portsmouth"]
+ *
+ */
+function _bw_telephone( $atts = NULL ) {
+  
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
   extract( shortcode_atts( array(
       'prefix' => 'Tel',
       'sep' => ': ',
+      'number' => NULL,
+      'tag' => 'div',
       ), $atts ) );
       
   bw_trace( $prefix, __FUNCTION__, __LINE__, __FILE__, "prefix" );
   bw_trace( $sep, __FUNCTION__, __LINE__, __FILE__, "sep" );
- 
-     
-   $tel =  bw_get_company( "telephone" );
+  $tel =  bw_default_empty_att( $number, "telephone", "" );
+  bw_trace( $tel, __FUNCTION__, __LINE__, __FILE__, "tel" );
+   
    if ( $tel <> "" )
    {
-     sdiv( "tel" );
+     stag( $tag,  "tel" );
      span( "type");
      e( $prefix );
      epan();
@@ -147,11 +157,24 @@ function bw_telephone( $atts = NULL ) {
      span( "value" );
      e( $tel );
      epan();
-     ediv();
+     etag( $tag );
    }
    return( bw_ret());
 }
 
+
+/**
+ * Display the telephone number using microformats
+ * See ISBN: 978-1-59059-814-6 p. 140
+ */
+function bw_telephone( $atts = NULL ) { 
+  $atts['tag'] = 'div';
+  return _bw_telephone( $atts );
+}  
+
+/**
+ * Display the fax number, if set
+ */
 function bw_fax( $atts = NULL ) {
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
   extract( shortcode_atts( array(
@@ -268,10 +291,10 @@ function bw_mailto( $prefix = NULL, $primary=TRUE )
 }
 
 
-// Using Microformat for address information
-
-function bw_address()
-{
+/**
+ * Return address using Microformats
+ */
+function bw_address( $atts = NULL ) {
   sdiv("adr" );
   
     sdiv("type");
@@ -440,19 +463,9 @@ function bw_skype( $atts ) {
    return( bw_ret());
 }
 
-function bw_tel()
-{
-   $tel =  bw_get_company( "telephone" );
-   if ( $tel <> "" )
-   {
-     span( "tel" );
-     sepan( "type", "work " );
-     span( "value" );
-     e( $tel );
-     epan();
-     epan();
-   }
-   return( bw_ret());
+function bw_tel( $atts = NULL ) {
+  $atts['tag'] = 'span';
+  return _bw_telephone( $atts );
 }
 
 function bw_mob()

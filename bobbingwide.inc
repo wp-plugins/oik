@@ -191,7 +191,7 @@ function bw_art() {
   * Create an Add Post button. If the text parameter is passed create "Add Post" regardless of the text
   */
 function bw_post( $atts ) {
-  $text = $atts['text'];
+  $text = bw_array_get( $atts, 'text', NULL );
   
   if ( bw_is_wordpress() )
      $url = site_url( "/wp-admin/post-new.php" );
@@ -208,7 +208,7 @@ function bw_post( $atts ) {
  * Create an Add Page button. Similar code to bw_post()
  */
 function bw_page( $atts ) {
-  $text = $atts['text'];
+  $text = bw_array_get( $atts, 'text', NULL );
 
   if ( bw_is_wordpress() )
     $url = site_url( "/wp-admin/post-new.php?post_type=page" );
@@ -295,10 +295,10 @@ function bw_plug_list_plugins( $option='active_plugins' ) {
  * 
 */
 function bw_plug( $atts ) {
-  $name = $atts['name'];
-  $link = $atts['link'];
-  $table = $atts['table']; 
-  $option = $atts['option'];
+  $name = bw_array_get( $atts, 'name', 'oik' );
+  $link = bw_array_get( $atts, 'link', NULL );
+  $table = bw_array_get( $atts, 'table', NULL ); 
+  $option = bw_array_get( $atts, 'option', NULL );
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
   
   $table = bw_validate_torf( $table );
@@ -316,8 +316,6 @@ function bw_plug( $atts ) {
     $table = TRUE;
   
   bw_plug_table( $table );
-  
-  
 
   foreach ( $names as $name ) {
   
