@@ -1,10 +1,10 @@
 === oik ===
 Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
-Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide, key information, tide, trace, blocks
+Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide, key information, tide, trace, blocks, buddypress
 Requires: 3.0.4
 Tested up to: 3.2.1
-Stable tag: 1.3.1
+Stable tag: trunk
 
 Often Included Key-information. 
 
@@ -78,13 +78,14 @@ Yes. I'm concentrating on getting version 1.x properly released.
 == Changelog ==
 = 1.4 =
 * Added: oik-pages plugin for [bw_pages] shortcode to list subpages, optionally within [bw_block]s
-* Added: [bw_block]/[bw_eblock] now supports themes generated with Artisteer 3.1 beta 1
+* Added: [bw_block]/[bw_eblock] now supports themes generated with Artisteer 3.1 beta versions ( v3.1.0.44079 and v3.1.0.42580 )
 * Added: option to specify which version of Artisteer was used to generate your theme: 31, 30, 25, or na
 * Added: Basic support for using [bw_block] when NOT using an Artisteer theme
 * Changed: Documentation has been migrated to www.oik-plugins.com/oik
 * Changed: some improvements to the bw API
 * Fixed: reduced some warnings that were produced when WP_DEBUG is set
 * Changed: oik-bwtrace changes to aid problem determination after a change has been made
+* Changed: Added support for BuddyPress filter - bp_screens 
 = 1.3.1 =
 * Changed: Lost another fight with SVN :-( 
 = 1.3 = 
