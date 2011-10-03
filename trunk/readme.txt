@@ -4,7 +4,7 @@ Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide, key information, tide, trace, blocks, buddypress
 Requires: 3.0.4
 Tested up to: 3.2.1
-Stable tag: trunk
+Stable tag: 1.4
 
 Often Included Key-information. 
 
