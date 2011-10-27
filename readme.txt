@@ -76,6 +76,17 @@ Yes. I'm concentrating on getting version 1.x properly released.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 1.5 = 
+* Changed: [clear] now expands to two classes: clear and cleared
+* Fixed: reduced more warnings that were produced when WP_DEBUG is set
+* Added: bw_wp_title() - use to return a nice SEO title when WordPress SEO may or may not be activated
+* Added: options to tracing to include or exclude information that can help or hinder problem determination
+* Changed: Default to not showing the address type as Work - hidden by CSS
+* Added: Option to edit the custom CSS file using standard WordPress functions
+* Changed: Custom CSS file now expected to be in the stylesheet directory.
+* Added: Dummy custom CSS file created in stylesheet diretory, if defined but not already present
+* Added: Initial support for selecting custom post types in [bw_pages] shortcode, restricting by category 
+* Fixed: [bw_pages] shortcode excludes the current post. Needed to prevent recursion in strange scenarios
 = 1.4 =
 * Added: oik-pages plugin for [bw_pages] shortcode to list subpages, optionally within [bw_block]s
 * Added: [bw_block]/[bw_eblock] now supports themes generated with Artisteer 3.1 beta versions ( v3.1.0.44079 and v3.1.0.42580 )

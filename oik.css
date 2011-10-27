@@ -394,3 +394,4 @@ span.drupal { color: #0678be; font-family: 'Helvetica Neue', Helvetica, Arial, s
 /* For [artisteer] */
 span.artisteer { color: #D16521; font-family: Arial; }
 
+div.attr div.type { display: none; }

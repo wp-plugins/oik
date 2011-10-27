@@ -4,7 +4,7 @@
 Plugin Name: oik pages
 Plugin URI: http://www.oik-plugins.com/oik
 Description: [bw_pages] shortcode to summarize child pages 
-Version: 1.4
+Version: 1.5
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -192,11 +192,13 @@ function bw_pages( $atts = NULL ) {
   /* Set default values if not already set */
   
   $attr['post_type'] = bw_array_get( $attr, 'post_type', 'page' );
-  $attr['post_parent'] = bw_array_get( $attr, "post_parent", $GLOBALS['post']->ID );
+  if ( $attr['post_type'] == 'page' )
+    $attr['post_parent'] = bw_array_get( $attr, "post_parent", $GLOBALS['post']->ID );
   $attr['numberposts'] = bw_array_get( $attr, "numberposts", -1 );
   $attr['orderby'] = bw_array_get( $attr, "orderby", "title" );
   $attr['order'] = bw_array_get( $attr, "order", "ASC" );
- 
+  $attr['category'] = bw_array_get( $attr, "category", NULL );
+  $attr['exclude'] = bw_array_get( $attr, "exclude", $GLOBALS['post']->ID );
   $posts = get_posts( $attr );
   bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
   
@@ -215,6 +217,7 @@ function bw_pages( $atts = NULL ) {
  */
  
 function bw_get_thumbnail( $post_id = null, $size = 'thumbnail' ) {
+ 
 
   /* Return Value: An array containing:
        $image[0] => attachment id
@@ -222,20 +225,29 @@ function bw_get_thumbnail( $post_id = null, $size = 'thumbnail' ) {
        $image[2] => width
        $image[3] => height
   */
-  If ($post_id == Null) $post_id = get_the_id();
+  $return_value = FALSE;
+  if ($post_id == Null) 
+    $post_id = get_the_id();
   
-  If (Function_Exists('get_post_thumbnail_id') && $thumb_id = get_post_thumbnail_id($post_id) )
-    return Array_Merge ( Array($thumb_id), (Array) wp_get_attachment_image_src($thumb_id, $size) );
-  ElseIf ($arr_thumb = bw_get_attached_image($post_id, 1, 'rand', $size))
-    return $arr_thumb[0];
-  Else
-    return False;
+  bw_trace( $post_id, __FUNCTION__, __LINE__, __FILE__, "post_id" );
+  
+  If ( function_exists('get_post_thumbnail_id') && $thumb_id = get_post_thumbnail_id( $post_id ) ) {
+    $return_value = array_merge( array( $thumb_id ), (array) wp_get_attachment_image_src( $thumb_id, $size ) );
+  }  
+  elseif ( $arr_thumb = bw_get_attached_image( $post_id, 1, 'rand', $size )) {
+    $return_value = $arr_thumb[0];
+  }  
+  bw_trace( $return_value, __FUNCTION__, __LINE__, __FILE__, "return_value" ); 
+  
 }
 
 /**
  * get the attached image
  */
 function bw_get_attached_image( $post_id = null, $number = 1, $orderby = 'rand', $image_size = 'thumbnail') {
+
+  bw_trace( $post_id, __FUNCTION__, __LINE__, __FILE__, "post_id" ); 
+
   If ($post_id == Null) $post_id = get_the_id();
   $number = IntVal ($number);
   $arr_attachment = get_posts (Array( 'post_parent'    => $post_id,
@@ -257,6 +269,8 @@ function bw_get_attached_image( $post_id = null, $number = 1, $orderby = 'rand',
          $image[3] => height
     */
   }
+  
+  bw_trace( $arr_attachment, __FUNCTION__, __LINE__, __FILE__, "arr_attachment" );
   
   return $arr_attachment;
 }

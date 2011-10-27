@@ -4,7 +4,7 @@
 Plugin Name: oik bwtrace 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use trace macros for oik plugins
-Version: 1.4
+Version: 1.5
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -69,7 +69,7 @@ function bw_trace_plugin_startup() {
   /* Shortcodes for each of the more useful APIs */
   add_shortcode( 'bwtron', 'bw_trace_on' );
   add_shortcode( 'bwtroff', 'bw_trace_off');
-  add_shortcode( 'bwtrace', 'bw_trace_button' );
+  //add_shortcode( 'bwtrace', 'bw_trace_button' );
 
   add_filter('widget_text', 'do_shortcode');
   add_filter('the_title', 'do_shortcode' ); 
@@ -78,24 +78,26 @@ function bw_trace_plugin_startup() {
 
   $bw_trace_options = get_option( 'bw_trace_options' );
 
-  $bw_trace_level = $bw_trace_options[ 'trace']; 
-  if ( $bw_trace_level > '0' ) {
+  $bw_trace_level = bw_torf( $bw_trace_options, 'trace' ); 
+  if ( $bw_trace_level ) {
     bw_trace_on();
-  }
-  else {
+    global $bw_include_trace_count, $bw_include_trace_date, $bw_trace_anonymous;
+    $bw_include_trace_count = bw_torf( $bw_trace_options, 'count' );
+    $bw_include_trace_date = bw_torf( $bw_trace_options, 'date' );
+    $bw_trace_anonymous = !bw_torf( $bw_trace_options, 'qualified' );
+  } else {
     bw_trace_off();  
   } 
 
-  $bw_trace_reset = $bw_trace_options[ 'reset']; 
-  if ( $bw_trace_reset > '0' ) {
+  // We can reset the trace file regardless of the value of tracing
+  $bw_trace_reset = bw_torf( $bw_trace_options, 'reset' ); 
+  if ( $bw_trace_reset ) {
     bw_trace_reset();
   }
   else {
     // Don't reset the trace file
   } 
-
-
-
+  
   //$bw_trace_errors = $bw_trace_options[ 'errors']; 
   //bw_trace_errors( $bw_trace_errors );
 
@@ -148,6 +150,10 @@ function bw_trace_options_do_page() {
   textfield( "bw_trace_options[reset]", 1 ,"Trace reset (1=each txn)", $options['reset'] );
   // Trace error processing is not yet enabled.
   // textfield( "bw_trace_options[errors]", 1 ,"Trace errors (0=no,-1=all,1=E_ERROR,2=E_WARNING,4=E_PARSE, etc)", $options['errors'] );
+  
+  textfield( "bw_trace_options[count]", 1 ,"Trace count (1=include)", $options['count'] );
+  textfield( "bw_trace_options[date]", 1 ,"Trace date (1=include)", $options['date'] );
+  textfield( "bw_trace_options[qualified]", 1 ,"Full qualified file names (1=include)", $options['qualified'] );
   
     
   tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" ); 

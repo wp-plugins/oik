@@ -425,8 +425,14 @@ function bw_domain() {
   return( bw_output( "domain" ));
 } 
 
+
+/**
+ * Create a div to clear the floats
+ * class cleared is used for Artisteer themes
+ * class clear is the simpler version in oik
+ */
 function bw_clear() {
-  sediv( "cleared" );
+  sediv( "cleared clear" );
   return( bw_ret());
 }  
 
@@ -518,8 +524,8 @@ function bw_google_plus( $atts ) {
 
 function bw_follow_e( $atts ) {
   $social_network = $atts['network'];
-  $text = $atts['text'];
-  $email = $atts['email'];
+  $text = bw_array_get( $atts, 'text', NULL );
+  //$email = bw_array_get( $atts, 'email', NULL );;
   
   $lc_social = strtolower( $social_network );
   $social = bw_get_company( $lc_social );
@@ -752,5 +758,23 @@ function bw_default_empty_arr( $bw_array=NULL, $bw_index=NULL, $bw_field=NULL, $
   } 
   bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value" );
   return( $val );
+}
+
+
+/**
+ * return a nice SEO title
+ * taking into account which plugins are being used
+ */
+if (!function_exists( 'bw_wp_title' )) {
+  function bw_wp_title() {
+    if ( class_exists( 'WPSEO_Frontend' )) {
+      $title = wp_title('', false );
+    }
+    else {
+      $title = wp_title( '|', false, 'right' ); 
+      $title .= get_bloginfo( 'name' );
+    }
+    return $title;
+  }
 }
 

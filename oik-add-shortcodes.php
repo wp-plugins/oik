@@ -83,6 +83,24 @@ function bw_wtf() {
  * If the function is not defined then simply return the tag inside []'s
  * Note: We use the HTML symbol for [ (&#91;) to prevent the shortcode being expanded multiple times
  
+ * Extract from codes... 
+ 
+ ; NOTE on confusing regex/callback name reference: 
+ The zeroeth entry of the attributes array ('''$atts[0]''') will contain the string that matched the shortcode regex, 
+ but ONLY if that differs from the callback name, which otherwise appears as the third argument to the callback function.
+ ; (Appears to always appear as third argument as of 2.9.2.)
+
+  add_shortcode('foo','foo'); // two shortcodes referencing the same callback
+  add_shortcode('bar','foo');
+     produces this behavior:
+  [foo a='b'] ==> callback to: foo(array('a'=>'b'),NULL,"foo");
+  [bar a='c'] ==> callback to: foo(array(0 => 'bar', 'a'=>'c'),NULL,"");
+
+This is confusing and perhaps reflects an underlying bug, 
+but an overloaded callback routine can correctly determine what shortcode was used to call it, 
+by checking BOTH the third argument to the callback and the zeroeth attribute. 
+(It is NOT an error to have two shortcodes reference the same callback routine, which allows for common code.) 
+ 
 */ 
 function bw_shortcode_event( $atts, $hmm=NULL, $tag=NULL ) {
   global $bw_sc_ev, $bw_sc_ev_pp;

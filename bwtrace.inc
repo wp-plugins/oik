@@ -18,7 +18,7 @@ function bwapi_trace_test( $text) {
 function bw_trace_inc_init() {   
   global $bw_trace_options, $bwapi_trace_test;   
   bw_trace_off();
-  $bw_trace_options = array( 'file' => "bwtrace.log", 'trace' => 0, 'reset' => 0 ); 
+  $bw_trace_options = array( 'file' => "bwtrace.log", 'trace' => 0, 'reset' => 0,  ); 
 
   //bw_trace_reset();
   //bw_trace_on();
@@ -59,7 +59,7 @@ function bw_getlocale($category=LC_ALL) {
 
 function bw_trace_file_part( $file ) {
   global $bw_trace_anonymous;
-  $bw_trace_anonymous = TRUE;
+  //$bw_trace_anonymous = TRUE;
   
   if ( $bw_trace_anonymous ) {
     $lose = str_replace( "/", "\\", ABSPATH );
@@ -81,10 +81,10 @@ function bw_trace_file_part( $file ) {
  * $bw_trace_date is supposed to be an option field.
  */
 function bw_trace_date( $format=DATE_W3C ) {
-  global $bw_trace_date;
+  global $bw_include_trace_date;
   
-  $bw_trace_date = FALSE;
-  if ( $bw_trace_date )
+  // $bw_trace_date = FALSE;
+  if ( $bw_include_trace_date )
     $ret = date( $format );
   else
     $ret = '';      
@@ -99,7 +99,7 @@ function bw_trace_date( $format=DATE_W3C ) {
  */
 function bw_trace_count( $count ) {
   global $bw_include_trace_count;
-  $bw_include_trace_count = FALSE;
+  //$bw_include_trace_count = FALSE;
   
  if ( $bw_include_trace_count )
     $ret = $count;
@@ -107,6 +107,18 @@ function bw_trace_count( $count ) {
     $ret = '';      
   return( $ret ) ;
 }
+
+
+/**
+ * Return TRUE if option is '1', FALSE otherwise
+ */
+function bw_torf( $array, $option ) {
+  $opt = bw_array_get( $array, $option );
+  $ret = $opt > '0';
+  return $ret;
+}
+
+
 
   
 /* Format required for the trace record is something like this
