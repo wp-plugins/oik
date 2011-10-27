@@ -4,7 +4,7 @@
 Plugin Name: oik base plugin 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use shortcode macros for often included key-information 
-Version: 1.4
+Version: 1.5
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -76,9 +76,8 @@ function oik_version() {
 
   $customCSS =  bw_get_company( 'customCSS' );
   if ( !empty( $customCSS) )
-    wp_enqueue_style( 'customCSS', get_theme_root_uri() . $customCSS);
-
-
+    wp_enqueue_style( 'customCSS', get_stylesheet_directory_uri() . '/' .  $customCSS);
+    
   add_action('admin_init', 'oik_options_init' );
   add_action('admin_menu', 'oik_options_add_page');
 
@@ -188,6 +187,11 @@ function oik_options_do_page() {
   p( bw_address());
   p( "[bw_follow_me] for ALL your Follow me buttons" );
   p( bw_follow_me() );
+  
+
+  bw_edit_custom_css_link( $options['customCSS'] );
+  
+
   p("For more information:" );
   art_button( "http://www.oik-plugins.com/oik", "oik documentation", "Read the documentation for the oik plugin" );
    
@@ -197,15 +201,66 @@ function oik_options_do_page() {
 
 
 // Sanitize and validate input. Accepts an array, return a sanitized array.
-function oik_options_validate($input) {
-	// Our first value is either 0 or 1
-	//$input['option1'] = ( $input['option1'] == 1 ? 1 : 0 );
-	
-	// Say our second option must be safe text with no HTML tags
-	//$input['sometext'] =  wp_filter_nohtml_kses($input['sometext']);
-	
-	return $input;
+
+
+function oik_options_validate( $input ) {
+  $customCSS = bw_array_get( $input, 'customCSS', NULL );
+  if ( $customCSS ) {
+    $sanfile = sanitize_file_name( $customCSS );
+    // Should we check the sanitized file name with the original ?
+    bw_create_file( get_stylesheet_directory(), $sanfile, plugin_dir_path( __FILE__ ) . 'custom.css' );  
+  }
+  
+  return $input;
 }
+
+/**
+ * Create a file with the specified name in the specified directory 
+ * @param string base - the base path for the file name - may be absolute
+ * @param string path - the rest of the file name - as specified by the user
+ * @param string default - the fully qualified filename of the base source file to copy
+ */
+function bw_create_file( $base, $path, $default ) {
+  $target = path_join( $base, $path );
+  
+  if ( !file_exists( $target ) ) {
+     // create an empty file - or copy the original  
+     // $info = pathinfo( $target );
+     // $name = basename( $target );
+     if ( $default ) {
+        $success = copy( $default, $target );
+     } else {
+       // write an empty file
+       $resource = fopen( $target, 'xb' );
+       fclose( $resource );
+     }
+  }
+}
+
+
+/** 
+ * Link to allow the custom CSS file to be edited 
+ *
+ * Note: you can't specify a relative path to this file
+ * Sorry, can't edit files with ".." in the name. 
+ * If you are trying to edit a file in your WordPress home directory, you can just type the name of the file in.
+ *
+ */ 
+function bw_edit_custom_css_link( $customCSS ) {
+  p( "If you have defined a custom CSS file use this link to edit it." );
+  p( "Note: This only works when the file is in the current theme directory." );
+  p( "If you change themes then you will start with a new custom CSS file" );
+  p( get_current_theme() . " in " . get_stylesheet_directory()  );
+  
+  
+  $link = admin_url( "theme-editor.php" );
+  $link .= '?file=';
+  //$link .= 'oik/custom.css';
+  $link .= path_join( get_stylesheet_directory(), $customCSS );
+  
+    
+  alink( NULL, $link, "edit custom CSS" ); 
+}  
 
 
 

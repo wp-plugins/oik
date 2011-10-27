@@ -4,7 +4,7 @@
 Plugin Name: oik email signature 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Generate an email signature file for your email client
-Version: 1.4
+Version: 1.5
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
