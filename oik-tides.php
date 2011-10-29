@@ -110,6 +110,35 @@ C:\apache\htdocs\wordpress\wp-content\plugins\oik\oik-tides.php(45:0) 2011-05-04
         )
 
 )
+
+from 28th October (first noticed) it changed again. The description was already formatted.
+C:\apache\htdocs\wordpress\wp-content\plugins\oik\oik-tides.php(44:0) 2011-10-29T16:49:09+00:00 54 bw_get_tide_info response_xml SimpleXMLElement Object
+(
+    [@attributes] => Array
+        (
+            [version] => 2.0
+        )
+
+    [channel] => SimpleXMLElement Object
+        (
+            [title] => Chichester Harbour (Entrance) Tide Times
+            [link] => http://www.tidetimes.org.uk/chichester-harbour-entrance-tide-times
+            [description] => Chichester Harbour (Entrance) tide times.
+            [lastBuildDate] => Sat, 29 Oct 2011 00:00:00 BST
+            [language] => en-gb
+            [item] => SimpleXMLElement Object
+                (
+                    [title] => Chichester Harbour (Entrance) Tide Times for 29th October 2011
+                    [link] => http://www.tidetimes.org.uk/chichester-harbour-entrance-tide-times
+                    [guid] => http://www.tidetimes.org.uk/chichester-harbour-entrance-tide-times
+                    [pubDate] => Sat, 29 Oct 2011 00:00:00 BST
+                    [description] => <a href="http://www.tidetimes.org.uk" title="Tide Times">Tide Times</a> & Heights for<br/><a href="http://www.tidetimes.org.uk/chichester-harbour-entrance-tide-times" title="Chichester Harbour (Entrance) tide times">Chichester Harbour (Entrance)</a> on 29th October 2011<br/><br/>01:18 - High Tide (5.00m)<br/>06:40 - Low Tide (0.70m)<br/>13:38 - High Tide (5.00m)<br/>19:03 - Low Tide (0.70m)<br/>
+                )
+
+        )
+
+)
+
  
 */
 
@@ -148,15 +177,19 @@ function bw_tides( $atts ) {
     $channel = $tideinfo->channel;    
     bw_trace( $channel, __FUNCTION__, __LINE__, __FILE__, 'channel');
     $link = (string) $channel->link;   
-    bw_trace( $desc, __FUNCTION__, __LINE__, __FILE__, 'desc');
 
+    /* cast to a string since otherwise there can be a problem with attempting to serialise a simpleXML elements */
+    $desc = (string) $channel->item->description;
+    
+    bw_trace( $desc, __FUNCTION__, __LINE__, __FILE__, 'desc');
     /* We may need to strip some unwanted advertising which appears in an anchor tag <a */
-    $desc = $channel->item->description;
+    /*
     $desc = preg_replace('/<a (.*?)<\/a>/', "\\2", $desc);
     $allowed = array( 'b' => array(),
                       'br' =>  array()
                     );  
     $desc = wp_kses( $desc, $allowed );
+    */
     $title = (string) $channel->item->title;  
     // $title = $channel->item->title;   uncomment this to cause set_transient to fail
     
@@ -174,8 +207,10 @@ function bw_tides( $atts ) {
   bw_trace( $title, __FUNCTION__, __LINE__, __FILE__, 'title');
   bw_trace( $link, __FUNCTION__, __LINE__, __FILE__, 'link');
 
-  alink( "tides", $link , $desc , $title ); 
-  
+  // Now that tidetimes.org.uk creates the links itself we only need to display the informaton in span
+  // with class tides, to allow for custom CSS styling
+  //alink( "tides", $link , $desc , $title ); 
+  sepan( "tides", $desc );
   
   return( bw_ret());
 
