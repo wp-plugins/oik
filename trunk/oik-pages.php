@@ -3,13 +3,13 @@
 /*
 Plugin Name: oik pages
 Plugin URI: http://www.oik-plugins.com/oik
-Description: [bw_pages] shortcode to summarize child pages 
+Description: [bw_pages] shortcode to summarize child pages or custom post types
 Version: 1.5
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
-    Copyright 2010, 2011 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2011 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -38,9 +38,12 @@ require_once( 'oik-artisteer.php' );
 bw_add_shortcode( 'bw_pages', 'bw_pages' );
 
 /**
- * Extract the excerpt from the $post 
- * Note: The function _theme_get_excerpt is not expected to exist. Artisteer doesn't "properly" extract the excerpt
- * so the '_' prefix disables the call to the Artisteer function
+ * Return the excerpt from the $post 
+ * Note: The function _theme_get_excerpt is not expected to exist. 
+ * Artisteer doesn't "properly" extract the excerpt, so the '_' prefix disables the call to the Artisteer function.
+ * 
+ * @param  post $post_id post from which to extract the excerpt
+ * @return string $excerpt the excerpt from the post
  * 
  */
 function bw_excerpt( $post_id ) {
@@ -63,11 +66,12 @@ function bw_excerpt( $post_id ) {
 
 /**
  * Return an array suitable for passing to image functions to determine the size
- 
- * @param mixed string representing the size.
+ * 
+ * @param mixed $size string representing the size.
  * if a single integer then make the array square
  * otherwise it's widthxheight or width,height or some other way of specifying width and height
  * so we split at the non numeric value(s) and take the first two integer bits
+ * @return array containing width and height
  */
 function bw_get_image_size( $size=100 ) {
   $pattern = "/([\d]+)/";
@@ -82,9 +86,9 @@ function bw_get_image_size( $size=100 ) {
 /**
  * get the thumbnail of the specified size
  *
- * Note: There is no code to control the size yet.
  */
 function bw_thumbnail( $post_id, $atts=NULL ) {
+  bw_trace( $post_id, __FUNCTION__, __LINE__, __FILE__, "post_id" );
 
   $thumbnail = bw_array_get( $atts, 'thumbnail', 'thumbnail' );
   switch ( $thumbnail ) {
@@ -103,6 +107,8 @@ function bw_thumbnail( $post_id, $atts=NULL ) {
       }
       break;
   }
+  
+  /* Cater for Artisteer themes that already return thumbnails */
     
   if ( function_exists( 'theme_get_post_thumbnail') ) {
     global $post;
@@ -113,15 +119,35 @@ function bw_thumbnail( $post_id, $atts=NULL ) {
     $post = $save_post;
     
   } else {
-    $thumbnail = bw_get_thumbnail( $post, $thumbnail );
+    $thumbnail = bw_get_thumbnail( $post_id, $thumbnail, $atts );
   } 
-   
   return( $thumbnail ); 
-  // $thumb = get_the_post_thumbnail( $post->ID,
 }
 
+/** 
+ * Create a thumbnail link
+ *
+ * Create a thumbnail with a link to the post_id specified, either via $post_id or the $atts['link']
+ * otherwise just create the image 
+ *
+ * @param string $thumbnail full HTML for the thumbnail image
+ * @param id     $post_id   default post id if not specified in $atts
+ * @param array  $atts      shortcode attributes array
+ */
+function bw_link_thumbnail( $thumbnail, $post_id, $atts=NULL )  {
+  $link_id = bw_array_get( $atts, "link", $post_id );
+  if ( $link_id ) {
+  
+    $text = bw_array_get( $atts, "title", NULL );
+    alink( NULL, get_permalink( $link_id ), $thumbnail, NULL, "link-".$link_id );  
+  } else {
+    e( $thumbnail );
+  }
+}
 /**
  * Format the "post" - basic first version
+ *
+ * Format the 'post' in a block or div with title, image with link, excerpt and read more button
  *
  */
 function bw_format_post( $post, $atts ) {
@@ -131,22 +157,22 @@ function bw_format_post( $post, $atts ) {
   
   $atts['title'] = get_the_title( $post->ID );
   $read_more = bw_array_get( $atts, "read_more", "read more" );
+  $thumbnail = bw_thumbnail( $post->ID, $atts );
   
   $in_block = bw_validate_torf( bw_array_get( $atts, "block", TRUE ));
   if ( $in_block ) { 
     e( bw_block( $atts ));
-    e( bw_thumbnail( $post, $atts ) );
-  }
-  else {
+    bw_link_thumbnail( $thumbnail, $post->ID, $atts );
+  } else {
     $class = bw_array_get( $atts, "class", "" );
     sdiv( $class );
-    e( bw_thumbnail( $post, $atts ) );
+    //e( bw_thumbnail( $post->ID, $atts ) );
+    bw_link_thumbnail( $thumbnail, $post->ID, $atts );
     span( "title" );
     strong( $atts['title'] );
     epan();
     br();
   }  
-
   e( bw_excerpt( $post ) );
   sp();
   art_button( get_permalink( $post->ID ), $read_more, $read_more ); 
@@ -163,9 +189,10 @@ function bw_format_post( $post, $atts ) {
 /**
  * List sub-pages of the current or selected page 
  *
- * This function is designed to replace the functionality of [bw_plug name='extended-page-lists'] and other plugins that list pages
+ * This function is designed to replace the functionality of the [bw_plug name='extended-page-lists'] plugin and other plugins that list pages.
  * It works in conjunction with Artisteer blocks - to enable the page list to be styled as a series of blocks
  * Well, that's the plan
+ *
  * [bw_pages class="classes for bw_block" 
  *   post_type='page'
  *   post_parent 
@@ -174,21 +201,16 @@ function bw_format_post( $post, $atts ) {
  *   posts_per_page=-1
  *   block=true or false
  *   thumbnail=specification - see bw_thumbnail
+ *   customcategoryname=custom category value  
  */
 function bw_pages( $atts = NULL ) {
-  
-  // $block_atts = array( "class"=> $class, );
   
   // Copy the atts from the shortcode to create the array for the query
   // removing the class and title parameter that gets passed to bw_block()
   
   $attr = $atts;
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
-  bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
-  
-  //unset( $attr['class'] );
-  //unset( $attr['title'] );
-  
+  //bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
   /* Set default values if not already set */
   
   $attr['post_type'] = bw_array_get( $attr, 'post_type', 'page' );
@@ -197,15 +219,15 @@ function bw_pages( $atts = NULL ) {
   $attr['numberposts'] = bw_array_get( $attr, "numberposts", -1 );
   $attr['orderby'] = bw_array_get( $attr, "orderby", "title" );
   $attr['order'] = bw_array_get( $attr, "order", "ASC" );
-  $attr['category'] = bw_array_get( $attr, "category", NULL );
+  $attr['category_name'] = bw_array_get( $attr, "category_name", NULL );
   $attr['exclude'] = bw_array_get( $attr, "exclude", $GLOBALS['post']->ID );
+  
+  bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
   $posts = get_posts( $attr );
   bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
   
   foreach ( $posts as $post ) {
     bw_format_post( $post, $atts );
-    //p( "this is a post" );
-    //e( $post->ID );
   }
   
   return( bw_ret() );
@@ -214,60 +236,66 @@ function bw_pages( $atts = NULL ) {
 
 /** 
  * get the post thumbnail 
+ * Returns the HTML for the thumbnail image which can then be wrapped in a link if required
+ * 
+ *  Return Value: An array containing:
+ *    $image[0] => url
+ *    $image[1] => width
+ *    $image[2] => height
+ *
  */
- 
-function bw_get_thumbnail( $post_id = null, $size = 'thumbnail' ) {
- 
-
-  /* Return Value: An array containing:
-       $image[0] => attachment id
-       $image[1] => url
-       $image[2] => width
-       $image[3] => height
-  */
+function bw_get_thumbnail( $post_id = null, $size = 'thumbnail', $atts=NULL ) {
   $return_value = FALSE;
-  if ($post_id == Null) 
+  if ($post_id == null) 
     $post_id = get_the_id();
   
   bw_trace( $post_id, __FUNCTION__, __LINE__, __FILE__, "post_id" );
   
-  If ( function_exists('get_post_thumbnail_id') && $thumb_id = get_post_thumbnail_id( $post_id ) ) {
-    $return_value = array_merge( array( $thumb_id ), (array) wp_get_attachment_image_src( $thumb_id, $size ) );
+  if ( has_post_thumbnail( $post_id ) ) {
+    $thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), $size );
+  }
+  elseif ( function_exists('get_post_thumbnail_id') && $thumb_id = get_post_thumbnail_id( $post_id ) ) {
+    $thumbnail =  wp_get_attachment_image_src( $thumb_id, $size ) ;
   }  
   elseif ( $arr_thumb = bw_get_attached_image( $post_id, 1, 'rand', $size )) {
-    $return_value = $arr_thumb[0];
+    $thumbnail = $arr_thumb[0];
   }  
-  bw_trace( $return_value, __FUNCTION__, __LINE__, __FILE__, "return_value" ); 
   
+  if ( $thumbnail[0] ) {
+    $text = bw_array_get( $atts, "title", NULL );
+    $return_value = retimage( "bw_thumbnail", $thumbnail[0], $text , $thumbnail[1], $thumbnail[2] );  
+  }
+  bw_trace( $return_value, __FUNCTION__, __LINE__, __FILE__, "return_value" ); 
+  return( $return_value );
 }
 
 /**
- * get the attached image
+ * get the attached image 
+ *
+ * Return an array of images attached to a specific post ID
+ *
+ *   
+ * Return Value: An array containing:
+ *       $image[0] => url
+ *       $image[1] => width
+ *       $image[2] => height
+ *       $image[3] => attachment id
  */
 function bw_get_attached_image( $post_id = null, $number = 1, $orderby = 'rand', $image_size = 'thumbnail') {
 
+  if ($post_id == null) 
+    $post_id = get_the_id();
   bw_trace( $post_id, __FUNCTION__, __LINE__, __FILE__, "post_id" ); 
-
-  If ($post_id == Null) $post_id = get_the_id();
-  $number = IntVal ($number);
-  $arr_attachment = get_posts (Array( 'post_parent'    => $post_id,
+  $number = intval( $number );
+  
+  $arr_attachment = get_posts (array( 'post_parent'    => $post_id,
                                       'post_type'      => 'attachment',
                                       'numberposts'    => $number,
                                       'post_mime_type' => 'image',
                                       'orderby'        => $orderby ));
   
-  // Check if there are attachments
-  If (Empty($arr_attachment)) return False;
-  
-  // Convert the attachment objects to urls
-  ForEach ($arr_attachment AS $index => $attachment){
-    $arr_attachment[$index] = Array_Merge ( Array($attachment->ID), (Array) wp_get_attachment_image_src($attachment->ID, $image_size));
-    /* Return Value: An array containing:
-         $image[0] => attachment id
-         $image[1] => url
-         $image[2] => width
-         $image[3] => height
-    */
+  foreach ( $arr_attachment as $index => $attachment ) {
+    $arr_attachment[$index] = array_merge ( (array) wp_get_attachment_image_src($attachment->ID, $image_size), array($attachment->ID) );
   }
   
   bw_trace( $arr_attachment, __FUNCTION__, __LINE__, __FILE__, "arr_attachment" );
