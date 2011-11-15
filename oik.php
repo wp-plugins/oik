@@ -4,7 +4,7 @@
 Plugin Name: oik base plugin 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use shortcode macros for often included key-information 
-Version: 1.5
+Version: 1.6
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -75,9 +75,11 @@ function oik_version() {
   wp_enqueue_style( 'bwlinkCSS', WP_PLUGIN_URL . '/oik/bwlink.css' ); 
 
   $customCSS =  bw_get_company( 'customCSS' );
-  if ( !empty( $customCSS) )
-    wp_enqueue_style( 'customCSS', get_stylesheet_directory_uri() . '/' .  $customCSS);
-    
+  if ( !empty( $customCSS) ) {
+  
+    $deps = array( get_current_theme() );
+    wp_enqueue_style( 'customCSS', get_stylesheet_directory_uri() . '/' .  $customCSS, $deps);
+  }  
   add_action('admin_init', 'oik_options_init' );
   add_action('admin_menu', 'oik_options_add_page');
 
