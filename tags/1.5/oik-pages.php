@@ -110,7 +110,7 @@ function bw_thumbnail( $post_id, $atts=NULL ) {
   
   /* Cater for Artisteer themes that already return thumbnails */
     
-  if ( function_exists( 'theme_get_post_thumbnail') ) {
+  if ( function_exists( '_theme_get_post_thumbnail') ) {
     global $post;
     $save_post = $post;
     $post = $post_id;
@@ -139,7 +139,7 @@ function bw_link_thumbnail( $thumbnail, $post_id, $atts=NULL )  {
   if ( $link_id ) {
   
     $text = bw_array_get( $atts, "title", NULL );
-    alink( NULL, get_permalink( $link_id ), $thumbnail, NULL, "link-".$link_id );  
+    alink( NULL, get_permalink( $link_id ), $thumbnail, $text, "link-".$link_id );  
   } else {
     e( $thumbnail );
   }
@@ -162,12 +162,16 @@ function bw_format_post( $post, $atts ) {
   $in_block = bw_validate_torf( bw_array_get( $atts, "block", TRUE ));
   if ( $in_block ) { 
     e( bw_block( $atts ));
+    sdiv( "avatar alignleft" );
     bw_link_thumbnail( $thumbnail, $post->ID, $atts );
+    ediv();
   } else {
     $class = bw_array_get( $atts, "class", "" );
     sdiv( $class );
+    sdiv( "avatar alignleft" );
     //e( bw_thumbnail( $post->ID, $atts ) );
     bw_link_thumbnail( $thumbnail, $post->ID, $atts );
+    ediv();
     span( "title" );
     strong( $atts['title'] );
     epan();
