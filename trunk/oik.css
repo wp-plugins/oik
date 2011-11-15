@@ -394,3 +394,8 @@ span.drupal { color: #0678be; font-family: 'Helvetica Neue', Helvetica, Arial, s
 span.artisteer { color: #D16521; font-family: Arial; }
 
 div.adr div.type { display: none; }
+
+/* disable the background on Mail Chimp's Email Format radio buttons */
+div#mc_embed_signup ul li { background-image: none; }
+
+

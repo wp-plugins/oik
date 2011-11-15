@@ -3,8 +3,8 @@
 /*
 Plugin Name: oik pages
 Plugin URI: http://www.oik-plugins.com/oik
-Description: [bw_pages] shortcode to summarize child pages or custom post types
-Version: 1.5
+Description: [bw_pages] and [bw_list] shortcodes to summarize child pages or custom post types
+Version: 1.6
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -36,6 +36,8 @@ require_once( 'oik-artisteer.php' );
 
 
 bw_add_shortcode( 'bw_pages', 'bw_pages' );
+bw_add_shortcode( 'bw_list', 'bw_list' );
+bw_add_shortcode( 'bw_bookmarks', 'bw_bookmarks' );
 
 /**
  * Return the excerpt from the $post 
@@ -110,7 +112,7 @@ function bw_thumbnail( $post_id, $atts=NULL ) {
   
   /* Cater for Artisteer themes that already return thumbnails */
     
-  if ( function_exists( 'theme_get_post_thumbnail') ) {
+  if ( function_exists( '_theme_get_post_thumbnail') ) {
     global $post;
     $save_post = $post;
     $post = $post_id;
@@ -139,7 +141,7 @@ function bw_link_thumbnail( $thumbnail, $post_id, $atts=NULL )  {
   if ( $link_id ) {
   
     $text = bw_array_get( $atts, "title", NULL );
-    alink( NULL, get_permalink( $link_id ), $thumbnail, NULL, "link-".$link_id );  
+    alink( NULL, get_permalink( $link_id ), $thumbnail, $text, "link-".$link_id );  
   } else {
     e( $thumbnail );
   }
@@ -162,12 +164,16 @@ function bw_format_post( $post, $atts ) {
   $in_block = bw_validate_torf( bw_array_get( $atts, "block", TRUE ));
   if ( $in_block ) { 
     e( bw_block( $atts ));
+    sdiv( "avatar alignleft" );
     bw_link_thumbnail( $thumbnail, $post->ID, $atts );
+    ediv();
   } else {
     $class = bw_array_get( $atts, "class", "" );
     sdiv( $class );
+    sdiv( "avatar alignleft" );
     //e( bw_thumbnail( $post->ID, $atts ) );
     bw_link_thumbnail( $thumbnail, $post->ID, $atts );
+    ediv();
     span( "title" );
     strong( $atts['title'] );
     epan();
@@ -183,6 +189,21 @@ function bw_format_post( $post, $atts ) {
     sediv( "cleared" );
     ediv();  
   }    
+}
+
+
+/**
+ * Format the "post" - in a simple link
+ */
+function bw_format_list( $post, $atts ) {
+  setup_postdata( $post );
+  
+  // bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
+  $title = get_the_title( $post->ID );
+  stag( 'li' );
+  alink( NULL, get_permalink( $post->ID ), $title );
+  etag( 'li' );
+  
 }
 
 
@@ -204,26 +225,7 @@ function bw_format_post( $post, $atts ) {
  *   customcategoryname=custom category value  
  */
 function bw_pages( $atts = NULL ) {
-  
-  // Copy the atts from the shortcode to create the array for the query
-  // removing the class and title parameter that gets passed to bw_block()
-  
-  $attr = $atts;
-  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
-  //bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
-  /* Set default values if not already set */
-  
-  $attr['post_type'] = bw_array_get( $attr, 'post_type', 'page' );
-  if ( $attr['post_type'] == 'page' )
-    $attr['post_parent'] = bw_array_get( $attr, "post_parent", $GLOBALS['post']->ID );
-  $attr['numberposts'] = bw_array_get( $attr, "numberposts", -1 );
-  $attr['orderby'] = bw_array_get( $attr, "orderby", "title" );
-  $attr['order'] = bw_array_get( $attr, "order", "ASC" );
-  $attr['category_name'] = bw_array_get( $attr, "category_name", NULL );
-  $attr['exclude'] = bw_array_get( $attr, "exclude", $GLOBALS['post']->ID );
-  
-  bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
-  $posts = get_posts( $attr );
+  $posts = bw_get_posts( $atts );
   bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
   
   foreach ( $posts as $post ) {
@@ -301,4 +303,92 @@ function bw_get_attached_image( $post_id = null, $number = 1, $orderby = 'rand',
   bw_trace( $arr_attachment, __FUNCTION__, __LINE__, __FILE__, "arr_attachment" );
   
   return $arr_attachment;
+}
+
+
+/**
+ * List sub-pages of the current or selected page - in a simple list 
+ *
+ * Same as bw_pages but producing a simple list of links to the content type
+ *
+ *
+ * [bw_list class="classes for the list" 
+ *   post_type='page'
+ *   post_parent 
+ *   orderby='title'
+ *   order='ASC'
+ *   posts_per_page=-1
+ *   block=true or false
+ *   thumbnail=specification - see bw_thumbnail
+ *   customcategoryname=custom category value  
+ */
+function bw_list( $atts = NULL ) {
+  
+  $posts = bw_get_posts( $atts );
+  
+  sul( bw_array_get( $atts, 'class', 'bw_list' ));
+  
+  foreach ( $posts as $post ) {
+    bw_format_list( $post, $atts );
+  }
+  eul();
+  
+  return( bw_ret() );
+} 
+
+/**
+ * Wrapper to get_posts() 
+ */
+function bw_get_posts( $atts = NULL ) {
+  // Copy the atts from the shortcode to create the array for the query
+  // removing the class and title parameter that gets passed to bw_block()
+ 
+  $attr = $atts;
+  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
+  //bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
+  /* Set default values if not already set */
+  
+  $attr['post_type'] = bw_array_get( $attr, 'post_type', 'page' );
+  if ( $attr['post_type'] == 'page' )
+    $attr['post_parent'] = bw_array_get( $attr, "post_parent", $GLOBALS['post']->ID );
+  $attr['numberposts'] = bw_array_get( $attr, "numberposts", -1 );
+  $attr['orderby'] = bw_array_get( $attr, "orderby", "title" );
+  $attr['order'] = bw_array_get( $attr, "order", "ASC" );
+  $attr['category_name'] = bw_array_get( $attr, "category_name", NULL );
+  $attr['exclude'] = bw_array_get( $attr, "exclude", $GLOBALS['post']->ID );
+  
+  bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
+  $posts = get_posts( $attr );
+  bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
+  return( $posts );
+  
+}
+
+
+/**
+ * Wrapper to wp_list_bookmarks() 
+ *
+ * which replaces get_links()
+ */
+function bw_bookmarks( $atts = NULL ) {
+  // Copy the atts from the shortcode to create the array for the query
+  // removing the class and title parameter that gets passed to bw_block()
+ 
+  $attr = $atts;
+  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
+  //bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
+  /* Set default values if not already set */
+  
+  $attr['limit'] = bw_array_get( $attr, "numberposts", -1 );
+  $attr['orderby'] = bw_array_get( $attr, "orderby", "name" );
+  $attr['order'] = bw_array_get( $attr, "order", "ASC" );
+  $attr['category_name'] = bw_array_get( $attr, "category_name", NULL );
+  // $attr['exclude'] = bw_array_get( $attr, "exclude", $GLOBALS['post']->ID );
+  $attr['echo'] = 0;
+  
+  bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
+  $posts = wp_list_bookmarks( $attr );
+  bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
+  return( $posts );
+  
 }

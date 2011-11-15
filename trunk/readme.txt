@@ -76,6 +76,10 @@ Yes. I'm concentrating on getting version 1.x properly released.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 1.6 =
+* Added [bw_bookmarks] shortcode - equivalent to the Links widget
+* Added [bw_list] shortcode
+* Changed custom.css will be after style.css
 = 1.5 = 
 * Changed: [clear] now expands to two classes: clear and cleared
 * Fixed: reduced more warnings that were produced when WP_DEBUG is set

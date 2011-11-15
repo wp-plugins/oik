@@ -28,18 +28,30 @@ function bw_ret() {
 }
 
 
-function retimage( $class, $jpg, $title, $width=NULL, $height=NULL )
-{
-    $img = '<img class="' .  $class . '" ';  
-    $img .= 'src="' .  bw_expand_link( $jpg ) . '" ';
-    if ( !is_null( $width))
-      $img .= 'width="' . $width . '" ';
-    if ( !is_null( $height))
-      $img .= 'height="' . $height . '" ';
-    $img .= 'title="' . $title . '" ';
-    $img .= 'alt="' . $title . '" ';
-    $img .= " />";
-    return( $img );
+/**
+ * Return an image tag
+ * 
+ * @param string $class  CSS classes for this image
+ * @param string $jpg file name of the image (src=)
+ * @param string $title value for the title= and alt= attributes
+ * @param string $width width of the image
+ * @param string $height height of the image
+ * @return string HTML of the img tag
+ 
+ * Note: This function does not handle an id= attribute
+ */
+function retimage( $class, $jpg, $title, $width=NULL, $height=NULL ) {
+  $img = '<img class="' .  $class . '" ';  
+  $img .= 'src="' .  bw_expand_link( $jpg ) . '" ';
+  if ( !is_null( $width))
+    $img .= 'width="' . $width . '" ';
+  if ( !is_null( $height))
+    $img .= 'height="' . $height . '" ';
+  $title = strip_tags( $title );
+  $img .= 'title="' . $title . '" ';
+  $img .= 'alt="' . $title . '" ';
+  $img .= " />";
+  return( $img );
 }
  
 function image( $class, $jpg, $title, $width=NULL, $height=NULL )
