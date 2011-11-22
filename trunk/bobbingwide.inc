@@ -278,6 +278,21 @@ function bw_plug_list_plugins( $option='active_plugins' ) {
   
   $names = bw_get_unique_plugin_names( $plugins );
   return( $names );
+}
+
+/** 
+ * Return what might be the plugin name with hyphens and lowercase chars
+ * 
+ * Strip any tags - the WordPress UI likes adding <br />'s where we don't want them
+ */
+ 
+function bw_plugin_namify( $name ) {
+  $name = trim( $name );
+  $name = str_replace( ' ', '-', $name );
+  $name = str_replace( '_', '-', $name );
+  $name = strtolower( $name );
+  
+  return( bw_trace2( $name ) ); 
 }  
 
 /** Added [bw_plug name="plugin name" link="URL" table="t/f,y/n,1/0"] shortcode
@@ -291,7 +306,7 @@ function bw_plug_list_plugins( $option='active_plugins' ) {
  * [bw_plug name='oik' table='y'][bw_plug name='wordpress-google-plus-one-button' table='y']
  * simplify it to 
  * [bw_plug name='oik,wordpress-google-plus-one-button' table='y']
- * In fact - you can omit the table= parameter since it's forced.
+ * In fact - you can omit the table= parameter since it's forced when there's more than one name.
  * 
 */
 function bw_plug( $atts ) {
@@ -308,6 +323,7 @@ function bw_plug( $atts ) {
   if ( !empty( $option ) ) {
     $names = bw_plug_list_plugins( $option );
   } else {
+    $name = wp_strip_all_tags( $name, TRUE );
     $names = explode( ",", $name );
   }
   
@@ -319,6 +335,8 @@ function bw_plug( $atts ) {
 
   foreach ( $names as $name ) {
   
+    $name = bw_plugin_namify( $name );
+  
     $plugininfo = bw_get_plugin_info_cache( $name );
   
     bw_trace( $plugininfo, __FUNCTION__, __LINE__, __FILE__, "plugininfo" );
@@ -326,7 +344,7 @@ function bw_plug( $atts ) {
     
     if ( !$plugininfo->name ) {
       if ( $table ) {
-        bw_format_table( $name, $link, NULL );
+        bw_format_table( $name, $link, FALSE );
       }  
       else {
         bw_format_default( $name, $link );
@@ -515,7 +533,7 @@ function bw_module( $atts ) {
   /*
   if ( !$plugininfo->name ) {
     if ( $table ) {
-      bw_format_table( $name, $link, NULL );
+      bw_format_table( $name, $link, FALSE );
     }  
     else {
       bw_format_default( $name, $link );

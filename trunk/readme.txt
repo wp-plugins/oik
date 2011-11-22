@@ -82,10 +82,11 @@ Yes. I'm concentrating on getting version 1.x properly released.
 * Added bw_trace2() function - improved (easier to code) wrapper to bw_trace()
 * Changed: custom.css should be embedded after style.css (and other stylesheets. e.g. buddypress stylesheets)
 * Changed add parameters ( me and url) to the "follow me" shortcodes - to set values for 'me' and the social media url
-* Fixed bw_backtrace() first checks if trace is enabled.
+* Changed: oik-bwtrace. The notes suggest .loh for a the log file extension. 
+* Changed: [bw_plug] tries to help with plugin names
+* Fixed: bw_backtrace() first checks if trace is enabled.
 * Fixed: ability to specify a custom image size for [bw_pages]  e.g. [bw_pages thumbnail=80] or [bw_pages thumbnail="120x80"]
 * Fixed: more clearly shows where the customCSS file will reside... in the current theme directory
-* Changed: oik-bwtrace. The notes suggest .loh for a the log file extension. 
 = 1.5 = 
 * Changed: [clear] now expands to two classes: clear and cleared
 * Fixed: reduced more warnings that were produced when WP_DEBUG is set
