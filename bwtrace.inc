@@ -1,4 +1,5 @@
 <?php 
+// (C) Copyright Bobbing Wide 2011
 
 function bwapi_trace_test( $text) {
   if ( function_exists( 'bw_trace' ) ) {
@@ -59,7 +60,6 @@ function bw_getlocale($category=LC_ALL) {
 
 function bw_trace_file_part( $file ) {
   global $bw_trace_anonymous;
-  //$bw_trace_anonymous = TRUE;
   
   if ( $bw_trace_anonymous ) {
     $lose = str_replace( "/", "\\", ABSPATH );
@@ -83,7 +83,6 @@ function bw_trace_file_part( $file ) {
 function bw_trace_date( $format=DATE_W3C ) {
   global $bw_include_trace_date;
   
-  // $bw_trace_date = FALSE;
   if ( $bw_include_trace_date )
     $ret = date( $format );
   else
@@ -99,7 +98,6 @@ function bw_trace_date( $format=DATE_W3C ) {
  */
 function bw_trace_count( $count ) {
   global $bw_include_trace_count;
-  //$bw_include_trace_count = FALSE;
   
  if ( $bw_include_trace_count )
     $ret = $count;
@@ -118,12 +116,15 @@ function bw_torf( $array, $option ) {
   return $ret;
 }
 
-
-
-  
 /* Format required for the trace record is something like this
  
-C:\apache\htdocs\wordpress\wp-content\plugins\bwtrace\bwtrace.php(116:0)  1 2011-01-05T22:43:13+00:00
+  C:\apache\htdocs\wordpress\wp-content\plugins\bwtrace\bwtrace.php(116:0)  1 2011-01-05T22:43:13+00:00
+
+  but this can be altered by the settings for:
+  - trace count
+  - trace date
+  - trace files part ( anonymous ) 
+
 */
 function bw_flf( $function, $lineno, $file, $count,  $text, $text_label = NULL ) {
   $ref = bw_trace_file_part( $file );
@@ -341,30 +342,80 @@ if ( !function_exists( 'bw_array_get' ) ) {
 
 )
 */
- 
 function bw_backtrace() {
-  $backtrace = debug_backtrace();
-  foreach ( $backtrace as $i => $call ) {
-    $function = $call['function'];
-    
-    $file = bw_array_get( $call, 'file', NULL) ;
-    $file = bw_trace_file_part( $file );
-    $line = bw_array_get( $call, 'line', 0 );
-    $args = $call['args'];
-    $cargs = count( $args );
-    switch ( $cargs ) {
-      case 0: 
-        $targs = NULL;
-        break;
-      case 1:
-        $targs = $args[0]; 
-        break;
-      default:
-        $targs = $args;
-    }      
-    bw_trace( $targs, $function, $line, $file, $i );
+  global $bw_trace_on;
+  if ($bw_trace_on) {
+    $backtrace = debug_backtrace();
+    foreach ( $backtrace as $i => $call ) {
+      $function = $call['function'];
+      
+      $file = bw_array_get( $call, 'file', NULL) ;
+      $file = bw_trace_file_part( $file );
+      $line = bw_array_get( $call, 'line', 0 );
+      $args = $call['args'];
+      $cargs = count( $args );
+      switch ( $cargs ) {
+        case 0: 
+          $targs = NULL;
+          break;
+        case 1:
+          $targs = $args[0]; 
+          break;
+        default:
+          $targs = $args;
+      }      
+      bw_trace( $targs, $function, $line, $file, $i );
+    }
   }
+} 
+
+/**
+ * Improved trace function that needs no parameters
+ *
+ * @param mixed $value - an optional field to be traced
+ * @param string $text - an optional identifying text for the field to be traced
+ * @return mixed $value - to allow this function to be called in return statements 
+ * 
+ * Using debug_backtrace this function can be used to trace the parameters to a function
+ * It's a version of bw_backtrace that doesn't produce the whole call tree
+ * It's less efficient than bw_trace since it first needs to call debug_backtrace()
+ * bw_backtrace should also perform the checks.
+ *
+ */
+function bw_trace2( $value=NULL, $text=NULL ) {
+  global $bw_trace_on;
+  if ($bw_trace_on) {
+    $backtrace = debug_backtrace();
+    $call = $backtrace[0];
+    $call1 = $backtrace[1];
+    //foreach ( $backtrace as $i => $call ) 
+    {
+      $function = $call1['function'];
+      
+      $file = bw_array_get( $call, 'file', NULL) ;
+      $file = bw_trace_file_part( $file );
+      $line = bw_array_get( $call, 'line', 0 );
+      $args = $call1['args'];
+      $cargs = count( $args );
+      switch ( $cargs ) {
+        case 0: 
+          $targs = NULL;
+          break;
+        case 1:
+          $targs = $args[0]; 
+          break;
+        default:
+          $targs = $args;
+      }      
+      bw_trace( $targs, $function, $line, $file, $cargs );
+      if ( $value ) 
+        bw_trace( $value, $function, $line, $file, $text );
+
+    }
+  }  
+  return( $value );
 }    
+   
    
 
 /**

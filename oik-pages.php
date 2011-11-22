@@ -77,13 +77,17 @@ function bw_excerpt( $post_id ) {
  */
 function bw_get_image_size( $size=100 ) {
   $pattern = "/([\d]+)/";
-  preg_match_all($pattern, $size, $thumbnail);
-  if ( count( $thumbnail ) < 2 ) 
-    $thumbnail[1] = $thumbnail[0];
+  preg_match_all( $pattern, $size, $thumbnail );
+  // bw_trace2( $thumbnail );
+  if ( count( $thumbnail[0] ) < 2 ) 
+    $thumbnail[0][1] = $thumbnail[0][0];
+    
+  $size = array( $thumbnail[0][0], $thumbnail[0][1] );  
 
-  bw_trace( $thumbnail, __FUNCTION__, __LINE__, __FILE__, "thumbnail" );
-  return( $thumbnail ); 
+  // bw_trace( $size, __FUNCTION__, __LINE__, __FILE__, "size" );
+  return( $size ); 
 }
+
  
 /**
  * get the thumbnail of the specified size
@@ -136,7 +140,7 @@ function bw_thumbnail( $post_id, $atts=NULL ) {
  * @param id     $post_id   default post id if not specified in $atts
  * @param array  $atts      shortcode attributes array
  */
-function bw_link_thumbnail( $thumbnail, $post_id, $atts=NULL )  {
+function bw_link_thumbnail( $thumbnail, $post_id=NULL, $atts=NULL )  {
   $link_id = bw_array_get( $atts, "link", $post_id );
   if ( $link_id ) {
   
@@ -146,10 +150,15 @@ function bw_link_thumbnail( $thumbnail, $post_id, $atts=NULL )  {
     e( $thumbnail );
   }
 }
+
 /**
  * Format the "post" - basic first version
  *
  * Format the 'post' in a block or div with title, image with link, excerpt and read more button
+ *
+ * @param object $post - A post object
+ * @param array $atts - Attributes array - passed from the shortcode
+ * 
  *
  */
 function bw_format_post( $post, $atts ) {
@@ -171,7 +180,6 @@ function bw_format_post( $post, $atts ) {
     $class = bw_array_get( $atts, "class", "" );
     sdiv( $class );
     sdiv( "avatar alignleft" );
-    //e( bw_thumbnail( $post->ID, $atts ) );
     bw_link_thumbnail( $thumbnail, $post->ID, $atts );
     ediv();
     span( "title" );
@@ -193,7 +201,7 @@ function bw_format_post( $post, $atts ) {
 
 
 /**
- * Format the "post" - in a simple link
+ * Format the "post" - in a simple list item list
  */
 function bw_format_list( $post, $atts ) {
   setup_postdata( $post );
@@ -233,12 +241,38 @@ function bw_pages( $atts = NULL ) {
   }
   
   return( bw_ret() );
-}  
+} 
+
+/**
+ * Force the thumbnail size to be what we asked for
+ * 
+ * wp_attachment_get_image_src() can sometimes attempt to return a $thumbnail where the
+ * width and height don't match what we asked for.
+ * 
+ * The values of $thumbnail[1] and $thumbnail[2] are used to set the width and height values on the <img> tag
+ * We choose to reset these to the values first thought of. 
+ * 
+ * Note: The side effect of this is that the images get reshaped rather than being cropped.
+ * It's up to the web designer to set the sizes for thumbnail, small, medium and large
+ * and/or upload images that will scale nicely for the chosen figures. 
+ */
+function bw_force_size( $thumbnail, $size ) {
+  if ( is_array( $size ) ) {
+  
+    $thumbnail[1] = $size[0];
+    $thumbnail[2] = $size[1];
+  }  
+  return( $thumbnail );
+}
   
 
 /** 
  * get the post thumbnail 
  * Returns the HTML for the thumbnail image which can then be wrapped in a link if required
+ * @param integer $post_id - the id of the content for which the thumbnail is required
+ *                defaults to the current post id
+ * @param mixed  $size - the required image size: either a preset or specified in an array
+ * @atts  array  array of key value pairs that may be needed
  * 
  *  Return Value: An array containing:
  *    $image[0] => url
@@ -254,17 +288,22 @@ function bw_get_thumbnail( $post_id = null, $size = 'thumbnail', $atts=NULL ) {
   bw_trace( $post_id, __FUNCTION__, __LINE__, __FILE__, "post_id" );
   
   if ( has_post_thumbnail( $post_id ) ) {
+    //bw_trace( $size, __FUNCTION__, __LINE__, __FILE__, "size" );
     $thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), $size );
   }
   elseif ( function_exists('get_post_thumbnail_id') && $thumb_id = get_post_thumbnail_id( $post_id ) ) {
+    // bw_trace( $thumb_id, __FUNCTION__, __LINE__, __FILE__, "thumb_id" );
     $thumbnail =  wp_get_attachment_image_src( $thumb_id, $size ) ;
   }  
   elseif ( $arr_thumb = bw_get_attached_image( $post_id, 1, 'rand', $size )) {
+    //bw_trace( $arr_thumb, __FUNCTION__, __LINE__, __FILE__, "arr_thumb" );
     $thumbnail = $arr_thumb[0];
-  }  
-  
+  } 
+  // bw_trace( $thumbnail, __FUNCTION__, __LINE__, __FILE__, "thumbnail" ); 
   if ( $thumbnail[0] ) {
     $text = bw_array_get( $atts, "title", NULL );
+    $thumbnail = bw_force_size( $thumbnail, $size );
+    
     $return_value = retimage( "bw_thumbnail", $thumbnail[0], $text , $thumbnail[1], $thumbnail[2] );  
   }
   bw_trace( $return_value, __FUNCTION__, __LINE__, __FILE__, "return_value" ); 

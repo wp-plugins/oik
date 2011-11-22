@@ -6,7 +6,7 @@ Requires: 3.0.4
 Tested up to: 3.2.1
 Stable tag: 1.5
 
-Often Included Key-information. 
+Often Included Key-information using smart shortcodes 
 
 == Description ==
 oik is a set of plugins that ease the day to day creation of the very important but rather tedious content that is information about you, 
@@ -26,7 +26,7 @@ For general use
 * oik-blocks to create Artisteer style blocks within your pages, posts and even widgets
 * oik-button-shortcodes to provide call-to-action button style links for Artisteer themes
 * oik-email-signature to help generate an email signature file for all your email messages
-* oik-pages to list subpages - [bw_pages] shortcode
+* oik-pages to list subpages, post or custom post types - [bw_pages] shortcode
 * oik-paypal-shortcodes to provide PayPal buttons
 * oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
 * oik-tides - shortcode for tide times in the UK
@@ -77,9 +77,15 @@ Yes. I'm concentrating on getting version 1.x properly released.
 
 == Changelog ==
 = 1.6 =
-* Added [bw_bookmarks] shortcode - equivalent to the Links widget
-* Added [bw_list] shortcode
-* Changed custom.css will be after style.css
+* Added: [bw_bookmarks] shortcode - equivalent to the Links widget
+* Added: [bw_list] shortcode - a simple list of links for any post type
+* Added bw_trace2() function - improved (easier to code) wrapper to bw_trace()
+* Changed: custom.css should be embedded after style.css (and other stylesheets. e.g. buddypress stylesheets)
+* Changed add parameters ( me and url) to the "follow me" shortcodes - to set values for 'me' and the social media url
+* Fixed bw_backtrace() first checks if trace is enabled.
+* Fixed: ability to specify a custom image size for [bw_pages]  e.g. [bw_pages thumbnail=80] or [bw_pages thumbnail="120x80"]
+* Fixed: more clearly shows where the customCSS file will reside... in the current theme directory
+* Changed: oik-bwtrace. The notes suggest .loh for a the log file extension. 
 = 1.5 = 
 * Changed: [clear] now expands to two classes: clear and cleared
 * Fixed: reduced more warnings that were produced when WP_DEBUG is set
