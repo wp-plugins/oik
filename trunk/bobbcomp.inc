@@ -349,17 +349,28 @@ function bw_contact() {
 } 
 
 
+/**
+ * create a styled follow me button
+ * 
+ * @param array atts - array of shortcode attributes
+ * 
+ * network= the name of the social network - this gets lowercased to choose the button class and the oik option field
+ * url = override of who to follow. value defaults to the oik option for the network
+ * me = who to follow - defaults to "me"
+ * text = parameter that gets ignored at present! 
+ */
 function bw_follow( $atts = NULL ) {
   $social_network = $atts['network'];
   $text = $atts['text'];
   
   $lc_social = strtolower( $social_network );
-  $social = bw_get_company( $lc_social );
+  $social = bw_array_get( $atts, 'url', bw_get_company( $lc_social ));
+  $me = bw_array_get( $atts, "me", "me" );
   bw_trace( $text, __FUNCTION__, __LINE__, __FILE__ , "text" );
   if ( $text ) {
     $text = $social_network;
   }  
-  alink( $social_network, $social, $text, "Follow me on ".$social_network );
+  alink( $social_network, $social, $text, "Follow $me on ".$social_network );
        
   return( bw_ret());
 }  

@@ -153,7 +153,7 @@ function bw_trace_options_do_page() {
   
   textfield( "bw_trace_options[count]", 1 ,"Trace count (1=include)", $options['count'] );
   textfield( "bw_trace_options[date]", 1 ,"Trace date (1=include)", $options['date'] );
-  textfield( "bw_trace_options[qualified]", 1 ,"Full qualified file names (1=include)", $options['qualified'] );
+  textfield( "bw_trace_options[qualified]", 1 ,"Fully qualified file names (1=include)", $options['qualified'] );
   
     
   tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" ); 
@@ -168,10 +168,10 @@ function bw_trace_options_do_page() {
   h2( "Notes about " . bw_oik() . " trace" );
   p("The tracing output produced by " .bw_oik(). " trace can be used for problem determination.");
   p("It's not for the faint hearted.");
-  p("The oik plugin should <b>not</b> need to be activated on a live site");
+  p("The oik-bwtrace plugin should <b>not</b> need to be activated on a live site");
   p("If you do need to activate it, only do so for a short period of time." );
  
-  p("You will need to specify the trace file name (e.g. bwtrace.log )" );
+  p("You will need to specify the trace file name (e.g. bwtrace.loh )" );
   p("Set trace level to 1 when you want to trace processing. 0 otherwise");
   p("If you want to clear the trace output set trace reset to 1, save changes, then set it back to 0");
   
