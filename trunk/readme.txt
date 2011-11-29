@@ -23,6 +23,7 @@ Most of the shortcodes are prefixed bw_ (for Bobbing Wide) e.g. [ bw_mailto], wh
 Other plugins extend the functionality: 
 
 For general use
+
 * oik-blocks to create Artisteer style blocks within your pages, posts and even widgets
 * oik-button-shortcodes to provide call-to-action button style links for Artisteer themes
 * oik-email-signature to help generate an email signature file for all your email messages
@@ -32,6 +33,7 @@ For general use
 * oik-tides - shortcode for tide times in the UK
 
 For bobbing wide and other WordPress plugin developers 
+
 * oik-bob-bing-wide to provide easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, bw_plug, bw_module
 * oik-bwtrace provides a rudimentary trace function, which logs trace information to a file, rather than including it within the web page output. 
 
@@ -76,6 +78,10 @@ Yes. I'm concentrating on getting version 1.x properly released.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 1.7 =
+* Added: oik-fields plugin - for [bw_field] (alias [bw_fields]) shortcode - display custom fields
+* Changed: image/retimage API: title defaults to NULL - so can be omitted
+* Fixed: [bw_pages] if the post_type is page, no longer set post_parent automatically 
 = 1.6 =
 * Added: [bw_bookmarks] shortcode - equivalent to the Links widget
 * Added: [bw_list] shortcode - a simple list of links for any post type

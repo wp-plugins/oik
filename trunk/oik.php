@@ -3,8 +3,8 @@
 /*
 Plugin Name: oik base plugin 
 Plugin URI: http://www.oik-plugins.com/oik
-Description: Easy to use shortcode macros for often included key-information 
-Version: 1.6
+Description: Easy to use shortcode macros for Often Included Key-information 
+Version: 1.7
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -64,10 +64,6 @@ function oik_version() {
   add_filter('the_excerpt', 'do_shortcode' );
   add_filter('the_content', 'do_shortcode' );
   //add_filter('get_pages', 'do_shortcode' );
-
-
-// In which sequence should these go?
-// trying api, bobbingwide then bwlink
 
   $bw_options = get_option( 'bw_options' );
 

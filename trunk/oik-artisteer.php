@@ -3,7 +3,7 @@
 -Plugin Name: oik for Artisteer
 -Plugin URI: http://www.oik-plugins.com/oik
 -Description: oik functions for Artisteer based themes 
--Version: 1.6
+-Version: 1.7
 -Author: bobbingwide
 -Author URI: http://www.bobbingwide.com
 -License: GPL2
