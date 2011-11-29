@@ -2,7 +2,7 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '1.5' );
+  return( '1.7' );
 }  
 
 function bw_echo( $string ) {
@@ -40,21 +40,23 @@ function bw_ret() {
  
  * Note: This function does not handle an id= attribute
  */
-function retimage( $class, $jpg, $title, $width=NULL, $height=NULL ) {
+function retimage( $class, $jpg, $title=NULL, $width=NULL, $height=NULL ) {
   $img = '<img class="' .  $class . '" ';  
   $img .= 'src="' .  bw_expand_link( $jpg ) . '" ';
   if ( !is_null( $width))
     $img .= 'width="' . $width . '" ';
   if ( !is_null( $height))
     $img .= 'height="' . $height . '" ';
-  $title = strip_tags( $title );
-  $img .= 'title="' . $title . '" ';
-  $img .= 'alt="' . $title . '" ';
+  if ( !is_null( $title ) ) {
+    $title = strip_tags( $title );
+    $img .= 'title="' . $title . '" ';
+    $img .= 'alt="' . $title . '" ';
+  }  
   $img .= " />";
   return( $img );
 }
  
-function image( $class, $jpg, $title, $width=NULL, $height=NULL )
+function image( $class, $jpg, $title=NULL, $width=NULL, $height=NULL )
 {
   $img = retimage( $class, $jpg, $title, $width, $height ); 
   bw_echo( $img );
@@ -64,32 +66,27 @@ function image( $class, $jpg, $title, $width=NULL, $height=NULL )
 // *?** Need to create a link where I can add the prefix but the link text is nice
 
 /*
-function createlink( $file, $text )
-{
+function createlink( $file, $text ) {
  bw_echo( '<a href="' . $file . '">' . $text . '</a>' );
 } 
 
-function checkout( $url, $text)
-{
+function checkout( $url, $text) {
    createlink( $url, $text);
 }
 
-function checkoutid( $url, $text, $id)
-{
+function checkoutid( $url, $text, $id) {
    bw_echo( '<a id="' .$id . '" href="' . $url . '" alt="' .$text . '" title="' .$text .'">' . $text . '</a>' );
 }
 
 
-function menulink( $file, $text )
-{
+function menulink( $file, $text ) {
   bw_echo( '<li>' );
   createlink( $file, $text );
   bw_echo( '</li>' );
 }
 */
 
-function retstag( $tag, $class=NULL, $id=NULL ) 
-{   
+function retstag( $tag, $class=NULL, $id=NULL ) {   
   $stag = '<' . $tag ;
   if ( $class <> NULL )
      $stag.= ' class="' . $class. '"';
@@ -100,8 +97,7 @@ function retstag( $tag, $class=NULL, $id=NULL )
 }
 
 
-function nullretstag( $tag, $class=NULL )
-{
+function nullretstag( $tag, $class=NULL ) {
    $ret = '';
    if ( $class <> NULL )
       $ret = retstag( $tag, $class );
@@ -109,130 +105,103 @@ function nullretstag( $tag, $class=NULL )
 } 
 
 
-function stag( $tag, $class=NULL, $id=NULL )
-{
+function stag( $tag, $class=NULL, $id=NULL ) {
   bw_echo( retstag( $tag, $class, $id ));
 }
 
-function sol( $class=NULL, $id=NULL )
-{
+function sol( $class=NULL, $id=NULL ) {
    stag( "ol", $class, $id );
 }        
 
 
 /* renamed uls to sul to be consistent with stag */ 
    
-function sul( $class=NULL, $id=NULL )
-{
+function sul( $class=NULL, $id=NULL ) {
    stag( "ul", $class, $id );
 }        
 
-function sdiv( $class=NULL, $id=NULL )
-{
+function sdiv( $class=NULL, $id=NULL ) {
    stag( "div", $class, $id );
 }
 
-function eol()
-{
+function eol() {
    bw_echo( '</ol>' );
 }
    
 
-function eul()
-{
+function eul() {
    bw_echo( '</ul>' );
 }
 
-function ediv()
-{
+function ediv() {
    bw_echo( '</div>' );
 }
 
 /* sediv creates a dummy div which is used for placing graphics using backhground images in CSS */
-function sediv( $class=NULL, $id=NULL )
-{
+function sediv( $class=NULL, $id=NULL ) {
    sdiv( $class, $id );
    ediv();
 }   
 
-function ep()
-{
+function ep() {
   bw_echo( '</p>' );
 }
 
-function nullretetag( $tag, $class=NULL ) 
-{
+function nullretetag( $tag, $class=NULL ) {
   $ret = '';
   if ( $class <> NULL )
      $ret = retetag( $tag );
   return( $ret );   
 }
 
-function retetag( $tag )
-{
+function retetag( $tag ) {
    return( '</'.$tag.'>');
 }  
 
-function etag( $tag )
-{
+function etag( $tag ) {
   //  bw_echo( '</'.$tag.'>'."\n";
   bw_echo( '</'.$tag.'>' );
 }    
 
-function sp( $class=NULL, $id=NULL )
-{
+function sp( $class=NULL, $id=NULL ) {
    stag( "p", $class, $id );
 } 
 
-function p( $text=NULL, $class=NULL, $id=NULL )
-{
+function p( $text=NULL, $class=NULL, $id=NULL ) {
    sp( $class, $id );
    if ( !is_null( $text ))
      bwt( $text );
    etag( "p" );
 }
 
-function hn( $text, $level, $class, $id )
-{
+function hn( $text, $level, $class, $id ) {
    stag( "h".$level, $class, $id );
    bwt( $text );
    etag( "h".$level );
 }
 
-function h1( $text, $class=NULL, $id=NULL )
-{
-   hn( $text, "1", $class, $id );
-  
+function h1( $text, $class=NULL, $id=NULL ) {
+   hn( $text, "1", $class, $id ); 
 }
 
-function h2( $text, $class=NULL, $id=NULL )
-{
-   hn( $text, "2", $class, $id );
-  
+function h2( $text, $class=NULL, $id=NULL ) {
+   hn( $text, "2", $class, $id );  
 }
 
-function h3( $text, $class=NULL, $id=NULL )
-{
-   hn( $text, "3", $class, $id );
-  
+function h3( $text, $class=NULL, $id=NULL ) {
+   hn( $text, "3", $class, $id ); 
 }
 
-function h4( $text, $class=NULL, $id=NULL )
-{
-   hn( $text, "4", $class, $id );
-  
+function h4( $text, $class=NULL, $id=NULL ) {
+   hn( $text, "4", $class, $id ); 
 }
 
-function h5( $text, $class=NULL, $id=NULL )
-{
-   hn( $text, "5", $class, $id );
-  
+function h5( $text, $class=NULL, $id=NULL ) {
+   hn( $text, "5", $class, $id ); 
 }
 
-function h6( $text, $class=NULL, $id=NULL )
-{
-   hn( $text, "6", $class, $id );
-  
+function h6( $text, $class=NULL, $id=NULL ) {
+   hn( $text, "6", $class, $id ); 
 }
 
 
@@ -240,78 +209,67 @@ function h6( $text, $class=NULL, $id=NULL )
  *   since for Drupal t() is already defined for translatable text
  *  Function bwt() does a similar job but also performs some strange filtering if required.
  */  
-function bwt( $text = NULL )
-{
-   global $bbboing;  
+function bwt( $text = NULL ) {
+  global $bbboing;  
 
-   if ( !is_null( $text ))
-   {
-     if ( $bbboing )
-        bw_echo( $bbboing( $text ));
-     else
-       bw_echo( $text ) ;
-   }    
+  if ( !is_null( $text ))
+  {
+    if ( $bbboing )
+       bw_echo( $bbboing( $text ));
+    else
+      bw_echo( $text ) ;
+  }    
 }
 
 /**
  * @func e for bw_echo( if not NULL
  */
-function e( $text = NULL )
-{
+function e( $text = NULL ) {
   if ( !is_null( $text ))
     bw_echo( $text );
 }
 
-function br( $text=NULL )
-{
+function br( $text=NULL ) {
    bw_echo( '<br />' );
    bwt( $text ); 
 }   
 
-function hr()
-{
+function hr() {
   bw_echo( '<hr />' );
 }  
   
 
-function say( $text )   
-{
+function say( $text ) {
   isay ($text, "EN" );
 }
 
-function isay( $text, $lang=NULL )
-{
+function isay( $text, $lang=NULL ) {
   e( $text );  
 } 
 
 // Instead of function li( use function lit( - List Item Text
 
-function lit( $text, $class=NULL, $id=NULL )
-{
+function lit( $text, $class=NULL, $id=NULL ) {
   stag( "li", $class, $id );
   bwt( $text );
   etag( "li" );
 }
 
 /* decided to write a helper function */
-function li( $text )
-{
+function li( $text ) {
    lit( $text );   
 } 
 
 // Note: here we omit the 's' of span to make it easier to type
-function span( $class=NULL, $id=NULL )
-{
+function span( $class=NULL, $id=NULL ) {
   stag( "span", $class, $id );
 }
 
-function epan()
-{
+function epan() {
   etag( "span" );
 }  
 
-function sepan( $class=NULL, $text=NULL )
-{
+function sepan( $class=NULL, $text=NULL ) {
    span( $class );
    e( $text );
    epan();
@@ -320,16 +278,14 @@ function sepan( $class=NULL, $text=NULL )
 
 /* table data */
 
-function td( $data, $class=NULL, $id=NULL )
-{
+function td( $data, $class=NULL, $id=NULL ) {
   stag( "td", $class, $id );
   e( $data );
   etag( "td" );
 } 
 
 /* table heading */
-function th( $data, $class=NULL, $id=NULL )
-{
+function th( $data, $class=NULL, $id=NULL ) {
   stag( "th", $class, $id );
   e( $data );
   etag( "th" );
@@ -338,8 +294,7 @@ function th( $data, $class=NULL, $id=NULL )
   
 
 
-function big_button( $class, $link, $text, $alt)
-{
+function big_button( $class, $link, $text, $alt) {
    sdiv( "big_button_" .$class );
    sp();
    
@@ -361,8 +316,7 @@ function big_button( $class, $link, $text, $alt)
    //ediv();
 }
 
-function button( $class, $link, $text, $alt)
-{
+function button( $class, $link, $text, $alt) {
    
    // createlink( $url, $text );
    stag( "span",  "big_button_" .$class );
@@ -386,8 +340,7 @@ function button( $class, $link, $text, $alt)
 
 }
 
-function sbutton( $class, $link, $text, $alt)
-{
+function sbutton( $class, $link, $text, $alt) {
    
    stag( "span",  "big_button_" .$class );
    // createlink( $url, $text );
@@ -417,8 +370,7 @@ function sbutton( $class, $link, $text, $alt)
 // Example: on betterbfar in the twentyte directory it's set:
 // $docroot_suffix = "/twentyte/" ;
 
-function bw_get_docroot_suffix()
-{
+function bw_get_docroot_suffix() {
   $docroot_suffix = "/";
   if ( $_SERVER['SERVER_NAME'] == bw_get_company( "betterbyfar") )
   {
@@ -443,8 +395,7 @@ function bw_get_docroot_suffix()
      ftp:
      mailto: 
 */     
-function bw_expand_link( $linkurl )
-{
+function bw_expand_link( $linkurl ) {
    if ( strpos( $linkurl, ':' ) == 0  )
       $linkurl = bw_get_docroot_suffix() . $linkurl;
    return( $linkurl) ;   
@@ -452,8 +403,7 @@ function bw_expand_link( $linkurl )
 
 // Note: Any bw_debug's before the DOCTYPE and the page goes into quirks mode
 // where's the earliest we can put these then? = perhaps in comments?
-function bw_get_page()
-{
+function bw_get_page() {
   $page = "";
   if ( !isset( $_GET['page'] ))
   {
@@ -488,38 +438,32 @@ function bw_get_page()
 }  
 
 
-function bw_prefix_require( $file )
-{
+function bw_prefix_require( $file ) {
   global $bobb_prefix;
-  
   $file = $bobb_prefix . $file ;
   require( $file );
 }
 
 
-function strong( $text, $class=NULL, $id=NULL )
-{
+function strong( $text, $class=NULL, $id=NULL ) {
    stag( "strong", $class, $id ) ;
    e( $text );
    etag( "strong" );    
 }
 
-function em( $text, $class=NULL, $id=NULL )
-{
+function em( $text, $class=NULL, $id=NULL ) {
    stag( "em", $class, $id ) ;
    e( $text );
    etag( "em" );    
 }
 
-function blockquote( $text, $class=NULL, $id=NULL )
-{
+function blockquote( $text, $class=NULL, $id=NULL ) {
    stag( "blockquote", $class, $id ) ;
    e( $text );
    etag( "blockquote" );    
 }
 
-function quote( $text, $class=NULL, $id=NULL )
-{
+function quote( $text, $class=NULL, $id=NULL ) {
    stag( "quote", $class, $id ) ;
    e( $text );
    etag( "quote" );    
@@ -541,6 +485,7 @@ function abbr( $title="Often Included Key-information wide", $abbrev="oik" ) {
  
 /** 
  * Create an <acronym> tag 
+ * Note: acronym becomes obsolete in HTML5
  */
 function acronym( $title="Often Included Key-information wide", $acronym="oik" ) {
   if ( $acronym ) {
@@ -555,26 +500,22 @@ function acronym( $title="Often Included Key-information wide", $acronym="oik" )
 
 
   
-function c( $text )
-{
+function c( $text ) {
   bw_echo( '<!--' . $text . '-->' );
 } 
 
-function bw_debug_on()
-{
+function bw_debug_on() {
   global $bw_debug_on;
   $bw_debug_on = TRUE;
 }
 
-function bw_debug_off()
-{
+function bw_debug_off() {
   global $bw_debug_on;
   $bw_debug_on = FALSE;
 }     
      
 
-function bw_debug( $text )
-{
+function bw_debug( $text ) {
   global $oktop, $bw_debug_on;
   if ($bw_debug_on)
   {
@@ -585,8 +526,7 @@ function bw_debug( $text )
   }     
 }
 
-function bw_theme_image( $file )
-{
+function bw_theme_image( $file ) {
   global $theme;
   $filename = bw_get_docroot_suffix();
   $filename.= "/themes/";
@@ -605,8 +545,7 @@ function bw_image_link( $link
                       , $imagetext
                       , $width=302
                       , $height=227
-                      )
-{
+                      ) {
   $linktext = bw_get_linktext( $link );
   $a = '<a title="';
   $a.= $linktext;
@@ -692,8 +631,7 @@ else {
   set a default value if the value is not set
 */
 function bw_default( $value, $default=NULL ) {
-  $val = $value;
-  
+  $val = $value; 
   bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value before" );
   if ( empty( $val ))
     $val = $default;

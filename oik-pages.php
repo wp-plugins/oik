@@ -3,8 +3,8 @@
 /*
 Plugin Name: oik pages
 Plugin URI: http://www.oik-plugins.com/oik
-Description: [bw_pages] and [bw_list] shortcodes to summarize child pages or custom post types
-Version: 1.6
+Description: [bw_pages], [bw_list] and [bw_bookmarks] shortcodes to summarize child pages or custom post types
+Version: 1.7
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -38,6 +38,7 @@ require_once( 'oik-artisteer.php' );
 bw_add_shortcode( 'bw_pages', 'bw_pages' );
 bw_add_shortcode( 'bw_list', 'bw_list' );
 bw_add_shortcode( 'bw_bookmarks', 'bw_bookmarks' );
+
 
 /**
  * Return the excerpt from the $post 
@@ -377,6 +378,11 @@ function bw_list( $atts = NULL ) {
 
 /**
  * Wrapper to get_posts() 
+ * 
+ * When no parameters are passed processing should depend upon the context
+ * e.g for a Page it should list the child pages
+ * for a post it should show related posts in the same category as the current post
+ * TO BE COMPLETED
  */
 function bw_get_posts( $atts = NULL ) {
   // Copy the atts from the shortcode to create the array for the query
@@ -387,17 +393,35 @@ function bw_get_posts( $atts = NULL ) {
   //bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
   /* Set default values if not already set */
   
-  $attr['post_type'] = bw_array_get( $attr, 'post_type', 'page' );
-  if ( $attr['post_type'] == 'page' )
+  // Set the post_type attribute - initially default to NULL
+  $attr['post_type'] = bw_array_get( $attr, 'post_type', NULL );
+  
+  // Only default post_parent for post_type of 'page' 
+  // This allows [bw_pages] to be used without parameters on a page
+  // and to be used to list 'page's from other post types.
+  // 
+  if ( $attr['post_type'] == 'page' ) {
     $attr['post_parent'] = bw_array_get( $attr, "post_parent", $GLOBALS['post']->ID );
+  } else {
+    // Now let it default to page if still NULL
+    $attr['post_type'] = bw_array_get( $attr, 'post_type', 'page' );
+  }  
   $attr['numberposts'] = bw_array_get( $attr, "numberposts", -1 );
   $attr['orderby'] = bw_array_get( $attr, "orderby", "title" );
   $attr['order'] = bw_array_get( $attr, "order", "ASC" );
   $attr['category_name'] = bw_array_get( $attr, "category_name", NULL );
+  
+  // Regardless of the post type, exclude the current post, 
+  // Note: This could also be improved **?**
   $attr['exclude'] = bw_array_get( $attr, "exclude", $GLOBALS['post']->ID );
   
   bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
-  $posts = get_posts( $attr );
+  
+  //if ( $attr['post_type'] == 'post' ) {
+    $posts = get_posts( $attr );
+  //} else {
+  //  $posts = get_pages( $attr );
+ // }  
   bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
   return( $posts );
   
@@ -431,3 +455,5 @@ function bw_bookmarks( $atts = NULL ) {
   return( $posts );
   
 }
+
+  
