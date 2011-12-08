@@ -79,9 +79,13 @@ Yes. I'm concentrating on getting version 1.x properly released.
 
 == Changelog ==
 = 1.7 =
-* Added: oik-fields plugin - for [bw_field] (alias [bw_fields]) shortcode - display custom fields
+* Added: oik-fields plugin - for [bw_field] (alias [bw_fields]) shortcode - display custom fields within the content
 * Changed: image/retimage API: title defaults to NULL - so can be omitted
 * Fixed: [bw_pages] if the post_type is page, no longer set post_parent automatically 
+* Added: oik_path() and oik_require() functions
+* Added: extra parameter to alink() to support additional fields in the anchor (<a>) tag
+* Added: oik-header plugin - custom header images for pages or posts
+* Added: oik-bp-signup-email - to direct the verification email to the site admin rather than the registrant
 = 1.6 =
 * Added: [bw_bookmarks] shortcode - equivalent to the Links widget
 * Added: [bw_list] shortcode - a simple list of links for any post type

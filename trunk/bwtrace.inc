@@ -43,12 +43,17 @@ function bw_trace_inc_init() {
 }  
 
 
-
+/**
+ * Programmatically enable tracing
+ */
 function bw_trace_on() {
   global $bw_trace_on;
   $bw_trace_on = TRUE;
 }
 
+/** 
+ * Programmatically disable tracing
+ */
 function bw_trace_off() {
   global $bw_trace_on;
   $bw_trace_on = FALSE;

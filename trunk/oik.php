@@ -44,6 +44,13 @@ global $bw_options;
 function oik_version() {
   return bw_oik_version();
 }
+
+
+if (!function_exists( 'oik_path' )) {
+  function oik_path() {
+    return( plugin_dir_path( __FILE__ ));
+  }
+}
   
   $bobb_prefix = NULL;
   $bw_echo = NULL;

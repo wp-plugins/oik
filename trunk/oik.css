@@ -399,3 +399,6 @@ div.adr div.type { display: none; }
 div#mc_embed_signup ul li { background-image: none; }
 
 
+/* Make the custom header image fit inside the meta box */
+img.bw-header-box { margin: 0 auto; position: relative; width: 100%; margin-top: 0; margin-bottom: 0; }
+
