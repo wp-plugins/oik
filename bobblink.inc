@@ -50,18 +50,17 @@ function atitle( $title = NULL )
   kv( "title", $title );
 } 
 
-function atext( $linktori )
-{
+function atext( $linktori ) {
    e( $linktori );
 }   
 
 /* $linktori is the text or image - see textorimage()
    $url is the fully formed url - 
    $alt - if NULL will use $linktori
+   $extra is anything else that needs to go in the <a> tag. e.g. 'onclick=then some javascript' 
 */   
 
-function alink( $class=NULL, $url, $linktori, $alt=NULL, $id=NULL )
-{
+function alink( $class=NULL, $url, $linktori, $alt=NULL, $id=NULL, $extra=NULL ) {
   sa();
   aclass( $class );
   aid( $id );
@@ -71,6 +70,7 @@ function alink( $class=NULL, $url, $linktori, $alt=NULL, $id=NULL )
   // Is alt= allowed with XHTML Strict 1.0?    
   // aalt( $alt );
   atitle( $alt );
+  e( $extra );
   ag();
   atext( $linktori );
   ea();

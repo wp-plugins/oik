@@ -3,7 +3,18 @@
 
 function bw_oik_version() {  
   return( '1.7' );
-}  
+} 
+
+if (!function_exists( 'oik_path' )) {
+  function oik_path() {
+    return( plugin_dir_path( __FILE__ ));
+  }
+}
+ 
+function oik_require( $include_file ) {
+  require_once( oik_path() . $include_file ); 
+}    
+  
 
 function bw_echo( $string ) {
   global $bwecho;
