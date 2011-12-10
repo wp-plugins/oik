@@ -400,5 +400,9 @@ div#mc_embed_signup ul li { background-image: none; }
 
 
 /* Make the custom header image fit inside the meta box */
-img.bw-header-box { margin: 0 auto; position: relative; width: 100%; margin-top: 0; margin-bottom: 0; }
+img.bw-header-box { margin: 0 auto; position: relative; max-width: 100%; margin-top: 0; margin-bottom: 0; }
+
+
+/* If there is a menu called 'footer' in the footer then make it horizontal */
+div.art-footer ul#menu-footer li { display: inline; text-transform: lowercase; }
 
