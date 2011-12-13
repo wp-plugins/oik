@@ -1,9 +1,9 @@
 === oik ===
 Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
-Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide, key information, tide, trace, blocks, buddypress
+Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide, key information, tide, trace, blocks, buddypress, pages, bookmarks, 
 Requires: 3.0.4
-Tested up to: 3.2.1
+Tested up to: 3.3
 Stable tag: 1.7
 
 Often Included Key-information using smart shortcodes 
@@ -27,7 +27,8 @@ For general use
 * oik-blocks to create Artisteer style blocks within your pages, posts and even widgets
 * oik-button-shortcodes to provide call-to-action button style links for Artisteer themes
 * oik-email-signature to help generate an email signature file for all your email messages
-* oik-pages to list subpages, post or custom post types - [bw_pages] shortcode
+* oik-header for custom header images by page or post
+* oik-pages to list subpages, post or custom post types - [bw_pages] or [bw_list] shortcodes
 * oik-paypal-shortcodes to provide PayPal buttons
 * oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
 * oik-tides - shortcode for tide times in the UK
@@ -36,6 +37,10 @@ For bobbing wide and other WordPress plugin developers
 
 * oik-bob-bing-wide to provide easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, bw_plug, bw_module
 * oik-bwtrace provides a rudimentary trace function, which logs trace information to a file, rather than including it within the web page output. 
+* oik-fields to display custom fields within the content
+
+For use in BuddyPress sites
+* oik-bp-signup-email to intercept BuddyPress registration emails
 
 ALL of the plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
 These are known as the bobbing wide application programming interface (bw API).
@@ -79,12 +84,11 @@ Yes. I'm concentrating on getting version 1.x properly released.
 
 == Changelog ==
 = 1.7 =
-* Added: oik-fields plugin - for [bw_field] (alias [bw_fields]) shortcode - display custom fields within the content
-* Added: oik_path() and oik_require() functions
 * Added: extra parameter to alink() to support additional fields in the anchor (<a>) tag
-* Added: oik-header plugin - custom header images for pages or posts
 * Added: oik-bp-signup-email - to direct the verification email to the site admin rather than the registrant
-* Added: default styling for footer menus in an Artisteer theme's footer 
+* Added: oik-fields plugin - for [bw_field] (alias [bw_fields]) shortcode - display custom fields within the content
+* Added: oik-header plugin - custom header images for pages or posts
+* Added: oik_path() and oik_require() functions
 * Changed: image/retimage API: title defaults to NULL - so can be omitted
 * Fixed: [bw_pages] if the post_type is page, no longer set post_parent automatically 
 = 1.6 =
