@@ -4,7 +4,7 @@ Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide, key information, tide, trace, blocks, buddypress, pages, bookmarks, 
 Requires: 3.0.4
 Tested up to: 3.3
-Stable tag: 1.7
+Stable tag: trunk
 
 Often Included Key-information using smart shortcodes 
 
@@ -83,6 +83,11 @@ Yes. I'm concentrating on getting version 1.x properly released.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 1.8 = 
+* Added: [bw_blockquote] and [bw_cite} shortcode - to overcome problems with wpautop()
+* Added: cite() function for bw API
+* Changed: Improved default processing for [bw_pages] and [bw_list] when used without parameters in a 'post' or a 'page' 
+* Changed: stylesheets enqueued during the 'wp_enqueue_scripts' action hook (change for WP 3.3)
 = 1.7 =
 * Added: extra parameter to alink() to support additional fields in the anchor (<a>) tag
 * Added: oik-bp-signup-email - to direct the verification email to the site admin rather than the registrant

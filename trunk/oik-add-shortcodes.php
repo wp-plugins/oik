@@ -284,4 +284,7 @@ bw_add_shortcode( 'bw_emergency', 'bw_emergency' );
 bw_add_shortcode( 'bw_abbr', 'bw_abbr' );
 bw_add_shortcode( 'bw_acronym', 'bw_acronym' );
 
+bw_add_shortcode( 'bw_blockquote', 'bw_blockquote' );
+bw_add_shortcode( 'bw_cite', 'bw_cite' );
+
 // bw_backtrace();

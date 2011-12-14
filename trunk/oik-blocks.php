@@ -4,7 +4,7 @@
 Plugin Name: oik blocks
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use shortcode macro for blocks in content [bw_block] [bw_eblock] 
-Version: 1.7
+Version: 1.8
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2

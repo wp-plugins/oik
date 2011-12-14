@@ -5,7 +5,7 @@
 Plugin Name: oik tides
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use shortcode macro for tide times [bw_tides]
-Version: 1.7
+Version: 1.8
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2

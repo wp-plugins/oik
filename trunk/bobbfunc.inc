@@ -2,25 +2,46 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '1.7' );
+  return( '1.8' );
 } 
 
+/**
+ * Return the path of the oik base plugin
+ *
+ * Use oik_path to find where oik is installed
+ * 
+ */
 if (!function_exists( 'oik_path' )) {
   function oik_path() {
     return( plugin_dir_path( __FILE__ ));
   }
 }
  
+/**
+ * invoke require_once on an oik include file or other file
+ */
 function oik_require( $include_file ) {
   require_once( oik_path() . $include_file ); 
 }    
   
 
+/**
+ * bw API partial equivalent of PHP's output buffering
+   
+ * 
+ * Note: this isn't really an output buffer
+ * and it's NOT stackable
+ * It's used by the bw APIs to create the HTML output that it then returned from the shortcode functions  
+ * 
+ */
 function bw_echo( $string ) {
   global $bwecho;
   $bwecho.=$string;
 }
 
+/**
+ * Use bw_flush() to echo the contents of $bwecho then empty it
+ */
 function bw_flush() {
   global $bwecho;
   echo $bwecho;
@@ -30,6 +51,9 @@ function bw_flush() {
   $bwecho = NULL;
 }
 
+/**
+ * Use bw_ret() to return the contents of $bwecho, leaving the global value as NULL
+ */
 function bw_ret() {
   global $bwecho;
   $bwret = $bwecho;
@@ -478,6 +502,12 @@ function quote( $text, $class=NULL, $id=NULL ) {
    stag( "quote", $class, $id ) ;
    e( $text );
    etag( "quote" );    
+}
+
+function cite( $text, $class=NULL, $id=NULL ) {
+   stag( "cite", $class, $id ) ;
+   e( $text );
+   etag( "cite" );    
 }
 
 /** 

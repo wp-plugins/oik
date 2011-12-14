@@ -4,7 +4,7 @@
 Plugin Name: oik fields
 Plugin URI: http://www.oik-plugins.com/oik
 Description: [bw_field] [bw_fields] shortcodes to display Custom Fields (post metadata)
-Version: 1.7
+Version: 1.8
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2

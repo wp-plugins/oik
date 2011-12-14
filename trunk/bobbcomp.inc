@@ -789,3 +789,26 @@ if (!function_exists( 'bw_wp_title' )) {
   }
 }
 
+
+
+/** 
+ * Display a blockquote unaffected by wpautop
+ */
+function bw_blockquote( $atts = NULL ) {
+  $text = bw_array_get( $atts, "text", NULL ); 
+  $class = bw_array_get( $atts, "class", NULL );
+  blockquote( $text, $class );
+  return( bw_ret());
+}
+
+/**
+ * Display a <cite> unaffected by wpautop 
+ */
+ 
+function bw_cite( $atts = NULL ) {
+  $text = bw_array_get( $atts, "text", NULL ); 
+  $class = bw_array_get( $atts, "class", NULL );
+  cite( $text, $class );
+  return( bw_ret());
+}
+
