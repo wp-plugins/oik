@@ -4,7 +4,7 @@
 Plugin Name: oik pages
 Plugin URI: http://www.oik-plugins.com/oik
 Description: [bw_pages], [bw_list] and [bw_bookmarks] shortcodes to summarize child pages or custom post types
-Version: 1.7
+Version: 1.8
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -91,7 +91,7 @@ function bw_get_image_size( $size=100 ) {
 
  
 /**
- * get the thumbnail of the specified size
+ * Get the thumbnail of the specified size
  *
  */
 function bw_thumbnail( $post_id, $atts=NULL ) {
@@ -115,7 +115,10 @@ function bw_thumbnail( $post_id, $atts=NULL ) {
       break;
   }
   
-  /* Cater for Artisteer themes that already return thumbnails */
+  /* Cater for Artisteer themes that already return thumbnails.
+     Well we would... but Artisteer only supports the current post
+     so we would end up getting the same thumbnail for each post.
+  */
     
   if ( function_exists( '_theme_get_post_thumbnail') ) {
     global $post;
@@ -144,7 +147,6 @@ function bw_thumbnail( $post_id, $atts=NULL ) {
 function bw_link_thumbnail( $thumbnail, $post_id=NULL, $atts=NULL )  {
   $link_id = bw_array_get( $atts, "link", $post_id );
   if ( $link_id ) {
-  
     $text = bw_array_get( $atts, "title", NULL );
     alink( NULL, get_permalink( $link_id ), $thumbnail, $text, "link-".$link_id );  
   } else {
@@ -376,15 +378,48 @@ function bw_list( $atts = NULL ) {
   return( bw_ret() );
 } 
 
+
+/**
+ * Get the list of categories for this "post" as a string of slugs separated by commas 
+ */
+function bw_get_categories() {
+  global $post;
+  $categories = get_the_category( $post->ID );
+  $cats = '';
+  foreach ( $categories as $category ) {
+    $cats .= $category->slug;
+    $cats .= ' ';
+  }  
+  $cats = trim( $cats );
+  $cats = str_replace( ' ',',', $cats );
+  return bw_trace2( $cats );
+}
+
 /**
  * Wrapper to get_posts() 
  * 
  * When no parameters are passed processing should depend upon the context
- * e.g for a Page it should list the child pages
- * for a post it should show related posts in the same category as the current post
- * TO BE COMPLETED
+ * e.g for a 'page' it should list the child pages
+ *     for a 'post' it should show related posts in the same category as the current post
+ * 
+ * # $atts       $post->     Default
+ *   post_type   post_type   processing
+ * - ---------   ---------   -----------------------------------
+ * 1 -           page        list child pages - first level only
+ * 2 -           post        list related posts - same categories
+ * 3 -           custom      none
+ * 4 page        page        as 1.
+ * 5 page        post        ?
+ * 6 page        custom      ?
+ * 7 post        page        ?
+ * 8 post        post        as 2.
+ * 9 post        custom      ?
+ * 10-12 custom  any         ?
+ *
+ * As you can see from the table above the default behaviour for listing posts on pages and vice-versa is not (yet) defined
  */
 function bw_get_posts( $atts = NULL ) {
+  
   // Copy the atts from the shortcode to create the array for the query
   // removing the class and title parameter that gets passed to bw_block()
  
@@ -394,7 +429,7 @@ function bw_get_posts( $atts = NULL ) {
   /* Set default values if not already set */
   
   // Set the post_type attribute - initially default to NULL
-  $attr['post_type'] = bw_array_get( $attr, 'post_type', NULL );
+  $attr['post_type'] = bw_array_get( $attr, 'post_type', $GLOBALS['post']->post_type );
   
   // Only default post_parent for post_type of 'page' 
   // This allows [bw_pages] to be used without parameters on a page
@@ -402,14 +437,19 @@ function bw_get_posts( $atts = NULL ) {
   // 
   if ( $attr['post_type'] == 'page' ) {
     $attr['post_parent'] = bw_array_get( $attr, "post_parent", $GLOBALS['post']->ID );
-  } else {
-    // Now let it default to page if still NULL
-    $attr['post_type'] = bw_array_get( $attr, 'post_type', 'page' );
-  }  
+  }
+  
+  if ( $attr['post_type'] == 'post' ) {
+    $attr['category_name'] = bw_array_get( $attr, "category_name", NULL );
+    if ( NULL == $attr['category_name'] ) {
+      $categories = bw_get_categories();
+      $attr['category_name'] = $categories;
+    }  
+  }
+        
   $attr['numberposts'] = bw_array_get( $attr, "numberposts", -1 );
   $attr['orderby'] = bw_array_get( $attr, "orderby", "title" );
   $attr['order'] = bw_array_get( $attr, "order", "ASC" );
-  $attr['category_name'] = bw_array_get( $attr, "category_name", NULL );
   
   // Regardless of the post type, exclude the current post, 
   // Note: This could also be improved **?**
@@ -417,11 +457,11 @@ function bw_get_posts( $atts = NULL ) {
   
   bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
   
-  //if ( $attr['post_type'] == 'post' ) {
+  // if ( $attr['post_type'] == 'post' ) {
     $posts = get_posts( $attr );
-  //} else {
+  // } else {
   //  $posts = get_pages( $attr );
- // }  
+  // }  
   bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
   return( $posts );
   
