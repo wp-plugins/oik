@@ -2,7 +2,7 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '1.8' );
+  return( '1.9' );
 } 
 
 /**

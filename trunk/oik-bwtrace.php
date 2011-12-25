@@ -4,7 +4,7 @@
 Plugin Name: oik bwtrace 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use trace macros for oik plugins
-Version: 1.8
+Version: 1.9
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2

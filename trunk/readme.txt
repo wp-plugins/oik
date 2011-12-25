@@ -4,7 +4,7 @@ Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide, key information, tide, trace, blocks, buddypress, pages, bookmarks, 
 Requires: 3.0.4
 Tested up to: 3.3
-Stable tag: trunk
+Stable tag: 1.8
 
 Often Included Key-information using smart shortcodes 
 
@@ -83,6 +83,11 @@ Yes. I'm concentrating on getting version 1.x properly released.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 1.9 =
+* Added: oik-bbpress to cater for expanded shortcodes in titles used as text attributes
+* Added: oik-header support for custom header background images with the Twenty Eleven theme
+* Changed: [bw_wtf] now prints the post or page id (only works for the main post, not nested posts)
+* Changed: wrote a brief comment about ticket #17567 and shortcodes with hyphens
 = 1.8 = 
 * Added: [bw_blockquote] and [bw_cite} shortcode - to overcome problems with wpautop()
 * Added: cite() function for bw API
