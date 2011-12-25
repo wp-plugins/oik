@@ -72,9 +72,15 @@ function bw_nobbut() {
   return "";
 }
 
+
+/** 
+ * returns the current value of $post->ID 
+ * Note: ths does not necessarily expand correctly when the shortcode is processed for a nested item within another post.
+ *
+ */
 function bw_wtf() {
-  bw_trace( "wtf", __FUNCTION__, __LINE__, __FILE__, "wtf" );
-  return( "what the f*ck");
+  // bw_trace( "wtf", __FUNCTION__, __LINE__, __FILE__, "wtf" );
+  return( get_the_ID() );
 }
 
 /** 

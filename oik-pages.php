@@ -4,7 +4,7 @@
 Plugin Name: oik pages
 Plugin URI: http://www.oik-plugins.com/oik
 Description: [bw_pages], [bw_list] and [bw_bookmarks] shortcodes to summarize child pages or custom post types
-Version: 1.8
+Version: 1.9
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
