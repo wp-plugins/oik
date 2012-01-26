@@ -4,12 +4,12 @@
 Plugin Name: oik base plugin 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use shortcode macros for Often Included Key-information 
-Version: 1.9
+Version: 1.10
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
-    Copyright 2010, 2011 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2010-2012 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -47,8 +47,8 @@ function oik_version() {
 
 
 if (!function_exists( 'oik_path' )) {
-  function oik_path() {
-    return( plugin_dir_path( __FILE__ ));
+  function oik_path( $file=NULL) {
+    return( plugin_dir_path( __FILE__ ). $file);
   }
 }
   
@@ -69,7 +69,10 @@ if (!function_exists( 'oik_path' )) {
 
   add_filter('get_the_excerpt', 'do_shortcode' );
   add_filter('the_excerpt', 'do_shortcode' );
-  add_filter('the_content', 'do_shortcode' );
+  // The big question is... do we need to add this filter 
+  // or can we rely on it having been already added
+  // 
+  add_filter('the_content', 'do_shortcode', 11 );
   //add_filter('get_pages', 'do_shortcode' );
 
   $bw_options = get_option( 'bw_options' );
@@ -215,6 +218,10 @@ function oik_options_do_page() {
   textfield( "bw_options[logo-image]", 50, "Logo image [bw_logo] in uploads: " . $baseurl, $options['logo-image'] );
   textfield( "bw_options[qrcode-image]", 50, "QR code image [bw_qrcode] in uploads", $options['qrcode-image'] );
   textfield( "bw_options[art-version]", 50, "Artisteer version 31/30/25/na [bw_art_version]", $options['art-version'] );
+  
+
+  $options['yearfrom'] = bw_array_get_dcb( $options, "yearfrom", NULL, "bw_get_yearfrom" );
+  textfield( "bw_options[yearfrom]", "4", "Copyright from year (used in [bw_copyright])", $options['yearfrom'] );
     
   tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" ); 
 

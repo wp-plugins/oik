@@ -4,12 +4,12 @@
 Plugin Name: oik bob bing wide shortcodes
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, etcetera
-Version: 1.9
+Version: 1.10
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
-    Copyright 2010, 2011 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2010-2012 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -72,19 +72,19 @@ bw_add_shortcode( 'ldrupal', 'bw_ldrupal' ); // Link to Drupal.org
 bw_add_shortcode( 'artisteer', 'bw_art' ); // Artisteer
 bw_add_shortcode( 'lartisteer', 'bw_lart' ); // Link to artisteer.com 
 
-bw_add_shortcode( 'lbw', 'bw_lbw'); // Link to Bobbing Wide
+bw_add_shortcode( 'lbw', 'bw_lbw'); // Link to Bobbing Wide or other websites
+
 
 // This is just a bit of code to help determine if a fix to shortcodes (ticket #17657) has been implemented or not
-// whether or not a shortcode is handled depends on when it's registered.
+// whether or not a shortcode containing hyphen(s) is handled depends on when it's registered.
+// if it's registered before the shortcode that is the same as the prefix before the '-' it's OK
+// it it's registed after, then the shorter shortcode will take precedence
 
 
-add_shortcode( 'wp-1', 'wp1');
-add_shortcode( 'wp-2', 'wp2');
 
 function wp1( $atts=NULL) {
   return( 'wp1 done');
-}
-  
+} 
 function wp2( $atts=NULL) {
   return( 'wp2 done');
 }  
@@ -92,6 +92,7 @@ function wp3( $atts=NULL) {
   return( 'wp3 done');
 }  
 
-
+add_shortcode( 'wp-1', 'wp1');
+add_shortcode( 'wp-2', 'wp2');
 bw_add_shortcode( 'wp', 'bw_wp' );   // WordPress
 add_shortcode( 'wp-3', 'wp3');

@@ -4,12 +4,12 @@
 Plugin Name: oik pages
 Plugin URI: http://www.oik-plugins.com/oik
 Description: [bw_pages], [bw_list] and [bw_bookmarks] shortcodes to summarize child pages or custom post types
-Version: 1.9
+Version: 1.10
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
-    Copyright 2011 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2011,2012 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -38,6 +38,8 @@ require_once( 'oik-artisteer.php' );
 bw_add_shortcode( 'bw_pages', 'bw_pages' );
 bw_add_shortcode( 'bw_list', 'bw_list' );
 bw_add_shortcode( 'bw_bookmarks', 'bw_bookmarks' );
+bw_add_shortcode( 'bw_attachments', 'bw_attachments' );
+bw_add_shortcode( 'bw_pdf', 'bw_pdf' );
 
 
 /**
@@ -435,7 +437,7 @@ function bw_get_posts( $atts = NULL ) {
   // This allows [bw_pages] to be used without parameters on a page
   // and to be used to list 'page's from other post types.
   // 
-  if ( $attr['post_type'] == 'page' ) {
+  if ( $attr['post_type'] == 'page' || $attr['post_type'] == 'attachment' ) {
     $attr['post_parent'] = bw_array_get( $attr, "post_parent", $GLOBALS['post']->ID );
   }
   
@@ -496,4 +498,102 @@ function bw_bookmarks( $atts = NULL ) {
   
 }
 
+
+/**
+ * List attachments
+ *
+ * This function is similar to bw_pages but formats attachments
+ * It works in conjunction with Artisteer blocks - to enable the page list to be styled as a series of blocks
+ * Well, that's the plan
+ *
+ * [bw_attachments class="classes for bw_block" 
+ *   post_type='atachment'
+ *   post_mime_type='
+ *     application/pdf
+ *      image/gif
+ * 	image/jpeg
+ * 	image/png
+ * 	text/css
+ *      video/mp4
+ * 
+ *   post_parent 
+ *   orderby='title'
+ *   order='ASC'
+ *   posts_per_page=-1
+ *   block=true or false
+ *   thumbnail=specification - see bw_thumbnail
+ *   customcategoryname=custom category value  
+ */
+function bw_attachments( $atts = NULL ) {
+  $atts[ 'post_type'] = bw_array_get( $atts, "post_type", "attachment" );
+  $posts = bw_get_posts( $atts );
+  bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
   
+  foreach ( $posts as $post ) {
+    bw_format_attachment( $post, $atts );
+  }
+  
+  return( bw_ret() );
+} 
+
+
+function bw_pdf( $atts = NULL ) {
+  $atts['post_mime_type'] = 'application/pdf';
+  return( bw_attachments( $atts ));
+}  
+
+
+/**
+ * Format the "attachment" - basic first version
+ *
+ * Format the 'post' in a block or div with title and link to the attachment
+ *
+ * @param object $post - A post object
+ * @param array $atts - Attributes array - passed from the shortcode
+ * 
+ * post_mime_type=image 
+ *
+ */
+function bw_format_attachment( $post, $atts ) {
+  setup_postdata( $post );
+  
+  bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
+  
+  $atts['title'] = get_the_title( $post->ID );
+  //$read_more = bw_array_get( $atts, "read_more", "read more" );
+  //$thumbnail = bw_thumbnail( $post->ID, $atts );
+  
+  $in_block = bw_validate_torf( bw_array_get( $atts, "block", false));
+  if ( $in_block ) { 
+    e( bw_block( $atts ));
+    //sdiv( "avatar alignleft" );
+    //bw_link_thumbnail( $thumbnail, $post->ID, $atts );
+    //ediv();
+  } else {
+    $class = bw_array_get( $atts, "class", "" );
+    sdiv( $class );
+    //sdiv( "avatar alignleft" );
+    //bw_link_thumbnail( $thumbnail, $post->ID, $atts );
+    //ediv();
+    //span( "title" );
+    //strong( $atts['title'] );
+    //epan();
+    //br();
+  } 
+  sp();
+  //e( $atts['title'] );
+  // Display images as thumbnails and other attachments as text links
+  // This calls seems inefficient since we've already loaded the whole post
+  // so wp_get_attachment_link is not doing much really! 
+   
+  e( wp_get_attachment_link( $post->ID, 'thumbnail', false, false )); 
+  ep(); 
+  if ( $in_block )
+    e( bw_eblock() ); 
+  else {  
+    sediv( "cleared" );
+    ediv();  
+  }
+}   
+
+ 

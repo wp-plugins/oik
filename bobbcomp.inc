@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2010, 2011
+<?php // (C) Copyright Bobbing Wide 2010-2012
 // bobbcomp.inc - Company Information
 
 function bw_get_cms_type() {
@@ -50,6 +50,24 @@ if ( bw_is_wordpress() ) {
     // bw_trace( '!' .$option.'!', __FUNCTION__,  __LINE__, __FILE__, "option" );  
     return( $option ); 
   }
+  
+  /** Set the value of an oik option field in the "bw_options" field
+   *
+   * @param string $field the option field to be set
+   * @param mixed $value the value of the option
+   * @return mixed $value
+   *
+   * Parms are basically the same as for update_option
+   */
+  function bw_set_company( $field, $value=NULL ) {
+    global $bw_options;
+    $bw_options = get_option( "bw_options" );
+    $bw_options[ $field ] = $value;
+    bw_trace2( $bw_options );
+    update_option( "bw_options", $bw_options );
+    return( $value );
+  }  
+  
 }
 else {
   /** 
@@ -394,6 +412,11 @@ function bw_youtube( $atts ) {
   $atts['network'] = "YouTube";  
   return( bw_follow( $atts ));
 }
+
+function bw_picasa( $atts ) { 
+  $atts['network'] = "Picasa";  
+  return( bw_follow( $atts ));
+}
     
 function bw_flickr( $atts) {
   $atts['network'] = "Flickr";  
@@ -733,17 +756,51 @@ function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL 
 
 /** 
  * Return the array[index] or a default value if not set
+ * 
+ * Performance notes:
+ * 
+ * Original code called isset() first, but this did not work if the parameter was a string
+ * I can no longer find the post where this was the suggested solution
+ *
+ * Improved version tests for the array using casting
+ * See http://us.php.net/manual/en/function.is-array.php#98156 
+ *
+ * 
  */
 if ( !function_exists( 'bw_array_get' ) ) { 
-  function bw_array_get( $array = array(), $index, $default=NULL ) {
-    if ( isset( $array[$index] ) || ( is_array( $array) && array_key_exists( $index, $array ) ) )  {
-      $value = $array[$index];
-    } else {
-      $value = $default;
-    } 
+  function bw_array_get( $array = NULL, $index, $default=NULL ) {
+    $value = $default;
+    if ( (array) $array === $array ) {
+      if ( isset( $array[$index] ) || ( is_array( $array) && array_key_exists( $index, $array ) ) )  {
+        $value = $array[$index];
+      }  
+    }   
+    // Note: We cannot call bw_trace2() here since it causes infinite recursion 
     // bw_trace( $value, __FUNCTION__,  __LINE__, __FILE__, "value" ); 
     return( $value );
   }
+}
+
+
+/** 
+ * Return the array[index] or build the result by calling $callback, passing the $default as the arg.
+ *
+ * @param array $array array from which to obtain the value
+ * @param string $index - index of value to obtain]
+ * @param mixed $default - parameter to the $callback function 
+ * @param string $callback - function name to invoke - defaults to invoking __()
+ *
+ * Notes: dcb = deferred callback
+ * Use this function when the applying the default might take some time but would be unnecessary
+ * if the $array[$index] is already set.
+ * You can also use this function when the default value is a string that you want to be translated.
+ */
+function bw_array_get_dcb( $array = array(), $index, $default = NULL, $callback='__' ) {
+  $value = bw_array_get( $array, $index, NULL );
+  if ( $value == NULL ) {
+    $value = $callback( $default ); 
+  }  
+  return( $value );  
 }
 
 
@@ -809,6 +866,137 @@ function bw_cite( $atts = NULL ) {
   $text = bw_array_get( $atts, "text", NULL ); 
   $class = bw_array_get( $atts, "class", NULL );
   cite( $text, $class );
+  return( bw_ret());
+}
+
+/**
+ *  Format a range of years
+ *
+ *  $yearfrom $yearto result
+ *  x         x       x
+ *  x         y       x,y
+ *  x         z       x-z
+ *
+ *  where: z >= (y + 1) = (x + 1)
+ *  if $atts['sep'] is set we use that
+ */
+function bw_year_range( $yearfrom, $yearto, $atts=NULL ) {
+  if ( !$yearfrom ) {
+    $yearfrom = $yearto;
+  }  
+  $diff = $yearto - $yearfrom;
+      
+  switch ( $diff ) {
+    case 0:
+      $years = $yearfrom;
+      break;
+    case 1:
+      $sep = bw_array_get( $atts, "sep", "," );
+      $years = "$yearfrom$sep$yearto";
+      break;
+    default: /* more than one OR negative - which is a bit of a boo boo */
+      $sep = bw_array_get( $atts, "sep", "-" );
+      $years = "$yearfrom$sep$yearto";
+  }
+  return( $years );    
+} 
+
+/**
+ * Determine the date of the blog from the date of the earliest registered user
+  
+  (
+    [0] => stdClass Object
+        (
+            [ID] => 1
+            [user_login] => admin
+            [user_pass] => $P$BijsY7/BdZ9AzR8YdJwYVVt68FBovk0
+            [user_nicename] => admin
+            [user_email] => info@bobbingwide.com
+            [user_url] => 
+            [user_registered] => 2010-12-23 12:22:39
+            [user_activation_key] => qLc3INyEWwBOsfFDnZeV
+            [user_status] => 0
+            [display_name] => admin
+        )
+
+)
+ */
+function bw_get_yearfrom() {
+  $users = bw_get_users();
+  bw_trace2( $users );
+  $yearfrom = bw_format_date( $users[0]->user_registered, 'Y' );
+
+  return $yearfrom;
+}
+
+
+/** 
+ * Simple wrapper to get_users
+ 
+				'blog_id' => $GLOBALS['blog_id'],
+				'role' => '',
+				'meta_key' => '',
+				'meta_value' => '',
+				'meta_compare' => '',
+				'include' => array(),
+				'exclude' => array(),
+				'search' => '',
+				'orderby' => 'login',
+				'order' => 'ASC',
+				'offset' => '',
+				'number' => '',
+				'count_total' => true,
+				'fields' => 'all',
+				'who' => ''
+    
+ *
+ */
+function bw_get_users( $atts = NULL ) {
+  $atts['orderby'] = bw_array_get( $atts, "orderby", "registered" );
+  $atts['number'] = bw_array_get( $atts, "number", 1 );
+
+  $users = get_users( $atts );
+  return( $users );
+
+}
+
+/** 
+ * Display the copyright statement for the company
+ * showing start and end years
+ * e.g. (C) Copyright [bw_company] [bw_from]&sep[year] 
+ * where [bw_from] is the first year of the site
+ * &sep is the separator ( defaults to ',' for one year apart and '-' for a range 
+ * [year] represents the current year
+ *
+ */ 
+function bw_copyright( $atts = NULL ) {
+  $copyright = bw_array_get_dcb( $atts, "prefix", "&copy; Copyright" );
+  $company = bw_array_get_dcb( $atts, "company", "company", "bw_get_company" );
+  $yearto = get_the_date('Y');
+  $yearfrom = bw_array_get_dcb( $atts, "from", "yearfrom", "bw_get_company" );
+  
+  
+  $years = bw_year_range( $yearfrom, $yearto, $atts );
+  span( "copyright" );
+  e( "$copyright " );
+  e( "$company " );
+  e( "$years" );
+  e( ". All rights reserved." );
+  epan();
+  return( bw_ret());
+}
+
+function bw_stag( $atts = NULL ) {
+  $tag = bw_array_get( $atts, "name", NULL );
+  $class = bw_array_get( $atts, "class", NULL );
+  $id = bw_array_get( $atts, "id", NULL );
+  stag( $tag, $class, $id );
+  return( bw_ret());
+}
+
+function bw_etag( $atts = NULL ) {
+  $tag = bw_array_get( $atts, "name", NULL );
+  etag( $tag );
   return( bw_ret());
 }
 

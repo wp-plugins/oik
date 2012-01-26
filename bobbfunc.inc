@@ -1,28 +1,12 @@
-<?php // Copyright Bobbing Wide 2009, 2011
+<?php // Copyright Bobbing Wide 2009-2012
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '1.9' );
-} 
-
-/**
- * Return the path of the oik base plugin
- *
- * Use oik_path to find where oik is installed
- * 
- */
-if (!function_exists( 'oik_path' )) {
-  function oik_path() {
-    return( plugin_dir_path( __FILE__ ));
-  }
+  return( '1.10' );
 }
+
+require_once( "oik_boot.inc" );
  
-/**
- * invoke require_once on an oik include file or other file
- */
-function oik_require( $include_file ) {
-  require_once( oik_path() . $include_file ); 
-}    
   
 
 /**
@@ -712,4 +696,32 @@ function bw_gallery() {
   e( gallery_shortcode( $gallery_options ));
 
 
+}
+
+
+/**
+ * Format a date with the specified format
+ *
+ * @param string $date - either a number - representing the UNIX date or a recognisable date string
+ *  e.g. 1293840000 => 2011-01-01
+ *       2011-12-31 => 2011-12-31
+ * @param string $format - date formatting string
+ * @returns string $date - the date formatted according to the $format string 
+ *
+ * A value of NULL will be returned as NULL
+ *
+ * strtotime() works for dates NOT in format yyyy-mm-dd e.g. '5-10-1955' or '30 Jul 1958'
+ * Note: Dates before 1970-01-01 are stored as negative values.
+ *
+ */
+function bw_format_date( $date=NULL, $format="Y-m-d" ) {
+  if ( $date != NULL ) {
+    $date = trim( $date );
+    if ( !is_numeric( $date ) ) {
+      $date = strtotime( $date );
+    } 
+    $date = date( $format, $date );
+    // bw_trace2( $date, "date" );
+  }
+  return( $date );
 }

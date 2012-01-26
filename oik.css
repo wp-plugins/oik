@@ -107,8 +107,10 @@ input.text, input.title {width:240px;padding:2px;}
 input.title {font-size:1.5em;}
 textarea {width:280px;height:150px;padding:5px;}
 input[type=checkbox], input[type=radio], input.checkbox, input.radio {position:relative;top:.25em;}
-form.inline {line-height:3;}
+*/
+form.inline {line-height:3; display: inline;}
 form.inline p {margin-bottom:0;}
+/*
 .error, .notice, .success {padding:.8em;margin-bottom:1em;border:2px solid #ddd;}
 .error {background:#FBE3E4;color:#8a1f11;border-color:#FBC2C4;}
 .notice {background:#FFF6BF;color:#514721;border-color:#FFD324;}
@@ -316,6 +318,7 @@ a.YouTube     ,
 a.directory   ,
 a.post        ,
 a.page        ,
+a.bwtrace     ,
 a.my-site     
  { line-height: 50px; padding: 16px 0px 16px 50px; }  
 
@@ -405,4 +408,20 @@ img.bw-header-box { margin: 0 auto; position: relative; max-width: 100%; margin-
 
 /* If there is a menu called 'footer' in the footer then make it horizontal */
 div.art-footer ul#menu-footer li { display: inline; text-transform: lowercase; }
+
+table.effort { text-align: right }
+
+/* Styling for the "(C) Copyright company yearfrom-yearto" from [bw_copyright] */
+span.copyright { }
+span.copyright-company { } 
+span.copyright-years {  }
+
+
+ul.tick, ul.cross, ul.x { list-style: none; list-style-position: outside; padding-left: 0; }
+ul.tick li, li.tick   { background: transparent url( 'images/green_tick_64x64.png' ) no-repeat; background-size: auto 100%; padding-left: 2em; } 
+ul.cross li, li.cross, .tick li.x { background: transparent url( 'images/red_x_64x64.png' ) no-repeat; background-size: auto 100%; padding-left: 2em; }
+
+
+/* For rules on using the PDF logo see "Adobe PDF file icon" in http://www.adobe.com/misc/linking.html */
+a[href*='.pdf'] { background: transparent url( 'images/pdficon_small.png' ) no-repeat; background-size: auto; padding-left: 32px; }
 

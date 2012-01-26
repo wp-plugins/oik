@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2009, 2011
+<?php // (C) Copyright Bobbing Wide 2009-2012
 function label( $name, $text )
 {
    $lab = "<label for=\"";
@@ -65,6 +65,22 @@ function tablerow( $td1, $td2 )
    return 0;
 }
 
+function bw_td( $text=NULL, $class=NULL, $id=NULL ) {
+  if ( $text ) {
+    stag( "td", $class, $id );
+    e( $text );
+    etag( "td");
+  }
+}
+
+function bw_tablerow( $td_array= array() ) {
+  stag( "tr" );
+  foreach ( $td_array as $td ) {
+    bw_td( $td );
+  }
+  etag( "tr"); 
+}
+
 function textfield($name, $len, $text, $value )
 {
   $lab = label( $name, $text );
@@ -80,4 +96,39 @@ function textarea( $name, $len, $text, $value )
   tablerow( $lab, $itext );
   return;
 }
-?>
+
+
+function bw_textfield( $name, $len, $text, $value ) {
+  $lab = label( $name, $text );
+  $itext = itext( $name, $len, $value ); 
+  bw_tablerow( array( $lab, $itext ) );
+  return;
+}
+
+function bw_textarea( $name, $len, $text, $value ) {
+  $lab = label( $name, $text );
+  $itext = iarea( $name, $len, $value ); 
+  bw_tablerow( array( $lab, $itext) );
+  return;
+}
+
+
+function iselect( $name, $value, $args ) {
+  $iselect = "<select name=\"$name\">" ;
+  $options = $args['#options'];
+  foreach ( $options as $option_key => $option_value ) {
+    $selected = selected( $option_key, $value, false );
+    $option = "<option value=\"$option_key\" $selected>$option_value</option>";
+    $iselect .= $option; 
+  }
+  $iselect .= "</select>" ;
+  return( $iselect );
+} 
+
+function bw_select( $name, $text, $value, $args ) {
+  $lab = label( $name, $text );
+  $iselect = iselect( $name, $value, $args ); 
+  bw_tablerow( array( $lab, $iselect ) );
+  return;
+}
+ 

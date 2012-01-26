@@ -1,4 +1,4 @@
-/* (C) Copyright Bobbing Wide 2010, 2011 */
+/* (C) Copyright Bobbing Wide 2010-2012 */
 /* bwlink.css */
 
 /* Colour table copied from bobb-bobbingwide.css
@@ -75,7 +75,7 @@ h1 a em { font-style: italic; font-weight: normal; }
 
 
 /* This is to remove the space between bobbing and wide when used in an URL */
-/* bc is abbreviation for business card - see also business_card.css */
+/* bc is abbreviation for business card */
 
 /* Removal of the space can also be done in a link or when the whole domain name is within the url class */
 .bc em.B1 { color:  #213623; color: #159374; text-transform: uppercase; }

@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2010, 2011
+<?php // (C) Copyright Bobbing Wide 2010-2012
 require_once( "bobblink.inc" );
 require_once( "bobbcomp.inc" );
  
@@ -100,23 +100,41 @@ function bw_wow_long ( $class = NULL ) {
 
 }
 
+/**
+ * Create a simple link to a website
+ * 
+ * @param array $atts - shortcode attributes
+ *  site = prefix of the site. e.g. www.cwiccer or twenty-tens
+ *  s = suffix = des for webdesign and dev for webdevelopment
+ *  t = tld = defaults to .com
+ *
+ * The primary purpose of this is to produce the fancy text for Bobbing Wide
+ * but it can be used for other sites if you specify site='your domain'
+ */
 function bw_lbw( $atts ) {
   $sites = array( 'bw' => "" ,
                   'des' => "webdesign",
                   'dev' => "webdevelopment"
+                  
                 );   
   $s = bw_default_empty_att( $atts['s'], NULL, "bw" );
   $tld = bw_default_empty_att( $atts['t'], NULL, ".com" );
-  $site = "www.bobbingwide";
+  $site = bw_array_get( $atts, 'site', "www.bobbingwide" );
+  if ( $site == 'www.bobbingwide' ) {
+     $text = "www." . bw();
+     $title = 'Visit the Bobbing Wide website: ';
+  } else {
+    $text = $site; 
+    $title = 'Visit the website: ';
+  }     
   $site .= $sites[ $s ];
   $site .= $tld;
   
-  $text = "www." . bw();
   if ( $sites[ $s ] ) 
     $text .= '<b>' . $sites[ $s ] . '</b>';
   $text .= $tld;  
    
-  alink( 'url', "http://" . $site, $text, "Visit the Bobbing Wide website: " . $site ) ;
+  alink( 'url', "http://" . $site, $text, $title . $site ) ;
   return( bw_ret());
 
 }
