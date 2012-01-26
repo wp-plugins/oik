@@ -1,16 +1,16 @@
-<?php // (C) Copyright Bobbing Wide 2011
+<?php // (C) Copyright Bobbing Wide 2011,2012
 
 
 /*
 Plugin Name: oik tides
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use shortcode macro for tide times [bw_tides]
-Version: 1.9
+Version: 1.10
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
-    Copyright 2010, 2011 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2011,2012 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,

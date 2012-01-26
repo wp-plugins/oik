@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2011
+<?php // (C) Copyright Bobbing Wide 2011,2012
 // Implementation of the BWPayPal class for oik PayPal shortcodes on WordPress and Drupal
 // 
 require_once( "bobbforms.inc" );

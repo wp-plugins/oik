@@ -4,12 +4,12 @@
 Plugin Name: oik bwtrace 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use trace macros for oik plugins
-Version: 1.9
+Version: 1.10
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
-    Copyright 2011 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2011,2012 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -69,7 +69,7 @@ function bw_trace_plugin_startup() {
   /* Shortcodes for each of the more useful APIs */
   add_shortcode( 'bwtron', 'bw_trace_on' );
   add_shortcode( 'bwtroff', 'bw_trace_off');
-  //add_shortcode( 'bwtrace', 'bw_trace_button' );
+  add_shortcode( 'bwtrace', 'bw_trace_button' );
 
   add_filter('widget_text', 'do_shortcode');
   add_filter('the_title', 'do_shortcode' ); 
@@ -209,6 +209,63 @@ function bw_trace_url() {
 
 }
 
+
+/**
+ * Shortcode for toggling or setting trace options 
+ * Provide a button for controlling trace
+ *
+ * @param $atts
+ *  option=view, reset, options 
+ *  
+ */
+function bw_trace_button( $atts = NULL ) {
+  $text = bw_array_get( $atts, 'text', "&nbsp;" );
+  $option = bw_array_get( $atts, 'option', NULL );
+  
+  $url = get_site_url( NULL, 'wp-admin/options-general.php?page=bw_trace_options' );
+  
+  //if ( bw_is_wordpress() )
+  //   $url = site_url( "/wp-admin/post-new.php" );
+  //else 
+  //   $url = site_url( '' );   
+  if ( $text ) {
+    //$text = "Trace options";
+  }
+  
+  global $bw_trace_on;
+  if ( $bw_trace_on ) {
+    switch ( $option ) {
+      case 'view':
+        $bw_trace_url = bw_trace_url();
+        alink( NULL, $bw_trace_url, "View trace log", "View trace output in your browser. $bw_trace_url");
+        break;
+        
+      case 'reset':
+        bw_trace_reset_form();
+        break; 
+        
+      default:   
+        alink( "bwtrace", $url, $text, "Trace options", "" );
+        bw_trace_reset_form();
+        break;  
+        
+    }
+  }    
+  return( bw_ret());  
+}
+
+/**
+ * Create the Trace reset button for use somewhere in any page
+ */
+function bw_trace_reset_form() {
+  oik_require( "bobbforms.inc" );
+  e( '<form method="post" action="" class="inline">' ); 
+  //stag( 'table class="form-table"' );
+  //bw_tablerow( array( "", 
+  e( "<input type=\"submit\" name=\"_bw_trace_reset\" value=\"Trace reset\" />" ); 
+  //etag( "table" ); 			
+  etag( "form" );
+}
 
 
 

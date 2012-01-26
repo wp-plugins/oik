@@ -3,7 +3,7 @@ Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide, key information, tide, trace, blocks, buddypress, pages, bookmarks, 
 Requires: 3.0.4
-Tested up to: 3.3
+Tested up to: 3.3.1
 Stable tag: 1.9
 
 Often Included Key-information using smart shortcodes 
@@ -83,6 +83,24 @@ Yes. I'm concentrating on getting version 1.x properly released.
 8. oik shortcode selection dialog
 
 == Changelog ==
+= 1.10 =
+* Added: [bw_attachments] for listing attachments 
+* Added: [bw_pdf] for .pdf type attachments
+* Added: [bw_tree] for producing a hierarchical tree of children of a 'page'
+* Added: [bw_copyright] for use in footers
+* Added: Introduced support for lazy shortcodes - where the shortcode function is not loaded until it's needed
+* Added: [stag] and [etag] shortcodes to use when using the HTML doesn't seem to work
+* Added: oik-boot.inc and changed oik_path to accept $file parameter
+* Added: [bwtrace] button for easier access to trace reset
+* Changed: better (faster) array detection in bw_array_get() 
+* Changed: added bw_array_get_dcb() where dcb = deferred callback. It only calls the callback function for the default when needed.
+* Changed: default function for bw_array_get_dcb is __() - to allow for i18n 
+* Changed: Update Copyright years throughout
+* Changed: alter custom header background image styling so that it does not repeat 
+* Changed: oik.css - added some additional styling 
+* Fixed: Fixed problem where shortcode escaping did not work. [[oik]] will now become [oik] 
+* Fixed: Added missing shortcode function for [bw_picasa]
+* Fixed: Added missing bw_block_25.inc - even though it may not be correct for Artisteer 2.5 
 = 1.9 =
 * Added: oik-bbpress to cater for expanded shortcodes in titles used as text attributes
 * Added: oik-header support for custom header background images with the Twenty Eleven theme

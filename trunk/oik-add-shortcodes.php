@@ -83,6 +83,48 @@ function bw_wtf() {
   return( get_the_ID() );
 }
 
+/**
+ *
+ */
+function _bw_missing_shortcodefunc( $atts, $hmm, $tag ) {
+  global $bw_sc_file;
+  // get_last_error ? 
+  $result = '&#91;' . $tag . ']';
+  $result .= "<b>Unable to locate routine to expand shortcode.</b>";
+  // Stop it from attempting to load an external file over and over again
+  $bw_sc_file[ $tag ] = $file;
+}
+
+/**
+ * load the file that implements the shortcode if necessary
+ *
+ * the file is expected to be the fully qualified file name
+ * for oik shortcodes these can be specified using oik_path( 'shortcodes/file.php' )
+ * on the call to bw_add_shortcode().
+ */  
+function bw_load_shortcodefile( $shortcode ) {
+  global $bw_sc_file;
+  $file = bw_array_get( $bw_sc_file, $shortcode, false );
+  if ( $file ) { 
+    $file = include_once( $file );
+  }
+  return( $file ); 
+}  
+
+/** 
+ * Invoke the shortcode
+ */ 
+function bw_load_shortcodefunc( $shortcodefunc, $shortcode ) {
+  if ( function_exists( $shortcodefunc ) ) {
+    $scfunc = $shortcodefunc;
+  } else {
+    $scfunc = '_bw_missing_shortcodefunc';
+    if ( bw_load_shortcodefile( $shortcode ) && function_exists( $shortcodefunc ) ) {
+      $scfunc = $shortcodefunc;
+    }   
+  }    
+  return( $scfunc );
+}  
 /** 
  * Expand a shortcode if the function is defined for the event
  *
@@ -112,7 +154,6 @@ function bw_shortcode_event( $atts, $hmm=NULL, $tag=NULL ) {
   global $bw_sc_ev, $bw_sc_ev_pp;
   // bw_backtrace();
   
-  $result = '&#91;' . $tag . ']';
   $cf = current_filter();
   if ( empty( $cf ) ) { $cf = 'wp_footer'; }
   
@@ -120,11 +161,8 @@ function bw_shortcode_event( $atts, $hmm=NULL, $tag=NULL ) {
   bw_trace( $tag, __FUNCTION__, __LINE__, __FILE__, "tag" ); 
   if ( isset( $bw_sc_ev[ $tag ][ $cf ] ))  {
     $shortcodefunc = $bw_sc_ev[ $tag ][ $cf ];
-    if ( function_exists( $shortcodefunc ) )
-      $result = $shortcodefunc( $atts, $hmm, $tag );   
-    else {
-      $result .= "<b>missing function to expand shortcode: $shortcodefunc</b>";
-    }
+    $shortcodefunc = bw_load_shortcodefunc( $shortcodefunc, $tag ); 
+    $result = $shortcodefunc( $atts, $hmm, $tag );   
   } 
   bw_trace( $result, __FUNCTION__, __LINE__, __FILE__, "result" );
   if ( isset( $bw_sc_ev_pp[ $tag ][ $cf ] ))  {
@@ -201,6 +239,16 @@ function bw_add_shortcode_event( $shortcode, $function=NULL, $eventlist='the_con
   add_shortcode( $shortcode, "bw_shortcode_event" );
 }
 
+/** 
+ * Add the location for the lazy shortcode
+*/
+function bw_add_shortcode_file( $shortcode, $file=NULL ) {
+  global $bw_sc_file;
+  if ( $file ) {
+    $bw_sc_file[$shortcode] = $file;
+  }
+} 
+
 /**
  * Add a shortcode that safely expands in admin page titles
  * but is properly expanded in content and widget text
@@ -208,9 +256,12 @@ function bw_add_shortcode_event( $shortcode, $function=NULL, $eventlist='the_con
  * bp_screens is included to support BuddyPress
  * get_the_excerpt is to support Artisteer 3.1 beta 1
 */
-function bw_add_shortcode( $shortcode, $function=NULL ) {
+function bw_add_shortcode( $shortcode, $function=NULL, $file=NULL ) {
   bw_add_shortcode_event( $shortcode, $function, 'the_content,widget_text,wp_footer,get_the_excerpt,settings_page_bw_email_signature,bp_screens' );
   bw_add_shortcode_event( $shortcode, $function, 'the_title', 'bw_admin_strip_tags' );
+  if ( $file ) { 
+    bw_add_shortcode_file( $shortcode, $file );
+  }  
 }  
 
 bw_add_shortcode_event( "bw_wtf");
@@ -294,3 +345,11 @@ bw_add_shortcode( 'bw_blockquote', 'bw_blockquote' );
 bw_add_shortcode( 'bw_cite', 'bw_cite' );
 
 // bw_backtrace();
+
+bw_add_shortcode( 'bw_copyright', 'bw_copyright' );
+
+bw_add_shortcode( 'stag', 'bw_stag' ); 
+bw_add_shortcode( 'etag', 'bw_etag' );
+
+
+bw_add_shortcode( "bw_tree", "bw_tree", oik_path("shortcodes/oik-tree.php") );

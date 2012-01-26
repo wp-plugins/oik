@@ -28,13 +28,15 @@ function bw_oik_header_box( $post ) {
 
 }
 
-function bw_authorized() {
-  $authorized = TRUE;
-  if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
-      $authorized = FALSE;
-      
-  // if ( !wp_verify_nonce( $_POST['myplugin_noncename'], plugin_basename( __FILE__ ) ) )
-  return $authorized;
+if ( !function_exists( "bw_authorized" ) ) {
+  function bw_authorized() {
+    $authorized = TRUE;
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
+        $authorized = FALSE;
+        
+    // if ( !wp_verify_nonce( $_POST['myplugin_noncename'], plugin_basename( __FILE__ ) ) )
+    return $authorized;
+  }
 }
 
 function bw_oik_header_save_postdata( $post_id ) {

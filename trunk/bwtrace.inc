@@ -1,5 +1,11 @@
 <?php 
-// (C) Copyright Bobbing Wide 2011
+// (C) Copyright Bobbing Wide 2011-2012
+
+
+/* We can't use plugin_basename since it may not be defined when bwtrace.inc first gets loaded
+   So we just hope for the best **?**
+*/
+require_once( "oik_boot.inc" );
 
 function bwapi_trace_test( $text) {
   if ( function_exists( 'bw_trace' ) ) {
@@ -19,9 +25,13 @@ function bwapi_trace_test( $text) {
 function bw_trace_inc_init() {   
   global $bw_trace_options, $bwapi_trace_test;   
   bw_trace_off();
-  $bw_trace_options = array( 'file' => "bwtrace.log", 'trace' => 0, 'reset' => 0,  ); 
+  $bw_trace_options = array( 'file' => "bwtrace.loh", 'trace' => 0, 'reset' => 0,  ); 
+  
 
-  //bw_trace_reset();
+  if ( !empty( $_REQUEST['_bw_trace_reset'] ) ) {
+    bw_trace_reset();
+  }  
+
   //bw_trace_on();
   // bw_trace_errors( 3 );
   //echo "<p>BAT1 $bwapi_trace_test</p>";
@@ -111,6 +121,13 @@ function bw_trace_count( $count ) {
   return( $ret ) ;
 }
 
+function bw_trace_function( $function ) {
+  global $bw_trace_functions;
+  $bw_trace_functions[$function]++;
+  $ret = $function;
+  $ret .= "(".$bw_trace_functions[$function].")";
+  return( $ret );
+}
 
 /**
  * Return TRUE if option is '1', FALSE otherwise
@@ -120,6 +137,42 @@ function bw_torf( $array, $option ) {
   $ret = $opt > '0';
   return $ret;
 }
+
+/** 
+ * Trace contextal information set using bw_set_context 
+ * If the context is "act" then we trace the number of times this has been processed
+ */
+
+function bw_trace_context() {	
+  global $bw_context;
+  $context = "cf=". current_filter();
+  if ( is_array( $bw_context ) ) {
+    foreach ( $bw_context as $key => $value ) {
+      $context .= ",$key=$value";     
+      if ( $key == "act" ) {
+        global $wp_actions;
+        $context .= "(".$wp_actions[$value].")";
+      }  
+    }
+  }    
+  return( $context );
+} 
+
+function bw_set_context( $key, $value=NULL ) {
+  global $bw_context;
+  if (!isset( $bw_context )) 
+    $bw_context = array();
+  $bw_context[$key] = $value;
+} 
+
+function bw_trace_context_all( $function=NULL, $line=NULL, $file=NULL ) {	
+  global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
+  // bw_trace( $wp_filter, $function, $line, $file, "wp_filter" );
+  //bw_trace( $wp_actions, $function, $line, $file, "wp_actions" );
+  //bw_trace( $merged_filters, $function, $line, $file, "merged_filters" );
+  bw_trace( $wp_current_filter, $function, $line, $file, "current_filter" );
+}
+
 
 /* Format required for the trace record is something like this
  
@@ -137,26 +190,42 @@ function bw_flf( $function, $lineno, $file, $count,  $text, $text_label = NULL )
   $ref .= bw_trace_date( DATE_W3C );
   $ref .= " ";
   $ref .= bw_trace_count( $count );
+  $ref .= " "; 
+  $ref .= bw_trace_context();
   $ref .= " ";
-  $ref .= $function;
+  $ref .= bw_trace_function( $function );
   $ref .= " ";
   $ref .= $text_label;
   $ref .= " ";
   $ref .= print_r( $text, TRUE );
   $ref .= "\n";
   return( $ref );
-}   
+} 
+
+function bw_array_inc( &$array, $index ) {
+  if ( !isset($array) )
+    $array = array();
+  if ( ! isset($array[$index]) )
+    $array[$index] = 1;
+  else
+    ++$array[$index];
+}
 
   
 function bw_trace( $text, $function=__FUNCTION__, $lineno=__LINE__, $file=__FILE__, $text_label=NULL) {
-  global $oktop, $bw_trace_on, $bw_trace_count;
+  global $oktop, $bw_trace_on, $bw_trace_count, $bw_trace_functions;
   $oktop = TRUE;
   
   if ($bw_trace_on)
   {
-    if ( empty( $bw_trace_count ) )
+    if ( empty( $bw_trace_count ) ) {
       $bw_trace_count = 0;
+      $bw_trace_functions = array();
+    }  
     $bw_trace_count++;
+    // Note: This is NOT the actual count of the number of times that the function is called. 
+    // It's the number of times that bw_trace is called for the $function
+    bw_array_inc( $bw_trace_functions, $function );
     $line = bw_flf( $function, $lineno, $file, $bw_trace_count, $text, $text_label );  
     bw_trace_log( $line );  
       
@@ -238,8 +307,7 @@ function bw_write( $file, $line ) {
   }
 } 
 
-function bw_trace_reset()
-{
+function bw_trace_reset() {
   $file = bw_trace_file();
   // This file may not exist so we have two choices. 1. precede with an @, 2. test for it
   // but if $file is not set then we should test
@@ -263,15 +331,31 @@ bw_trace_inc_init();
  */
  
 if ( !function_exists( 'bw_array_get' ) ) { 
+  if ( FALSE) {
   function bw_array_get( $array = array(), $index, $default=NULL ) {
     if ( isset( $array[$index] ) || ( is_array( $array) && array_key_exists( $index, $array ) ) )  {
       $value = $array[$index];
     } else {
       $value = $default;
-    } 
+    }
+    // We can't use bw_trace2() here since it caused infinite recursion 
+    //bw_trace2( $value );
+     bw_trace( $value, __FUNCTION__,  __LINE__, __FILE__, "value" ); 
+    return( $value );
+  }
+  }
+    
+  function bw_array_get( $array = NULL, $index, $default=NULL ) {
+    $value = $default;
+    if ( (array) $array === $array ) {
+      if ( isset( $array[$index] ) || ( is_array( $array) && array_key_exists( $index, $array ) ) )  {
+        $value = $array[$index];
+      }  
+    }   
+    // Note: We cannot call bw_trace2() here since it causes infinite recursion 
     // bw_trace( $value, __FUNCTION__,  __LINE__, __FILE__, "value" ); 
     return( $value );
-  }  
+  }
 }
 
 
@@ -351,10 +435,11 @@ function bw_backtrace() {
   global $bw_trace_on;
   if ($bw_trace_on) {
     $backtrace = debug_backtrace();
+    //bw_trace( $backtrace, __FUNCTION__, __LINE__, __FILE__, "backtrace" );
+    $file = "";
     foreach ( $backtrace as $i => $call ) {
       $function = $call['function'];
-      
-      $file = bw_array_get( $call, 'file', NULL) ;
+      $file = bw_array_get( $call, 'file', $file ) ;
       $file = bw_trace_file_part( $file );
       $line = bw_array_get( $call, 'line', 0 );
       $args = $call['args'];
@@ -365,11 +450,31 @@ function bw_backtrace() {
           break;
         case 1:
           $targs = $args[0]; 
+          //if ( strpos( " require require_once include include_once ", $function ) ) {
+            $function .= "(".$targs.")";
+          //}  
           break;
         default:
           $targs = $args;
-      }      
-      bw_trace( $targs, $function, $line, $file, $i );
+          $sep = '(';
+          foreach ( $targs as $targ ) {
+            $function .= $sep.$targ ;
+            $sep = ',';
+          }
+          $function .= ')';  
+      }
+      // This produces far too much      
+      //bw_trace( $targs, $function, $line, $file, $i );
+      // this is not much better
+      //bw_trace( $i, $function, $line, $file, "backtrace" );
+      
+      /*
+0.0018 467368 1. {main}() C:\apache\htdocs\wordpress\wp-admin\options-general.php:0 
+0.0033 561816 2. require_once('C:\apache\htdocs\wordpress\wp-admin\admin.php') C:\apache\htdocs\wordpress\wp-admin\options-general.php:10 
+0.0040 578248 3. require_once('C:\apache\htdocs\wordpress\wp-load.php') C:\apache\htdocs\wordpress\wp-admin\admin.php:30 
+      */ 
+      $line = "$i. $function $file:$line $cargs\n";
+      bw_trace_log( $line ); 
     }
   }
 } 
@@ -415,6 +520,8 @@ function bw_trace2( $value=NULL, $text=NULL ) {
       bw_trace( $targs, $function, $line, $file, $cargs );
       if ( $value ) 
         bw_trace( $value, $function, $line, $file, $text );
+      bw_trace_context_all( $function, $line, $file );  
+        
 
     }
   }  
@@ -423,36 +530,3 @@ function bw_trace2( $value=NULL, $text=NULL ) {
    
    
 
-/**
- * Shortcode for togglingor setting trace options 
- * Provide a button for controlling trace
- *
- * @param $atts
- *  option= 
- *  
- */
-function bw_trace_button( $atts = NULL ) {
-  $text = bw_array_get( $atts, 'text', " " );
-  $option = bw_array_get( $atts, 'option', NULL );
-  
-  $url = get_site_url( NULL, 'wp-admin/options-general.php?page=bw_trace_options' );
-  
-  //if ( bw_is_wordpress() )
-  //   $url = site_url( "/wp-admin/post-new.php" );
-  //else 
-  //   $url = site_url( '' );   
-  if ( $text ) {
-    $text = "Trace options";
-  }
-  switch ( $option ) {
-    case 'view':
-      $bw_trace_url = bw_trace_url();
-      alink( NULL, $bw_trace_url, "View trace log", "View trace output in your browser. $bw_trace_url");
-      break; 
-      
-    default:   
-      alink( "bwtrace", $url, $text, "Trace options", "" );
-      break;
-  }    
-  return( bw_ret());  
-}
