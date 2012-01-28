@@ -1,13 +1,6 @@
 <?php // (C) Copyright Bobbing Wide 2012
 
 /*
-Plugin Name: oik-tree
-Plugin URI: http://www.oik-plugins.com/oik
-Description: [bw_tree] tree view of the 'page' hierarchy
-#Version: 1.10
-Author: bobbingwide
-Author URI: http://www.bobbingwide.com
-License: GPL2
 
     Copyright 2012 Bobbing Wide (email : herb@bobbingwide.com )
 
@@ -47,11 +40,13 @@ function bw_format_tree( $post, $atts ) {
  */
 function bw_tree_func( $atts ) {  
   $posts = bw_get_posts( $atts );
-  stag( "ul" );
-  foreach ( $posts as $post ) {
-    bw_format_tree( $post, $atts );
-  }
+  if ( count( $posts ) ) {
+    stag( "ul" );
+    foreach ( $posts as $post ) {
+      bw_format_tree( $post, $atts );
+    }
   etag( "ul" );
+  }
 }
 
 /**
@@ -61,7 +56,7 @@ function bw_tree_func( $atts ) {
  */
 function bw_tree( $atts = NULL ) {
   $atts['orderby'] = bw_array_get($atts, "orderby", "menu_order" );
-  $atts['order'] = bw_array_get( $atts, "order" "ASC" );
+  $atts['order'] = bw_array_get( $atts, "order", "ASC" );
   $atts['post_parent'] = bw_array_get( $atts, "post_parent", $GLOBALS['post']->ID );      
   bw_tree_func( $atts );
   return( bw_ret() );
