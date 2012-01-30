@@ -157,6 +157,8 @@ function bw_shortcode_event( $atts, $hmm=NULL, $tag=NULL ) {
   $cf = current_filter();
   if ( empty( $cf ) ) { $cf = 'wp_footer'; }
   
+  $result = '&#91;' . $tag . ']';
+  
   bw_trace( $cf, __FUNCTION__, __LINE__, __FILE__, "current_filter" );
   bw_trace( $tag, __FUNCTION__, __LINE__, __FILE__, "tag" ); 
   if ( isset( $bw_sc_ev[ $tag ][ $cf ] ))  {

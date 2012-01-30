@@ -448,17 +448,20 @@ function bw_backtrace() {
         case 0: 
           $targs = NULL;
           break;
-        case 1:
-          $targs = $args[0]; 
+        //case 1:
+          //$targs = $args[0]; 
           //if ( strpos( " require require_once include include_once ", $function ) ) {
             $function .= "(".$targs.")";
           //}  
-          break;
+          //break;
         default:
           $targs = $args;
           $sep = '(';
           foreach ( $targs as $targ ) {
-            $function .= $sep.$targ ;
+            if ( is_object( $targ ) )
+              $function .= $sep."object";
+            else  
+              $function .= $sep.$targ ;
             $sep = ',';
           }
           $function .= ')';  
