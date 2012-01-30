@@ -71,8 +71,8 @@ if (!function_exists( 'oik_path' )) {
   add_filter('the_excerpt', 'do_shortcode' );
   // The big question is... do we need to add this filter 
   // or can we rely on it having been already added
-  // 
-  add_filter('the_content', 'do_shortcode', 11 );
+  // Well it all depends on how add_filter works **?**
+  // add_filter('the_content', 'do_shortcode', 11 );
   //add_filter('get_pages', 'do_shortcode' );
 
   $bw_options = get_option( 'bw_options' );
@@ -241,7 +241,7 @@ function oik_options_do_page() {
   p( bw_follow_me() );
   
 
-  bw_edit_custom_css_link( $options['customCSS'] );
+  bw_edit_custom_css_link( bw_array_get( $options, 'customCSS', NULL ));
   
 
   p("For more information:" );
@@ -302,19 +302,17 @@ function bw_create_file( $base, $path, $default ) {
  * With WPMS, the link takes you to style.css rather than custom.css. Don't know why!
  */ 
 function bw_edit_custom_css_link( $customCSS ) {
-  p( "If you have defined a custom CSS file use this link to edit it." );
   p( "Note: This only works when the file is in the current theme directory." );
   p( "If you change themes then you will start with a new custom CSS file" );
   p( get_current_theme() . " in " . get_stylesheet_directory()  );
   
-  
-  $link = admin_url( "theme-editor.php" );
-  $link .= '?file=';
-  //$link .= 'oik/custom.css';
-  $link .= path_join( get_stylesheet_directory(), $customCSS );
-  
-    
-  alink( NULL, $link, "edit custom CSS" ); 
+  if ( $customCSS != NULL ) {
+    $link = admin_url( "theme-editor.php" );
+    $link .= '?file=';
+    //$link .= 'oik/custom.css';
+    $link .= path_join( get_stylesheet_directory(), $customCSS );
+    alink( NULL, $link, "edit custom CSS" ); 
+  }
 }  
 
 
