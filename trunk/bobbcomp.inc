@@ -972,7 +972,8 @@ function bw_get_users( $atts = NULL ) {
 function bw_copyright( $atts = NULL ) {
   $copyright = bw_array_get_dcb( $atts, "prefix", "&copy; Copyright" );
   $company = bw_array_get_dcb( $atts, "company", "company", "bw_get_company" );
-  $yearto = get_the_date('Y');
+  $yearto = bw_format_date( null, 'Y');
+  bw_trace( $yearto, __FUNCTION__, __LINE__, __FILE__, "yearto!" );
   $yearfrom = bw_array_get_dcb( $atts, "from", "yearfrom", "bw_get_company" );
   
   
