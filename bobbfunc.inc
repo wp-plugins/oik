@@ -722,6 +722,8 @@ function bw_format_date( $date=NULL, $format="Y-m-d" ) {
     } 
     $date = date( $format, $date );
     // bw_trace2( $date, "date" );
-  }
+  } else {
+    $date = date( $format );
+  }  
   return( $date );
 }
