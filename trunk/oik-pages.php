@@ -35,11 +35,13 @@ require_once( 'oik-add-shortcodes.php' );
 require_once( 'oik-artisteer.php' );
 
 
-bw_add_shortcode( 'bw_pages', 'bw_pages' );
-bw_add_shortcode( 'bw_list', 'bw_list' );
-bw_add_shortcode( 'bw_bookmarks', 'bw_bookmarks' );
-bw_add_shortcode( 'bw_attachments', 'bw_attachments' );
-bw_add_shortcode( 'bw_pdf', 'bw_pdf' );
+/* We shouldn't let any of these expand in titles */
+
+bw_add_shortcode( 'bw_pages', 'bw_pages', NULL, false );
+bw_add_shortcode( 'bw_list', 'bw_list', NULL, false );
+bw_add_shortcode( 'bw_bookmarks', 'bw_bookmarks', NULL, false );
+bw_add_shortcode( 'bw_attachments', 'bw_attachments', NULL, false );
+bw_add_shortcode( 'bw_pdf', 'bw_pdf', NULL, false );
 
 
 /**
@@ -303,9 +305,11 @@ function bw_get_thumbnail( $post_id = null, $size = 'thumbnail', $atts=NULL ) {
   elseif ( $arr_thumb = bw_get_attached_image( $post_id, 1, 'rand', $size )) {
     //bw_trace( $arr_thumb, __FUNCTION__, __LINE__, __FILE__, "arr_thumb" );
     $thumbnail = $arr_thumb[0];
-  } 
+  } else {
+    $thumbnail = NULL; 
+  }  
   // bw_trace( $thumbnail, __FUNCTION__, __LINE__, __FILE__, "thumbnail" ); 
-  if ( $thumbnail[0] ) {
+  if ( bw_array_get( $thumbnail, 0, FALSE)  ) {
     $text = bw_array_get( $atts, "title", NULL );
     $thumbnail = bw_force_size( $thumbnail, $size );
     
@@ -397,6 +401,30 @@ function bw_get_categories() {
   return bw_trace2( $cats );
 }
 
+
+/** 
+ *
+ */
+function bw_global_post_id() {
+  $post_id = 0;
+  if ( isset( $GLOBALS['post'] )) {
+    $post_id = $GLOBALS['post']->ID;
+  }  
+  return( $post_id ) ;
+}  
+
+/** 
+ *
+ */
+function bw_global_post_type() {
+  $post_type = NULL;
+  if ( isset( $GLOBALS['post'] )) {
+    $post_type = $GLOBALS['post']->post_type;
+  }  
+  return( $post_type ) ;
+}  
+
+
 /**
  * Wrapper to get_posts() 
  * 
@@ -427,18 +455,17 @@ function bw_get_posts( $atts = NULL ) {
  
   $attr = $atts;
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
-  //bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
-  /* Set default values if not already set */
+  //bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );    
   
-  // Set the post_type attribute - initially default to NULL
-  $attr['post_type'] = bw_array_get( $attr, 'post_type', $GLOBALS['post']->post_type );
+  /* Set default values if not already set */
+  $attr['post_type'] = bw_array_get_dcb( $attr, 'post_type', NULL, "bw_global_post_type"  );
   
   // Only default post_parent for post_type of 'page' 
   // This allows [bw_pages] to be used without parameters on a page
   // and to be used to list 'page's from other post types.
   // 
   if ( $attr['post_type'] == 'page' || $attr['post_type'] == 'attachment' ) {
-    $attr['post_parent'] = bw_array_get( $attr, "post_parent", $GLOBALS['post']->ID );
+    $attr['post_parent'] = bw_array_get_dcb( $attr, "post_parent", NULL, "bw_global_post_id" );
   }
   
   if ( $attr['post_type'] == 'post' ) {
@@ -455,7 +482,7 @@ function bw_get_posts( $atts = NULL ) {
   
   // Regardless of the post type, exclude the current post, 
   // Note: This could also be improved **?**
-  $attr['exclude'] = bw_array_get( $attr, "exclude", $GLOBALS['post']->ID );
+  $attr['exclude'] = bw_array_get_dcb( $attr, "exclude", NULL, "bw_global_post_id" );
   
   bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
   

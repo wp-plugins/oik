@@ -418,10 +418,56 @@ span.copyright-years {  }
 
 
 ul.tick, ul.cross, ul.x { list-style: none; list-style-position: outside; padding-left: 0; }
-ul.tick li, li.tick   { background: transparent url( 'images/green_tick_64x64.png' ) no-repeat; background-size: auto 100%; padding-left: 2em; } 
+ul.tick li, li.tick   { background: transparent url( 'images/green_tick_64x64.png' ) no-repeat; background-size: 16px 16px; padding-left: 2em; } 
 ul.cross li, li.cross, .tick li.x { background: transparent url( 'images/red_x_64x64.png' ) no-repeat; background-size: auto 100%; padding-left: 2em; }
 
 
 /* For rules on using the PDF logo see "Adobe PDF file icon" in http://www.adobe.com/misc/linking.html */
 a[href*='.pdf'] { background: transparent url( 'images/pdficon_small.png' ) no-repeat; background-size: auto; padding-left: 32px; }
 
+/* columns required %ages to use
+   ---------------- ---------------
+   1                100
+   2                50%
+   3                33% 66%
+   4                25% 50% 75%
+   5                20% 40% 60% 80% 
+   6                16% 33% 50% 66% 83%
+   7                14.285714%
+*/   
+.w100pc { float: left; width: 100%; }
+.w90pc { float: left; width: 90%; }
+.w83pc { float: left; width: 83.3333333%; }
+.w80pc { float: left; width: 80%; }
+.w75pc { float: left; width: 75%; }
+.w70pc { float: left; width: 70%; }
+.w66pc { float: left; width: 66.6666667%; }
+.w60pc { float: left; width: 60%; }
+.w50pc { float: left; width: 50%; }
+.w40pc { float: left; width: 40%; }
+.w33pc { float: left; width: 33.3333333%; }
+.w30pc { float: left; width: 30%; }
+.w25pc { float: left; width: 25%; }
+.w20pc { float: left; width: 20%; }
+.w15pc { float: left; width: 15%; }
+.w16pc { float: left; width: 16.6666667%; }
+.w10pc { float: left; width: 10%; }
+
+/* Prevent images from going outside their bounding divs */
+div.art-block img { max-width: 100% }
+
+/* Fix for nested Artisteer blocks - see Support case 69871. 
+  Although it was Closed with a recommendation to use the following
+
+   .art-blockcontent .art-blockheader, .art-blockcontent .art-blockcontent {  z-index: 0; } 
+ I find that doesn't work for blocks in the content. 
+ So I'm using a slightly modified version of my original solution.
+ 
+   .art-bar is needed to complete the RHS of the header bar for the box
+   but we need to work at a lower level to ensure that the drop down of the horizontal menu appears
+   
+   .art-box is needed to complete the RHS of the content of the box
+   
+*/
+.art-box-body .art-bar { z-index: 0; } 
+.art-box { z-index: 0; } 

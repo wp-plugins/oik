@@ -17,7 +17,7 @@ function bw_get_cms_type() {
     return( $bw_cms_type );       
     }  
   }
-  exit( "Unknown CMS");
+  //exit( "Unknown CMS");
   
   return( $bw_cms_type );       
 }
@@ -103,9 +103,10 @@ else {
     $url .= $path;
     return( $url );
   }  
-     
-  require_once( "shortcodes.php" );  // This is a copy of the WordPress include specifically for the Drupal version of oik.
-
+  
+  if ( bw_is_drupal() ) {    
+    require_once( "shortcodes.php" );  // This is a copy of the WordPress include specifically for the Drupal version of oik.
+  }
 }
 
 
@@ -757,28 +758,32 @@ function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL 
 /** 
  * Return the array[index] or a default value if not set
  * 
- * Performance notes:
- * 
- * Original code called isset() first, but this did not work if the parameter was a string
- * I can no longer find the post where this was the suggested solution
- *
- * Improved version tests for the array using casting
- * See http://us.php.net/manual/en/function.is-array.php#98156 
- *
  * 
  */
-if ( !function_exists( 'bw_array_get' ) ) { 
-  function bw_array_get( $array = NULL, $index, $default=NULL ) {
-    $value = $default;
-    if ( (array) $array === $array ) {
-      if ( isset( $array[$index] ) || ( is_array( $array) && array_key_exists( $index, $array ) ) )  {
-        $value = $array[$index];
+if ( !function_exists( 'bw_array_get' ) ) {
+  function bw_array_get( $array = NULL, $index, $default=NULL ) {   
+    if ( isset( $array ) ) {
+      if ( is_array( $array ) ) {
+        if ( isset( $array[$index] ) || array_key_exists( $index, $array ) ) {
+          $value = $array[$index];
+        } else {
+          $value = $default;
+        }  
+      } elseif ( is_object( $array ) ) {
+        if ( property_exists( $array, $index ) ) {
+          $value = $array->$index;
+        } else {
+          $value = $default;
+        } 
+      } else {
+        $value = $default;
       }  
-    }   
-    // Note: We cannot call bw_trace2() here since it causes infinite recursion 
-    // bw_trace( $value, __FUNCTION__,  __LINE__, __FILE__, "value" ); 
+    } else {
+      $value = $default;
+    }  
     return( $value );
   }
+ 
 }
 
 

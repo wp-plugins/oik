@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2009, 2011
+<?php // (C) Copyright Bobbing Wide 2009-2012
 // Functions for the anchor tag...
 // because it's more complicated than others
 
