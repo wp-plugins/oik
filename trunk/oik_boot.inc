@@ -19,4 +19,11 @@ if (!function_exists( 'oik_require' )) {
   function oik_require( $include_file = "bobbfunc.inc" ) {
     require_once( oik_path( $include_file ) ); 
   }  
-}    
+}  
+
+function oik_init( ) {
+
+  oik_require( 'bwtrace.inc' );
+  
+
+}  
