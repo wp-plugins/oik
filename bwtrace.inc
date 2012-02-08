@@ -327,33 +327,34 @@ bw_trace_inc_init();
 
 
 /** 
- * Return the array[index] or a default value if not set
+ * Return the array[index] or array->index (for an object) or a default value if not set
+ *
+ * Note: This code is slightly more efficient with the default being assigned in the else
+ * than when there is just one assignment of $value = $default right at the start
+ * where slightly more is 2 or 3 microseconds - measured on a laptop.
  */
  
 if ( !function_exists( 'bw_array_get' ) ) { 
-  if ( FALSE) {
-  function bw_array_get( $array = array(), $index, $default=NULL ) {
-    if ( isset( $array[$index] ) || ( is_array( $array) && array_key_exists( $index, $array ) ) )  {
-      $value = $array[$index];
+  function bw_array_get( $array = NULL, $index, $default=NULL ) {   
+    if ( isset( $array ) ) {
+      if ( is_array( $array ) ) {
+        if ( isset( $array[$index] ) || array_key_exists( $index, $array ) ) {
+          $value = $array[$index];
+        } else {
+          $value = $default;
+        }  
+      } elseif ( is_object( $array ) ) {
+        if ( property_exists( $array, $index ) ) {
+          $value = $array->$index;
+        } else {
+          $value = $default;
+        } 
+      } else {
+        $value = $default;
+      }  
     } else {
       $value = $default;
-    }
-    // We can't use bw_trace2() here since it caused infinite recursion 
-    //bw_trace2( $value );
-     bw_trace( $value, __FUNCTION__,  __LINE__, __FILE__, "value" ); 
-    return( $value );
-  }
-  }
-    
-  function bw_array_get( $array = NULL, $index, $default=NULL ) {
-    $value = $default;
-    if ( (array) $array === $array ) {
-      if ( isset( $array[$index] ) || ( is_array( $array) && array_key_exists( $index, $array ) ) )  {
-        $value = $array[$index];
-      }  
-    }   
-    // Note: We cannot call bw_trace2() here since it causes infinite recursion 
-    // bw_trace( $value, __FUNCTION__,  __LINE__, __FILE__, "value" ); 
+    }  
     return( $value );
   }
 }

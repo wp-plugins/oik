@@ -27,6 +27,7 @@ License: GPL2
 
 */
 global $bw_options;
+require_once( "oik_boot.inc" );
 
 
 //echo '<p>BATa='.$bwapi_trace_test.'=aBAT</p>';

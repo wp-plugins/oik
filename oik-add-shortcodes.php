@@ -258,9 +258,11 @@ function bw_add_shortcode_file( $shortcode, $file=NULL ) {
  * bp_screens is included to support BuddyPress
  * get_the_excerpt is to support Artisteer 3.1 beta 1
 */
-function bw_add_shortcode( $shortcode, $function=NULL, $file=NULL ) {
+function bw_add_shortcode( $shortcode, $function=NULL, $file=NULL, $the_title=TRUE ) {
   bw_add_shortcode_event( $shortcode, $function, 'the_content,widget_text,wp_footer,get_the_excerpt,settings_page_bw_email_signature,bp_screens' );
-  bw_add_shortcode_event( $shortcode, $function, 'the_title', 'bw_admin_strip_tags' );
+  if ( $the_title ) {
+    bw_add_shortcode_event( $shortcode, $function, 'the_title', 'bw_admin_strip_tags' );
+  }  
   if ( $file ) { 
     bw_add_shortcode_file( $shortcode, $file );
   }  
@@ -354,4 +356,5 @@ bw_add_shortcode( 'stag', 'bw_stag' );
 bw_add_shortcode( 'etag', 'bw_etag' );
 
 
-bw_add_shortcode( "bw_tree", "bw_tree", oik_path("shortcodes/oik-tree.php") );
+bw_add_shortcode( "bw_tree", "bw_tree", oik_path("shortcodes/oik-tree.php"), false );
+bw_add_shortcode( "bw_posts", "bw_posts", oik_path("shortcodes/oik-posts.php"), false );

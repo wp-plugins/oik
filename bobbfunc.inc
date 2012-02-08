@@ -702,7 +702,7 @@ function bw_gallery() {
 /**
  * Format a date with the specified format
  *
- * @param string $date - either a number - representing the UNIX date or a recognisable date string
+ * @param string $date - either a number - representing the UNIX date or a recognisable date string or NULL - for the current date
  *  e.g. 1293840000 => 2011-01-01
  *       2011-12-31 => 2011-12-31
  * @param string $format - date formatting string
