@@ -111,7 +111,7 @@ function bw_wow_long ( $class = NULL ) {
  * The primary purpose of this is to produce the fancy text for Bobbing Wide
  * but it can be used for other sites if you specify site='your domain'
  */
-function bw_lbw( $atts ) {
+function bw_lbw( $atts=NULL ) {
   $sites = array( 'bw' => "" ,
                   'des' => "webdesign",
                   'dev' => "webdevelopment"
