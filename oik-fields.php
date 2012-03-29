@@ -4,7 +4,7 @@
 Plugin Name: oik fields
 Plugin URI: http://www.oik-plugins.com/oik
 Description: [bw_field] [bw_fields] shortcodes to display Custom Fields (post metadata)
-Version: 1.10
+Version: 1.11
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -28,7 +28,7 @@ License: GPL2
 */
 
 require_once( 'bobbfunc.inc' );
-require_once( 'bobbingwide.inc' );
+//require_once( 'bobbingwide.inc' );
 /* This include will enable oik shortcodes even if the oik base is not enabled. Is this is good idea? */
 require_once( 'oik-add-shortcodes.php' );
 /* Include functions to determine level of Artisteer theme whilst Artisteer doesn't provide it */

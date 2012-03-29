@@ -19,6 +19,7 @@
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
+oik_require( "includes/bw_posts.inc" );
 
 /**
  * format the tree - as a nested list
@@ -57,7 +58,17 @@ function bw_tree_func( $atts ) {
 function bw_tree( $atts = NULL ) {
   $atts['orderby'] = bw_array_get($atts, "orderby", "menu_order" );
   $atts['order'] = bw_array_get( $atts, "order", "ASC" );
-  $atts['post_parent'] = bw_array_get( $atts, "post_parent", $GLOBALS['post']->ID );      
+  $atts['post_parent'] = bw_array_get_dcb( $atts, "post_parent", null, "bw_global_post_id" );
   bw_tree_func( $atts );
   return( bw_ret() );
+}
+
+
+/** 
+ * bw_tree doesn't currently support classes
+*/
+function bw_tree__syntax( $shortcode="bw_tree" ) {
+  $syntax = _sc_posts(); 
+  // $syntax = array_merge( $syntax, _sc_classes() );
+  return( $syntax );   
 }

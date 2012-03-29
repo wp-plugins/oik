@@ -350,6 +350,13 @@ a.bwtrace     { background: transparent url(images/oik_trace_48.png) no-repeat t
 
 
 
+/* background image for the oik dashboard icon */
+#adminmenu #toplevel_page_oik_menu div.wp-menu-image img { visibility: hidden; }
+#adminmenu #toplevel_page_oik_menu div.wp-menu-image { background: url( 'images/oik-icon.png' ) 0 90% no-repeat; }
+#toplevel_page_oik_menu.current .wp-menu-image, 
+#toplevel_page_oik_menu.wp-has-current-submenu .wp-menu-image, 
+#toplevel_page_oik_menu:hover .wp-menu-image { background-position: top left; }
+
 /* CSS for Views forms buttons */
 /* .views-exposed-form .views-exposed-widget .form-submit { margin-top:0; } */
 /* form#views-ui-preview-form input#preview-submit { margin-top:0; } */
@@ -368,7 +375,7 @@ div.bd-100 .art-blockcontent { min-height: 100px; }
 div.bd-150 .art-blockcontent { min-height: 150px; }
 div.bd-200 .art-blockcontent { min-height: 200px; }
 div.bd-250 .art-blockcontent { min-height: 250px; }
-div.bd-300 .art-blockcontent { min-height: 300px; }
+div.bd-300 .art-blockcontent, .bd-300 { min-height: 300px; }
 div.bd-350 .art-blockcontent { min-height: 350px; }
 div.bd-400 .art-blockcontent { min-height: 400px; }
 div.bd-450 .art-blockcontent { min-height: 450px; }
@@ -380,6 +387,7 @@ div.emergency { color: #b53030 }
 
 /* For [bw_show_googlemap] */
 #map_canvas { height: 100%; min-height: 100% } 
+#map_canvas img { max-width: none; }
 
 /* For [wp] = WordPress  - see http://wordpress.org/about/logos/ */
 span.wordpress { /* nothing yet */ }
@@ -424,7 +432,7 @@ ul.cross li, li.cross, .tick li.x { background: transparent url( 'images/red_x_6
 
 /* For rules on using the PDF logo see "Adobe PDF file icon" in http://www.adobe.com/misc/linking.html */
 a[href*='.pdf'] { background: transparent url( 'images/pdficon_small.png' ) no-repeat; background-size: auto; padding-left: 32px; }
-
+a.portfolio { background: none; padding-left: 0px;  }
 /* columns required %ages to use
    ---------------- ---------------
    1                100
@@ -451,10 +459,15 @@ a[href*='.pdf'] { background: transparent url( 'images/pdficon_small.png' ) no-r
 .w20pc { float: left; width: 20%; }
 .w15pc { float: left; width: 15%; }
 .w16pc { float: left; width: 16.6666667%; }
+.w14pc { float: left; width: 14.285714%; }
 .w10pc { float: left; width: 10%; }
 
 /* Prevent images from going outside their bounding divs */
-div.art-block img { max-width: 100% }
+/* Does it matter what the class of the div is? Can't we do it for every image? */
+div.art-block img, div.textwidget img { max-width: 100% }
+img { max-width: 100% } 
+
+
 
 /* Fix for nested Artisteer blocks - see Support case 69871. 
   Although it was Closed with a recommendation to use the following
@@ -467,7 +480,16 @@ div.art-block img { max-width: 100% }
    but we need to work at a lower level to ensure that the drop down of the horizontal menu appears
    
    .art-box is needed to complete the RHS of the content of the box
-   
+  
+   2012/03/22  discovered that this can stop hmenu drop down items from appearing
+   So I have removed my latest fix and added a new line for the
+   blocks in body content
+    
 */
-.art-box-body .art-bar { z-index: 0; } 
-.art-box { z-index: 0; } 
+/* .art-box-body .art-bar { z-index: 0; } */
+/* .art-box { z-index: 0; } */
+/* .art-box-body .art-nav { z-index: 1; } */
+/* .art-bar, .art-box { z-index: 0; }  */
+
+   .art-blockcontent .art-blockheader, .art-blockcontent .art-blockcontent {  z-index: 0; } 
+   .art-block-body .art-blockheader, .art-block-body .art-blockcontent { z-index: 0; }

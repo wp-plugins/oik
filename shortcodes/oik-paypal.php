@@ -1,32 +1,27 @@
-<?php // (C) Copyright Bobbing Wide 2011,2012
-// Implementation of the BWPayPal class for oik PayPal shortcodes on WordPress and Drupal
-// 
-require_once( "bobbforms.inc" );
-class BWPaypal
-{
-	function __construct() {
-		// add_action('admin_menu', array($this, 'bw_pp_create_menu'));
-		add_action('admin_init', array($this, 'bw_pp_admin_init'));
-		add_shortcode('paypal', array($this, 'bw_pp_shortcodes'));
-	}
-	
-	function bw_pp_admin_init() {
-		if ( current_user_can( 'edit_posts' ) && current_user_can( 'edit_pages' ) ) {
-			add_filter('mce_buttons', array($this, 'filter_mce_button'));
-			add_filter('mce_external_plugins', array($this, 'filter_mce_plugin'));
-		}
-	}
-	
-	function filter_mce_button($buttons) {
-		array_push($buttons, '|', 'bwpaypal_button' );
-		return $buttons;
-	}
-	
-	function filter_mce_plugin($plugins) {
-		$plugins['bwpaypal'] = plugin_dir_url( __FILE__ ) . 'oik_paypal_plugin.js';
-		return $plugins;
-	}
-        
+<?php 
+/*
+
+    Copyright 2011,2012 Bobbing Wide (email : herb@bobbingwide.com )
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License version 2,
+    as published by the Free Software Foundation.
+
+    You may NOT assume that you can use any other version of the GPL.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    The license for this software can likely be found here:
+    http://www.gnu.org/licenses/gpl-2.0.html
+
+*/
+
+oik_require( "bobbforms.inc" );
+
+
 /* PayPal generated code for the buttons was
    
    Pay now - rather than Buy Now
@@ -83,16 +78,19 @@ class BWPaypal
   </form>
 */
 
-	function bw_pp_shortcodes($atts) {
-	
-		// $email = get_option('bw-pp-email');
-                $bw_paypal_email =  bw_get_company( 'paypal-email' );
+function bw_pp_shortcodes( $atts = NULL) {
+  $bw_paypal_email = bw_array_get( $atts, "email", bw_get_option( 'paypal-email' ));   	
+  // $email = get_option('bw-pp-email');
+  // $bw_paypal_email =  bw_get_option( 'paypal-email' );
                 
-                $bw_paypal_location = 'GB';  // hardcoded at present
-                $bw_paypal_currency = 'GBP'; // hardcoded at present
+  $bw_paypal_location = bw_array_get( $atts, "location", 'GB' );  // hardcoded at present
+  $bw_paypal_currency = bw_array_get( $atts, "currency", 'GBP' ); // hardcoded at present
+  $atts['productname'] = bw_array_get( $atts, "productname", "oik-plugin" );
+  $atts['sku'] = bw_array_get( $atts, "sku", "oik" );
                 
-		$shipadd = $atts['shipadd'];
-		if(!is_numeric($shipadd)) $shipadd = '2';
+  $shipadd = bw_array_get( $atts, 'shipadd', 2 );
+  if (!is_numeric($shipadd)) 
+    $shipadd = '2';
                 
                 // set up the common fields for the form
                 
@@ -163,9 +161,9 @@ class BWPaypal
                         $code .= ihidden( "noshipping", $shipadd );
                         
                         
-                        $code .= ihidden( "weight", $atts['weight']  ); 
-			$code .= ihidden( "shipping", $atts['shipcost'] );
-                        $code .= ihidden( "shipping2", $atts['shipcost2'] );
+                        $code .= ihidden( "weight", bw_array_get( $atts, 'weight', null ) ); 
+			$code .= ihidden( "shipping", bw_array_get( $atts, 'shipcost', null) );
+                        $code .= ihidden( "shipping2", bw_array_get( $atts, 'shipcost2', null) );
                         
                         /* Don't want extra info yet 
                         
@@ -220,9 +218,3 @@ class BWPaypal
                 
 		return $code;	
 	}
-	
-}
-
-$bwpaypal = new BWPaypal();
-
-

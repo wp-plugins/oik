@@ -1,47 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2010, 2011
-
-
-/* 
- * Google Maps JavaScript API V2 - now deprecated
-*/
-function bw_googlemap( $club, $lat, $lng, $postcode ) {
-  $latlng = $lat . ',' . $lng ;
-     
-  //echo '<div class="sidebar-right">';
-  //echo '<h2 class="bar-green-med-light">' . $club . '</a></h2>';
-  //echo '<p>Use this button for ';
-  //echo '<a href="http://maps.google.co.uk/maps?f=d&hl=en&daddr=' . $latlng . '" title="Google directions">Google directions</a></p>';
-  //echo '</div>';
-     
-     
-     bw_echo( '<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=');
-     bw_echo( bw_get_company( "google_maps_api_key" ));
-     
-     // ABQIAAAAEraXBMl-kX5b-Swk0AR98BQOEsTKtT06IEwsylb7Uz31uE8TkRRL_5k4o5givS__FLcKk7M8WMou8Q"');
-     bw_echo( '" type="text/javascript"></script>');
-     bw_echo( "<script type=\"text/javascript\">\n");
-
-     bw_echo( "//<![CDATA[\n");
-     bw_echo( "function load() {\n");
-     bw_echo( 'if (GBrowserIsCompatible()) {');
-     bw_echo( 'var map = new GMap2(document.getElementById("map"));');
-     bw_echo( 'var point = new GLatLng( ' .  $latlng . ');');
-     bw_echo( 'map.setCenter( point , 12);');
-     bw_echo( 'map.addOverlay( new GMarker( point ));');
-     bw_echo( 'map.openInfoWindow( point, document.createTextNode("' . $club . ' ' .  $postcode . '" ));');
-     //map.setMapType( G_HYBRID_MAP); 
-     bw_echo( 'var mapControl = new GMapTypeControl();');
-     bw_echo( 'map.addControl( mapControl);');
-     bw_echo( 'map.addControl( new GLargeMapControl());');
-     bw_echo( '}');
-     bw_echo( '}');
-     bw_echo( '//]]>');
-     bw_echo( '</script>');
-     bw_echo( '<body onload="load()" onunload="GUnload()">');
-     bw_echo( '<div id="map" style="width:' .bw_get_company( "width" ). 'px; height:'.bw_get_company( "height" ).'px"></div>');
-     bw_echo( '</body>');
-}
- 
+<?php // (C) Copyright Bobbing Wide 2010-2012
 
 /*
  * set the Google map marker
@@ -86,7 +43,7 @@ function bw_googlemap_v3(  $title, $lat, $lng, $postcode, $width, $height ) {
 
   $latlng = $lat . ',' . $lng ;
 
-  bw_echo( '<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&region=GB">' );
+  bw_echo( '<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;region=GB">' );
   bw_echo( '</script>' );
   bw_echo( '<script type="text/javascript">' );
   bw_echo( 'function initialize() {' );
@@ -95,19 +52,25 @@ function bw_googlemap_v3(  $title, $lat, $lng, $postcode, $width, $height ) {
   // Choose from ROADMAP, SATELLITE, HYBRID, TERRAIN 
   bw_echo( 'var myOptions = { zoom: 12, center: latlng, mapTypeId: google.maps.MapTypeId.ROADMAP };' );
   bw_echo( 'var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); ' );
-  
-  bw_gmap_marker( $postcode );
-  bw_gmap_infowindow( $title, $postcode );
-  
+
+  if ( $postcode ) {
+    bw_gmap_marker( $postcode );
+    bw_gmap_infowindow( $title, $postcode );
+  }
   bw_echo( '}' );
+  bw_echo( 'window.onload=initialize;');
 
   bw_echo( '</script>' );
   
-  bw_echo( '<body onload="initialize()">');
   
   // Here we set the min-height so that the Google Map should at least be visible 
-  bw_echo( '<div id="map_canvas" style="min-height: 200px; width:' . $width. '; height:'. $height. ';"></div>');
-  bw_echo( '</body>' );
+  
+  if ( $height ) {
+    $hv = ' height:'. $height; 
+  } else {
+    $hv = '';  
+  }  
+  bw_echo( '<div id="map_canvas" style="min-height: 200px; width:' . $width. ';' .$hv .';"></div>');
 
 
 }
@@ -138,16 +101,21 @@ function bw_show_googlemap( $atts=NULL ) {
   //$isnull = is_null( $company_override );
   //p( "isnull:".$isnull.":" );
   //p( "company_override:".$company_override.":");     
-  $company = bw_get_company( "company" );
+  $company = bw_get_option( "company" );
   if ( $company_override === NULL )
     bw_echo( '<p>This Google map shows you where <strong>' . $company . '</strong> is located.</p>');
   else 
     bw_echo( '<p>This Google map should show you where <strong>' . $company_override . '</strong> is located.</p>');
  
   $width = bw_default_empty_att( $width, "width", "100%" );
+  
   // The default height allows for the info window being opened above the marker which is centred in the map.
-  // any less than this an the top of the info window gets cropped
+  // any less than this and the top of the info window gets cropped
   $height = bw_default_empty_att( $height, "height", "400px" );
+
+  // Karen makemybizmobile suggested I try not even setting the height
+  //$height = bw_default_empty_att( $height, "height", NULL );
+  
   $height = bw_forp( $height );
   
   $lat = bw_default_empty_att( $lat, "lat", 50.887856 );
@@ -163,6 +131,35 @@ function bw_show_googlemap( $atts=NULL ) {
             , $height
             );
   return( bw_ret() );
+}
+
+function bw_show_googlemap__example( $shortcode = "bw_show_googlemap" ) {
+  p( "To display a Googlemap for your company location use [bw_show_googlemap]" );
+  p( "Some of the default values are extracted from oik information:" );
+  sul();
+  li( "company - for the Company name" );
+  li( "lat - for the latitude" );
+  li( "long - for the longitude" );
+  li( "width - map width (  100% )" );
+  li( "height - map height ( 400px - to allow for the info window )" );
+  eul();
+  
+  $example = "[$shortcode]";
+  p ( $example );
+  bw_add_shortcode_event( $shortcode, $shortcode, current_filter() );
+  e( do_shortcode( $example ));
+}
+
+
+function bw_show_googlemap__syntax( $shortcode = "bw_show_googlemap" ) {
+  $syntax = array( "company_override" => bw_skv( "", "company name", "type your company name" )
+                 , "lat" => bw_skv( "<i>lat</i>", "latitude", "latitude" )
+                 , "long" => bw_skv( "<i>long</i>", "longitude", "longitude" )
+                 , "postcode" => bw_skv( "<i>postcode</i>", "postcode", "post code or zip code" )
+                 , "width" => bw_skv( "100%", "width", "width of the Google map" )
+                 , "height" => bw_skv( "400px", "height", "height of the map" )
+                 );
+  return( $syntax );
 }  
 
 
