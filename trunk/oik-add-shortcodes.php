@@ -1,87 +1,10 @@
 <?php 
 
- require_once( 'bwtrace.inc' );
+// require_once( 'bwtrace.inc' );
 /* Shortcodes for each of the more useful "often included key-information" fields 
    in Bobbing Wide's Wonder of WordPress websites
 */
 
-
-/**
- * Safely invoke SlideShow Gallery Pro
-*/ 
-function bw_gp_slideshow( $atts, $hmm=NULL, $tag=NULL ) {
-  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
-  bw_trace( $tag, __FUNCTION__, __LINE__, __FILE__, "tag" ); 
-  $continue = true; 
-   
-  if ( $continue && ( 'the_content' != current_filter() ) ) {
-    $content = '&#91;' . $tag . ']';  
-    $continue = FALSE;
-      // $content .= ' !?#';
-  }  
-  
-  if ( $continue && !class_exists( "Gallery" ) ) {
-    $content = '&#91;' . $tag . '] <b>Slideshow Gallery Pro not activated</b>';
-    $continue = FALSE;
-  }
-    
-  if ( $continue ) {
-    $Gallery = new Gallery();
-    $content = $Gallery->embed( $atts );
-  }
-  
-  bw_trace( $content,  __FUNCTION__, __LINE__, __FILE__, "content" );
-  
-  return $content;
-}
-
-
-/**
- * This is a prototype function used to investigate what's necessary to make shortcode expansion "safe"
- 
-  An advanced shortcode processor needs to know the context in which 
-   the shortcode is being expanded. There are times when we don't want to show the
-   HTML since this may include information that would cause CSS to
-   do some unexpected styling - so that needs to be stripped
-   but there are other times when we do want this to happen
-   This function is an experimental / exploratory function
-   to find out what needs to be done, when, where and how.
-*/   
-function bw_clever( $atts, $hmm=NULL, $tag=NULL ) {
-  /* The current_filter function lets us know why the shortcode is being expanded
-     but we also need to know the purpose.
-     
-     e.g. the_title is used in a multitude of places
-     when displayed on a post, page or widget we may want the text nicely formatted
-     but in a page list we want plain text - with no shortcode expansion OR expanded but not styled
-     How do we decide the best approach to this problem?
-     
-  */   
-  $cf = current_filter();
-  bw_trace( $cf, __FUNCTION__, __LINE__, __FILE__, "current_filter" );
- 
-  $admin = is_admin();
-  // as you can see it's incomplete
-  return( $tag );
-}  
-
-/** 
- * These are dummy functions to demonstrate my appalling understanding of php's OO implementation 
-*/
-function bw_nobbut() {
-  return "";
-}
-
-
-/** 
- * returns the current value of $post->ID 
- * Note: ths does not necessarily expand correctly when the shortcode is processed for a nested item within another post.
- *
- */
-function bw_wtf() {
-  // bw_trace( "wtf", __FUNCTION__, __LINE__, __FILE__, "wtf" );
-  return( get_the_ID() );
-}
 
 /**
  *
@@ -92,7 +15,7 @@ function _bw_missing_shortcodefunc( $atts, $hmm, $tag ) {
   $result = '&#91;' . $tag . ']';
   $result .= "<b>Unable to locate routine to expand shortcode.</b>";
   // Stop it from attempting to load an external file over and over again
-  $bw_sc_file[ $tag ] = $file;
+  $bw_sc_file[ $tag ] = false;
 }
 
 /**
@@ -115,16 +38,27 @@ function bw_load_shortcodefile( $shortcode ) {
  * Invoke the shortcode
  */ 
 function bw_load_shortcodefunc( $shortcodefunc, $shortcode ) {
-  if ( function_exists( $shortcodefunc ) ) {
-    $scfunc = $shortcodefunc;
-  } else {
-    $scfunc = '_bw_missing_shortcodefunc';
-    if ( bw_load_shortcodefile( $shortcode ) && function_exists( $shortcodefunc ) ) {
+
+  if ( is_array( $shortcodefunc ) ) {
+    if ( is_callable( $shortcodefunc ) ) {
       $scfunc = $shortcodefunc;
-    }   
+    } else {
+      // Don't know what to do here
+    }    
+    
+  } else {
+    if ( function_exists( $shortcodefunc ) ) {
+      $scfunc = $shortcodefunc;
+    } else {
+      $scfunc = '_bw_missing_shortcodefunc';
+      if ( bw_load_shortcodefile( $shortcode ) && function_exists( $shortcodefunc ) ) {
+        $scfunc = $shortcodefunc;
+      }   
+    }
   }    
   return( $scfunc );
-}  
+} 
+ 
 /** 
  * Expand a shortcode if the function is defined for the event
  *
@@ -159,12 +93,13 @@ function bw_shortcode_event( $atts, $hmm=NULL, $tag=NULL ) {
   
   $result = '&#91;' . $tag . ']';
   
-  bw_trace( $cf, __FUNCTION__, __LINE__, __FILE__, "current_filter" );
-  bw_trace( $tag, __FUNCTION__, __LINE__, __FILE__, "tag" ); 
+  //bw_trace( $cf, __FUNCTION__, __LINE__, __FILE__, "current_filter" );
+  //bw_trace( $tag, __FUNCTION__, __LINE__, __FILE__, "tag" ); 
   if ( isset( $bw_sc_ev[ $tag ][ $cf ] ))  {
+    //bw_trace( $bw_sc_ev, __FUNCTION__, __LINE__, __FILE__, "bw_sc_ev" );
     $shortcodefunc = $bw_sc_ev[ $tag ][ $cf ];
     $shortcodefunc = bw_load_shortcodefunc( $shortcodefunc, $tag ); 
-    $result = $shortcodefunc( $atts, $hmm, $tag );   
+    $result = call_user_func( $shortcodefunc, $atts, $hmm, $tag );   
   } 
   bw_trace( $result, __FUNCTION__, __LINE__, __FILE__, "result" );
   if ( isset( $bw_sc_ev_pp[ $tag ][ $cf ] ))  {
@@ -186,12 +121,15 @@ function bw_shortcode_event( $atts, $hmm=NULL, $tag=NULL ) {
  * bw_strip_tags() is equivalent to esc_attr( strip_tags() )
  * but it also gets passed the current_filter - future use
 */
-function bw_strip_tags( $string, $current_filter=NULL ) {
-  $rstring = $string;
-  $rstring = strip_tags( $rstring );
-  $rstring = esc_attr( $rstring );
-  return $rstring;
+if ( !function_exists( "bw_strip_tags" ) ) {
+  function bw_strip_tags( $string, $current_filter=NULL ) {
+    $rstring = $string;
+    $rstring = strip_tags( $rstring );
+    $rstring = esc_attr( $rstring );
+    return $rstring;
+  }
 }
+
 
 /** 
  * bw_admin_strip_tags() strips tags if the content is being displayed on an admin page 
@@ -270,8 +208,8 @@ function bw_add_shortcode( $shortcode, $function=NULL, $file=NULL, $the_title=TR
 
 bw_add_shortcode_event( "bw_wtf");
 bw_add_shortcode_event( "bw_wtf", NULL, "the_title", "bw_strip_tags" );
+bw_add_shortcode_file( "bw_wtf", oik_path( "shortcodes/oik-wtf.php" ) );
 
-bw_add_shortcode_event( 'bw_ngslideshow', 'NextGEN_shortcodes::show_slideshow', 'the_content,widget_text' );
 
 bw_add_shortcode_event( 'bw_directions', 'bw_directions', 'the_content,widget_text' );
 
@@ -291,7 +229,7 @@ bw_add_shortcode( 'bw_telephone', 'bw_telephone' );
 bw_add_shortcode( 'bw_fax', 'bw_fax' );
 bw_add_shortcode( 'bw_mobile', 'bw_mobile' );
 bw_add_shortcode( 'bw_wpadmin', 'bw_wpadmin' );
-bw_add_shortcode( 'bw_show_googlemap', 'bw_show_googlemap');
+bw_add_shortcode( 'bw_show_googlemap', 'bw_show_googlemap', oik_path("shortcodes/oik-googlemap.php"), false );
 bw_add_shortcode( 'bw_contact', 'bw_contact' );
 
 bw_add_shortcode( 'bw_twitter', 'bw_twitter' );
@@ -322,17 +260,15 @@ bw_add_shortcode( 'bw_tel', 'bw_tel' );
 bw_add_shortcode( 'bw_mob', 'bw_mob' );
 
 
-bw_add_shortcode( 'ngslideshow', 'NextGEN_shortcodes::show_slideshow' );
-
-//add_shortcode( 'gpslideshow', 'bw_gp_slideshow' ); 
-
-bw_add_shortcode( 'gpslides', 'bw_gp_slideshow' );
 //add_shortcode( 'clever', 'bw_clever' );
 bw_add_shortcode( 'bw_follow_me', 'bw_follow_me' );
 
 
 //bw_add_shortcode( 'bw_logo', 'bw_logo' );
 bw_add_shortcode_event( 'bw_logo', 'bw_logo', 'the_content,widget_text,settings_page_bw_email_signature' );
+bw_add_shortcode_file( "bw_logo", oik_path( "shortcodes/oik-logo.php" ) );
+
+
 bw_add_shortcode_event( 'bw_qrcode', 'bw_qrcode', 'the_content,widget_text,settings_page_bw_email_signature');
 
 // Include [div]/[sdiv], [ediv] and [sediv] 
@@ -356,5 +292,61 @@ bw_add_shortcode( 'stag', 'bw_stag' );
 bw_add_shortcode( 'etag', 'bw_etag' );
 
 
+/* We shouldn't let any of these expand in titles */
+
 bw_add_shortcode( "bw_tree", "bw_tree", oik_path("shortcodes/oik-tree.php"), false );
 bw_add_shortcode( "bw_posts", "bw_posts", oik_path("shortcodes/oik-posts.php"), false );
+
+
+bw_add_shortcode( 'bw_pages', 'bw_pages', oik_path("shortcodes/oik-pages.php"), false );
+bw_add_shortcode( 'bw_list', 'bw_list', oik_path("shortcodes/oik-list.php"), false );
+bw_add_shortcode( 'bw_bookmarks', 'bw_bookmarks', oik_path("shortcodes/oik-bookmarks.php"), false );
+bw_add_shortcode( 'bw_attachments', 'bw_attachments', oik_path("shortcodes/oik-attachments.php"), false );
+bw_add_shortcode( 'bw_pdf', 'bw_pdf', oik_path("shortcodes/oik-attachments.php"), false );
+bw_add_shortcode( 'bw_images', 'bw_images', oik_path("shortcodes/oik-attachments.php"), false );
+bw_add_shortcode( 'bw_portfolio', 'bw_portfolio', oik_path("shortcodes/oik-attachments.php"), false );
+bw_add_shortcode( 'bw_thumbs', 'bw_thumbs', oik_path("shortcodes/oik-thumbs.php"), false );
+ 
+
+
+bw_add_shortcode( 'bw_button', 'bw_button_shortcodes', oik_path("shortcodes/oik-button.php"), false );
+bw_add_shortcode( 'bw_contact_button', 'bw_contact_button', oik_path("shortcodes/oik-button.php"), false );
+
+
+bw_add_shortcode( 'bw_block', 'bw_block', oik_path("shortcodes/oik-blocks.php"), false );
+bw_add_shortcode( 'bw_eblock', 'bw_eblock', oik_path("shortcodes/oik-blocks.php"), false );
+                                           
+bw_add_shortcode( 'paypal', 'bw_pp_shortcodes', oik_path( "shortcodes/oik-paypal.php"), false );
+
+
+//if ( $bw_plugins['oik-tides'] ) {
+//  bw_add_shortcode( 'bw_tides', 'bw_tides', oik_path( "shortcodes/oik-tides.php"), false );
+//}
+
+
+/* Allow the NextGEN slideshow to be used in widgets as well as in context 
+*/
+
+bw_add_shortcode_event( 'ngslideshow', 'NextGEN_shortcodes::show_slideshow', 'the_content,widget_text' );
+// bw_add_shortcode_file ( 'ngslideshow', oik_path( "shortcodes/oik-slideshows.php") );
+
+bw_add_shortcode( 'gpslides', 'bw_gp_slideshow', oik_path( "shortcodes/oik-slideshows.php"), false  );
+bw_add_shortcode( "bw_slides", "bw_slides",  oik_path( "shortcodes/oik-slide.php"), false  );
+ 
+
+
+/* Shortcodes for each of the more useful APIs */
+bw_add_shortcode( 'bwtron', 'bw_trace_on', oik_path( "shortcodes/oik-trace.php") , false );
+bw_add_shortcode( 'bwtroff', 'bw_trace_off', oik_path( "shortcodes/oik-trace.php") , false );
+bw_add_shortcode( 'bwtrace', 'bw_trace_button', oik_path( "shortcodes/oik-trace.php") , false );
+
+add_action( "bw_sc_help", "bw_sc_help" );
+add_action( "bw_sc_syntax", "bw_sc_syntax" );
+add_action( "bw_sc_example", "bw_sc_example");
+add_action( "bw_sc_snippet", "bw_sc_snippet" );
+
+
+bw_add_shortcode_file( 'portfolio_slideshow', oik_path( "shortcodes/oik-slideshows.php") );
+bw_add_shortcode_file( 'nggallery', oik_path( "shortcodes/oik-galleries.php" ) );
+
+bw_add_shortcode( "bw_power", "bw_power", oik_path( "shortcodes/oik-bob-bing-wide.php" ) );

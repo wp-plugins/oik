@@ -6,7 +6,7 @@ Requires: 3.0.4
 Tested up to: 3.3.1
 Stable tag: 1.10
 
-Often Included Key-information using smart shortcodes 
+Lazy smart shortcodes for often included key-information
 
 == Description ==
 oik is a set of plugins that ease the day to day creation of the very important but rather tedious content that is information about you, 
@@ -22,7 +22,7 @@ Most of the shortcodes are prefixed bw_ (for Bobbing Wide) e.g. [ bw_mailto], wh
 
 Other plugins extend the functionality: 
 
-For general use
+For general use:
 
 * oik-blocks to create Artisteer style blocks within your pages, posts and even widgets
 * oik-button-shortcodes to provide call-to-action button style links for Artisteer themes
@@ -33,14 +33,17 @@ For general use
 * oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
 * oik-tides - shortcode for tide times in the UK
 
-For bobbing wide and other WordPress plugin developers 
+For WordPress plugin developers:
 
 * oik-bob-bing-wide to provide easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, bw_plug, bw_module
-* oik-bwtrace provides a rudimentary trace function, which logs trace information to a file, rather than including it within the web page output. 
+* oik-bwtrace provides an advanced trace function, which logs trace information to a file, rather than including it within the web page output. 
 * oik-fields to display custom fields within the content
 
-For use in BuddyPress sites
+For use in BuddyPress sites:
 * oik-bp-signup-email to intercept BuddyPress registration emails
+
+For use in bbPress sites:
+* oik-bbpress to strip tags from bbPress forum title tooltips
 
 ALL of the plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
 These are known as the bobbing wide application programming interface (bw API).
@@ -57,7 +60,12 @@ Put this before the require_once for wp-settings.php
 
 `require_once(ABSPATH . '/wp-content/plugins/oik/bwtrace.inc' );`
 
-Don't forget to remove this line before deleting the plugin.
+If you also want to track action and filter processing then you should precede that line with:
+
+`define( 'BW_TRACE_CONFIG_STARTUP', true );`
+
+
+Don't forget to remove this code before deleting the plugin.
 
 == Frequently Asked Questions ==
 = Where is the FAQ? =
@@ -82,7 +90,47 @@ Yes. I'm concentrating on getting version 1.x properly released.
 7. oik PayPal dialog
 8. oik shortcode selection dialog
 
+
+== Upgrade Notice ==
+
+= 1.11 =
+There are many changes in version 1.11 to support lazy invocation of code.  
+Some plugins have been created as separate plugins (uk-tides), others have been changed
+so that you can activate them by changing oik settings, so are no longer activatable.
+ 
+
 == Changelog ==
+= 1.11 = 
+* Added: "oik_loaded" actions for lazy initialisation of dependent plugins.
+* Added: AJAX enabled dialog for listing shortcodes, showing syntax and providing further information online
+* Added: CSS support for responsive images
+* Added: Improved support for nested shortcodes being expanded in excerpts
+* Added: [bw_code] shortcode to display help, syntax, example, live example and snippet for a shortcode
+* Added: [bw_codes] table to summarise active shortcodes
+* Added: [bw_power] shortcode for "Proudly powered by WordPress" link to WordPress.org
+* Added: [bw_thumbs] shortcode - shows the thumbnail images as links
+* Added: action and filter logging, an optional addition to tracing (for developers)
+* Added: edit custom CSS button (for developers and designers) 
+* Added: files for deprecated functions - but these are TOTALLY lazy
+* Added: help and syntax information for (some) NextGEN and Portfolio slideshow shortcodes
+* Added: help and syntax information for the NextGEN [nggallery] shortcode
+* Added: shortcode quicktag (labelled [] ) with jQuery code shared with th existing TinyMCE buttons
+* Added: shortcodes can now provide: help, syntax, examples, live examples and snippets
+* Added: trace options, trace actions and trace reset buttons
+* Changed: Improved API for form fields
+* Changed: PayPal shortcodes support currency (e.g. 'GBP') and location (e.g. 'GB') parameters
+* Changed: TinyMCE button selection is now part of the oik settings menu
+* Changed: [bw_logo] now includes jQuery code to automatically resize the image when displayed in a text widget in an Artisteer header
+* Changed: [bw_wtf] now prints the raw content of the post 
+* Changed: added shortcodes folder where the lazy shortcode logic is implemented
+* Changed: code only needed for admin pages has been made lazy
+* Changed: oik options is now in its own submenu with a dashboard like overview page
+* Changed: restructured to make shortcodes lazy
+* Changed: trace functions are very lazy
+* Fixed: CSS to fix a problem with GoogleMap's images on "responsive" sites
+* Fixed: Changed CSS fix for Artisteer nested blocks; original solution broke hmenus
+* Fixed: edit custom CSS links works on Multisite
+* Fixed: elimination of as many "Notice" messages as possible 
 = 1.10 =
 * Added: [bw_attachments] for listing attachments 
 * Added: [bw_pdf] for .pdf type attachments

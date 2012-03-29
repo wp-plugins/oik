@@ -4,7 +4,7 @@
 Plugin Name: oik BuddyPress signup email
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Send sign up verification emails via site admin for verification before accepting a user
-Version: 1.10
+Version: 1.11
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -52,12 +52,6 @@ add_filter( "wpmu_signup_user_notification", 'bw_signup_user_notification', 1, 4
 add_filter( "bp_core_signup_send_validation_email_message", "bw_core_signup_send_validation_email_message", 1, 3 );
 add_filter( "bp_core_signup_send_validation_email_to", "bw_core_signup_send_validation_email_to", 1, 2 );
 
-
-
-//	if ( !apply_filters('wpmu_signup_user_notification', $user, $user_email, $key, $meta) )
-//      return false; 
-   
-   
 /**
  * Create the body of the message to be sent to the admin user
  *
@@ -70,7 +64,6 @@ function bw_activate_email_message( $admin_email, $user, $user_email, $key, $met
   return $message;
 }
 
-
 function bw_activate_email_subject( $admin_email, $user, $user_email, $key, $meta ) {
   $subject .= get_site_option( 'site_name' );
   $subject .= " new user registration:";
@@ -78,9 +71,8 @@ function bw_activate_email_subject( $admin_email, $user, $user_email, $key, $met
   return $subject;
 }
 
-
 function bw_signup_user_notification( $user, $user_email, $key, $meta ) {
-  bw_trace2();
+  // bw_trace2();
   $admin_email = bw_send_validation_email_to();
     
   $from_name = get_site_option( 'site_name' ) == '' ? 'WordPress' : esc_html( get_site_option( 'site_name' ) );
@@ -103,12 +95,9 @@ function bw_send_validation_email_to() {
   return $admin_email;
 }
 
-
-
-
 function bw_core_signup_send_validation_email_message( $message, $user, $activate_url ) {
   
-  bw_trace2();
+  // bw_trace2();
   global $bw_user_email;
   
   $message .= "User: $user\n";
@@ -118,7 +107,7 @@ function bw_core_signup_send_validation_email_message( $message, $user, $activat
 }
 
 function bw_core_signup_send_validation_email_to( $user_email, $user_id ) {
-  bw_trace2();
+  //bw_trace2();
   global $bw_user_email;
   $bw_user_email = $user_email;
   

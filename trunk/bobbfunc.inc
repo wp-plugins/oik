@@ -2,22 +2,19 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '1.10' );
+  return( '1.11' );
 }
 
-require_once( "oik_boot.inc" );
- 
-  
+require_once( "oik_boot.inc" );   /* Don't use oik_require here */
 
 /**
  * bw API partial equivalent of PHP's output buffering
-   
  * 
  * Note: this isn't really an output buffer
- * and it's NOT stackable
- * It's used by the bw APIs to create the HTML output that it then returned from the shortcode functions  
+ * Use bw_push and bw_pop if you need to stack buffers during nested processing.
+ * $bwecho is used by the bw APIs to create the HTML output that is then returned from the shortcode functions  
  * 
- */
+*/
 function bw_echo( $string ) {
   global $bwecho;
   $bwecho.=$string;
@@ -25,6 +22,9 @@ function bw_echo( $string ) {
 
 /**
  * Use bw_flush() to echo the contents of $bwecho then empty it
+ * 
+ * You may need to use this before calling a WordPress function that echoes its output 
+ * directly rather than through a buffer. e.g. before calling settings_fields()
  */
 function bw_flush() {
   global $bwecho;
@@ -45,6 +45,39 @@ function bw_ret() {
   //bw_trace( __FUNCTION__ );
   return( $bwret );
 }
+
+/**
+ * Push then empty the current $bwecho buffer
+*/ 
+function bw_push() {
+ global $bwecho, $bwecho_array;
+ $bwecho_array[] = $bwecho;
+ $bwecho = null;
+}
+
+/** 
+ * Restore the previous $bwecho buffer
+*/
+function bw_pop() {
+  global $bwecho, $bwecho_array;
+  $bwecho = array_pop( $bwecho_array ); 
+}   
+
+/**
+ * Perform nested shortcode expansion
+ *
+ * @param string $content - the content to be expanded
+ * @return string the content after shortcode expansion
+ *
+ * Performance question - is there any point testing for a '[' in the string? i.e. How expensive is do_shortcode() ? 
+ */
+function bw_do_shortcode( $content ) {
+  bw_push(); 
+  $content = do_shortcode( $content );
+  bw_pop(); 
+  return( $content );
+}
+
 
 
 /**
@@ -74,43 +107,99 @@ function retimage( $class, $jpg, $title=NULL, $width=NULL, $height=NULL ) {
   $img .= " />";
   return( $img );
 }
+
  
-function image( $class, $jpg, $title=NULL, $width=NULL, $height=NULL )
-{
+function image( $class, $jpg, $title=NULL, $width=NULL, $height=NULL ) {
   $img = retimage( $class, $jpg, $title, $width, $height ); 
   bw_echo( $img );
 }
- 
 
-// *?** Need to create a link where I can add the prefix but the link text is nice
 
-/*
-function createlink( $file, $text ) {
- bw_echo( '<a href="' . $file . '">' . $text . '</a>' );
+function kv( $keyword, $value=null ) {
+  if ( $value != null ) {
+    $kv = ' '.$keyword . '="' . $value .'"';
+  } else {
+    $kv = '';
+  }  
+  return( $kv );  
 } 
 
-function checkout( $url, $text) {
-   createlink( $url, $text);
-}
-
-function checkoutid( $url, $text, $id) {
-   bw_echo( '<a id="' .$id . '" href="' . $url . '" alt="' .$text . '" title="' .$text .'">' . $text . '</a>' );
-}
 
 
-function menulink( $file, $text ) {
-  bw_echo( '<li>' );
-  createlink( $file, $text );
-  bw_echo( '</li>' );
+function atitle( $title = NULL ) {
+  $title = wp_strip_all_tags( $title );
+  return( kv( "title", $title ) );
+} 
+
+
+/**
+ * Create an anchor tag for linking within a page
+ */ 
+function aname( $name ) { 
+  stag( 'a' );
+  e( ' name="'. $name . '"' );
+  etag( 'a' );
+  // return( bw_ret() );
+} 
+
+
+
+/**
+ * Create a link
+ * 
+ * @param string $class - the classes for the anchor tag
+ * @param string $url - the fully formed URL e.g. http://www.oik-plugins.com
+ * @param string $linktori - is the text or image
+ * @param string $alt - if NULL will use $linktori
+ * @param string $id - the unique ID for the anchor tag
+ * @param string $extra - anything else that needs to go in the <a> tag. e.g. 'onclick=then some javascript' 
+ *
+ * @uses retlink()
+ * 
+*/   
+
+function alink( $class=NULL, $url, $linktori=NULL, $alt=NULL, $id=NULL, $extra=NULL ) {
+  $link = retlink( $class, $url, $linktori, $alt, $id, $extra );
+  e( $link ); 
 }
+
+
+/**
+ * Return a well formed link
+ *
+ * Parameters as for alink()
 */
+function retlink( $class=NULL, $url, $linktori=NULL, $alt=NULL, $id=NULL, $extra=NULL  ) {
+  if ( is_null( $linktori ) )
+    $linktori = $url;
+  $link = "<a" ;
+  $link .= kv( "class", $class ); // aclass( $class );
+  $link .= kv( "id", $id ); // aid( $id );
+  $link .= kv( "href", $url ); // ahref( $url );
+  if ( is_null( $alt ) )
+     $alt = $linktori;
+  // Is alt= allowed with XHTML Strict 1.0?    
+  // aalt( $alt );
+  $link .= atitle( $alt );
+  if ( $extra )
+    $link .= $extra ;
+  $link .= ">";
+  if ( $linktori )
+    $link .= $linktori;
+  $link .= "</a>";
+  return( $link );
+}  
+ 
 
-function retstag( $tag, $class=NULL, $id=NULL ) {   
+
+function retstag( $tag, $class=NULL, $id=NULL, $extra=NULL ) {   
   $stag = '<' . $tag ;
   if ( $class <> NULL )
      $stag.= ' class="' . $class. '"';
   if ( $id <> NULL )
      $stag.= ' id="' . $id. '"';
+  if ( $extra <> NULL )
+    $stag .= ' '. $extra;   
   $stag.= '>';
   return( $stag );
 }
@@ -124,8 +213,8 @@ function nullretstag( $tag, $class=NULL ) {
 } 
 
 
-function stag( $tag, $class=NULL, $id=NULL ) {
-  bw_echo( retstag( $tag, $class, $id ));
+function stag( $tag, $class=NULL, $id=NULL, $extra=NULL ) {
+  bw_echo( retstag( $tag, $class, $id, $extra ));
 }
 
 function sol( $class=NULL, $id=NULL ) {
@@ -139,8 +228,8 @@ function sul( $class=NULL, $id=NULL ) {
    stag( "ul", $class, $id );
 }        
 
-function sdiv( $class=NULL, $id=NULL ) {
-   stag( "div", $class, $id );
+function sdiv( $class=NULL, $id=NULL, $extra=NULL ) {
+   stag( "div", $class, $id, $extra );
 }
 
 function eol() {
@@ -157,8 +246,8 @@ function ediv() {
 }
 
 /* sediv creates a dummy div which is used for placing graphics using backhground images in CSS */
-function sediv( $class=NULL, $id=NULL ) {
-   sdiv( $class, $id );
+function sediv( $class=NULL, $id=NULL, $extra=NULL ) {
+   sdiv( $class, $id, $extra );
    ediv();
 }   
 
@@ -258,14 +347,6 @@ function hr() {
 }  
   
 
-function say( $text ) {
-  isay ($text, "EN" );
-}
-
-function isay( $text, $lang=NULL ) {
-  e( $text );  
-} 
-
 // Instead of function li( use function lit( - List Item Text
 
 function lit( $text, $class=NULL, $id=NULL ) {
@@ -313,75 +394,6 @@ function th( $data, $class=NULL, $id=NULL ) {
   
 
 
-function big_button( $class, $link, $text, $alt) {
-   sdiv( "big_button_" .$class );
-   sp();
-   
-   // createlink( $url, $text );
-   $url = $link ; 
-   
-   sa();
-   // No id parm 
-   aclass();
-   ahref( $url );
-   //aalt( $alt );
-   atitle( $alt );    
-   ag();
-
-   e( $text );  
-   ea();
-   ep(); 
-   ediv();
-   //ediv();
-}
-
-function button( $class, $link, $text, $alt) {
-   
-   // createlink( $url, $text );
-   stag( "span",  "big_button_" .$class );
-   $url = $link ; 
-   
-   sa();
-   // No id parm 
-   aclass();
-   ahref( $url );
-   atitle( $alt );    
-
-   ag();     
-
-   e( $text );  
-   ea();
-   etag( "span" );    
-   stag( "span", "end_button_" . $class );
-   //e( "&nbsp;*&nbsp;");
-   etag( "span" );     
-       
-
-}
-
-function sbutton( $class, $link, $text, $alt) {
-   
-   stag( "span",  "big_button_" .$class );
-   // createlink( $url, $text );
-   $url = $link ; 
-   
-   sa();
-   // No id parm 
-   aclass();
-   ahref( $url );
-   atitle( $alt );    
-
-   ag();     
-
-   e( $text );  
-   ea();    
-   etag( "span" );    
-   stag( "span", "end_button_" . $class );
-   e( "&nbsp;");
-   etag( "span" );     
-
-}
-
 
 
 // This routine finds the subdirectory under which this local version of the website is installed
@@ -419,42 +431,6 @@ function bw_expand_link( $linkurl ) {
       $linkurl = bw_get_docroot_suffix() . $linkurl;
    return( $linkurl) ;   
 }
-
-// Note: Any bw_debug's before the DOCTYPE and the page goes into quirks mode
-// where's the earliest we can put these then? = perhaps in comments?
-function bw_get_page() {
-  $page = "";
-  if ( !isset( $_GET['page'] ))
-  {
-     $page = $_SERVER['REQUEST_URI'];
-     //bw_debug( "SERVER request uri: " . $page );
-     if ( $page != $_SERVER['SCRIPT_NAME'] )
-     {
-        //bw_debug( "SCRIPT_NAME:" . $_SERVER['SCRIPT_NAME'] . " not the same as the REQUEST_URI:". $page . ", using SCRIPT_NAME" );
-        $page = $_SERVER['SCRIPT_NAME'];  
-     }   
-  }   
-  else
-     $page = $_GET['page'];   
-  //bw_debug( "bw_get_page: " . $page );   
-  
-  // Now we need to reduce this to the part of the page that we really want
-  // on betterbyfar there may be an unwanted subdirectory
-  // on real servers this subdirectory will not be present
-  // how do we find out what the subdirectory is? 
-  
-
-  // bw_debug( "page before:" . $page ); 
-  $docroot_suffix = bw_get_docroot_suffix();
-  
-  if ( $docroot_suffix <> '/' )
-    $page = str_replace( $docroot_suffix, NULL, $page );
-  else  
-    $page = ltrim( $page, $docroot_suffix );   
-  // bw_debug( "page after: " . $page );
-   
-  return $page;
-}  
 
 
 function bw_prefix_require( $file ) {
@@ -550,16 +526,6 @@ function bw_debug( $text ) {
       c( $text ); 
   }     
 }
-
-function bw_theme_image( $file ) {
-  global $theme;
-  $filename = bw_get_docroot_suffix();
-  $filename.= "/themes/";
-  $filename.= $theme;
-  $filename.= "/";
-  $filename.=$file;
-  return( $filename) ;
-} 
 
 
 /* Function: bw_image_link
@@ -726,4 +692,87 @@ function bw_format_date( $date=NULL, $format="Y-m-d" ) {
     $date = date( $format );
   }  
   return( $date );
+}
+
+
+/** Simple function to validate a field as TRUE or FALSE given a big list of strings that represent TRUE 
+    Note: No need for the $falses parameter at present
+ */
+function bw_validate_torf( $field, $trues=",true,yes,1", $falses=NULL ) {
+  $torf = FALSE;
+  $field = ",".strtolower( $field );
+  bw_trace( $field, __FUNCTION__, __LINE__, __FILE__, "field" );
+  bw_trace( $trues, __FUNCTION__, __LINE__, __FILE__, "trues" );
+  $pos = strpos( $trues, $field );
+  bw_trace( $pos, __FUNCTION__, __LINE__, __FILE__, "pos" );
+  if ( $pos )
+    $torf = TRUE;
+    
+  return( $torf );
+  
+  
+}
+
+
+
+/** 
+ * Return what might be the plugin name with hyphens and lowercase chars
+ * 
+ * Strip any tags - the WordPress UI likes adding <br />'s where we don't want them
+ */
+ 
+function bw_plugin_namify( $name ) {
+  $name = trim( $name );
+  $name = str_replace( ' ', '-', $name );
+  $name = str_replace( '_', '-', $name );
+  $name = strtolower( $name );
+  
+  return( bw_trace2( $name ) ); 
+}
+
+  
+/**
+ * Return the function name of the function to invoke built from parms
+ *
+ * @param string $prefix - the function name prefix e.g. "_bw_create_content"
+ * @param string $key - the multi-word key e.g. About oik-plugins"
+ * @return string $funcname - the function name to invoke
+ * 
+ * Example: Return the function name to create content for an about us page
+ * $funcname = bw_funcname( "_bw_create_content", "About oik-plugins" );
+ * 
+ * Would return the most detailed function that exists
+ *  _bw_create_content
+ *  _bw_create_content_about
+ *  _bw_create_content_about_oik
+ *  _bw_create_content_about_oik_plugins
+ *
+ * Note: In the original version of this code it happily produced
+ * _sc_help_caption
+ * for wp_caption
+ * So check what happens in the setup plugin **?**
+*/
+function bw_funcname( $prefix, $key, $value=NULL ) {
+  $funcname = $prefix; 
+  $testname = $funcname;
+  $keys = explode( "-", bw_plugin_namify( $key ));
+  foreach ( $keys as $keyword ) {
+    $testname .= '_'.$keyword;
+    if ( function_exists( $testname ) ) {
+      $funcname = $testname;
+    }  
+  }
+  return( $funcname );
+} 
+
+
+/**
+ * Return the URL for a resource file
+ * 
+ * @uses plugin_dir_url() to find the plugin base directory then appends the plugin folder and file name
+*/
+function oik_url( $file = null, $plugin='oik' ) {
+  $url = plugin_dir_url( null );
+  $url .= "$plugin/$file" ;
+  return( $url ); 
 }

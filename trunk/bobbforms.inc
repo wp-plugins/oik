@@ -1,4 +1,17 @@
 <?php // (C) Copyright Bobbing Wide 2009-2012
+
+// Note: This file uses functions from bobbfunc.inc. You must ensure this is already loaded
+
+function form( $action="", $method="post" ) {
+  return( "<form method=\"${method}\" action=\"${action}\">" ); 
+}
+
+function bw_form( $action="", $method="post" ) {
+  e( form( $action, $method ) );
+}  
+  
+
+
 function label( $name, $text )
 {
    $lab = "<label for=\"";
@@ -22,7 +35,7 @@ function ihidden( $name, $value ) {
   return $it;
 }  
 
-function itext( $name, $len, $value )
+function itext( $name, $len, $value, $class=null, $extras=null )
 {
   $width = ($len * 20) ;
   $it = "<input type=\"text\" size=\"";
@@ -36,7 +49,11 @@ function itext( $name, $len, $value )
   $it.= $name;
   $it.= "\" value=\"";
   $it.= $value;
-  $it.= "\" />"; 
+  $it.= "\" class=\"";
+  $it.= $class;
+  $it.= "\"";
+  $it.= $extras;
+  $it.= " />"; 
   return $it;
 }  
 
@@ -81,10 +98,10 @@ function bw_tablerow( $td_array= array() ) {
   etag( "tr"); 
 }
 
-function textfield($name, $len, $text, $value )
+function textfield($name, $len, $text, $value, $class=null )
 {
   $lab = label( $name, $text );
-  $itext = itext( $name, $len, $value ); 
+  $itext = itext( $name, $len, $value, $class ); 
   tablerow( $lab, $itext );
   return;
 }
@@ -98,9 +115,9 @@ function textarea( $name, $len, $text, $value )
 }
 
 
-function bw_textfield( $name, $len, $text, $value ) {
+function bw_textfield( $name, $len, $text, $value, $class=null, $extras=null ) {
   $lab = label( $name, $text );
-  $itext = itext( $name, $len, $value ); 
+  $itext = itext( $name, $len, $value, $class, $extras ); 
   bw_tablerow( array( $lab, $itext ) );
   return;
 }
@@ -131,4 +148,55 @@ function bw_select( $name, $text, $value, $args ) {
   bw_tablerow( array( $lab, $iselect ) );
   return;
 }
+
+
+/** 
+ * Create a checkbox input field
+ * @param string $name the name for the checkbox input field
+ * @param string $value the value of the checkbox - default NOT checked
+ * When the value is set then the checkbox is checked
+ 
+ */
+function icheckbox( $name, $value=NULL ) {
+  $it = "<input type=\"checkbox\" ";
+  $it.= "name=\"";
+  $it.= $name;
+  $it.= "\" id=\"";
+  $it.= $name;
+  $it.= '"';
+  if ( $value ) {
+    $it.= " checked=checked\"";
+  }  
+  $it.= "/>"; 
+  return $it;
+}
+
+/**
+ * Create a checkbox field given a field name and value
+ */
+function bw_checkbox( $name, $text, $value=1, $args=NULL ) {
+  $lab = label( $name, $text );
+  $icheckbox = icheckbox( $name, $value );
+  bw_tablerow( array( $lab, $icheckbox ));
+  return;
+}
+
+/**
+ * Create a checkbox for an array options field 
+ */
+function bw_checkbox_arr( $name, $text, $array, $index ) {
+  $name_index = $name.'['.$index.']';
+  $value = bw_array_get( $array, $index, NULL );
+  bw_checkbox( $name_index, $text, $value );
+}  
+
+/**
+ * Create a textfield for an array options field 
+ */
+function bw_textfield_arr( $name, $text, $array, $index, $len ) {
+  $name_index = $name.'['.$index.']';
+  $value = bw_array_get( $array, $index, NULL );
+  bw_textfield( $name_index, $len, $text, $value );
+}  
+
  

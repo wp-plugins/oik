@@ -33,18 +33,18 @@ function bw_is_drupal() {
 
 
 if ( bw_is_wordpress() ) {
-  function bw_get_company( $field ) {
-    global $company;
+  function bw_get_option( $field, $set="bw_options" ) {
+    //global $company;
     /* WordPress code */
-    global $bw_options;
+    //global $bw_options;
     /* Need to put some code here to see if it's been loaded */
-    $bw_options = get_option( "bw_options" );
+    $bw_options = get_option( $set );
     
-    // bw_trace( $bw_options, __FUNCTION__,  __LINE__, __FILE__, "bw_options" );  
-    if ( $bw_options === FALSE )
-      $option = $company[ $field ] ; 
-    else
+    bw_trace( $bw_options, __FUNCTION__,  __LINE__, __FILE__, "bw_options" );  
+    if ( isset( $bw_options[ $field ] ) )
       $option = $bw_options[ $field ] ; 
+    else
+      $option = NULL;  
       
     // Note: A value that appears to be blank ( == '') may actually be FALSE ( == FALSE )
     // bw_trace( '!' .$option.'!', __FUNCTION__,  __LINE__, __FILE__, "option" );  
@@ -60,7 +60,7 @@ if ( bw_is_wordpress() ) {
    * Parms are basically the same as for update_option
    */
   function bw_set_company( $field, $value=NULL ) {
-    global $bw_options;
+    //global $bw_options;
     $bw_options = get_option( "bw_options" );
     $bw_options[ $field ] = $value;
     bw_trace2( $bw_options );
@@ -70,51 +70,15 @@ if ( bw_is_wordpress() ) {
   
 }
 else {
-  /** 
-   * I need to decide if I should prefix each field with bw_
-   * Decision: I didn't prefix the fields in Drupal settings
-   */
-  function bw_get_company( $field ) {
-    return( variable_get( $field, "" ) );
-  }
-   
-  /** 
-   * Dummy implementation of add_filter() so that shortcodes.php can be copied unchanged from WordPress.
-   */
-  function add_filter() {
-   // Dummy implementation of add_filter() so that shortcodes.php can be copied unchanged from WordPress.
-  } 
-
-  /**
-   * Dummy implementation of add_action so that oik-paypal-shortcodes.inc can be included in Drupal as well as WordPress
-   */
-  function add_action( $tag, $function_to_add, $priority=NULL, $accepted_args=NULL ) {
-  // e.g. add_action( admin_init', array($this, 'bw_pp_admin_init'));
-  }
-  
-  /** 
-   * Drupal implementation of site_url using the 'domain' variable 
-   * This is to allow for local implementations e.g. qw/contacts
-   */
-  function site_url( $path=NULL, $scheme='http:' ) {
-    $url  = $scheme; 
-    $url .= '//';
-    $url .= bw_get_company( 'domain' );
-    $url .= $path;
-    return( $url );
-  }  
-  
-  if ( bw_is_drupal() ) {    
-    require_once( "shortcodes.php" );  // This is a copy of the WordPress include specifically for the Drupal version of oik.
-  }
+  oik_require( "bobbnotwp.inc" );
 }
 
 
 function bw_get_geo( $separator )
 {
-  $geo = bw_get_company( "lat" );
+  $geo = bw_get_option( "lat" );
   $geo.= $separator;
-  $geo.= bw_get_company( "long" );
+  $geo.= bw_get_option( "long" );
   return( $geo );
 }  
 
@@ -123,13 +87,13 @@ function bw_geo() {
   span( "geo");
     e( "Lat." ); 
     span( "latitude" );
-    e( bw_get_company( "lat" ));
+    e( bw_get_option( "lat" ));
     epan();
     // I think we should have a space between the lat. and long. values
     e( "&nbsp;");
     e( "Long." );
     span( "longitude" );
-    e( bw_get_company( "long") );
+    e( bw_get_option( "long") );
     epan();
   epan();
  ep(); 
@@ -201,7 +165,7 @@ function bw_fax( $atts = NULL ) {
       'sep' => ': ',
       ), $atts ) );
       
-  $fax = bw_get_company( "fax" );
+  $fax = bw_get_option( "fax" );
   if ( $fax <> "" )
   { 
     sdiv( "tel" );
@@ -224,7 +188,7 @@ function bw_mobile( $atts = NULL ) {
       'sep' => ': ',
       ), $atts ) );
       
-  $mobile = bw_get_company( "mobile" ) ;
+  $mobile = bw_get_option( "mobile" ) ;
   if ( $mobile <> "" )
   {
     sdiv( "tel" );
@@ -248,7 +212,7 @@ function bw_emergency( $atts = NULL ) {
       'class' => 'emergency'
       ), $atts ) );
       
-  $emergency = bw_get_company( "emergency" ) ;
+  $emergency = bw_get_option( "emergency" ) ;
   if ( $emergency <> "" )
   {
     sdiv( "tel " . $class );
@@ -283,7 +247,7 @@ function bw_email( $atts = NULL )
   
   e( $prefix );
   e( $sep );
-  $email = bw_get_company( $index ); 
+  $email = bw_get_option( $index ); 
   alink( NULL, "mailto:". $email, $email, "Send email to: " . $email );
   epan();
   
@@ -298,9 +262,9 @@ function bw_mailto( $prefix = NULL, $primary=TRUE )
   $prefix = "Email:&nbsp;";
   e( $prefix );
   //if ( $primary )
-     $email = bw_get_company( "email" ); 
+     $email = bw_get_option( "email" ); 
   //else
-  //   $email = bw_get_company( "admin" );   
+  //   $email = bw_get_option( "admin" );   
   alink( NULL, "mailto:". $email, $email, "Send email to: " . $email );
   ep();
   
@@ -314,34 +278,35 @@ function bw_mailto( $prefix = NULL, $primary=TRUE )
  * Return address using Microformats
  */
 function bw_address( $atts = NULL ) {
+  $type = bw_array_get( $atts, "type", "Work" );
   sdiv("adr" );
   
     sdiv("type");
-    e( "Work" );
+    e( $type );
     ediv();
     
     sdiv("extended-address");
-    e( bw_get_company( "extended-address" ) );
+    e( bw_get_option( "extended-address" ) );
     ediv();
     
     sdiv("street-address");
-    e( bw_get_company( "street-address" ) );
+    e( bw_get_option( "street-address" ) );
     ediv();  
     
     sdiv("locality");
-    e( bw_get_company( "locality" ) );
+    e( bw_get_option( "locality" ) );
     ediv();      
     
     sdiv("region");
-    e( bw_get_company( "region" ) );
+    e( bw_get_option( "region" ) );
     ediv();      
     
     sdiv("postal-code");
-    e( bw_get_company( "postal-code" ) );
+    e( bw_get_option( "postal-code" ) );
     ediv();
        
     span("country-name");
-    e( bw_get_company( "country-name" ) );
+    e( bw_get_option( "country-name" ) );
     epan();
   
   ediv();
@@ -350,10 +315,21 @@ function bw_address( $atts = NULL ) {
   
 }
 
+function bw_address__syntax( $shortcode="bw_address" ) {
+  $syntax = array( "type" => bw_skv( "Work", "<i>type</i>", "Address type." )
+                 );
+  return( $syntax );
+}
+
+function bw_address__example( $shortcode="bw_address" ) {
+ p( "Display the address defined in oik options" );
+ e( bw_address() );
+} 
+
 /* Return a link to the site's wp-admin 
 */
 function bw_wpadmin() {
-  $site = bw_get_company( "domain" );
+  $site = bw_get_option( "domain" );
   
   e( "Site:&nbsp; ");
   alink( NULL, "http://". $site . "/wp-admin", $site, "Website: " . $site );
@@ -363,7 +339,7 @@ function bw_wpadmin() {
 
 
 function bw_contact() {
-  $contact = bw_get_company( "contact" );
+  $contact = bw_get_option( "contact" );
   return( $contact );
 } 
 
@@ -379,11 +355,11 @@ function bw_contact() {
  * text = parameter that gets ignored at present! 
  */
 function bw_follow( $atts = NULL ) {
-  $social_network = $atts['network'];
-  $text = $atts['text'];
+  $social_network = bw_array_get( $atts, 'network', 'Facebook' );
+  $text = bw_array_get( $atts, 'text', null );
   
   $lc_social = strtolower( $social_network );
-  $social = bw_array_get( $atts, 'url', bw_get_company( $lc_social ));
+  $social = bw_array_get( $atts, 'url', bw_get_option( $lc_social ));
   $me = bw_array_get( $atts, "me", "me" );
   bw_trace( $text, __FUNCTION__, __LINE__, __FILE__ , "text" );
   if ( $text ) {
@@ -425,7 +401,7 @@ function bw_flickr( $atts) {
 }  
   
 function bw_output( $field ) {
-  $fieldvalue = bw_get_company( $field );
+  $fieldvalue = bw_get_option( $field );
   span( $field );
   e( $fieldvalue );
   epan();
@@ -488,7 +464,7 @@ function bw_skype( $atts ) {
   bw_trace( $sep, __FUNCTION__, __LINE__, __FILE__, "sep" );
  
      
-   $tel =  bw_get_company( "skype" );
+   $tel =  bw_get_option( "skype" );
    if ( $tel <> "" )
    {
      sdiv( "skype" );
@@ -511,7 +487,7 @@ function bw_tel( $atts = NULL ) {
 
 function bw_mob()
 {
-   $mob =  bw_get_company( "mobile" );
+   $mob =  bw_get_option( "mobile" );
    if ( $mob <> "" )
    {
      span( "tel" );
@@ -531,11 +507,11 @@ function bw_mob()
  *
  */
 function bw_directions() {
-  $lat = bw_get_company( "lat" );
-  $long = bw_get_company( "long");
-  $company = bw_get_company( "company" );
-  $extended = bw_get_company( "extended-address" );
-  $postcode = bw_get_company( "postal-code" );
+  $lat = bw_get_option( "lat" );
+  $long = bw_get_option( "long");
+  $company = bw_get_option( "company" );
+  $extended = bw_get_option( "extended-address" );
+  $postcode = bw_get_option( "postal-code" );
   $link = "http://maps.google.co.uk/maps?f=d&hl=en&daddr=" . $lat . "," . $long;  
   $text = "Google directions";
   $title = "Get directions to " . $company;
@@ -563,7 +539,7 @@ function bw_follow_e( $atts ) {
   //$email = bw_array_get( $atts, 'email', NULL );;
   
   $lc_social = strtolower( $social_network );
-  $social = bw_get_company( $lc_social );
+  $social = bw_get_option( $lc_social );
   if ( $social ) {
     bw_trace( $text, __FUNCTION__, __LINE__, __FILE__ , "text" );
     $imagefile = plugins_url( 'images/'. $lc_social . '_48.png', __FILE__ );
@@ -615,52 +591,23 @@ function bw_oik_long( $class = NULL ) {
 }
 
 
-/**
- * Display the company logo with a link if required
- * Notes: the attribute defaulting needs to be improved 
-*/ 
-function bw_logo( $atts ) {
-  $link = $atts['link'];
-  $text = $atts['text'];
-  $width = $atts['width'];
-  $height = $atts['height'];
-
-
-  $upload_dir = wp_upload_dir();
-  $baseurl = $upload_dir['baseurl'];
-  
-  $logo_image = bw_get_company( "logo-image" );
-  $company = bw_get_company( "company" );
-  $image_url = $baseurl . $logo_image;
-  
-  $image = retimage( NULL, $image_url, $company, $width, $height );
-  if ( $link ) {
-    alink( NULL, $link, $image, $company );
-  }  
-  else {
-    e( $image );  
-  }  
-  return( bw_ret());
-    
-}
-
 
 /**
  * Display the QR code file with a link if required
  * Notes: the attribute defaulting needs to be improved 
 */ 
 function bw_qrcode( $atts ) {
-  $link = $atts['link'];
-  $text = $atts['text'];
-  $width = $atts['width'];
-  $height = $atts['height'];
+  $link = bw_array_get( $atts, 'link', null );
+  $text = bw_array_get_dcb( $atts, 'text', 'company', 'bw_get_option' );
+  $width = bw_array_get( $atts, 'width', null );
+  $height = bw_array_get( $atts, 'height', null );
 
 
   $upload_dir = wp_upload_dir();
   $baseurl = $upload_dir['baseurl'];
   
-  $logo_image = bw_get_company( "qrcode-image" );
-  $company = bw_get_company( "company" );
+  $logo_image = bw_get_option( "qrcode-image" );
+  $company = bw_get_option( "company" );
   $image_url = $baseurl . $logo_image;
   
   $image = retimage( NULL, $image_url, "QR code for " . $text , $width, $height );
@@ -680,8 +627,8 @@ function bw_qrcode( $atts ) {
  * e.g. [div class="blah"]blah goes here[ediv]
  */
 function bw_sdiv( $atts ) {
-  $class = $atts['class'];
-  $id = $atts['id'];
+  $class = bw_array_get( $atts, 'class', null );
+  $id = bw_array_get( $atts, 'id', null );
   sdiv( $class, $id );
   return( bw_ret());
 }
@@ -710,8 +657,8 @@ function bw_sediv( $atts ) {
  * Display the company abbreviation using an abbr tag
  */
 function bw_abbr( $atts = NULL ) {
-  $abbr = bw_get_company( "abbr" );
-  $company = bw_get_company( "company" );
+  $abbr = bw_get_option( "abbr" );
+  $company = bw_get_option( "company" );
   abbr( $company, $abbr );
   return( bw_ret());
 }
@@ -722,8 +669,8 @@ function bw_abbr( $atts = NULL ) {
  * see (for example) http://www.benmeadowcroft.com/webdev/articles/abbr-vs-acronym/   
  */
 function bw_acronym( $atts = NULL ) {
-  $abbr = bw_get_company( "abbr" );
-  $company = bw_get_company( "company" );
+  $abbr = bw_get_option( "abbr" );
+  $company = bw_get_option( "company" );
   acronym( $company, $abbr );
   return( bw_ret());
 }
@@ -744,7 +691,7 @@ function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL 
   bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "field" );
   if ( empty( $val )) {
     bw_trace( $bw_field, __FUNCTION__, __LINE__, __FILE__, "bw_field" );
-    $val = bw_get_company( $bw_field );
+    $val = bw_get_option( $bw_field );
     bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value" );
     if ( empty( $val ))
       $val = $bw_default;
@@ -754,37 +701,6 @@ function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL 
 }
 
 
-
-/** 
- * Return the array[index] or a default value if not set
- * 
- * 
- */
-if ( !function_exists( 'bw_array_get' ) ) {
-  function bw_array_get( $array = NULL, $index, $default=NULL ) {   
-    if ( isset( $array ) ) {
-      if ( is_array( $array ) ) {
-        if ( isset( $array[$index] ) || array_key_exists( $index, $array ) ) {
-          $value = $array[$index];
-        } else {
-          $value = $default;
-        }  
-      } elseif ( is_object( $array ) ) {
-        if ( property_exists( $array, $index ) ) {
-          $value = $array->$index;
-        } else {
-          $value = $default;
-        } 
-      } else {
-        $value = $default;
-      }  
-    } else {
-      $value = $default;
-    }  
-    return( $value );
-  }
- 
-}
 
 
 /** 
@@ -824,7 +740,7 @@ function bw_default_empty_arr( $bw_array=NULL, $bw_index=NULL, $bw_field=NULL, $
   $val = bw_array_get( $bw_array, $bw_index, NULL );
   if ( empty( $val )) {
     bw_trace( $bw_field, __FUNCTION__, __LINE__, __FILE__, "bw_field" );
-    $val = bw_get_company( $bw_field );
+    $val = bw_get_option( $bw_field );
     bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value" );
     if ( empty( $val ))
       $val = $bw_default;
@@ -976,16 +892,16 @@ function bw_get_users( $atts = NULL ) {
  */ 
 function bw_copyright( $atts = NULL ) {
   $copyright = bw_array_get_dcb( $atts, "prefix", "&copy; Copyright" );
-  $company = bw_array_get_dcb( $atts, "company", "company", "bw_get_company" );
+  $company = bw_array_get_dcb( $atts, "company", "company", "bw_get_option" );
   $yearto = bw_format_date( null, 'Y');
   bw_trace( $yearto, __FUNCTION__, __LINE__, __FILE__, "yearto!" );
-  $yearfrom = bw_array_get_dcb( $atts, "from", "yearfrom", "bw_get_company" );
+  $yearfrom = bw_array_get_dcb( $atts, "from", "yearfrom", "bw_get_option" );
   
   
   $years = bw_year_range( $yearfrom, $yearto, $atts );
   span( "copyright" );
   e( "$copyright " );
-  e( "$company " );
+  e( bw_do_shortcode( "$company ") );
   e( "$years" );
   e( ". All rights reserved." );
   epan();

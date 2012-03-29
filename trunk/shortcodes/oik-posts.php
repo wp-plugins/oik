@@ -20,6 +20,9 @@
 
 */
 
+oik_require( "includes/bw_posts.inc" );
+oik_require( "shortcodes/oik-list.php" );
+
 
 /**
  * Create a simple list of posts, defaulting to recent posts if no parms specified
@@ -45,4 +48,11 @@ function bw_posts( $atts = NULL ) {
   $atts['post_parent'] = bw_array_get( $atts, "post_parent", $default_parent );
         
   return( bw_list( $atts )) ;
+}
+
+
+function bw_posts__syntax( $shortcode="bw_posts" ) {
+  $syntax = _sc_posts(); 
+  $syntax = array_merge( $syntax, _sc_classes() );
+  return( $syntax );   
 }

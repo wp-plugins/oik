@@ -4,7 +4,7 @@
 Plugin Name: oik bwtrace 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use trace macros for oik plugins
-Version: 1.10
+Version: 1.11
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -28,18 +28,20 @@ License: GPL2
 */
 global $bw_trace_options, $bw_trace_on, $bw_trace_level;
 
+// Since this plugin is defined to load first... so that it can perform the trace reset
+// then we need to load oik_boot ourselves. We need bw_array_get().
+require_once( "oik_boot.inc" );
+oik_init();
+oik_require( "bwtrace_boot.inc" ); 
+oik_require( "includes/bwtrace.inc" );
 
-$bwapi_trace_test = 'bw_trace';
 
-
-require_once( 'bwtrace.inc');
-require_once( 'bobbfunc.inc' );
-require_once( 'bobblink.inc' );
 
 function oik_bwtrace_version() {
   return oik_version();
-  
 }
+
+
 
 function bw_this_plugin_first() {
 	// ensure path to this file is via main wp plugin path
@@ -60,20 +62,28 @@ if (function_exists( "add_action" )) {
   bw_trace_plugin_startup();
 }
 
+
+/**
+ * Return TRUE if option is '1', FALSE otherwise
+ */
+function bw_torf( $array, $option ) {
+  $opt = bw_array_get( $array, $option );
+  $ret = $opt > '0';
+  return $ret;
+}
+
+
 function bw_trace_plugin_startup() {
 
   global $bw_trace_options;
   add_action("activated_plugin", "bw_this_plugin_first");
 
+  // Moved the calls to bw_add_shortcode into oik-add-shortcodes
+  // 
 
-  /* Shortcodes for each of the more useful APIs */
-  add_shortcode( 'bwtron', 'bw_trace_on' );
-  add_shortcode( 'bwtroff', 'bw_trace_off');
-  add_shortcode( 'bwtrace', 'bw_trace_button' );
-
-  add_filter('widget_text', 'do_shortcode');
-  add_filter('the_title', 'do_shortcode' ); 
-  add_filter('wpbody-content', 'do_shortcode' );
+  //add_filter('widget_text', 'do_shortcode');
+  //add_filter('the_title', 'do_shortcode' ); 
+  //add_filter('wpbody-content', 'do_shortcode' );
 
 
   $bw_trace_options = get_option( 'bw_trace_options' );
@@ -85,18 +95,38 @@ function bw_trace_plugin_startup() {
     $bw_include_trace_count = bw_torf( $bw_trace_options, 'count' );
     $bw_include_trace_date = bw_torf( $bw_trace_options, 'date' );
     $bw_trace_anonymous = !bw_torf( $bw_trace_options, 'qualified' );
+    
+    // We should only do this if we want to trace actions
+    
+    add_action( "init", "bw_trace_actions" );
   } else {
     bw_trace_off();  
   } 
 
   // We can reset the trace file regardless of the value of tracing
-  $bw_trace_reset = bw_torf( $bw_trace_options, 'reset' ); 
-  if ( $bw_trace_reset ) {
-    bw_trace_reset();
-  }
-  else {
-    // Don't reset the trace file
+  $bw_trace_reset = bw_torf( $bw_trace_options, 'reset' );
+  
+  if ( !empty( $_REQUEST['_bw_trace_reset'] ) ) {
+    $bw_trace_reset = TRUE;
   } 
+  
+ 
+  $bw_action_options = get_option( 'bw_action_options' );
+  $bw_action_reset = bw_torf( $bw_action_options, 'reset' );
+  if ( !empty( $_REQUEST['_bw_action_reset'] ) ) {
+    $bw_action_reset = TRUE;
+  } 
+  
+  if ( $bw_trace_reset ) {
+    oik_require( "includes/bwtrace.inc" );
+    bw_trace_reset();
+    $bw_action_reset = true;
+  } 
+  
+  if ( $bw_action_reset ) {
+    oik_require( "includes/oik-bwtrace.inc" );
+    bw_action_reset();
+  }
   
   //$bw_trace_errors = $bw_trace_options[ 'errors']; 
   //bw_trace_errors( $bw_trace_errors );
@@ -104,169 +134,38 @@ function bw_trace_plugin_startup() {
   // bw_trace_log( "Trace log starting"  );
 
   if ( $bw_trace_level > '0' ) {
-    bw_trace( ABSPATH . $bw_trace_options['file'], __FUNCTION__, __LINE__, __FILE__, 'tracelog' );
-    bw_trace( $_SERVER, __FUNCTION__, __LINE__, __FILE__, "_SERVER" ); 
-    bw_trace( bw_getlocale(), __FUNCTION__, __LINE__, __FILE__, "locale" );
-    //bw_trace( $_GET, __FUNCTION__, __LINE__, __FILE__, "_GET" );
-    //bw_trace( $_POST, __FUNCTION__, __LINE__, __FILE__, "_POST" );
-    bw_trace( $_REQUEST, __FUNCTION__, __LINE__, __FILE__, "_REQUEST" );
-    //bw_trace( ABSPATH,  __FUNCTION__, __LINE__, __FILE__, "ABSPATH" );
-
-      
+    bw_lazy_trace( ABSPATH . $bw_trace_options['file'], __FUNCTION__, __LINE__, __FILE__, 'tracelog' );
+    bw_lazy_trace( $_SERVER, __FUNCTION__, __LINE__, __FILE__, "_SERVER" ); 
+    bw_lazy_trace( bw_getlocale(), __FUNCTION__, __LINE__, __FILE__, "locale" );
+    bw_lazy_trace( $_REQUEST, __FUNCTION__, __LINE__, __FILE__, "_REQUEST" );
   } 
 
   add_action('admin_init', 'bw_trace_options_init' );
+  add_action('admin_init', 'bw_action_options_init' );
   add_action('admin_menu', 'bw_trace_options_add_page');
+  add_action('admin_menu', 'bw_action_options_add_page');
 
 }
 
-// Init plugin options to white list our options
-function bw_trace_options_init(){
-	register_setting( 'bw_trace_options_options', 'bw_trace_options', 'bw_trace_options_validate' );
+/** 
+ * Start the trace action logic if required 
+*/ 
+function bw_trace_actions() {
+  $bw_action_options = get_option( 'bw_action_options' );
+  $trace_actions = bw_array_get( $bw_action_options, "actions", "off" );
+  bw_trace2( $bw_action_options, "bw_action_options" );
+  if ( $trace_actions ) {
+    oik_require( "includes/oik-bwtrace.inc" );
+    bw_lazy_trace_actions();
+  }  
 }
 
-// Add menu page
-function bw_trace_options_add_page() {
-	add_options_page('oik trace options', 'oik trace options', 'manage_options', 'bw_trace_options', 'bw_trace_options_do_page');
+if ( function_exists( "is_admin" ) ) {
+if ( is_admin() ) {   
+
+  require_once( 'admin/oik-bwtrace.inc' );
 }
-
-
-
-// Draw the menu page itself
-function bw_trace_options_do_page() { 
-  require_once( "bobbforms.inc" );
-
-  sdiv( "column span-14 wrap" );
-  h2( bw_oik(). " trace options" );
-  e( '<form method="post" action="options.php">' ); 
-  $options = get_option('bw_trace_options');     
- 
-  stag( 'table class="form-table"' );
-  bw_flush();
-  settings_fields('bw_trace_options_options'); 
-  
-  textfield( "bw_trace_options[file]", 60, "Trace file", $options['file']  );
-  textfield( "bw_trace_options[trace]", 1 ,"Trace level (1=on)", $options['trace'] );
-  textfield( "bw_trace_options[reset]", 1 ,"Trace reset (1=each txn)", $options['reset'] );
-  // Trace error processing is not yet enabled.
-  // textfield( "bw_trace_options[errors]", 1 ,"Trace errors (0=no,-1=all,1=E_ERROR,2=E_WARNING,4=E_PARSE, etc)", $options['errors'] );
-  
-  textfield( "bw_trace_options[count]", 1 ,"Trace count (1=include)", $options['count'] );
-  textfield( "bw_trace_options[date]", 1 ,"Trace date (1=include)", $options['date'] );
-  textfield( "bw_trace_options[qualified]", 1 ,"Fully qualified file names (1=include)", $options['qualified'] );
-  
-    
-  tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" ); 
-
-  etag( "table" ); 			
-  etag( "form" );
-  
-  ediv(); 
-  sediv( "clear" );
-  sdiv("column span-14 wrap");
-  
-  h2( "Notes about " . bw_oik() . " trace" );
-  p("The tracing output produced by " .bw_oik(). " trace can be used for problem determination.");
-  p("It's not for the faint hearted.");
-  p("The oik-bwtrace plugin should <b>not</b> need to be activated on a live site");
-  p("If you do need to activate it, only do so for a short period of time." );
- 
-  p("You will need to specify the trace file name (e.g. bwtrace.loh )" );
-  p("Set trace level to 1 when you want to trace processing. 0 otherwise");
-  p("If you want to clear the trace output set trace reset to 1, save changes, then set it back to 0");
-  
-  p("You may find the most recent trace output at..." );
-  $bw_trace_url = bw_trace_url();
-  
-  alink( NULL, $bw_trace_url, $bw_trace_url, "View trace output in your browser.");
-  p("If you want to trace processing within some content you can use two shortcodes");
-  p("Use [bwtron] to turn trace on and [bwtroff] to turn it off" );
-  
-  p("For more information:" );
-  art_button( "http://www.oik-plugins.com/oik", bw_oik() . " documentation", "Read the documentation for the oik plugin" );
-  ediv();      
-  bw_flush();
 }
-
-
-// Sanitize and validate input. Accepts an array, return a sanitized array.
-function bw_trace_options_validate($input) {
-	// Our first value is either 0 or 1
-	//$input['option1'] = ( $input['option1'] == 1 ? 1 : 0 );
-	
-	// Say our second option must be safe text with no HTML tags
-	//$input['sometext'] =  wp_filter_nohtml_kses($input['sometext']);
-	
-	return $input;
-}
-
-function bw_trace_url() {
-  
-  $options = get_option('bw_trace_options');     
-  
-  $bw_trace_url = get_site_url( NULL, $options['file'] );
-  return( $bw_trace_url );
-
-}
-
-
-/**
- * Shortcode for toggling or setting trace options 
- * Provide a button for controlling trace
- *
- * @param $atts
- *  option=view, reset, options 
- *  
- */
-function bw_trace_button( $atts = NULL ) {
-  $text = bw_array_get( $atts, 'text', "&nbsp;" );
-  $option = bw_array_get( $atts, 'option', NULL );
-  
-  $url = get_site_url( NULL, 'wp-admin/options-general.php?page=bw_trace_options' );
-  
-  //if ( bw_is_wordpress() )
-  //   $url = site_url( "/wp-admin/post-new.php" );
-  //else 
-  //   $url = site_url( '' );   
-  if ( $text ) {
-    //$text = "Trace options";
-  }
-  
-  global $bw_trace_on;
-  if ( $bw_trace_on ) {
-    switch ( $option ) {
-      case 'view':
-        $bw_trace_url = bw_trace_url();
-        alink( NULL, $bw_trace_url, "View trace log", "View trace output in your browser. $bw_trace_url");
-        break;
-        
-      case 'reset':
-        bw_trace_reset_form();
-        break; 
-        
-      default:   
-        alink( "bwtrace", $url, $text, "Trace options", "" );
-        bw_trace_reset_form();
-        break;  
-        
-    }
-  }    
-  return( bw_ret());  
-}
-
-/**
- * Create the Trace reset button for use somewhere in any page
- */
-function bw_trace_reset_form() {
-  oik_require( "bobbforms.inc" );
-  e( '<form method="post" action="" class="inline">' ); 
-  //stag( 'table class="form-table"' );
-  //bw_tablerow( array( "", 
-  e( "<input type=\"submit\" name=\"_bw_trace_reset\" value=\"Trace reset\" />" ); 
-  //etag( "table" ); 			
-  etag( "form" );
-}
-
 
 
 
