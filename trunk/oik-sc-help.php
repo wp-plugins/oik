@@ -3,8 +3,8 @@
 /*
 Plugin Name: oik shortcode help
 Plugin URI: http://www.oik-plugins.com/oik
-Description: Shortcode help
-Version: 2.0
+Description: Shortcode help plus [bw_code] and [bw_codes] shortcodes
+Version: 1.11
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -26,15 +26,10 @@ License: GPL2
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
-
-$bw_sc_help = FALSE;
-
-//add_action( "init", "oik_init" );
 add_action( "oik_loaded", "oik_sc_help_init" );
 
 
 function oik_sc_help_init() { 
-  // oik_require( "bobbfunc.inc" );
   bw_add_shortcode( "bw_codes", "bw_codes", oik_path( "shortcodes/oik-codes.php") , false );
   bw_add_shortcode( "bw_code", "bw_code", oik_path( "shortcodes/oik-codes.php") , false ); 
 }
