@@ -21,39 +21,6 @@
 */
 oik_require( "includes/oik-sc-help.inc" );
 
-/**
- * The reason this code is not working at present is because when we invoke the shortcode  
-   it returns bw_ret() which also includes the output from the previous call to this function
-   so we need to p() the result as well
-   OR flush the p()s before returning
-*/     
-
-function bw_get_shortcode_syntax_help( $shortcode, $callback ) {
-  global $bw_sc_ev, $bw_sc_syntax;
-  p( $shortcode );
-  $bw_sc_syntax = "&#91;$shortcode"; 
-  if ( $callback == "bw_shortcode_event" ) {
-    bw_trace2( $callback );
-    $sc_callback = $bw_sc_ev[$shortcode]['the_content'];
-    bw_trace2( $sc_callback, "sc_callback" );
-    if ( $sc_callback ) { 
-      if ( function_exists( $sc_callback )) { 
-        $result = $sc_callback( NULL, NULL, $shortcode );
-        $bw_sc_syntax .= "]" ;
-      } else {
-        $result = "";
-        $bw_sc_syntax .= "] contextual help not available";
-      }  
-    } else {
-      $bw_sc_syntax .= "the_content event not defined for this shortcode" ;
-    }
-      
-    p( $bw_sc_syntax );
-  } else {
-    p( "$shortcode (not oik) ");
-  } 
-  bw_flush(); 
-}
 
 function bw_get_shortcode_syntax_link( $shortcode, $callback ) {
 
@@ -111,28 +78,6 @@ function bw_help_etable( $table=true ) {
   }  
 }
 
-
-
-/* Instead of coding bw_array_get 
-   or bw_array_get_dcb 
-   we called bw_sc_parm which determines what to do depending in the value of the global $bw_sc_help;
-   if $bw_sc_help then we return the help for the shortcode rather than expand the shortcode.
-   This also relies on there being code to "fail" to expand the shortcode
-    
-*/
-function bw_sc_parm( $atts, $key, $value, $default=NULL ) {
-  global $bw_sc_help, $bw_sc_syntax;
-  if ( $bw_sc_help ) {
-    if ( $default ) {
-      $value = $default( $value );
-    }  
-    $bw_sc_syntax .= " $key='$value'";
-  } 
-  $value = bw_array_get_dcb( $atts, $key, $value, $default );
-  return( $value );
-}
-
-
 /**
  * Return an associative array of shortcodes and their one line descriptions (help)
  *
@@ -142,7 +87,6 @@ function bw_sc_parm( $atts, $key, $value, $default=NULL ) {
  * The array is ordered by shortcode
  * @uses _bw_lazy_shortcode_help() rather than
 */ 
-
 function bw_shortcode_list( $atts=null ) {
   global $shortcode_tags; 
   
@@ -157,23 +101,16 @@ function bw_shortcode_list( $atts=null ) {
 
   
 function bw_list_shortcodes( $atts = NULL ) {
-  global $shortcode_tags, $bw_sc_help;
-  if ( !$bw_sc_help ) { 
-    $bw_sc_help = TRUE;
-    foreach ( $shortcode_tags as $shortcode => $callback ) {
-      //bw_get_shortcode_syntax_help( $shortcode, $callback );
-    }
-    $bw_sc_help = FALSE;
-  }
+  global $shortcode_tags;
   $ordered = bw_array_get( $atts, "ordered", "N" );
   $ordered = bw_validate_torf( $ordered ); 
-  bw_trace2( $shortcode_tags );
-  bw_trace2( $ordered, "ordered" );
+  //bw_trace2( $shortcode_tags );
+  //bw_trace2( $ordered, "ordered" );
   
   if ( $ordered ) {
     ksort( $shortcode_tags );
   }
-  bw_trace2( $shortcode_tags, "shortcode_tags" );
+  //bw_trace2( $shortcode_tags, "shortcode_tags" );
   add_action( "bw_sc_help", "bw_sc_help" );
   add_action( "bw_sc_example", "bw_sc_example" );
   add_action( "bw_sc_syntax", "bw_sc_syntax" );
@@ -207,25 +144,20 @@ function bw_code( $atts = NULL ) {
   $live = bw_array_get( $atts, "live", "N" );
   $snippet = bw_array_get( $atts, "snippet", "N" );
   
-
-  //add_action( "bw_sc_help", "bw_sc_help", null ,2 );
-  //add_action( "bw_sc_example", "bw_sc_example" );
-  //add_action( "bw_sc_syntax", "bw_sc_syntax" );
-  
   $help = bw_validate_torf( $help );
   if ( $help ) {
-    p( "Help for shortcode: [${shortcode}]" );
+    p( "Help for shortcode: [${shortcode}]", "bw_code_help" );
     //bw_trace2( $shortcode, "before do_action" );
     do_action( "bw_sc_help", $shortcode );
   }  
   $syntax = bw_validate_torf( $syntax );
   if ( $syntax ) {
-    p( "Syntax" ); 
+    p( "Syntax", "bw_code_syntax" ); 
     do_action( "bw_sc_syntax", $shortcode );
   }  
   $example = bw_validate_torf( $example );
   if ( $example ) {
-    p( "Example");
+    p( "Example", "bw_code_example");
     
     do_action( "bw_sc_example", $shortcode );
   }
@@ -233,13 +165,14 @@ function bw_code( $atts = NULL ) {
 
   $live = bw_validate_torf( $live ) ;
   if ( $live ) {
-    p("Live example" );
+    p("Live example", "bw_code_live_example" );
     $live_example = bw_do_shortcode( '['.$shortcode.']' );
     e( $live_example );
   }
   
   $snippet = bw_validate_torf( $snippet );
   if ( $snippet ) {
+    p( "Snippet", "bw_code_snippet" );
     do_action( "bw_sc_snippet", $shortcode );
   }
 

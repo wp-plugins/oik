@@ -19,17 +19,35 @@ function _bw_missing_shortcodefunc( $atts, $hmm, $tag ) {
 }
 
 /**
+ * Wrapper to include_once to prevent Warning messages returned in JSON response
+ * @param string $file - filename of file to load
+ * @return bool - return code from include_once or false if file does not exist
+ *
+*/
+function bw_include_once( $file ) {
+  if ( file_exists( $file )) {
+    $rc = include_once( $file );
+  } else {
+    $rc = false; 
+    bw_trace2( $file, "File does not exist" );
+  }  
+  return( $rc );    
+}
+
+/**
  * load the file that implements the shortcode if necessary
  *
  * the file is expected to be the fully qualified file name
  * for oik shortcodes these can be specified using oik_path( 'shortcodes/file.php' )
  * on the call to bw_add_shortcode().
+ * @return bool - false if the file does not exist
+ 
  */  
 function bw_load_shortcodefile( $shortcode ) {
   global $bw_sc_file;
   $file = bw_array_get( $bw_sc_file, $shortcode, false );
   if ( $file ) { 
-    $file = include_once( $file );
+    $file = bw_include_once( $file );
   }
   return( $file ); 
 }  
@@ -331,7 +349,7 @@ bw_add_shortcode_event( 'ngslideshow', 'NextGEN_shortcodes::show_slideshow', 'th
 // bw_add_shortcode_file ( 'ngslideshow', oik_path( "shortcodes/oik-slideshows.php") );
 
 bw_add_shortcode( 'gpslides', 'bw_gp_slideshow', oik_path( "shortcodes/oik-slideshows.php"), false  );
-bw_add_shortcode( "bw_slides", "bw_slides",  oik_path( "shortcodes/oik-slide.php"), false  );
+//bw_add_shortcode( "bw_slides", "bw_slides",  oik_path( "shortcodes/oik-slide.php"), false  );
  
 
 
