@@ -103,3 +103,15 @@ function bw_eblock( $atts=NULL ) {
   $func = bw_block_func( "bw_eblock" );
   return( $func( $atts ) );
 }
+
+
+function bw_block__syntax( $shortcode="bw_block" ) {
+  $syntax = array( "title" => bw_skv( "", "<i>title</i>", "block title" )
+                 , "level" => bw_skv( "h3", "<i>tag</i>", "HTML tag for heading" )
+                 , "framed" => bw_skv( "true", "false|Y|N", "Use Artisteer styled frame" )
+                 , "class" => bw_skv( "", "<i>CSS classes</i>", "CSS classes for block" )
+                 , "prefix" => bw_skv( "art-", "", "CSS class prefix" )
+                 );
+  return( $syntax );
+}
+

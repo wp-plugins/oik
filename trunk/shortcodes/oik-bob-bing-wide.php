@@ -152,7 +152,7 @@ function bw_lbw( $atts=NULL ) {
   $site .= $tld;
   
   if ( $site_s ) 
-    $text .= '<b>' . $sites_s. '</b>';
+    $text .= '<b>' . $site_s. '</b>';
   $text .= $tld;  
    
   $link = retlink( 'url', "http://" . $site, $text, $title . $site ) ;
