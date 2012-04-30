@@ -58,9 +58,9 @@ function bw_lazy_sc_help( $shortcode ) {
   e( _bw_lazy_sc_help( $shortcode )) ;
 }
 
-function bw_lazy_sc_example( $shortcode ) {
+function bw_lazy_sc_example( $shortcode, $atts=null ) {
   $funcname = bw_load_shortcode_suffix( $shortcode, "__example" ); 
-  $funcname( $shortcode ); 
+  $funcname( $shortcode, $atts ); 
 }
 
 function _bw_lazy_sc_syntax( $shortcode ) {
@@ -93,23 +93,28 @@ function bw_report_scripts() {
   }
 }
 
-function _sc__snippet( $shortcode="bw_code", $example=null, $function=null ) { 
+/** 
+ * Produce the HTML snippet of the shortcode output
+*/
+function _sc__snippet( $shortcode="bw_code", $atts=null ) {
+  $example = "[$shortcode";
+  if ($atts ) 
+    $example .= " $atts";
+  $example .= ']';
+
   if ( $example == null ) {    
     $example = "[$shortcode]"; 
   } 
-  if ( $function == null ) {
-    $function = $shortcode;
-  }       
-  bw_add_shortcode_event( $shortcode, $function, current_filter() );
   bw_save_scripts(); 
-  $formatted_example = bw_do_shortcode( $example );
+  bw_push();
+  $formatted_example = apply_filters( 'the_content', $example ); 
+  bw_pop();
   bw_trace2( $formatted_example, "formatted example" );
   bw_report_scripts();
   $escaped_example = esc_html( $formatted_example );
   stag( 'p', null, null, 'lang=HTML" escaped="true"' );
   e( $escaped_example );
   etag( "p" );
-  
 }
 
 function bw_lazy_sc_snippet( $shortcode=null, $example=null ) {
@@ -166,6 +171,7 @@ function _sc__help( $shortcode="bw_code" ) {
 "bw_directions" => "Display a 'Google directions' button.",
 "bw_domain" => "Display the domain name",
 "bw_eblock" => "end a [bw_block]",
+"bw_editcss" => "Edit Custom CSS file button", 
 "bw_email" => "Email primary contact (formal)",
 "bw_email_signature" => "Format the email signature",
 "bw_emergency" => "Emergency telephone number",
@@ -195,10 +201,10 @@ function _sc__help( $shortcode="bw_code" ) {
 "bw_portfolio" => "Display matched portfolio files",
 "bw_post" => "Add Post button",
 "bw_posts" => "Display posts",
+"bw_power" => "Powered by WordPress", 
 "bw_qrcode" => "Display an uploaded QR code image",
 "bw_show_googlemap" => "Show Google map [bw_show_googlemap]",
 "bw_skype" => "Skype name",
-"bw_slides" => "Display pages as a slideshow",
 "bw_slogan" => "Primary slogan",
 "bw_tel" => "Telephone number (inline)",
 "bw_telephone" => "Telephone number (block)",
@@ -210,8 +216,8 @@ function _sc__help( $shortcode="bw_code" ) {
 "bw_wtf" => "WTF",
 "bw_youtube" => "Follow me on YouTube",
 "bwtrace" => "Trace facility form",
-"bwtroff" => "Force trace on",
-"bwtron" => "Force trace off",
+"bwtroff" => "Force trace off",
+"bwtron" => "Force trace on",
 "caption" => "Display the caption for an image. Standard WordPress shortcode",
 "clear" => "Clear divs ",
 "css" => "Show a valid CSS icon (Artisteer theme)",
@@ -253,17 +259,18 @@ function _sc__help( $shortcode="bw_code" ) {
 );
                         
                       
-  $help = bw_array_get( $default_help, $shortcode, "" );
+  $help = bw_array_get( $default_help, $shortcode, "?" );
   return( $help );
 }
 
 function _sc__syntax( $shortcode="bw_code" ) {
-  // return( "oik doesn't know about this shortcode's syntax: ". $shortcode );
+  //return( "oik doesn't know about this shortcode's syntax: ". $shortcode );
   return( null );
 }
 
-function _sc__example( $shortcode="bw_code" ) {
+function _sc__example( $shortcode="bw_code", $atts=null ) {
   //p( "oik doesn't know how to give an example for this shortcode: ". $shortcode );
+  bw_invoke_shortcode( $shortcode, $atts, "oik generated example." );
 }
 
 /**
@@ -279,23 +286,44 @@ function _sc_classes() {
  
 /**
  * Helper function for shortcodes that use get_posts() 
+ *
+ *   post_mime_type=
+ *     application/pdf
+ *      image/gif
+ * 	image/jpeg
+ * 	image/png
+ * 	text/css
+ *      video/mp4
+ *  
+ *               , 'block'           => bw_skv( "true", "false", "Enclose in an Artisteer block" )
+ *               , 'posts_per_page'  => bw_skv( -1, "", "Not supported in OIK" )
+
 */
 function _sc_posts() {
   return( array( 'numberposts'  => bw_skv( "5", "numeric", "number to return" )
                , 'offset'          => bw_skv( 0, "numeric", "offset from which to start" )
                , 'category'        => bw_skv( null, "<i>category-slug</i>", "category slugs (comma separated)" )
+               , 'customcategoryname' => bw_skv( null, "category-slug", "custom category slug" )
                , 'orderby'         => bw_skv( 'date', "ID|title|parent|rand|menu_order", "Sort sequence" )
                , 'order'           => bw_skv( 'DESC', "ASC", "Sort order." )
                , 'include'         => bw_skv( null, "<i>id1,id2</i>", "IDs to include" )
                , 'exclude'         => bw_skv( null, "<i>id1,id2</i>", "IDs to exclude" )
                , 'meta_key'        => bw_skv( null, "meta key", "post metadata key" )
                , 'meta_value'      => bw_skv( null, "meta value", "post metadata value" )
-               , 'post_type'       => bw_skv( "page", "post|custom post type", "Content type to display" )
-               , 'post_mime_type'  => bw_skv( null, "image|application|mime type", "Attached media MIME type" )
+               , 'post_type'       => bw_skv( "page", "post|attachment|custom post type", "Content type to display" )
+               , 'post_mime_type'  => bw_skv( null, "image|application|text|video|mime type", "Attached media MIME type" )
                , 'post_parent'     => bw_skv( null, "ID", "Parent ID to use if not current post" )
                , 'post_status'     => bw_skv( 'publish', "pending|draft|auto-draft|future|private|trash|any", "Post status" )
                ));
-}               
+} 
+
+function _sc_thumbnail() {   
+  return( array( 'thumbnail'       => bw_skv( "thumbnail", "medium|large|full|nnn|wxh", "image size" )   
+               ));
+}        
+
+              
+
 
 /**  
  * These functions return the help and syntax for the shortcodes that are activated
@@ -334,7 +362,7 @@ function caption__example() {
 
 
 function wp_caption__help() {
-  caption__help();
+  return( caption__help() );
 }
 
 function caption__syntax() {
@@ -347,7 +375,7 @@ function caption__syntax() {
 }
 
 function wp_caption__syntax() {
-  caption__syntax();
+  return( caption__syntax() );
 } 
 
 function gallery__help() {
@@ -507,3 +535,31 @@ function oik__example( $shortcode=NULL ) {
  }  
 } 
 
+/**
+ * Function to call a shortcode for a simple example
+ * 
+ * @param string $shortcode - name of shortcode
+ * @param string $atts - attribute parameters to the shortcode
+ * @param string $text - brief description of the shortcode 
+ *
+ * @uses apply_filters() rather than do_shortcode() since the shortcodes that get invoked
+ * may not support the current_filter() - which on an admin page could be oik-options_page_oik_options-1
+ * Nearly ALL shortcodes support 'the_content' so we will apply that filter
+ * 
+ 
+ * Now I need to convert all unnecessary calls to bw_add_shortcode_event (or current_filter) to use this function instead **?**
+*/
+function bw_invoke_shortcode( $shortcode, $atts=null, $text ) {
+  p( $text );
+  $example = "[$shortcode";
+  if ($atts ) 
+    $example .= " $atts";
+  $example .= ']';
+  sp();
+  stag( "code" );
+  e( $example ); 
+  etag( "code" ); 
+  ep();
+  //p( $example );
+  e( apply_filters( 'the_content', $example ) );
+}  

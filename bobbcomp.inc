@@ -74,26 +74,26 @@ else {
 }
 
 
-function bw_get_geo( $separator )
-{
-  $geo = bw_get_option( "lat" );
+function bw_get_geo( $separator, $alt=null ) {
+  $geo = bw_get_option( "lat", "bw_options$alt" );
   $geo.= $separator;
-  $geo.= bw_get_option( "long" );
+  $geo.= bw_get_option( "long", "bw_options$alt" );
   return( $geo );
 }  
 
-function bw_geo() {
+function bw_geo( $atts=null ) {
+  $alt = bw_array_get( $atts, "alt", null );
   sp("geo");
   span( "geo");
     e( "Lat." ); 
     span( "latitude" );
-    e( bw_get_option( "lat" ));
+    e( bw_get_option( "lat", "bw_options$alt" ) );
     epan();
     // I think we should have a space between the lat. and long. values
     e( "&nbsp;");
     e( "Long." );
     span( "longitude" );
-    e( bw_get_option( "long") );
+    e( bw_get_option( "long", "bw_options$alt" ) );
     epan();
   epan();
  ep(); 
@@ -108,41 +108,40 @@ function bw_geo() {
  *   prefix = type of number: free form e.g. Tel, Home, Work, Mob, Cell
  *   sep = separator default ': '
  *   number = telephone number override
- *   tag = 'div' or 'span' or other HTML wrapping tag - with start and and
+ *   tag = 'div' or 'span' or other HTML wrapping tag - with start and end
+ *   index = field to obtain ( telephone, fax, mobile, emergency )
+ *   alt = 1 if alternative number are required
  *
  * Example:
  * [bw_telephone]
  * [bw_telephone number="023 92 410090" prefix="Portsmouth"]
  *
  */
-function _bw_telephone( $atts = NULL ) {
+function _bw_telephone( $atts = null ) {
+  $prefix = bw_array_get_dcb( $atts, "prefix", "Tel" );
+  $sep = bw_array_get( $atts, "sep", ": " );
+  $number = bw_array_get_dcb( $atts, "number", null );
+  $alt = bw_array_get( $atts, "alt", null );
+  $index = bw_array_get( $atts, "index", "telephone" );
+  $tag = bw_array_get( $atts, "tag", "div" );
+  $class = bw_array_get( $atts, "class", null );
   
-  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
-  extract( shortcode_atts( array(
-      'prefix' => 'Tel',
-      'sep' => ': ',
-      'number' => NULL,
-      'tag' => 'div',
-      ), $atts ) );
-      
-  bw_trace( $prefix, __FUNCTION__, __LINE__, __FILE__, "prefix" );
-  bw_trace( $sep, __FUNCTION__, __LINE__, __FILE__, "sep" );
-  $tel =  bw_default_empty_att( $number, "telephone", "" );
-  bw_trace( $tel, __FUNCTION__, __LINE__, __FILE__, "tel" );
+  if ( !$number ) {
+    $number = bw_get_option( $index, "bw_options$alt" );
+  } 
    
-   if ( $tel <> "" )
-   {
-     stag( $tag,  "tel" );
-     span( "type");
-     e( $prefix );
-     epan();
-     e( $sep );
-     span( "value" );
-     e( $tel );
-     epan();
-     etag( $tag );
-   }
-   return( bw_ret());
+  if ( $number <> "" ) {
+    stag( $tag,  "tel $class" );
+    span( "type");
+    e( $prefix );
+    epan();
+    e( $sep );
+    span( "value" );
+    e( $number );
+    epan();
+    etag( $tag );
+  }
+  return( bw_ret());
 }
 
 
@@ -150,135 +149,86 @@ function _bw_telephone( $atts = NULL ) {
  * Display the telephone number using microformats
  * See ISBN: 978-1-59059-814-6 p. 140
  */
-function bw_telephone( $atts = NULL ) { 
-  $atts['tag'] = 'div';
-  return _bw_telephone( $atts );
+function bw_telephone( $atts = null ) { 
+  $atts['index'] = bw_array_get( $atts, "index", "telephone" );
+  return( _bw_telephone( $atts ) );
 }  
 
 /**
  * Display the fax number, if set
  */
-function bw_fax( $atts = NULL ) {
-  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
-  extract( shortcode_atts( array(
-      'prefix' => 'Fax',
-      'sep' => ': ',
-      ), $atts ) );
-      
-  $fax = bw_get_option( "fax" );
-  if ( $fax <> "" )
-  { 
-    sdiv( "tel" );
-    span( "type");
-    e( $prefix );
-    epan();
-    e( $sep );
-    span( "value" );
-    e( $fax );
-    epan();
-    ediv();
-  }
-  return( bw_ret());
+function bw_fax( $atts = null ) {
+  $atts['index'] = bw_array_get( $atts, "index", "fax" );
+  $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Fax" );
+  return( _bw_telephone( $atts ) );
+}  
+
+function bw_mobile( $atts = null ) {
+  $atts['index'] = bw_array_get( $atts, "index", "mobile" );
+  $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Mobile" );
+  return( _bw_telephone( $atts ) );
 }
 
-function bw_mobile( $atts = NULL ) {
-  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
-  extract( shortcode_atts( array(
-      'prefix' => 'Mobile',
-      'sep' => ': ',
-      ), $atts ) );
-      
-  $mobile = bw_get_option( "mobile" ) ;
-  if ( $mobile <> "" )
-  {
-    sdiv( "tel" );
-    span( "type");
-    e( $prefix );
-    epan();
-    e( $sep );
-    span( "value" );
-    e( $mobile );
-    epan();
-    ediv();
-  }
-  return( bw_ret());
-}
-
-function bw_emergency( $atts = NULL ) {
-  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
-  extract( shortcode_atts( array(
-      'prefix' => 'Emergency',
-      'sep' => ': ',
-      'class' => 'emergency'
-      ), $atts ) );
-      
-  $emergency = bw_get_option( "emergency" ) ;
-  if ( $emergency <> "" )
-  {
-    sdiv( "tel " . $class );
-    span( "type");
-    e( $prefix );
-    epan();
-    e( $sep );
-    span( "value" );
-    e( $emergency );
-    epan();
-    ediv();
-  }
-  return( bw_ret());
-}
+function bw_emergency( $atts = null ) {
+  $atts['index'] = bw_array_get( $atts, "index", "emergency" );
+  $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Emergency" );
+  $atts['class'] = bw_array_get_dcb( $atts, "class", "emergency" );
+  return( _bw_telephone( $atts ) );
+}  
 
 // Notes: Using class=email for Microformat
 
-/* use [bw_email] - for an inline mailto link 
-   or [bw_mailto] for a more formal mailto link
+/**
+ *
+ *
+ *  use [bw_email] - for an inline mailto link 
+ *  or [bw_mailto] for a more formal mailto link
+ * I'm sure I used antispambot() once upon a time. Reintroduced but it needs more work
+ 
 */   
 
-function bw_email( $atts = NULL )
-{
-  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
-  extract( shortcode_atts( array(
-      'prefix' => 'Email',
-      'sep' => ': ',
-      'index' => 'email',
-      ), $atts ) );
-
-  span("email");
+function _bw_email( $atts = null ) {
+  $prefix = bw_array_get_dcb( $atts, "prefix", "Email" );
+  $sep = bw_array_get( $atts, "sep", ": " );
+  $index = bw_array_get( $atts, "index", 'email' );
+  $alt = bw_array_get( $atts, "alt", null );
+  $title = bw_array_get_dcb( $atts, "title", "Send email to: " );
+  $tag = bw_array_get( $atts, "tag", "span" );
+   
+  stag( $tag, "email");
   
   e( $prefix );
   e( $sep );
-  $email = bw_get_option( $index ); 
-  alink( NULL, "mailto:". $email, $email, "Send email to: " . $email );
-  epan();
+  $email = bw_get_option( $index, "bw_options$alt" ); 
+  $emailasb = antispambot( $email, 1 ); 
+  alink( NULL, "mailto:". $emailasb, $email, $title . $email );
+  etag( $tag );
   
   return( bw_ret() );
 }
 
-/* [bw_mailto] is for a mailto link with a prefix ( in a paragraph )
+function bw_email( $atts = null ) {
+  $atts['tag'] = bw_array_get( $atts, "tag", "span" );
+  return( _bw_email( $atts) ); 
+}  
+
+/* [bw_mailto] is for a mailto link in a paragraph or div
 */
-function bw_mailto( $prefix = NULL, $primary=TRUE )
-{
-  sp("email");
-  $prefix = "Email:&nbsp;";
-  e( $prefix );
-  //if ( $primary )
-     $email = bw_get_option( "email" ); 
-  //else
-  //   $email = bw_get_option( "admin" );   
-  alink( NULL, "mailto:". $email, $email, "Send email to: " . $email );
-  ep();
-  
-  // **?** <p>e: <a href="mailto:info@bobbingwide.com" alt="Send email to: info@bobbingwide.com">info@bobbingwide.com</a>
-  // alink( 
-  return( bw_ret() );
-}
+function bw_mailto( $atts=null ) {
+  $atts['tag'] = bw_array_get( $atts, "tag", "p" );
+  return( _bw_email( $atts ) );
+}  
 
 
 /**
  * Return address using Microformats
+ *
+ * 
  */
 function bw_address( $atts = NULL ) {
   $type = bw_array_get( $atts, "type", "Work" );
+  $alt = bw_array_get( $atts, "alt", null );
+  
   sdiv("adr" );
   
     sdiv("type");
@@ -286,27 +236,27 @@ function bw_address( $atts = NULL ) {
     ediv();
     
     sdiv("extended-address");
-    e( bw_get_option( "extended-address" ) );
+    e( bw_get_option( "extended-address", "bw_options$alt" ) );
     ediv();
     
     sdiv("street-address");
-    e( bw_get_option( "street-address" ) );
+    e( bw_get_option( "street-address", "bw_options$alt"  ) );
     ediv();  
     
     sdiv("locality");
-    e( bw_get_option( "locality" ) );
+    e( bw_get_option( "locality", "bw_options$alt" ) );
     ediv();      
     
     sdiv("region");
-    e( bw_get_option( "region" ) );
+    e( bw_get_option( "region", "bw_options$alt" ) );
     ediv();      
     
     sdiv("postal-code");
-    e( bw_get_option( "postal-code" ) );
+    e( bw_get_option( "postal-code", "bw_options$alt" ) );
     ediv();
        
     span("country-name");
-    e( bw_get_option( "country-name" ) );
+    e( bw_get_option( "country-name", "bw_options$alt" ) );
     epan();
   
   ediv();
@@ -317,6 +267,7 @@ function bw_address( $atts = NULL ) {
 
 function bw_address__syntax( $shortcode="bw_address" ) {
   $syntax = array( "type" => bw_skv( "Work", "<i>type</i>", "Address type." )
+                 , "alt" => bw_skv( "", "1", "suffix for alternative address" )
                  );
   return( $syntax );
 }
@@ -337,11 +288,22 @@ function bw_wpadmin() {
   
 }
 
-
-function bw_contact() {
-  $contact = bw_get_option( "contact" );
-  return( $contact );
+/**
+ * Format the contact name using hCard Microformat
+*/ 
+function bw_contact( $atts=null ) {
+  $alt = bw_array_get( $atts, "alt", null );
+  $contact = bw_get_option( "contact", "bw_options$alt" );
+  span( "vcard" );
+  span( "fn" );
+  e( $contact );
+  epan();
+  epan();
+  return( bw_ret() );
 } 
+
+
+
 
 
 /**
@@ -359,13 +321,18 @@ function bw_follow( $atts = NULL ) {
   $text = bw_array_get( $atts, 'text', null );
   
   $lc_social = strtolower( $social_network );
-  $social = bw_array_get( $atts, 'url', bw_get_option( $lc_social ));
+  $social = bw_array_get_dcb( $atts, 'url', $lc_social, "bw_get_option" );
   $me = bw_array_get( $atts, "me", "me" );
-  bw_trace( $text, __FUNCTION__, __LINE__, __FILE__ , "text" );
-  if ( $text ) {
-    $text = $social_network;
-  }  
-  alink( $social_network, $social, $text, "Follow $me on ".$social_network );
+  // bw_trace( $text, __FUNCTION__, __LINE__, __FILE__ , "text" );
+  //if ( $text ) {
+  //  $text = $social_network;
+  //}
+    
+  $imagefile = plugins_url( 'images/'. $lc_social . '_48.png', __FILE__ );
+    
+  $image = retimage( NULL, $imagefile, $social_network );
+  alink( NULL, $social, $image, "Follow $me on ".$social_network );
+  //  alink( $social_network, $social, $text, "Follow $me on ".$social_network );
        
   return( bw_ret());
 }  
@@ -454,50 +421,28 @@ function bw_clear() {
  * as such may be changed from time to time by Skype in its sole discretion.  
 */
 function bw_skype( $atts ) {
-  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
-  extract( shortcode_atts( array(
-      'prefix' => 'Skype name',
-      'sep' => ': ',
-      ), $atts ) );
-      
-  bw_trace( $prefix, __FUNCTION__, __LINE__, __FILE__, "prefix" );
-  bw_trace( $sep, __FUNCTION__, __LINE__, __FILE__, "sep" );
- 
-     
-   $tel =  bw_get_option( "skype" );
-   if ( $tel <> "" )
-   {
-     sdiv( "skype" );
-     span( "type");
-     e( $prefix );
-     epan();
-     e( $sep );
-     span( "value" );
-     e( $tel );
-     epan();
-     ediv();
-   }
-   return( bw_ret());
-}
+  $atts['index'] = bw_array_get( $atts, "index", "skype" );
+  $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Skype name" );
+  $atts['class'] = bw_array_get( $atts, "class", "skype" );
+  return( _bw_telephone( $atts ) );
+}  
 
-function bw_tel( $atts = NULL ) {
+/**
+ * Inline telephone number, using span
+*/ 
+function bw_tel( $atts=null ) {
   $atts['tag'] = 'span';
   return _bw_telephone( $atts );
 }
 
-function bw_mob()
-{
-   $mob =  bw_get_option( "mobile" );
-   if ( $mob <> "" )
-   {
-     span( "tel" );
-     sepan( "type", "cell " );
-     span( "value" );
-     e( $mob );
-     epan();
-     epan();
-   }
-   return( bw_ret());
+/**
+ * Inline mobile number, using span
+*/ 
+function bw_mob( $atts=null ) {
+  $atts['tag'] = 'span';
+  $atts['index'] = bw_array_get( $atts, "index", "mobile" );
+  $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Mobile" );
+  return _bw_telephone( $atts );
 }
 
 
@@ -506,12 +451,14 @@ function bw_mob()
  * http://maps.google.co.uk/maps?f=d&hl=en&daddr=50.887856,-0.965113
  *
  */
-function bw_directions() {
-  $lat = bw_get_option( "lat" );
-  $long = bw_get_option( "long");
+function bw_directions( $atts=null ) {
+  $alt = bw_array_get( $atts, "alt", null );
+  
+  $lat = bw_get_option( "lat", "bw_options$alt" );
+  $long = bw_get_option( "long", "bw_options$alt" );
   $company = bw_get_option( "company" );
-  $extended = bw_get_option( "extended-address" );
-  $postcode = bw_get_option( "postal-code" );
+  $extended = bw_get_option( "extended-address", "bw_options$alt" );
+  $postcode = bw_get_option( "postal-code", "bw_options$alt" );
   $link = "http://maps.google.co.uk/maps?f=d&hl=en&daddr=" . $lat . "," . $long;  
   $text = "Google directions";
   $title = "Get directions to " . $company;
@@ -528,15 +475,14 @@ function bw_directions() {
 function bw_google_plus( $atts ) { 
   $atts['network'] = "GooglePlus";  
   return( bw_follow( $atts ));
-} 
+}
 
-
-
-
+/**
+ * Only produce a follow me button if there is a value for the selected social network
+*/ 
 function bw_follow_e( $atts ) {
   $social_network = $atts['network'];
   $text = bw_array_get( $atts, 'text', NULL );
-  //$email = bw_array_get( $atts, 'email', NULL );;
   
   $lc_social = strtolower( $social_network );
   $social = bw_get_option( $lc_social );
@@ -547,9 +493,7 @@ function bw_follow_e( $atts ) {
     $image = retimage( NULL, $imagefile, $social_network );
     alink( NULL, $social, $image, "Follow me on ".$social_network );
   }     
-  //return( bw_ret());
 } 
-
 
 /**
  * Produce a Follow me button for each of these social networks:  Twitter, Facebook, LinkedIn, GooglePlus, YouTube, Flickr
@@ -677,26 +621,23 @@ function bw_acronym( $atts = NULL ) {
 
 
 /**
- * Set a default value for an empty attribute value from the oik option or a hardcoded value
- * @param bw_value - value passed... if not set then
- * @param bw_field - get the oik option value - this is the field name of the oik option - e.g. 'company'
- * @param bw_default - the (hardcoded) default value if the oik option is not set
+ * Set a default value for an empty attribute value from the oik options or a hardcoded value
+ * @param string $bw_value - value passed... if not set then
+ * @param string $bw_field - get the oik option value - this is the field name of the oik option - e.g. 'company'
+ * @param string $bw_default - the (hardcoded) default value if the oik option is not set
+ * @param string $set - options set from which the field should be returned 
  *
  * e.g. 
  * $width = bw_default_empty_att( $width, "width", "100%" );
  * 
 */
-function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL ) {
+function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL, $set="bw_options" ) {
   $val = $bw_value;
-  bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "field" );
   if ( empty( $val )) {
-    bw_trace( $bw_field, __FUNCTION__, __LINE__, __FILE__, "bw_field" );
-    $val = bw_get_option( $bw_field );
-    bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value" );
+    $val = bw_get_option( $bw_field, $set );
     if ( empty( $val ))
       $val = $bw_default;
   } 
-  bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value" );
   return( $val );
 }
 
@@ -893,17 +834,17 @@ function bw_get_users( $atts = NULL ) {
 function bw_copyright( $atts = NULL ) {
   $copyright = bw_array_get_dcb( $atts, "prefix", "&copy; Copyright" );
   $company = bw_array_get_dcb( $atts, "company", "company", "bw_get_option" );
+  $suffix = bw_array_get_dcb( $atts, "suffix", ". All rights reserved." );
   $yearto = bw_format_date( null, 'Y');
-  bw_trace( $yearto, __FUNCTION__, __LINE__, __FILE__, "yearto!" );
+  // bw_trace( $yearto, __FUNCTION__, __LINE__, __FILE__, "yearto!" );
   $yearfrom = bw_array_get_dcb( $atts, "from", "yearfrom", "bw_get_option" );
-  
   
   $years = bw_year_range( $yearfrom, $yearto, $atts );
   span( "copyright" );
   e( "$copyright " );
   e( bw_do_shortcode( "$company ") );
   e( "$years" );
-  e( ". All rights reserved." );
+  e( "$suffix" );
   epan();
   return( bw_ret());
 }

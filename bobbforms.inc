@@ -6,6 +6,11 @@ function form( $action="", $method="post" ) {
   return( "<form method=\"${method}\" action=\"${action}\">" ); 
 }
 
+/**
+ * Start a form
+ * @param string $action - defaults to none - so this must be defined on the submit button
+ * @param string $method - defaults to "post". other value is "get"
+*/
 function bw_form( $action="", $method="post" ) {
   e( form( $action, $method ) );
 }  
@@ -55,24 +60,19 @@ function itext( $name, $len, $value, $class=null, $extras=null )
   $it.= $extras;
   $it.= " />"; 
   return $it;
+}
+
+function iarea( $name, $len, $value, $rows=10 ) {
+  $it = "<textarea";
+  $it .= kv( "rows", $rows);
+  $it .= kv( "cols", $len );
+  $it .= kv( "name", $name );
+  $it .= ">";
+  $it .= $value;
+  $it .= "</textarea>";
+  return( $it );
 }  
-
-function iarea( $name, $len, $value )
-{
-  $it = "<textarea rows=\"10\" cols=\"";
-  $it.= $len;
-  $it.= "\" name=\"";
-  $it.= $name;
-  $it.= "\" id=\"";
-  $it.= $name;
-  $it.= "\">";   
-  $it.= $value;
-  $it.= "</textarea>";
-
-  return $it;
-}  
-
-
+    
 function tablerow( $td1, $td2 )
 {  
    echo '<tr>';
@@ -106,10 +106,10 @@ function textfield($name, $len, $text, $value, $class=null )
   return;
 }
 
-function textarea( $name, $len, $text, $value )
+function textarea( $name, $len, $text, $value, $rows=10 )
 {
   $lab = label( $name, $text );
-  $itext = iarea( $name, $len, $value ); 
+  $itext = iarea( $name, $len, $value, $rows ); 
   tablerow( $lab, $itext );
   return;
 }
@@ -122,9 +122,9 @@ function bw_textfield( $name, $len, $text, $value, $class=null, $extras=null ) {
   return;
 }
 
-function bw_textarea( $name, $len, $text, $value ) {
+function bw_textarea( $name, $len, $text, $value, $rows=10 ) {
   $lab = label( $name, $text );
-  $itext = iarea( $name, $len, $value ); 
+  $itext = iarea( $name, $len, $value, $rows ); 
   bw_tablerow( array( $lab, $itext) );
   return;
 }
@@ -156,15 +156,20 @@ function bw_select( $name, $text, $value, $args ) {
  * @param string $value the value of the checkbox - default NOT checked
  * When the value is set then the checkbox is checked
  
+ * Note: In order to obtain a value when the checkbox is unticked
+ * we add a hidden field with a vale of off
+ * See http://iamcam.wordpress.com/2008/01/15/unchecked-checkbox-values/
+ 
  */
 function icheckbox( $name, $value=NULL ) {
-  $it = "<input type=\"checkbox\" ";
+  $it = ihidden( $name, "0" );
+  $it .= "<input type=\"checkbox\" ";
   $it.= "name=\"";
   $it.= $name;
   $it.= "\" id=\"";
   $it.= $name;
   $it.= '"';
-  if ( $value ) {
+  if ( $value && $value != "0" ) {
     $it.= " checked=checked\"";
   }  
   $it.= "/>"; 
@@ -197,6 +202,27 @@ function bw_textfield_arr( $name, $text, $array, $index, $len ) {
   $name_index = $name.'['.$index.']';
   $value = bw_array_get( $array, $index, NULL );
   bw_textfield( $name_index, $len, $text, $value );
-}  
+} 
+
+/**
+ * Create a textarea for an array options field 
+ */
+function bw_textarea_arr( $name, $text, $array, $index, $len, $rows=5 ) {
+  $name_index = $name.'['.$index.']';
+  $value = bw_array_get( $array, $index, NULL );
+  bw_textarea( $name_index, $len, $text, $value, $rows );
+}
+
+ 
+
+/**
+ * Create a select for an array options field
+*/ 
+function bw_select_arr( $name, $text, $array, $index, $args ) {
+  $name_index = $name.'['.$index.']';
+  $value = bw_array_get( $array, $index, NULL );
+  bw_select( $name_index, $text, $value, $args );
+}
+
 
  

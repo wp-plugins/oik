@@ -371,16 +371,16 @@ a.contact { }
    [bw_block class="column span-6 bd-200"]
    If these are not sufficient you can add more to your custom stylesheet
 */   
-div.bd-100 .art-blockcontent { min-height: 100px; }
-div.bd-150 .art-blockcontent { min-height: 150px; }
-div.bd-200 .art-blockcontent { min-height: 200px; }
-div.bd-250 .art-blockcontent { min-height: 250px; }
+div.bd-100 .art-blockcontent, .bd-100 { min-height: 100px; }
+div.bd-150 .art-blockcontent, .bd-150 { min-height: 150px; }
+div.bd-200 .art-blockcontent, .bd-200 { min-height: 200px; }
+div.bd-250 .art-blockcontent, .bd-250 { min-height: 250px; }
 div.bd-300 .art-blockcontent, .bd-300 { min-height: 300px; }
-div.bd-350 .art-blockcontent { min-height: 350px; }
-div.bd-400 .art-blockcontent { min-height: 400px; }
-div.bd-450 .art-blockcontent { min-height: 450px; }
-div.bd-500 .art-blockcontent { min-height: 500px; }
-div.bd-550 .art-blockcontent { min-height: 550px; }
+div.bd-350 .art-blockcontent, .bd-350 { min-height: 350px; }
+div.bd-400 .art-blockcontent, .bd-400 { min-height: 400px; }
+div.bd-450 .art-blockcontent, .bd-450 { min-height: 450px; }
+div.bd-500 .art-blockcontent, .bd-500 { min-height: 500px; }
+div.bd-550 .art-blockcontent, .bd-550 { min-height: 550px; }
 
 /* Classes for the emergency telephone number - darkish red */
 div.emergency { color: #b53030 }

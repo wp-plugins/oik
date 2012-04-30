@@ -1,23 +1,17 @@
 <?php // (C) Copyright Bobbing Wide 2011,2012
 /*
--Plugin Name: oik Paypal Shortcodes
--Plugin URI: http://www.oik-plugins.com/oik
--Description: [oik] PayPal Shortcodes - Pay Now, Buy Now, Donate, Add to Cart and View Cart buttons
--Version: 1.11
--Author: bobbingwide
--Author URI: http://www.bobbingwide.com/content/herb-miller
 
 Notes & Limitations
 - If the button that's generated doesn't fit your needs then you can go to 
   https://www.paypal.com/cgi-bin/webscr?cmd=_button-designer
   and generate the HTML directly
   
-- This code assumes you are in the UK, taking Payments in pounds sterling 
-- It assumes that you will not be adding Tax or Shipment costs
-- The choice of images for the button are hard coded. 
+- This code assumes that you will not be adding Tax or Shipment costs
+- The choice of images for the button are hard coded and uses images for the UK
 - You can see a load of PayPal buttons at:
   http://members.cox.net/pptech/paypal_button_chart.htm   
 - This code was originally based upon the jw-paypal-shortcodes plugin (designed for use in the US)
+- It has now been almost completely rewritten to follow oik's lazy smart shortcode conventions
 - The plugins (this one and jw-paypal-shortcodes) should co-exist peacefully.
 - I had no idea what the purpose of this image was https://www.paypal.com/en_GB/i/scr/pixel.gif
   but having read the forums I now see that it's not particularly important so I've eliminated it
@@ -73,7 +67,7 @@ function bw_paypal_filter_mce_button( $buttons ) {
  *
 */ 
 function bw_paypal_filter_mce_plugin($plugins) {
-  $plugins['bwpaypal'] = plugin_dir_url( __FILE__ ) . 'oik_paypal_plugin.js';
+  $plugins['bwpaypal'] = plugin_dir_url( __FILE__ ) . 'admin/oik_paypal_plugin.js';
   return $plugins;
 }
         

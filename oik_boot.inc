@@ -84,11 +84,32 @@ if ( !function_exists( 'bw_array_get' ) ) {
  
 }
 
-function oik_depends( $plugin=null, $dependencies="oik" ) {
+
+/**
+ * Simple implementation of plugin dependency logic
+ *
+ * @param string $plugin - the plugin file name
+ * @param string $dependencies - the list of plugins upon which this plugin is dependent
+ * @param string $callback - the callback function to invoke when the dependencies aren't satisfied
+ *
+ * Instead of calling this module during activation we invoke it in response to the 
+ * after_plugin_row_$plugin_basename action.
+ * 
+ * This gives us a bit more control over the information we provide.
+ * IF the oik plugin is not activated then oik_lazy_depends() will not be defined
+ * 
+*/
+function oik_depends( $plugin=null, $dependencies="oik", $callback=null ) {
+  //bw_trace2();
+  if ( function_exists( "oik_load_plugins" )) {
+    oik_load_plugins();
+  }  
   if ( function_exists( "oik_lazy_depends" ) ) {  
-    oik_lazy_depends( $plugin, $dependencies );
-  } else { 
-    trigger_error( "$plugin is dependent upon 'oik' and the following plugins: $dependencies" );  
+    oik_lazy_depends( $plugin, $dependencies, $callback );
+  } else {
+    if ( is_callable( $callback ) ) {
+      call_user_func( $callback, $plugin, $dependencies );
+    }  
   }  
 }
 

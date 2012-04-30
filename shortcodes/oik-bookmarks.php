@@ -18,7 +18,6 @@
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
-//oik_require( 'includes/oik_posts.inc' );
 
 /**
  * Wrapper to wp_list_bookmarks() 
@@ -43,8 +42,28 @@ function bw_bookmarks( $atts = NULL ) {
   
   bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
   $posts = wp_list_bookmarks( $attr );
-  bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
+  bw_trace2( $posts, "bw_bm_posts");
   return( $posts );
   
 }
 
+/**
+ * Note: The parameters to wp_list_bookmarks are different to _sc_posts 
+ * And what are we doing with numberposts? 
+ *
+*/
+
+function bw_bookmarks__syntax( $shortcode="bw_bookmarks" ) {
+  $syntax = array( "numberposts" => bw_skv( -1, "limit", "Number of bookmarks to return. -1=unlimited" )
+                 , "orderby" => bw_skv( "name", "", "Sort by field" )
+                 , "order" => bw_skv( "ASC", "DESC", "Sort order" )
+                 , "category_name" => bw_skv( "", "<i>category name</i>", "Category name" )
+                 );
+  // $syntax = array_merge( _sc_posts(), $syntax );
+  return( $syntax );
+}
+
+
+function bw_bookmarks__example( $shortcode="bw_bookmarks" ) {
+  bw_invoke_shortcode( $shortcode, 'category_name=blogroll', "To display the links in the Blogroll" );
+}  

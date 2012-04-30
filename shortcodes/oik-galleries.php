@@ -35,40 +35,21 @@ function bw_callablefunction( $class, $method ) {
 }
 
 /**
- *
+ * Give an example of the NextGEN gallery and a link to more examples
  * 
  * This function will probably work even if the NextGEN is not activated
  *
 */
-
 function nggallery__example( $shortcode="nggallery" ) {
-  p( "To display NextGEN gallery with id=1 and the carousel template" );
-  //$example = "[$shortcode id=1]";
-  //$example = "[$shortcode id=1 template=\"caption\"]";
-  $example = "[$shortcode id=1 template=\"carousel\"]";
-  
-  p ( $example );
-  //$function = "NextGEN_shortcodes::show_gallery" ;
-  $function = bw_callablefunction( "NextGEN_shortcodes", "show_gallery" );
-  bw_add_shortcode_event( 'nggallery', $function, current_filter() );
-  e( do_shortcode( $example ));
+  bw_invoke_shortcode( $shortcode, 'id=1 template="carousel"', "To display NextGEN gallery with id=1 and the carousel template" );
   alink( null, "http://nextgen-gallery.com/gallery-page/", "Visit the NextGEN Gallery page" );
 }
 
 /**
- * Create the snippet for the NextGEN [nggallery] shortcode
+ * Create the snippet for the NextGEN [nggallery] shortcode with parameters "id=1 template=carousel" - as for the example
  *
- * We have to force the shortcode to expand for this filter
- * I wonder what it was?
 */
- 
 function nggallery__snippet( $shortcode="nggallery" ) {
-  bw_trace2();
-  $function = bw_callablefunction( "NextGEN_shortcodes", "show_gallery" );
-  //$function = "NextGEN_shortcodes::show_gallery" ;
-  //bw_add_shortcode_event( 'nggallery', $function, current_filter() );
-  //p( "before snippet" );
-  _sc__snippet( $shortcode, "[$shortcode id=1]", $function );
-  //p( "After snippet" );
+  _sc__snippet( $shortcode, "id=1 template=carousel" );
 }
 

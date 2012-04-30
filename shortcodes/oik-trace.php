@@ -32,22 +32,9 @@ function bwtrace__syntax( $shortcode='bwtrace' ) {
 }
 
 function bwtrace__example( $shortcode='bwtrace' ) {    
-  bw_add_shortcode_event( $shortcode, 'bw_trace_button', current_filter() );
-
-  p( "To display the trace options and trace reset buttons use" ); 
-  $example = "[$shortcode]" ;
-  p( $example );
-  e( do_shortcode( $example ));
-  
-  p( "To display a link to the active trace file use" );
-  $example = "[$shortcode option=view]" ;
-  p( $example );
-  e( do_shortcode( $example ));
-  
-  p( "To display the trace reset only use" );
-  $example = "[$shortcode option=reset]" ;
-  p( $example );
-  e( do_shortcode( $example ));
+  bw_invoke_shortcode( $shortcode, null, "To display the trace options and trace reset buttons." );    
+  bw_invoke_shortcode( $shortcode, "option=view", "To display a link to the active trace file." );
+  bw_invoke_shortcode( $shortcode, "option=reset", "To display the trace reset only" );
 }                   
 
 

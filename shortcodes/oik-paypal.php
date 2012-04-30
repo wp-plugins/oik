@@ -76,14 +76,15 @@ oik_require( "bobbforms.inc" );
   <input type="image" src="https://www.paypal.com/en_GB/i/btn/btn_cart_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online.">
   <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
   </form>
+  
+  Note: Image locations are currently hardcoded for en_GB
 */
 
 function bw_pp_shortcodes( $atts = NULL) {
-  $bw_paypal_email = bw_array_get( $atts, "email", bw_get_option( 'paypal-email' ));   	
-  // $email = get_option('bw-pp-email');
-  // $bw_paypal_email =  bw_get_option( 'paypal-email' );
-                
-  $bw_paypal_location = bw_array_get( $atts, "location", 'GB' );  // hardcoded at present
+  $bw_paypal_email = bw_array_get_dcb( $atts, "email", "paypal-email" , "bw_get_option" );        
+  $atts['location'] = bw_array_get_dcb( $atts, "location", 'paypal-country', "bw_get_option" );  
+  $bw_paypal_location = bw_array_get( $atts, "location", "GB" );
+  $atts['currency'] = bw_array_get_dcb( $atts, "currency", 'paypal-currency', "bw_get_option" );  
   $bw_paypal_currency = bw_array_get( $atts, "currency", 'GBP' ); // hardcoded at present
   $atts['productname'] = bw_array_get( $atts, "productname", "oik-plugin" );
   $atts['sku'] = bw_array_get( $atts, "sku", "oik" );

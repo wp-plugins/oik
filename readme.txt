@@ -1,105 +1,150 @@
 === oik ===
 Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
-Tags: shortcodes, PayPal, buttons, Artisteer, widget, bobbingwide, key information, tide, trace, blocks, buddypress, pages, bookmarks, 
-Requires: 3.0.4
-Tested up to: 3.3.1
+Tags: shortcodes, PayPal, buttons, Artisteer, widget, key information, trace, blocks, buddypress, pages, bookmarks, images, attachments, smart, lazy
+Requires at least: 3.0.4
+Tested up to: 3.4
 Stable tag: 1.11
 
-Lazy smart shortcodes for often included key-information
+Lazy smart shortcodes for displaying often included key-information and other WordPress content
 
 == Description ==
-oik is a set of plugins that ease the day to day creation of the very important but rather tedious content that is information about you, 
-your company, your social networking ids and your website. 
+oik is a set of plugins delivering over 70 lazy smart shortcodes for use just about anywhere on your website.
 
-There are a number of component modules which can be activated as and when you need them.
+oik helps you to display information about you, your company, your social networking ids and your website using standard formats that search engines such as Google recognise.
 
-The oik base plugin provides a series of WordPress shortcodes that take the pain out of producing commonly used information.
-You provide this information once on the oik options panel, then use shortcodes to include the information on your website; in pages, posts,
-titles, widgets and the footer.
-Most of the shortcodes are prefixed bw_ (for Bobbing Wide) e.g. [ bw_mailto], which produces a "send email to" link.
+* You enter your information once, then use oik shortcodes to display it wherever you want; in titles, post and page content, header, sidebar and footer widgets.
+* Whenever you need to change a value you only need to update it in one place; and your website is updated instantly.
+* Shortcodes to display often included key information include: [bw_contact], [bw_telephone], [bw_mobile], [bw_mailto], [bw_company], [bw_address], [bw_show_googlemap], [bw_directions], [bw_logo], [bw_qrcode], [bw_copyright]
+* For your social networking "follow me" sites use the [bw_follow_me] shortcode to display your links to Twitter, Facebook, LinkedIn, Google+, etcetera
 
+The oik *base* plugin also provides a series of advanced WordPress shortcodes that help you display dynamic content from your website's pages, posts, attachments, links and custom post types.
 
-Other plugins extend the functionality: 
+* [bw_pages], [bw_posts], [bw_thumbs], [bw_attachments], [bw_images], [bw_pdf], shortcodes to list subpages, posts, attachments or custom post types 
+* [bw_list], [bw_tree] to display lists of links to pages, posts, attachments or custom post types 
+* [bw_bookmarks] to list links
+* [paypal] shortcodes for PayPal buttons: Pay Now, Buy Now, Donate, Add to Cart, View Cart/Checkout
+* [bw_block] & [bw_eblock], [div] & [ediv], [clear] - to create block structures within your pages, posts and even widgets
+* [bw_button [bw_contact_button] - to provide call-to-action button style links for Artisteer themes
+* helper shortcodes for web designers and developers: [bw_editcss], [bwtrace], [bw_page], [bw_post], [bw_wpadmin], [bw_wtf], [stag] & [etag]
 
-For general use:
+Features: 
 
-* oik-blocks to create Artisteer style blocks within your pages, posts and even widgets
-* oik-button-shortcodes to provide call-to-action button style links for Artisteer themes
+* oik is theme independent; meaning that you can change your theme without having to worry about whether or not the shortcodes will still work.
+* oik uses microformats so that Google and other search engines can understand your content.
+* oik provides buttons to help you write the shortcodes, showing you the parameters you can choose and default values 
+* oik provides a shortcode discovery page where you can find out about every shortcode which is active in your site
+* lazy programming means that code is only loaded when it's actually needed
+* smart means that the shortcodes can recognise the content in which they're used and adjust their behaviour accordingly
+* oik is extendable - plugin developers can build on the oik base functionality 
+* using the oik API: help, syntax information, examples AND HTML snippets can be produced for any plugin or theme that provides shortcodes
+
+oik includes a number of optional modules which can be activated as and when you need them:
+
 * oik-email-signature to help generate an email signature file for all your email messages
-* oik-header for custom header images by page or post
-* oik-pages to list subpages, post or custom post types - [bw_pages] or [bw_list] shortcodes
-* oik-paypal-shortcodes to provide PayPal buttons
+* oik-header for custom page header image selection for pages, posts and custom post types
 * oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
-* oik-tides - shortcode for tide times in the UK
+ 
 
-For WordPress plugin developers:
+For WordPress designers, web site developers and plugin developers:
 
-* oik-bob-bing-wide to provide easy to use shortcode macros for bob/fob bing/bong wide/hide wow, WoW and WOW, oik and loik, bw_plug, bw_module
-* oik-bwtrace provides an advanced trace function, which logs trace information to a file, rather than including it within the web page output. 
-* oik-fields to display custom fields within the content
+* oik-bob-bing-wide to provide more lazy smart shortcodes: bw_plug, bob/fob bing/bong wide/hide wow, oik and loik, wp, wpms, bp, artisteer, drupal* oik-bwtrace provides an advanced trace function, which logs trace information to a file, rather than including it within the web page output
+* oik-bwtrace Easy to use trace macros for oik plugins
+* oik-shortc-shortcodes - shortcode help shortcodes: provides [bw_code] and [bw_codes] shortcodes
+* oik-fields - [bw_field] [bw_fields] shortcodes to display Custom Fields (post metadata)
 
 For use in BuddyPress sites:
 * oik-bp-signup-email to intercept BuddyPress registration emails
 
 For use in bbPress sites:
-* oik-bbpress to strip tags from bbPress forum title tooltips
+* oik-bbpress to strip tags from bbPress forum title tooltips  
+
+Other plugins which use the oik API are also available on WordPress.org: 
+
+* [oik-nivo-slider](http://wordpress.org/extend/plugins/oik-nivo-slider/) - [nivo] shortcode for the jQuery "Nivo slider" for posts, pages, attachments and custom post types
+* [uk-tides](http://wordpress.org/extend/plugins/uk-tides/) - [bw_tides] shortcode for tide times and heights in the UK  (replaces oik-tides)
+* [bbboing](http://www.wordpress.org/extend/plugins/bbboing) - obfuscate text but leave it readable
+* more coming soon! 
+
 
 ALL of the plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
 These are known as the bobbing wide application programming interface (bw API).
 
+
 == Installation ==
 1. Upload the contents of the oik plugin to the `/wp-content/plugins/oik' directory
 1. Activate the oik base plugin through the 'Plugins' menu in WordPress
-1. Go to Settings > oik options to fill in your **o**ften **i**ncluded **k**ey information
+1. Go to **oik options** > **options** to fill in your **o**ften **i**ncluded **k**ey information
 1. Use the shortcodes when writing your content
 1. Activate other oik plugins when you need them
-
-If you are a developer and want to try the oik-bwtrace plugin then you may find you need to add a line to your wp-config.php file.
-Put this before the require_once for wp-settings.php
-
-`require_once(ABSPATH . '/wp-content/plugins/oik/bwtrace.inc' );`
-
-If you also want to track action and filter processing then you should precede that line with:
-
-`define( 'BW_TRACE_CONFIG_STARTUP', true );`
-
-
-Don't forget to remove this code before deleting the plugin.
 
 == Frequently Asked Questions ==
 = Where is the FAQ? =
 [oik FAQ](http://www.oik-plugins.com/oik/oik-faq)
 
-= Is there a forum? =
-Yes - see above - plus the standard WordPress forum - http://wordpress.org/tags/oik?forum_id=10
+= Is there a support forum? =
+Yes - please use the standard WordPress forum - http://wordpress.org/tags/oik?forum_id=10
 
 = Can I get support? = 
 Yes - see above 
 
-= Do you know the screenshots are out of date? =
-Yes. I'm concentrating on getting version 1.x properly released.
-
 == Screenshots ==
-1. oik options (also known as bobbing wide shortcode options)
-2. oik PayPal buttons and their shortcodes
-3. oik button shortcodes - showing a Contact me button
-4. base oik shortcodes and examples (part 1)
-5. base oik shortcodes and examples (part 2)
-6. oik button dialog
-7. oik PayPal dialog
-8. oik shortcode selection dialog
-
+1. oik overview - main settings page
+1a. Custom CSS and the [bw_editcss] shortcode
+1b. Often included key information settings
+1c. Alternative values for oik settings, using the alt=1 shortcode parameter
+1d. Button selection - choose the buttons to add to the TinyMCE and HTML editor toolbars
+1e. Shortcode help page - Discover all the currently active shortcodes
+1f. Shortcode example on the help page - showing [bw_show_googlemap] output
+2. Demonstrating [bw_pages] and [bw_thumbs] (and [bw_wtf)
+3. Shortcode help, syntax and examples - [bw_contact_button]
+4. Shortcode snippets - [bw_address] 
+5. email signature file generation using [bw_email_signature]
+6. oik button dialog - to create the [bw_button] shortcode
+7. oik PayPal dialog - create PayPal buttons: Pay Now, Buy Now, Donate, Add to Cart and View Cart/Checkout
+7a. PayPal buttons using the [paypal] shortcode
+8. oik shortcodes dialog - showing syntax for [bw_block]
+9. oik header image plugin - custom header image for a page 
 
 == Upgrade Notice ==
+= 1.12 =
+Upgrade oik to version 1.12 before updating oik-nivo-slider to version 1.2. For more information see:
+[oik-nivo-slider-v1.2 for oik v1.12](http://www.oik-plugins.com/2012/04/oik-nivo-slider-v1-2-for-oik-v1-12-now-in-alpha-test/)
+
 
 = 1.11 =
 There are many changes in version 1.11 to support lazy invocation of code.  
-Some plugins have been created as separate plugins (uk-tides), others have been changed
-so that you can activate them by changing oik settings, so are no longer activatable.
+Some plugins have been created as separate plugins (e.g. uk-tides). Others have been changed so that you can activate them by changing oik settings, so are no longer activatable.
  
 
 == Changelog ==
+= 1.12 =
+* Added: oik extra shortcode options for shortcodes with alternative values ( alt=1 keyword )
+* Added: shortcode help page - listing all current shortcodes
+* Added: new function to assist in earlier detection of action or filter processing (oik trace actions)
+* Added: support for dependent plugins to indicate the minimum required plugin version
+* Added: link to "Getting started with oik plugins"
+* Added: New functions to set jQuery JSON parms from WordPress options
+* Changed: Improved styling of admin pages
+* Changed: Improved logic for the shortcodes that support the alt=1 keyword ( [bw_mailto], [bw_contact], [bw_telephone], [bw_mobile], [bw_address], [bw_show_googlemap], [bw_geo], [bw_directions] )
+* Changed: User configurable Google Maps intro text replaces hardcoded version
+* Changed: Improved "usage notes"
+* Changed: Improved display of oik action options page
+* Changed: Improved display of oik trace options page
+* Changed: bw_backtrace() is now a lazy API
+* Changed: Improved logic for producing shortcode examples and snippets, adding support for "oik generated examples"
+* Changed: More help, syntax and example logic for shortcodes including: [bw_bookmarks], [bwtrace]
+* Changed: [paypal] shortcode now accepts the country (default "GB") and currency (default "GBP")
+* Changed: [bw_contact] now uses the microformat for an hCard (span classes are vcard and fn (full name))
+* Changed: API changes to support alt=1 parameter: bw_default_empty_att() 
+* Changed: Copyright statement suffix text now overrideable e.g. [bw_copyright suffix="copyright suffix"] 
+* Changed: API changes in bobbforms.inc: iarea() - added rows parameter, icheckbox() - returns a value when checkbox is not selected
+* Changed: added more bd-nnn class names for { min-height: nnnpx; } for non Artisteer themes
+* Changed: optional plugins link to their own page on oik-plugins.com
+* Fixed: some of the shortcode help one-liners. Also set default to '?' for unknown/undocumented shortcodes
+* Fixed: Individual "follow me" shortcodes don't display the link address
+* Fixed: [lxx] shortcodes should not expand in titles (oik-bob-bing-wide plugin)
+
 = 1.11 = 
 * Added: "oik_loaded" actions for lazy initialisation of dependent plugins.
 * Added: AJAX enabled dialog for listing shortcodes, showing syntax and providing further information online
@@ -206,7 +251,7 @@ so that you can activate them by changing oik settings, so are no longer activat
 = 1.3 = 
 * Changed: [bw_show_googlemap] now uses V3 of the GoogleMap API so a GoogleMap API key is no longer needed
 * Added: Parameters to [bw_show_googlemap] allowing more than one GoogleMap. 
-* Added: [div]/[sdiv], [ediv] and [sediv] shortcodes for <div> tags
+* Added: [div]/[sdiv], [ediv] and [sediv] shortcodes for &lt;div&gt; tags
 * Added: support for Artisteer art-blockcontent and heading background images
 * Added: [bw_emergency] for Emergency phone number
 * Added: [bw_abbr] for company abbreviation e.g. bw = bobbing wide
@@ -284,7 +329,20 @@ If you want to read more about the oik plugins then please visit the
 [oik plugin](http://www.oik-plugins.com/oik) 
 **"the oik plugin - for often included key-information"**
 If you're interested in the Drupal version then please visit the 
-[oik module](http://www.bobbingwidewebdevelopment.com/content/often-included-key-information-oik-drupal-module
+[oik module](http://www.bobbingwidewebdevelopment.com/content/often-included-key-information-oik-drupal-module)
+
+
+If you are a developer and want to try the oik-bwtrace plugin then you may find you need to add a line to your wp-config.php file.
+Put this before the require_once for wp-settings.php
+
+`require_once(ABSPATH . '/wp-content/plugins/oik/bwtrace.inc' );`
+
+If you also want to track action and filter processing then you should precede that line with:
+
+`define( 'BW_TRACE_CONFIG_STARTUP', true );`
+
+
+Don't forget to remove this code before deleting the plugin.
 
 
 

@@ -18,6 +18,13 @@ function bw_trace2( $value=NULL, $text=NULL ) {
     return( $value );
 } 
 
+function bw_backtrace() {
+  global $bw_trace_on;
+  if ( $bw_trace_on ) {
+    bw_lazy_backtrace();
+  }
+}    
+
 
 if ( defined('BW_TRACE_CONFIG_STARTUP' ) && BW_TRACE_CONFIG_STARTUP == true )
   require_once( ABSPATH . '/wp-content/plugins/oik/bwtrace_boot.inc' );

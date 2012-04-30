@@ -21,6 +21,15 @@
 */
 oik_require( "includes/oik-sc-help.inc" );
 
+function bw_code_link( $shortcode ) {
+  if ( is_admin() ) {
+     alink( null, admin_url("admin.php?page=oik_sc_help&amp;code=$shortcode"), $shortcode );
+  } else {
+    e( $shortcode );
+  }  
+  e( " - " );
+}
+
 
 function bw_get_shortcode_syntax_link( $shortcode, $callback ) {
 
@@ -28,16 +37,19 @@ function bw_get_shortcode_syntax_link( $shortcode, $callback ) {
   //bw_tablerow( array( $shortcode, $link ) );
   stag( "tr" );
   stag( "td" );
-  $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode";
-  alink( NULL, $link, "$shortcode help" );   
-  etag( "td");
+  bw_code_link( $shortcode );
+  
+  do_action( "bw_sc_help", $shortcode );
+  //do_action( "bw_sc_example", $shortcode );
+  etag( "td" );
   stag( "td" );
   do_action( "bw_sc_syntax", $shortcode );
   etag( "td" );
+  
   stag( "td" );
-  do_action( "bw_sc_help", $shortcode );
-  do_action( "bw_sc_example", $shortcode );
-  etag( "td" );
+  $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode";
+  alink( NULL, $link, "$shortcode help" );   
+  etag( "td");
   //bw_td( $shortcode );
   //bw_td( $link );
   etag( "tr" );
@@ -58,13 +70,16 @@ function bw_get_shortcode_syntax_link( $shortcode, $callback ) {
 */
 function bw_help_table( $table=true ) {
   if ( $table ) {
-    stag( "table" );
-    stag( "tbody" );
+    stag( "table", "widefat" );   
+    stag( "thead" ); 
     stag( "tr" );
-    th( "Shortcode" );
-    th( "Syntax" );
     th( "Help" );
+    th( "Syntax" );
+    th( "more oik help" );
     etag( "tr" );
+    etag( "thead" );
+ 
+    stag( "tbody" );
   }  
 }
 

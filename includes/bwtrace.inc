@@ -424,7 +424,7 @@ if ( !function_exists( 'bw_array_get' ) ) {
 
 )
 */
-function bw_backtrace() {
+function bw_lazy_backtrace() {
   global $bw_trace_on;
   if ($bw_trace_on) {
     $backtrace = debug_backtrace();

@@ -2,9 +2,9 @@
 
 /*
 Plugin Name: oik fields
-Plugin URI: http://www.oik-plugins.com/oik
+Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-fields
 Description: [bw_field] [bw_fields] shortcodes to display Custom Fields (post metadata)
-Version: 1.11
+Version: 1.12
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -92,15 +92,30 @@ function bw_metadata( $atts = NULL ) {
 }
 
 /**
- * Theme a custom field 
+ * Theme a custom field  
+ * 
+ * @param string $key - field name e.g. _txn_amount
+ * @param mixed $value - post metadata value
+ * @param array $field - the field structure if defined using bw_register_field()
+ *
+ * 
+ * 
  */
 
-function bw_theme_field( $key, $value ) {
-  bw_trace2();
-  $funcname = "bw_theme_field_" . $key;
+function bw_theme_field( $key, $value, $field=null ) {
+  $type = bw_array_get( $field, "#field_type", null );
+  // Try for a theming function named "bw_theme_field_$type_$key 
   
-  if ( function_exists( $funcname ) ) {
-    $funcname( $key, $value );
+  $funcname = bw_funcname( "bw_theme_field_${type}", $key );
+  // If there isn't a generic one for the type 
+  // nor a specific one just try for the field
+  
+  if ( $funcname == "bw_theme_field_" && $type ) { 
+    $funcname = bw_funcname( "bw_theme_field_", $key );
+  }  
+  
+  if ( is_callable( $funcname ) ) {
+    call_user_func( $funcname,  $key, $value );
   } else {
     _bw_theme_field_default( $key, $value );
   }

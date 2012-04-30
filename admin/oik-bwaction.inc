@@ -41,7 +41,9 @@ function bw_average( $elapsed, $count ) {
     $av = $elapsed;
   }     
   return( $av );
-}  
+} 
+
+if ( !function_exists( "bw_array_add" ) ) { 
 
 function bw_array_add( &$array, $index, $amount ) {
   if ( ! isset($array[$index]) ) {
@@ -51,7 +53,7 @@ function bw_array_add( &$array, $index, $amount ) {
   }
   return( $value );  
 }
-
+}
 
 function _bw_time( $ts, $msec ) {
   $time = strtotime( $ts );
@@ -123,6 +125,8 @@ function bw_handle_action( $data ) {
 
 
 function bw_format_action_row( $action, $count, $elapsed, $average ) {
+  $elapsed = sprintf( "%.6f", $elapsed );
+  $average = sprintf( "%.6f", $average );
   $tr = array( $action, $count, $elapsed, $average );
   bw_tablerow( $tr ); 
   //echo $action;
@@ -143,6 +147,7 @@ function bw_summarise_actions( $file="bwaction.loh" ) {
   
   global $actions, $actions_elapsed;
   if ( count( $actions ) ) {
+     
      foreach ( $actions as $action => $count ) {
        $elapsed = bw_array_get( $actions_elapsed, $action, 0 );
        $average = bw_average( $elapsed, $count );
@@ -160,7 +165,18 @@ function bw_action_summary() {
   $file = bw_action_file();
   if ( $file ) {
     stag( "table", "form-table" );
+    stag( "thead" ); 
+    stag( "tr" );
+    th( "Action" );
+    th( "Invocations" );
+    th( "Elapsed" );
+    th( "Average" );
+    etag( "tr" );
+    etag( "thead" );
+    stag( "tbody" );
+    
     bw_summarise_actions( $file );
+    etag( "tbody" );
     etag( "table" );
     bw_action_reset_form();
   }

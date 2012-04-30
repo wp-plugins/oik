@@ -14,7 +14,7 @@ function bw_button_shortcodes( $atts=NULL ) {
   $text = bw_array_get( $atts, 'text', "dummy" );
   $title = bw_array_get( $atts, 'title', $text ); 
   $class = bw_array_get( $atts, 'class', NULL );
-  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
+  //bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
   art_button( $link, $text, $title, $class ); 
   return( bw_ret());  
 }
@@ -29,11 +29,9 @@ function bw_button__syntax( $shortcode='bw_button' ) {
 }
 
 function bw_button__example( $shortcode='bw_button' ) {
-  p( "To create a button suggesting that the user tries the bbboing plugin" );
-  $example = '[bw_button text="go bbboing\'ing" link="http://herbmiller.me/bbboing" title="Give the bbboing plugin a test drive"]';
-  p ( $example );
-  bw_add_shortcode_event( 'bw_button', 'bw_button_shortcodes', current_filter() );
-  e( do_shortcode( $example ));
+  $text = "To create a button suggesting that the user tries the bbboing plugin" ;
+  $example = 'text="go bbboing\'ing" link="http://www.oik-plugins.com/oik-plugins/bbboing/" title="Give the bbboing plugin a test drive"';
+  bw_invoke_shortcode( $shortcode, $example, $text );
 }
   
 /**
@@ -82,11 +80,7 @@ function bw_contact_button__syntax( $shortcode='bw_contact_button' ) {
 
 
 function bw_contact_button__example( $shortcode='bw_contact_button' ) {
-  p( "To create a <b>Contact me</b> button linking to your contact form" );
-  $example = '[bw_contact_button]';
-  p ( $example );
-  bw_add_shortcode_event( 'bw_contact_button', 'bw_contact_button', current_filter() );
-  e( do_shortcode( $example ));
+  bw_invoke_shortcode( $shortcode, null, "To create a <b>Contact me</b> button linking to your contact form" );
 }
 
 

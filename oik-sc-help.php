@@ -1,10 +1,10 @@
 <?php
 
 /*
-Plugin Name: oik shortcode help
+Plugin Name: oik shortcode help shortcodes
 Plugin URI: http://www.oik-plugins.com/oik
-Description: Shortcode help plus [bw_code] and [bw_codes] shortcodes
-Version: 1.11
+Description: [bw_code] and [bw_codes] shortcodes
+Version: 1.12
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -28,40 +28,12 @@ License: GPL2
 */
 add_action( "oik_loaded", "oik_sc_help_init" );
 
-
 function oik_sc_help_init() { 
   bw_add_shortcode( "bw_codes", "bw_codes", oik_path( "shortcodes/oik-codes.php") , false );
   bw_add_shortcode( "bw_code", "bw_code", oik_path( "shortcodes/oik-codes.php") , false ); 
 }
 
 
-/**
- * Need to find out more about other shortcodes and 
- * then find a way of capturing the registration information for a shortcode
- * it should be possible to find the plugin that implements the shortcode
- * but we might not know the location of the function that we can call 
- * if the shortcode is a lazy shortcode.
- */
- 
-function bw_sc_help( $shortcode="oik" ) {
-  oik_require( "includes/oik-sc-help.inc" );
-  bw_lazy_sc_help( $shortcode );
-}
-
-function bw_sc_syntax( $shortcode="oik" ) {
-  oik_require( "includes/oik-sc-help.inc" );
-  bw_lazy_sc_syntax( $shortcode );
-}
-
-function bw_sc_example( $shortcode="oik" ) {
-  oik_require( "includes/oik-sc-help.inc" );
-  bw_lazy_sc_example( $shortcode );
-}
-
-function bw_sc_snippet( $shortcode="oik" ) {
-  oik_require( "includes/oik-sc-help.inc" );
-  bw_lazy_sc_snippet( $shortcode );
-}
 
 
 
