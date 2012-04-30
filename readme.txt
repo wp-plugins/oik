@@ -4,7 +4,7 @@ Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, key information, trace, blocks, buddypress, pages, bookmarks, images, attachments, smart, lazy
 Requires at least: 3.0.4
 Tested up to: 3.4
-Stable tag: 1.11
+Stable tag: 1.12
 
 Lazy smart shortcodes for displaying often included key-information and other WordPress content
 
