@@ -32,6 +32,36 @@ function bw_get_all_plugin_names( $active_plugins ) {
   return( $names ); 
 } 
 
+
+/**
+ * Return an associative version of the sitewide active plugins array
+ *
+ * The MS active plugins array is structured like this 
+ * (  $key                                     $value
+ 
+    [oik-nivo-slider/oik-nivo-slider.php] => 1335804038
+    [oik/oik.php] => 1335804114
+   )
+ * we need to make it the same as the array returned by bw_get_all_plugin_names()  
+*/
+function bw_ms_get_all_plugin_names( $active_plugins ) {
+  $names = array();
+  if ( count( $active_plugins ) ) {
+    foreach ( $active_plugins as $key => $value ) {
+      $name = basename( $key, '.php' );
+      $names[$name] = $key;
+    }  
+  }
+  return( $names );
+}
+
+/** 
+ * Produce a message when a dependent plugin is inactive or the wrong version
+ *
+ * @param string $plugin - the plugin we're checking 
+ * @param string $dependencies - format plug_name:version e.g. oik:1.12.1, where :version is optional
+ * 
+ */
 function oik_plugin_inactive( $plugin, $dependencies ) {
   $plug_name = basename( $plugin, '.php' );
   $dependencies = str_replace( ":", " version ", $dependencies );
@@ -52,7 +82,6 @@ function oik_plugin_inactive( $plugin, $dependencies ) {
   }
   echo $message; 
 }
-
 
 /** 
  * Checks that the version of the plugin is at least the value we specify
@@ -86,11 +115,15 @@ function oik_check_version( $depend, $version ) {
  */
 function oik_lazy_depends( $plugin=null, $dependencies, $callback="oik_plugin_inactive" ) {
   //bw_backtrace();
-  $active_plugins = get_option( 'active_plugins' );
+  if ( is_multisite() ) {
+    $active_plugins = get_site_option( 'active_sitewide_plugins');
+    $names = bw_ms_get_all_plugin_names( $active_plugins );
+  } else {
+    $active_plugins = get_option( 'active_plugins' );
+    $names = bw_get_all_plugin_names( $active_plugins );
+  }  
+  bw_trace2( $active_plugins, "active plugins" );
   
-  //bw_trace2( $active_plugins, "active plugins" );
-  
-  $names = bw_get_all_plugin_names( $active_plugins );
   $depends = explode( ",", $dependencies );
   foreach ( $depends as $dependcolver ) {
     list( $depend, $version ) = explode( ":", $dependcolver. ":" );
@@ -112,7 +145,6 @@ function oik_lazy_depends( $plugin=null, $dependencies, $callback="oik_plugin_in
       //deactivate_plugins( array( $plugin ) );
     }
   }
-  
-  
 }
 
+   
