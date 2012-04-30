@@ -1,23 +1,13 @@
-<?php
-/*
--Plugin Name: oik button on TinyMCE
--Plugin URI: http://www.oik-plugins.com/oik
--Description: Add the oik button for inserting call to action buttons 
--Version: 1.11
--Author: bobbingwide
--Author URI: http://www.bobbingwide.com/content/herb-miller
-
-Notes & Limitations: 
-  
-  
-*/
-
+<?php // Copyright Bobbing Wide 2010, 2012
 /**
- * This file is loaded during oik_options_init which is called to process admin_init
+ * Optional functionality to provide the TinyMCE button for inserting [bw_button] shortcodes
+ *
+ * This file is loaded during oik_options_init() which is called to process 'admin_init'
  * so we can't add processing for this action... just do it
+ *
  * Note: We assume that the current user can edit content. 
  * If they can't then the filters won't get called.
- */
+*/
 
 add_filter( 'mce_buttons', 'bw_filter_mce_button' );
 add_filter( 'mce_external_plugins', 'bw_filter_mce_plugin' );
@@ -37,7 +27,7 @@ function bw_filter_mce_button( $buttons ) {
  * @see http://codex.wordpress.org/TinyMCE_Custom_Buttons
 */
 function bw_filter_mce_plugin($plugins) {
-  $plugins['bwbutton'] = plugin_dir_url( __FILE__ ) . 'oik_button_plugin.js';
+  $plugins['bwbutton'] = plugin_dir_url( __FILE__ ) . 'admin/oik_button_plugin.js';
   return $plugins;
 }
         

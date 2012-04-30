@@ -87,40 +87,43 @@ function bw_forp( $value, $append='px' ) {
 /* 
  * show a googlemap - called from [bw_show_googlemap] 
  * The width may default to 100%, the height may default to 400px
+ * 
  */
-function bw_show_googlemap( $atts=NULL ) { 
-  $a = extract(shortcode_atts(array(
-		'company_override' => NULL,
-                'width' => NULL,
-                'height' => NULL,
-                'lat' => NULL,
-                'long' => NULL, 
-                'postcode' => NULL,
-	), $atts));
-        
-  //$isnull = is_null( $company_override );
-  //p( "isnull:".$isnull.":" );
-  //p( "company_override:".$company_override.":");     
-  $company = bw_get_option( "company" );
+function bw_show_googlemap( $atts=null ) {
+  $company = bw_array_get_dcb( $atts, "company", "company", "bw_get_option" );
+  $width = bw_array_get( $atts, "width", null );
+  $height = bw_array_get( $atts, "height", null );
+  $lat = bw_array_get( $atts, "lat", null );
+  $long = bw_array_get( $atts, "long", null );
+  $alt = bw_array_get( $atts, "alt", null );
+  $postcode = bw_array_get( $atts, "postcode", null );
+      
+  // $company = bw_get_option( "company" );
+  $gmap_intro = bw_get_option( "gmap_intro", "bw_options$alt" );
+  if ( $gmap_intro ) {
+    p( bw_do_shortcode( $gmap_intro ) );
+    bw_backtrace();
+  }
+  /*
   if ( $company_override === NULL )
     bw_echo( '<p>This Google map shows you where <strong>' . $company . '</strong> is located.</p>');
   else 
     bw_echo( '<p>This Google map should show you where <strong>' . $company_override . '</strong> is located.</p>');
+  */  
+  $set = "bw_options$alt"; 
  
-  $width = bw_default_empty_att( $width, "width", "100%" );
+  $width = bw_default_empty_att( $width, "width", "100%", $set);
   
   // The default height allows for the info window being opened above the marker which is centred in the map.
   // any less than this and the top of the info window gets cropped
-  $height = bw_default_empty_att( $height, "height", "400px" );
+  $height = bw_default_empty_att( $height, "height", "400px", $set );
 
-  // Karen makemybizmobile suggested I try not even setting the height
-  //$height = bw_default_empty_att( $height, "height", NULL );
   
   $height = bw_forp( $height );
   
-  $lat = bw_default_empty_att( $lat, "lat", 50.887856 );
-  $long = bw_default_empty_att( $long, "long", -0.965113 );
-  $postcode = bw_default_empty_att( $postcode, "postal-code", NULL );
+  $lat = bw_default_empty_att( $lat, "lat", 50.887856, $set );
+  $long = bw_default_empty_att( $long, "long", -0.965113, $set );
+  $postcode = bw_default_empty_att( $postcode, "postal-code", NULL, $set );
   
 
   bw_googlemap_v3( $company      
@@ -133,8 +136,14 @@ function bw_show_googlemap( $atts=NULL ) {
   return( bw_ret() );
 }
 
+/**
+ * bw_show_googlemap example
+ * 
+ * Note: This works on a normal page but not when invoked on the oik Shortcodes thickbox overlay
+ * - probably something to do with the javascript not being processed by the .js
+*/ 
 function bw_show_googlemap__example( $shortcode = "bw_show_googlemap" ) {
-  p( "To display a Googlemap for your company location use [bw_show_googlemap]" );
+  bw_invoke_shortcode( $shortcode, null, "To display a Googlemap for your company location" );    
   p( "Some of the default values are extracted from oik information:" );
   sul();
   li( "company - for the Company name" );
@@ -143,11 +152,6 @@ function bw_show_googlemap__example( $shortcode = "bw_show_googlemap" ) {
   li( "width - map width (  100% )" );
   li( "height - map height ( 400px - to allow for the info window )" );
   eul();
-  
-  $example = "[$shortcode]";
-  p ( $example );
-  bw_add_shortcode_event( $shortcode, $shortcode, current_filter() );
-  e( do_shortcode( $example ));
 }
 
 

@@ -3,8 +3,8 @@
 /*
 Plugin Name: oik base plugin 
 Plugin URI: http://www.oik-plugins.com/oik
-Description: Smart lazy shortcodes -for Often Included Key-information and content reuse
-Version: 1.11
+Description: Lazy smart shortcodes for displaying often included key-information and other WordPress content
+Version: 1.12
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -29,17 +29,15 @@ License: GPL2
 global $bw_options;
 require_once( "oik_boot.inc" );
 
-/* All of the oik plugins and many of the common functions include calls to bw_trace(), bw_trace2() so we need to include bwtrace.inc
+/* All of the oik plugins and many of the common functions include calls to bw_trace(), bw_trace2() or bw_backtrace() so we need to include bwtrace.inc
 */   
   require_once( 'bwtrace.inc' );
   require_once( "bobbfunc.inc" );
-//  require_once( "bobblink.inc" );
   require_once( "bobbcomp.inc" );
-//  require_once( "bobbgoog.inc" ); 
 
 /**
  * Return the oik_version
- * @returns string oik version number e.g. 1.11
+ * @returns string oik version number e.g. 1.12
  */  
 function oik_version() {
   return bw_oik_version();
@@ -90,7 +88,7 @@ function oik_version() {
  * Note: For WordPress 3.3 we've been recommended to use the wp_enqueue_scripts' action instead of 'wp_print_styles'
  */
 function oik_enqueue_stylesheets() {
-  global $wp_styles;
+  //global $wp_styles;
   bw_trace2();
   wp_enqueue_style( 'oikCSS', WP_PLUGIN_URL . '/oik/oik.css' ); 
   
@@ -121,19 +119,34 @@ function oik_enqueue_stylesheets() {
 }
   
 
+/** 
+ * Implement the 'init' action
+ * 
+ * start oik and let oik dependent plugins know it's OK to use the oik API
+*/
 function oik_main_init() {
-
-  if ( is_admin() ) {   
-    add_action('admin_init', 'oik_options_init' );
-    add_action('admin_menu', 'oik_options_add_page');
-    //add_action('load-plugins.php', 'oik_load_plugins' );
-    add_action( "activate_plugin", "oik_load_plugins" );
-
-    require_once( 'admin/oik-admin.inc' );
-  
-  // require_once( "oik-shortc-shortcodes.php" );
-  }
+  add_action( 'admin_menu', 'oik_admin_menu' );
+  add_action( "activate_plugin", "oik_load_plugins" );
   do_action( 'oik_loaded' );
+}
+
+/**
+ * Implement the 'admin_menu' action
+ *
+ * Note: This comes before 'admin_init' and after '_admin_menu'
+ *
+*/ 
+function oik_admin_menu() {
+  require_once( 'admin/oik-admin.inc' );
+  oik_options_add_page();
+  add_action('admin_init', 'oik_admin_init' );
+}
+
+/**
+ * Implement 'admin_init'
+*/
+function oik_admin_init() {
+  oik_options_init();
 }
 
 function oik_ajax_list_shortcodes() {

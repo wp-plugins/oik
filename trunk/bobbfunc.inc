@@ -2,7 +2,7 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '1.11' );
+  return( '1.12' );
 }
 
 require_once( "oik_boot.inc" );   /* Don't use oik_require here */
@@ -11,7 +11,7 @@ require_once( "oik_boot.inc" );   /* Don't use oik_require here */
  * bw API partial equivalent of PHP's output buffering
  * 
  * Note: this isn't really an output buffer
- * Use bw_push and bw_pop if you need to stack buffers during nested processing.
+ * Use bw_push() and bw_pop() if you need to stack buffers during nested processing.
  * $bwecho is used by the bw APIs to create the HTML output that is then returned from the shortcode functions  
  * 
 */
@@ -402,8 +402,10 @@ function th( $data, $class=NULL, $id=NULL ) {
 // $docroot_suffix = "/twentyte/" ;
 
 function bw_get_docroot_suffix() {
+  bw_backtrace();
+  //gobang();
   $docroot_suffix = "/";
-  if ( $_SERVER['SERVER_NAME'] == bw_get_company( "betterbyfar") )
+  if ( $_SERVER['SERVER_NAME'] == bw_get_option( "betterbyfar") )
   {
      $exdr = explode( '/', $_SERVER["DOCUMENT_ROOT"] );
      $exsf = explode( '/', $_SERVER['SCRIPT_FILENAME'] );
@@ -776,3 +778,148 @@ function oik_url( $file = null, $plugin='oik' ) {
   $url .= "$plugin/$file" ;
   return( $url ); 
 }
+
+/**
+ * Need to find out more about other shortcodes and 
+ * then find a way of capturing the registration information for a shortcode
+ * it should be possible to find the plugin that implements the shortcode
+ * but we might not know the location of the function that we can call 
+ * if the shortcode is a lazy shortcode.
+ */
+ 
+function bw_sc_help( $shortcode="oik" ) {
+  oik_require( "includes/oik-sc-help.inc" );
+  bw_lazy_sc_help( $shortcode );
+}
+
+function bw_sc_syntax( $shortcode="oik" ) {
+  oik_require( "includes/oik-sc-help.inc" );
+  bw_lazy_sc_syntax( $shortcode );
+}
+
+function bw_sc_example( $shortcode="oik", $atts=null ) {
+  oik_require( "includes/oik-sc-help.inc" );
+  bw_lazy_sc_example( $shortcode, $atts );
+}
+
+function bw_sc_snippet( $shortcode="oik" ) {
+  oik_require( "includes/oik-sc-help.inc" );
+  bw_lazy_sc_snippet( $shortcode );
+}
+
+
+
+/**
+  * Dynamic jQuery setting the selector, function and option parameters
+  * When should we use?
+  * 
+  * jQuery(window).load(function() - when you need to wait for images to load?
+  * jQuery(function()
+  * jQuery(document).ready(function()
+  *
+*/  
+if ( !function_exists( "bw_jquery" ) ) {
+function bw_jquery( $selector, $method, $parms=null ) {
+  stag( "script type=\"text/javascript\"" );
+  $function = "jQuery(window).load(function() { jQuery( \"$selector\" ).$method( $parms ); });";
+  e( $function );
+  etag( "script" );
+} 
+}
+
+/**
+ * Format an array of parms for jQuery 
+ * 
+ * If it's not an array we treat it as an already formatted string
+ * OR a single parameter and value
+ *
+*/
+if ( !function_exists( "bw_jkv" ) ) {
+
+function bw_jkv( $parms, $value=null ) {
+  if ( is_array( $parms ) ) {
+    bw_jtorf( $parms );
+    $jqoption = json_encode( $parms );
+  } else {
+    $jqoption = "{";
+    if ( $value ) { 
+      $jqoption .= "$parms : $value";
+    } else {
+      $jqoption .= $parms;
+    }  
+    $jqoption .= "}";
+  }
+  return( $jqoption );
+}
+}
+
+/**
+ * Pre-processing for json_encode to convert
+ * "on" == "true" to 1 == true
+ * "off" == "0" to 0 == false
+ * torf = true or false
+ * This will allow WordPress options which are checkboxes to be passed as jQuery boolean parameters
+ * where the default is true so we need to pass false.
+ * Used in conjunction with a hidden field for checkboxes.
+ *
+ * This code also removes any entries where the option value is blank...
+ * allowing the jQuery code to use its hardcoded default.
+ * 
+*/
+if ( !function_exists( "bw_jtorf" ) ) {
+
+function bw_jtorf( &$parms ) {
+  foreach ( $parms as $parm => $value ) {
+    if ( $value == "on" ) {
+      $parms[$parm] = 1;
+    } elseif ( $value == "0" ) {
+      $parms[$parm] = 0;
+    } elseif ( $value == "" ) { 
+      unset( $parms[$parm] );  
+    }    
+  }
+  //bw_trace2();
+}
+}
+
+/**
+ * Convert a simple array into an associative array keyed on the value
+ * @param array $array - a simple array - with at least one entry
+ * @return array $assoc_array
+*/ 
+function bw_assoc( $array ) {
+  $assoc_array = array();
+  foreach ( $array as $key => $value  ) {
+    $assoc_array[$value] = $value;
+  }
+  return( $assoc_array );
+}    
+
+/**
+ *  Convert array of file names to array of urls
+ *
+ * @param array $files - array of file names 
+ * @param array $atts - attributes for get_post
+ * @return array $urls
+ * 
+ * We filter the results to take into account  SOME of the possible parameters:
+ * 
+ * 'numberposts' - we accept ALL by default 
+ *   'offset' - start from the first by default 
+*/ 
+function bw_file_to_url( $files, $atts=null ) {
+  $offset = bw_array_get( $atts, 'offset', 0 );
+  $numberposts = bw_array_get( $atts, "numberposts", count( $files ) );
+  $urls = array();
+  if ( count( $files ) ) {
+    foreach( $files as $file ) {
+      if ( ( $offset <= 0 ) && ( $numberposts > 0 ) ) {
+        $urls[] = plugin_dir_url( $file ) . basename( $file );
+      }  
+      $offset--;
+      $numberposts--;
+    }
+  }  
+  bw_trace2( $urls );
+  return( $urls );
+}    

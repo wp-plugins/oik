@@ -46,34 +46,41 @@ function bw_action_options_add_page() {
  */
  
 function bw_action_options_do_page() {
-  oik_require( "bobbforms.inc" );
-  oik_enqueue_stylesheets();
-  sdiv( "column span-14 wrap" );
-  h2( bw_oik(). " action options" );
-  e( '<form method="post" action="options.php">' ); 
+
+
+  oik_menu_header( "action options", "w70pc" );
+  oik_box( null, null, "Options", "oik_action_options" ); 
+  oik_box( null, null, "Notes about oik actions", "oik_action_notes" ); 
+  ecolumn();
+  scolumn( "w30pc" );
+  //oik_box( null, null, "Action reset button", "oik_action_reset_notes" ); 
+  oik_box( NULL, NULL, "oik documentation", "oik_documentation" );
+  oik_box( NULL, NULL, "support oik", "oik_support" );
+  ecolumn();
+  scolumn();
+  oik_box( null, null, "Action summary", "oik_action_summary" ); 
+  oik_menu_footer();
+  bw_flush();
+
+}
+
+function oik_action_options() {  
+  bw_form( "options.php" );
   $options = get_option('bw_action_options');     
- 
   stag( 'table class="form-table"' );
   bw_flush();
   settings_fields('bw_action_options_options'); 
   
-//  textfield( "bw_action_options[file]", 60, "Action file", $options['file']  );
-  
-//function bw_textfield( $name, $len, $text, $value, $class=null, $extras=null ) {
   bw_textfield_arr( "bw_action_options", "Action file", $options, 'file', 60 );
   bw_checkbox_arr( "bw_action_options", "Trace actions", $options, 'actions' );
-//  tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" ); 
   
   bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
 
   etag( "table" ); 			
   etag( "form" );
+}  
   
-  ediv(); 
-  sediv( "clear" );
-  sdiv("column span-14 wrap");
-  
-  h2( "Notes about " . bw_oik() . " actions" );
+function oik_action_notes() {  
   p( "The actions output produced by " .bw_oik(). " actions can be used to find the sequence that actions are performed" );
   p( "It needs to be used in conjunction with the trace facility.");
   p( "The oik actions should <b>not</b> need to be activated on a live site");
@@ -88,34 +95,43 @@ function bw_action_options_do_page() {
   
   alink( NULL, $bw_action_url, $bw_action_url, "View action output in your browser.");
   
-  p("For more information:" );
-  art_button( "http://www.oik-plugins.com/oik-actions", bw_oik() . " documentation", "Read the documentation for oik actions" );
-  ediv(); 
-  
+  bw_flush();
+}
+
+function oik_action_reset_notes() {
+ p(" to be written" );
+}
+
+function oik_action_summary() {  
   oik_require( "admin/oik-bwaction.inc" ); 
   bw_action_summary();  
-  bw_flush();
- 
-  
-
 }
 
 // Draw the menu page itself
 function bw_trace_options_do_page() { 
-  oik_require( "bobbforms.inc" );
+  oik_menu_header( "trace options" );
+  oik_box( null, null, "Options", "oik_trace_options" ); 
+  oik_box( null, null, "Notes about oik trace", "oik_trace_notes" ); 
+  ecolumn();
   
-  oik_enqueue_stylesheets();
+  scolumn( "w30pc" );
+  oik_box( null, null, "Trace options and reset button", "oik_trace_reset_notes" ); 
+  oik_box( NULL, NULL, "oik documentation", "oik_documentation" );
+  oik_box( NULL, NULL, "support oik", "oik_support" );
+  oik_menu_footer();
+  bw_flush();
+}
 
-  sdiv( "column span-14 wrap" );
-  h2( bw_oik(). " trace options" );
-  e( '<form method="post" action="options.php">' ); 
+
+function oik_trace_options() {
+  bw_form( "options.php" );
+  
   $options = get_option('bw_trace_options');     
  
   stag( 'table class="form-table"' );
   bw_flush();
   settings_fields('bw_trace_options_options'); 
   
-  // textfield( "bw_trace_options[file]", 60, "Trace file", $options['file']  );
   bw_textfield_arr( "bw_trace_options", "Trace file", $options, 'file', 60 );
   
   bw_checkbox_arr( "bw_trace_options", "Trace enabled", $options, 'trace' );
@@ -129,45 +145,41 @@ function bw_trace_options_do_page() {
   // Trace error processing is not yet enabled.
   // textfield( "bw_trace_options[errors]", 1 ,"Trace errors (0=no,-1=all,1=E_ERROR,2=E_WARNING,4=E_PARSE, etc)", $options['errors'] );
   
-  //textfield( "bw_trace_options[count]", 1 ,"Trace count (1=include)", $options['count'] );
-  //textfield( "bw_trace_options[date]", 1 ,"Trace date (1=include)", $options['date'] );
-  //textfield( "bw_trace_options[qualified]", 1 ,"Fully qualified file names (1=include)", $options['qualified'] );
-  
-  
-    
   
   bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
 
   etag( "table" ); 			
   etag( "form" );
   
-  ediv(); 
-  sediv( "clear" );
-  sdiv("column span-14 wrap");
-  
-  h2( "Notes about " . bw_oik() . " trace" );
-  p("The tracing output produced by " .bw_oik(). " trace can be used for problem determination.");
-  p("It's not for the faint hearted.");
-  p("The oik-bwtrace plugin should <b>not</b> need to be activated on a live site");
-  p("If you do need to activate it, only do so for a short period of time." );
+  bw_flush();
+}
+
+function oik_trace_notes() {
+  p( "The tracing output produced by " .bw_oik(). " trace can be used for problem determination.");
+  p( "It's not for the faint hearted.");
+  p( "The oik-bwtrace plugin should <b>not</b> need to be activated on a live site");
+  p( "If you do need to activate it, only do so for a short period of time." );
  
-  p("You will need to specify the trace file name (e.g. bwtrace.loh )" );
-  p("Set trace level to 1 when you want to trace processing. 0 otherwise");
-  p("If you want to clear the trace output set trace reset to 1, save changes, then set it back to 0");
+  p( "You will need to specify the trace file name (e.g. bwtrace.loh )" );
+  p( "When you want to trace processing check 'Trace enabled'" );
+  p( "Check 'Reset trace file every transaction' to cause the trace file to be cleared for every request, including AJAX requests" );
+    
   
   p("You may find the most recent trace output at..." );
   $bw_trace_url = bw_trace_url();
   
   alink( NULL, $bw_trace_url, $bw_trace_url, "View trace output in your browser.");
-  p("If you want to trace processing within some content you can use two shortcodes");
-  p("Use [bwtron] to turn trace on and [bwtroff] to turn it off" );
   
-  p("For more information:" );
-  art_button( "http://www.oik-plugins.com/oik", bw_oik() . " documentation", "Read the documentation for the oik plugin" );
-  ediv();      
+  p("If you want to trace processing within some content you can use two shortcodes: [bwtron] to turn trace on and [bwtroff] to turn it off" );
+  
   bw_flush();
+
 }
 
+function oik_trace_reset_notes() {
+  oik_require( "includes/oik-sc-help.inc" );
+  bw_invoke_shortcode( "bwtrace", null, "Use the [bwtrace] shortcode in a widget to provide an instant trace reset and page reload." );
+}
 
 // Sanitize and validate input. Accepts an array, return a sanitized array.
 function bw_trace_options_validate($input) {

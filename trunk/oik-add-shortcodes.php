@@ -349,9 +349,6 @@ bw_add_shortcode_event( 'ngslideshow', 'NextGEN_shortcodes::show_slideshow', 'th
 // bw_add_shortcode_file ( 'ngslideshow', oik_path( "shortcodes/oik-slideshows.php") );
 
 bw_add_shortcode( 'gpslides', 'bw_gp_slideshow', oik_path( "shortcodes/oik-slideshows.php"), false  );
-//bw_add_shortcode( "bw_slides", "bw_slides",  oik_path( "shortcodes/oik-slide.php"), false  );
- 
-
 
 /* Shortcodes for each of the more useful APIs */
 bw_add_shortcode( 'bwtron', 'bw_trace_on', oik_path( "shortcodes/oik-trace.php") , false );
@@ -368,3 +365,5 @@ bw_add_shortcode_file( 'portfolio_slideshow', oik_path( "shortcodes/oik-slidesho
 bw_add_shortcode_file( 'nggallery', oik_path( "shortcodes/oik-galleries.php" ) );
 
 bw_add_shortcode( "bw_power", "bw_power", oik_path( "shortcodes/oik-bob-bing-wide.php" ) );
+bw_add_shortcode( 'bw_editcss', 'bw_editcss', oik_path("shortcodes/oik-bob-bing-wide.php"), false );
+

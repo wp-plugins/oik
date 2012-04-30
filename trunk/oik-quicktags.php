@@ -1,23 +1,14 @@
-<?php
+<?php // (C) Copyright Bobbing Wide 2012
+
 /**
-Plugin Name: oik quicktags
-Description: quicktags for the HTML editor
-Version: 1.11
+ * Lazy code for implementing the [] quicktag
+ * The JavaScript code is pre-requisite to the TinyMCE [] button
+ *
+ * From http://wordpress.org/support/topic/edit_page_form-versus-edit_form_advanced?replies=4
+ * - edit_page_form is for PAGES
+ * - edit_form_advanced is for POSTS
 */
-
- add_action( "admin_init", "bw_load_admin_scripts" );
-
-if ( is_admin() ) {
-
- 
-
-function bw_load_admin_scripts() {
-  //wp_register_script( "oik-quicktags", plugin_dir_url( __FILE__). "oik_quicktags.js", array('quicktags') );  
-  //wp_enqueue_script( "oik-quicktags" );
-  
-  wp_register_script( "oik-quicktags", plugin_dir_url( __FILE__). "bw_shortcodes.js", array('quicktags') );  
-  wp_enqueue_script( "oik-quicktags" );
+ add_action( "edit_form_advanced", "bw_load_admin_scripts" );
+ add_action( "edit_page_form", "bw_load_admin_scripts" );
 
 
-}
-}

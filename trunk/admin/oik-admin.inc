@@ -1,8 +1,9 @@
 <?php // (C) Copyright Bobbing Wide 2011,2012 
 
 /**
- * Load file if checkbox is set on
+ * Load 'plugin' file if the options checkbox is set on
  *
+ * The file extension of the plugin is ".php"
  */
 function bw_load_plugin( $set="bw_buttons", $option="oik-button-shortcodes", $plugin=NULL ) {
   $checkbox = bw_get_option( $option, $set );
@@ -19,13 +20,26 @@ function bw_load_plugin( $set="bw_buttons", $option="oik-button-shortcodes", $pl
 // Init plugin options 
 function oik_options_init() {
   register_setting( 'oik_options_options', 'bw_options', 'oik_options_validate' );
+  register_setting( 'oik_options_options1', 'bw_options1', 'oik_options_validate' );
   register_setting( 'oik_plugins_options', 'bw_plugins', 'oik_plugins_validate' ); // No validation yet
   register_setting( 'oik_buttons_options', 'bw_buttons', 'oik_plugins_validate' ); // Ditto
   
   bw_load_plugin( "bw_buttons", "oik-paypal-shortcodes" );
   bw_load_plugin( "bw_buttons", "oik-button-shortcodes" );
   bw_load_plugin( "bw_buttons", "oik-shortc-shortcodes" );
+  bw_load_plugin( "bw_buttons", "oik-quicktags" );
   
+}
+
+
+/**
+ * Load the oik-quicktags jQuery/JavaScript for when TinyMCE or the advanced HTML editor is being used
+ * Question: Does this work in full screen?
+
+*/
+function bw_load_admin_scripts() {
+  wp_register_script( "oik-quicktags", plugin_dir_url( __FILE__). "bw_shortcodes.js", array('quicktags') );  
+  wp_enqueue_script( "oik-quicktags" );
 }
 
 /**
@@ -36,7 +50,7 @@ function oik_options_init() {
  * Notes: we need to enqueue the oik stylesheets for the oik options page
  */
 function oik_options_add_page() {
- // add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position ); 
+  // add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $function, $icon_url, $position ); 
  
   // We don't specify the icon here since WordPress doesn't cater for it nicely.
   // It's better as a background image which can be hovered, in focus etc
@@ -44,20 +58,19 @@ function oik_options_add_page() {
 
   add_menu_page('[oik] Options', 'oik options', 'manage_options', 'oik_menu', 'oik_menu' );
   
-//  add_menu_page( 'Effort', 'Effort', 'manage_options', 'bw_effort_menu', 'bw_effort_menu', '' );
-  
   // add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function ); 
-
   
   add_submenu_page( 'oik_menu', 'oik overview', 'Overview', 'manage_options', 'oik_menu', 'oik_menu');
   add_submenu_page( 'oik_menu', 'oik options', 'Options', 'manage_options', 'oik_options', 'oik_options_do_page');
-  add_submenu_page( 'oik_menu', 'oik plugins', 'Plugins', 'manage_options', 'oik_plugins', 'oik_plugins_do_page' );
+  add_submenu_page( 'oik_menu', 'oik options-1', 'More Options', 'manage_options', 'oik_options-1', 'oik_options_do_page_1');
+  // add_submenu_page( 'oik_menu', 'oik plugins', 'Plugins', 'manage_options', 'oik_plugins', 'oik_plugins_do_page' );
   add_submenu_page( 'oik_menu', 'oik buttons', 'Buttons', 'manage_options', 'oik_buttons', 'oik_buttons_do_page' );
+  add_submenu_page( 'oik_menu', 'oik shortcode help', "Shortcode help", 'manage_options', 'oik_sc_help', "oik_help_do_page" );
   //add_submenu_page( 'oik_menu', 'Trace options', 
 }
 
 function oik_callback() {
- p( "This box left intentionally blank" );
+ p( "This box intentionally left blank" );
  
 }
 
@@ -94,13 +107,17 @@ function ecolumn( ) {
 } 
 
 
-function oik_menu_header( $title="Overview" ) {
+function oik_menu_header( $title="Overview", $class="w70pc" ) {
+
+  oik_require( "bobbforms.inc" );
   oik_require( "shortcodes/oik-bob-bing-wide.php" );
+  oik_enqueue_stylesheets();
+  oik_enqueue_scripts();
   sdiv( "wrap" ); 
   //bw_flush();
   $loik = bw_loik();
   h2( "$loik $title" ); 
-  scolumn( "w70pc" );
+  scolumn( $class );
   
 }
   
@@ -111,20 +128,25 @@ function oik_menu_footer() {
 
 function oik_shortcode_options( ) {
 
- //p( "Here we list the things that oik can do" );
- //p( "here we list the shortcode sets" );
- p( "oik provides a set of smart lazy shortcodes that you can use just about anywhere in your WordPress site" );
+  //p( "Here we list the things that oik can do" );
+  //p( "here we list the shortcode sets" );
+  p( "oik provides sets of lazy smart shortcodes that you can use just about anywhere in your WordPress site." );
  
- sul();
- li( "common information: contact details, slogans, location information" );
- li( "content shortcodes: for page excerpts, lists, trees, links, attachments" );
- li( "Follow me buttons" );
- li( "PayPal" );
- li( "UK Tides and times" );
- li( "plugin information" );
- li( "email signature" );
- li( "styling shortcodes" );
- eul();
+  p( "You enter your common information, such as contact details, slogans, location information, PayPal payment information and your social networking and bookmarking information using oik Options" );
+  p( "If required, you enter alternative information using More options" );
+  
+  alink( "button-primary", admin_url("admin.php?page=oik_options"), "Options", "Enter your common information" );
+  e( "&nbsp;" );
+  alink( "button-secondary", admin_url("admin.php?page=oik_options-1"), "More options", "Enter additional information" );
+  
+  p( "Discover the shortcodes that you can use in your content and widgets using Shortcode help" );
+  
+  alink( "button-secondary", admin_url( "admin.php?page=oik_sc_help"), "Shortcode help", "Discover shortcodes you can use" );
+  
+  p( "Choose the helper buttons that help you to insert shortcodes when editing your content" );
+  alink( "button-secondary", admin_url( "admin.php?page=oik_buttons"), "Buttons", "Select TinyMCE and HTML edit helper buttons" );
+
+  
 }
 
 
@@ -137,8 +159,18 @@ function oik_custom_css_box() {
   p( "You should save your custom CSS file before updating theme $theme." );
   
 
-  p( "$theme in " . get_stylesheet_directory()  );
-  oik_custom_css( $theme );
+  // p( "$theme in " . get_stylesheet_directory()  );
+  
+  $options = get_option('bw_options');     
+  $customCSS = bw_array_get( $options, 'customCSS', NULL );
+  if ( $customCSS ) {
+    p( "Click on this button to edit your custom CSS file.");
+    oik_custom_css( $theme );
+  } else {
+    p( "You have not defined a custom CSS file." );
+    
+    alink( "button-secondary", admin_url("admin.php?page=oik_options"), "Name your custom CSS file", "Enter the name of your custom CSS file on the Options page" );
+  }
 }
 
 function oik_custom_css( $theme=null ) {
@@ -148,20 +180,24 @@ function oik_custom_css( $theme=null ) {
     $sanfile = sanitize_file_name( $customCSS );
     // Should we check the sanitized file name with the original ?
     bw_create_file( get_stylesheet_directory(), $sanfile, plugin_dir_path( __FILE__ ) . 'custom.css' );  
-  }  
-  bw_edit_custom_css_link( $sanfile, $theme );
+    bw_edit_custom_css_link( $sanfile, $theme );
+  }    
 } 
 
 function oik_optional_plugins() {
   $options = get_option( 'bw_plugins' );
-  p( "Optional plugins:" );
+  p( "oik comes with a set of companion plugins. Activate these when you find a need for them." );
   sul();
-  li( "oik trace" );
-  li( "oik action trace" );
   li( "email signature" );
   li( "custom header image" );
   li( "oik sidebar" );
   li( "oik fields" );
+  li( "oik trace - " );
+  li( "oik action trace" );
+  
+ li( "oik bbpress - strip tags from bbPress forum title tooltips" );
+ li( "oik bob bing wide shortcodes - activate this plugin to enable the <code>[bw_plug]</code> shortcode" );
+ li( "oik BuddyPress signup email - Send sign up verification emails via site admin for verification before accepting a user" );
   eul();
   
   //bw_flush();
@@ -170,40 +206,30 @@ function oik_optional_plugins() {
 }
 
 function oik_tinymce_buttons() {
-  p( "Select the buttons you want to be able to use when editing content using TinyMCE" );
+  //p( "Select the buttons you want to be able to use when editing content using TinyMCE Visual edit or HTML" );
   $options = get_option( 'bw_buttons' );
-  
   bw_form( "options.php" );
- 
-
   stag( 'table', "form-table" );
   bw_flush();
   settings_fields('oik_buttons_options'); 
-  
-     
   $imagefile_bw = retimage( NULL, plugin_dir_url(__FILE__ ).'bw-bn-icon.gif', "Button shortcodes" );
   $imagefile_pp = retimage( NULL, plugin_dir_url( __FILE__ ).'bw-pp-icon.gif', "PayPal shortcodes" );
   $imagefile_sc = retimage( NULL, plugin_dir_url( __FILE__ ).'bw-sc-icon.gif', "ALL shortcodes" );
   bw_checkbox_arr( "bw_buttons", $imagefile_bw . " Button shortcodes", $options, 'oik-button-shortcodes' ); 
   bw_checkbox_arr( "bw_buttons", $imagefile_pp . " PayPal shortcodes", $options, 'oik-paypal-shortcodes' ); 
   bw_checkbox_arr( "bw_buttons", $imagefile_sc . " ALL shortcodes", $options, 'oik-shortc-shortcodes' ); 
-  
+  bw_checkbox_arr( "bw_buttons", "[] quicktag for HTML editor", $options, "oik-quicktags" );
   bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
-
-
   etag( "table" ); 			
   etag( "form" );
-  
-  
-
-  //ediv(); 
   bw_flush();
- 
 }
 
-function oik_documentation( ) {
+function oik_documentation() {
   p("For more information:" );
   sul();
+  stag( "li" );
+  alink( null, "http://www.oik-plugins.com/tutorial/getting-started-with-oik-plugins/", "Getting started" );
   stag( "li" );
   alink( NULL,  "http://www.oik-plugins.com/oik/oik-faq", "Frequently Asked Questions" );
   etag( "li" );
@@ -212,17 +238,13 @@ function oik_documentation( ) {
   etag( "li" );
   eul();
   sp();
-  
   art_button( "http://www.oik-plugins.com", "oik documentation", "Read the documentation for the oik plugin" );
-    
   ep();
 } 
 
 function oik_support() {
   oik_require( "shortcodes/oik-paypal.php" );
-
   p( "Support the development of ". bw_oik(). " by making a donation to ". bw_lbw() );
-  
   e ( bw_pp_shortcodes( array( "type" => "donate", "email" => "herb@bobbingwide.com" )) );
 }
 
@@ -252,36 +274,25 @@ function oik_enqueue_scripts() {
   //wp_enqueue_script( 'jquery-query' );
   wp_enqueue_script( 'dashboard' );
   
-  
   //wp_enqueue_script( 'jquery-ui-draggable' );
   //wp_enqueue_script( 'jquery-ui-droppable' );
   //wp_enqueue_script( 'jquery-ui-tabs' );
-  
   //wp_enqueue_script( 'jquery-ui-selectable' );
-   
-  
   //wp_enqueue_script( 'wp-pointer' ); 
   //wp_enqueue_script( 'utils' );
 }  
 
 
 function oik_menu() {
-
-  oik_require( "bobbforms.inc" );
-  oik_enqueue_stylesheets();
-  oik_enqueue_scripts();
-  oik_menu_header();
+  oik_menu_header( "overview", "w70pc" );
   oik_box( NULL, NULL, "Shortcode options", "oik_shortcode_options" );
   oik_box( NULL, NULL, "Custom CSS", "oik_custom_css_box" );
-  //oik_box( NULL, NULL, "TinyMCE buttons", "oik_tinymce_buttons" );
   oik_box( NULL, NULL, "Optional plugins", "oik_optional_plugins" );
   ecolumn();
   scolumn( "w30pc" );
   oik_box( NULL, NULL, "oik documentation", "oik_documentation" );
   oik_box( NULL, NULL, "support oik", "oik_support" );
   oik_menu_footer();
-  
-
   bw_flush();
 }
 
@@ -289,79 +300,57 @@ function oik_menu() {
 // Draw the oik buttons page
 
 function oik_buttons_do_page() {
-  oik_require( "bobbforms.inc" );
-  oik_enqueue_stylesheets();
-  sdiv( "column span-15 wrap" );
-  h2( bw_oik(). " button selection" );
-  p( "Select the buttons you want to be able to use when editing content using TinyMCE" );
-  bw_form( "options.php" );
-  $options = get_option('bw_buttons');
-  //bw_trace2( $options );
-  
-  stag( 'table', "form-table" );
-  bw_flush();  // We need this flush since settings_fields() echoes hidden fields directly!
-  settings_fields('oik_buttons_options'); 
-  $imagefile_bw = retimage( NULL, plugin_dir_url(__FILE__ ).'bw-bn-icon.gif', "Button shortcodes" );
-  $imagefile_pp = retimage( NULL, plugin_dir_url( __FILE__ ).'bw-pp-icon.gif', "PayPal shortcodes" );
-  $imagefile_sc = retimage( NULL, plugin_dir_url( __FILE__ ).'bw-sc-icon.gif', "ALL shortcodes" );
-  bw_checkbox_arr( "bw_buttons", $imagefile_bw . " Button shortcodes", $options, 'oik-button-shortcodes' ); 
-  bw_checkbox_arr( "bw_buttons", $imagefile_pp . " PayPal shortcodes", $options, 'oik-paypal-shortcodes' ); 
-  bw_checkbox_arr( "bw_buttons", $imagefile_sc . " ALL shortcodes", $options, 'oik-shortc-shortcodes' ); 
-  bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
-  etag( "table" ); 			
-  etag( "form" );
-  ediv(); 
+  oik_menu_header( "button selection" );
+  oik_box( NULL, NULL, "TinyMCE buttons", "oik_tinymce_buttons" );
+  oik_menu_footer();
   bw_flush();
 }  
 
 
-
-// Draw the oik plugins page
-
+/** 
+ * Draw the oik plugins page
+ *
+ * This page is under construction **?** Herb 2012/04/24
+*/ 
 function oik_plugins_do_page() {
-  oik_require( "bobbforms.inc" );
-  oik_enqueue_stylesheets();
-  sdiv( "column span-15 wrap" );
-  h2( bw_oik(). " plugin selection" );
+  oik_menu_header( "plugin selection" );
   
-  //e( '<form method="post" action="options.php">' ); 
-  bw_form( "options.php" );
+  //e( '<form method="post" action="options.php">' );
+  oik_box( null, null, "choose optional function to enable", "oik_plugin_selection" );
+  oik_menu_footer();
+  bw_flush();
+}
 
+function oik_plugin_selection() {  
+  bw_form( "options.php" );
   $options = get_option('bw_plugins');
-  //bw_trace2( $options );
-  
   stag( 'table', "form-table" );
   bw_flush();
   settings_fields('oik_plugins_options'); 
-  
-
-// function bw_checkbox( $name, $text, $value=1, $args=NULL ) {
-       
+  // function bw_checkbox( $name, $text, $value=1, $args=NULL ) {
   bw_checkbox_arr( "bw_plugins", "oik trace", $options, 'oik-bwtrace' ); 
   bw_checkbox_arr( "bw_plugins", "oik email signature", $options, 'oik-email-signature' );
-  
   bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
-
-
   etag( "table" ); 			
   etag( "form" );
-  
-  
-
-  ediv(); 
   bw_flush();
 }  
   
 
-
-
-
-// Draw the oik options page 
+/** 
+ * Draw the oik options page 
+*/
 function oik_options_do_page() {
-  oik_require( "bobbforms.inc" );
-  oik_enqueue_stylesheets();
-  sdiv( "column span-15 wrap" );
-  h2( bw_oik(). " shortcode options" );
+  oik_menu_header( "shortcode options", "w60pc" );
+  oik_box( null, null, "Often included key information", "oik_main_shortcode_options" );
+  ecolumn();
+  scolumn( "w40pc" );
+  oik_box( null, null, "Usage notes", "oik_usage_notes" );
+  oik_menu_footer();
+  bw_flush();
+} 
+ 
+function oik_main_shortcode_options() {
   bw_form( "options.php" );
   
   // e( '<form method="post" action="options.php">' ); 
@@ -411,10 +400,7 @@ function oik_options_do_page() {
   textfield( "bw_options[lat]", 50, "Latitude [bw_geo] [bw_directions]", $options['lat']  );
   textfield( "bw_options[long]", 50, "Longitude", $options['long']  );
   
-  // ABQIAAAAEraXBMl-kX5b-Swk0AR98BQiFdr9vy7axdrApFjkJGV6ZRaqtxRqjZfTaNvU9q3jxZ50yMHK-mrzag
-  // Note: this is now optional since [bw_show_googlemap] uses the newer API that no longer requires this
-  // So we won't actually display it anymore, until we find a need to require it
-  // textfield( "bw_options[google_maps_api_key]", 87, "Google Maps API key [bw_show_googlemap]", $options['google_maps_api_key']  );
+  textarea( "bw_options[gmap_intro]", 50, "Google Maps intro text for [bw_show_googlemap]", $options['gmap_intro'], 5 );
   textfield( "bw_options[width]", 10, "Google Map width", $options['width']  );
   textfield( "bw_options[height]", 10, "Google Map height", $options['height']  );
   
@@ -447,31 +433,113 @@ function oik_options_do_page() {
   $options['yearfrom'] = bw_array_get_dcb( $options, "yearfrom", NULL, "bw_get_yearfrom" );
   textfield( "bw_options[yearfrom]", "4", "Copyright from year (used in [bw_copyright])", $options['yearfrom'] );
     
-  tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" ); 
+  //tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" ); 
+  
+  bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
 
   etag( "table" ); 			
   etag( "form" );
+  bw_flush();
+}
+
+function oik_usage_notes() {
+  oik_require( "includes/oik-sc-help.inc" );
+  p( "Use the shortcodes in your pages, widgets and titles. e.g." );
+  bw_invoke_shortcode( "bw_contact", null, "Display your contact name" );
+  bw_invoke_shortcode( "bw_telephone", null, "Display your telephone number." );     
+  bw_invoke_shortcode( "bw_address", null, "Display your address." );
+  bw_invoke_shortcode( "bw_email", null, "Display your email address." );
+
+  bw_invoke_shortcode( "bw_show_googlemap", null, "Display a Googlemap for your primary address." );
+  bw_invoke_shortcode( "bw_directions", null, "Display a button for obtaining directions to your address." );
+  bw_invoke_shortcode( "bw_follow_me", null, "Show all your <b>Follow me</b> buttons" );
   
-  ediv(); 
-  sdiv("column span-9 wrap last");
+  p( "For more information about the shortcodes you can use select <b>Shortcode help</b>" );
   
-  h2( "Usage notes" );
-  p("Use the shortcode options in your pages, widgets and titles. e.g." );
-  p("[bw_telephone] for your telephone number" );
-  p( bw_telephone() );
-  p("[bw_address] to print your address" );
-  p( bw_address());
-  p( "[bw_follow_me] for ALL your Follow me buttons" );
-  p( bw_follow_me() );
+  alink( "button-secondary", admin_url( "admin.php?page=oik_sc_help"), "Shortcode help", "Discover shortcodes you can use" );
   
 
-  
-
-  ediv(); 
   bw_flush();
 }
 
 
+/** 
+ * Draw the oik options-1 page
+ *
+ * This page is for additional fields to enable multiple sets of bw_options
+ * $alt = 1;
+*/
+function oik_options_do_page_1() {
+  oik_menu_header( "extra shortcode options", "w60pc" );
+  oik_box( null, null, "alternative values using alt=1", "oik_extra_shortcode_options" );
+  ecolumn();
+  scolumn( "w40pc" );
+  oik_box( null, null, "usage notes", "oik_extra_usage_notes" );
+  oik_menu_footer();
+  bw_flush();
+}
+  
+function oik_extra_shortcode_options() {
+  bw_form( "options.php" );
+  $alt = "1";
+  $option = "bw_options$alt";
+  $options = get_option( $option );     
+  stag( 'table class="form-table"' );
+  bw_flush();
+  settings_fields("oik_options_options$alt");
+
+  bw_textfield_arr( $option, "Contact [bw_contact alt=1]", $options, 'contact', 50 );
+  bw_textfield_arr( $option, "Email [bw_email alt=1]", $options, 'email', 50 );
+  bw_textfield_arr( $option, "Telephone [bw_telephone alt=1]", $options, 'telephone', 50 );
+  bw_textfield_arr( $option, "Mobile [bw_mobile alt=1]", $options, 'mobile', 50 );
+  
+  bw_textfield_arr( $option, "Extended-address [bw_address alt=1]", $options, 'extended-address', 50 );
+  bw_textfield_arr( $option, "Street-address", $options, 'street-address', 50 );
+  bw_textfield_arr( $option, "Locality", $options, 'locality', 50 );
+  bw_textfield_arr( $option, "Region", $options, 'region', 50 );
+  bw_textfield_arr( $option, "Post Code", $options, 'postal-code', 50 );
+  bw_textfield_arr( $option, "Country name", $options, 'country-name', 50 );
+  
+  bw_textarea_arr( $option, "Google Maps introductory text for [bw_show_googlemap alt=1]", $options, 'gmap_intro', 50 );
+  bw_textfield_arr( $option, "Latitude [bw_geo alt=1] [bw_directions alt=1]", $options, 'lat', 50 );
+  bw_textfield_arr( $option, "Longitude [bw_show_googlemap alt=1]", $options, 'long', 50 );
+  
+  /* these will come later - better to set them against the user rather than the site 
+  
+  textfield( "bw_options[twitter]", 50, "Twitter URL [bw_twitter]", $options['twitter'] );
+  textfield( "bw_options[facebook]", 50, "Facebook URL [bw_facebook]", $options['facebook'] );
+  textfield( "bw_options[linkedin]", 50, "LinkedIn URL [bw_linkedin]", $options['linkedin'] );
+  textfield( "bw_options[googleplus]", 50, "Google Plus URL [bw_googleplus]", $options['googleplus'] );
+  textfield( "bw_options[youtube]", 50, "YouTube URL [bw_youtube]", $options['youtube'] );
+  textfield( "bw_options[flickr]", 50, "Flickr URL [bw_flickr]", $options['flickr'] );
+  textfield( "bw_options[picasa]", 50, "Picasa URL [bw_picasa]", $options['picasa'] );
+  textfield( "bw_options[skype]", 50, "Skype Name [bw_skype]", $options['skype'] );
+  
+  
+  textfield( "bw_options[paypal-email]", 50, "PayPal email [bw_paypal]", $options['paypal-email'] );
+  textfield( "bw_options[paypal-country]", 2, "PayPal country", $options['paypal-country'] );
+  textfield( "bw_options[paypal-currency]", 2, "PayPal currency", $options['paypal-currency'] );
+  
+  */
+ 
+  bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
+
+  etag( "table" ); 			
+  etag( "form" );
+  bw_flush();
+}  
+  
+function oik_extra_usage_notes() {
+  oik_require( "includes/oik-sc-help.inc" );
+  p( "Use the shortcodes in your pages, widgets and titles. e.g." );
+  bw_invoke_shortcode( "bw_contact", "alt=1", "Display your alternative contact name." );
+  bw_invoke_shortcode( "bw_email", "alt=1 prefix=e-mail", "Display your alternative email address, with a prefix of 'e-mail'." );
+  bw_invoke_shortcode( "bw_telephone", "alt=1", "Display your alternative telephone number." );
+  bw_invoke_shortcode( "bw_address", "alt=1", "Display your alternative address." );
+  bw_invoke_shortcode( "bw_show_googlemap", "alt=1", "Display a Googlemap for your alternative address." );
+  bw_invoke_shortcode( "bw_directions", "alt=1", "Display directions to the alternative address." );
+  bw_flush();
+}
 
 function oik_plugins_validate( $input ) {
   return $input;
@@ -553,4 +621,58 @@ function bw_edit_custom_css_link( $customCSS, $theme ) {
 
 function oik_load_plugins() {
   oik_require( "admin/oik-depends.inc" );
+}  
+
+
+/**
+ * Display help information for all the active shortcodes
+ *
+ * When a shortcode is selected for further display then we invoke the __example and __snippet routine
+ * **?** For some reason, when the shortcode is 'nivo' the columns get wide than normal. Don't yet know why Herb 2012/04/26
+*/ 
+function oik_help_do_page() {
+  oik_menu_header( "shortcode help", "w95pc" );
+  oik_box( null, null, "About shortcodes", "oik_code_about" );
+  
+  $shortcode = bw_array_get( $_REQUEST, "code", null );
+  if ( $shortcode ) {
+    oik_box( null, NULL, "$shortcode - more information", "oik_code_example" );
+    oik_box( null, null, "$shortcode - snippet", "oik_code_snippet" ); 
+  }
+  oik_require( "shortcodes/oik-codes.php" );
+  oik_box( null, null, "Shortcode summary", "oik_code_table" );
+  oik_menu_footer();
+  bw_flush();
+}  
+
+function oik_code_about() {
+
+  p( "This page lists all the currently active shortcodes. To find out more information about a shortcode click on the shortcode name." );
+  p( "Depending on how the shortcode is implemented you will either be shown some more information with one or more examples, or an 'oik generated example.' "); 
+  p( "You will also be shown the HTML snippet for the example. There should be no need to do anything with this output." );
+  
+  p( "For further information click on the links in the <b>more oik help</b> column" );
+  
+}
+/** 
+ * Display an example of the shortcode, which may be oik generated
+ */
+function oik_code_example() {
+  $shortcode = bw_array_get( $_REQUEST, "code", null );
+  do_action( "bw_sc_example", $shortcode );
+}
+
+  
+/** 
+ * Display the snippet the shortcode, which may be oik generated
+ */
+function oik_code_snippet() {
+  $shortcode = bw_array_get( $_REQUEST, "code", null );
+  do_action( "bw_sc_snippet", $shortcode );
+}  
+  
+  
+function oik_code_table() {
+
+  $shortcodes = bw_list_shortcodes( array( "ordered" => "y") );
 }  

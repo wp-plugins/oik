@@ -28,6 +28,27 @@ function bw_trace_add_actions( $tag, $actions=NULL ) {
 }
 
 /**
+ * Avoid recursion when bw_lazy_trace_actions is adding its own filters
+*/ 
+function bw_call_lazy_trace_actions( $tag, $actions ) {
+  static $bw_in_lazy_trace;
+  if ( !isset( $bw_in_lazy_trace ) )
+    $bw_in_lazy_trace = false;
+  if ( !$bw_in_lazy_trace ) {
+    $bw_in_lazy_trace = true;
+    /* We already know that an action or filter has been added 
+       so no need to test the counts again
+       what we should do is improve the logic to add actions for the new action/filter
+    */
+    bw_trace_add_actions( $tag, $actions );
+    global $bw_filter_count, $wp_filter; 
+    $bw_filter_count = count( $wp_filter );
+      
+    $bw_in_lazy_trace = false;
+  }    
+}
+
+/**
  * Attach oik-bwtrace to each action that gets invoked by do_action
  *
  * Uses globals:
@@ -51,7 +72,8 @@ function bw_lazy_trace_actions() {
   //add_action( "wp_title", "bw_trace_action", 1000, 5 );
   //add_action( "the_content", "bw_trace_action", 1000, 5 );
   $bw_filter_count = count( $wp_filter );
-  bw_trace( $bw_filter_count, __FUNCTION__, __LINE__, __FILE__, "bw_filter_count" );
+  // This produces too much trace output
+  //bw_trace( $bw_filter_count, __FUNCTION__, __LINE__, __FILE__, "bw_filter_count" );
 }
 
 
