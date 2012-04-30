@@ -2,7 +2,7 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '1.12' );
+  return( '1.12.1' );
 }
 
 require_once( "oik_boot.inc" );   /* Don't use oik_require here */

@@ -4,7 +4,7 @@
 Plugin Name: oik shortcode help shortcodes
 Plugin URI: http://www.oik-plugins.com/oik
 Description: [bw_code] and [bw_codes] shortcodes
-Version: 1.12
+Version: 1.12.1
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2

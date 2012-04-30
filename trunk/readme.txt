@@ -25,7 +25,7 @@ The oik *base* plugin also provides a series of advanced WordPress shortcodes th
 * [bw_bookmarks] to list links
 * [paypal] shortcodes for PayPal buttons: Pay Now, Buy Now, Donate, Add to Cart, View Cart/Checkout
 * [bw_block] & [bw_eblock], [div] & [ediv], [clear] - to create block structures within your pages, posts and even widgets
-* [bw_button [bw_contact_button] - to provide call-to-action button style links for Artisteer themes
+* [bw_button], [bw_contact_button] - to provide call-to-action button style links for Artisteer themes
 * helper shortcodes for web designers and developers: [bw_editcss], [bwtrace], [bw_page], [bw_post], [bw_wpadmin], [bw_wtf], [stag] & [etag]
 
 Features: 
@@ -48,15 +48,17 @@ oik includes a number of optional modules which can be activated as and when you
 
 For WordPress designers, web site developers and plugin developers:
 
-* oik-bob-bing-wide to provide more lazy smart shortcodes: bw_plug, bob/fob bing/bong wide/hide wow, oik and loik, wp, wpms, bp, artisteer, drupal* oik-bwtrace provides an advanced trace function, which logs trace information to a file, rather than including it within the web page output
-* oik-bwtrace Easy to use trace macros for oik plugins
+* oik-bob-bing-wide to provide more lazy smart shortcodes: bw_plug, bob/fob bing/bong wide/hide wow, oik and loik, wp, wpms, bp, artisteer, drupal
+* oik-bwtrace provides an advanced trace function, which logs trace information to a file, rather than including it within the web page output
 * oik-shortc-shortcodes - shortcode help shortcodes: provides [bw_code] and [bw_codes] shortcodes
-* oik-fields - [bw_field] [bw_fields] shortcodes to display Custom Fields (post metadata)
+* oik-fields - [bw_field] [bw_fields] shortcodes to display Custom Fields (post metadata) (beta version)
 
 For use in BuddyPress sites:
+
 * oik-bp-signup-email to intercept BuddyPress registration emails
 
 For use in bbPress sites:
+
 * oik-bbpress to strip tags from bbPress forum title tooltips  
 
 Other plugins which use the oik API are also available on WordPress.org: 
@@ -107,6 +109,9 @@ Yes - see above
 9. oik header image plugin - custom header image for a page 
 
 == Upgrade Notice ==
+= 1.12.1 = 
+For WordPress Multisite installations you actually need oik version 1.12.1 for oik-nivo-slider 1.2
+
 = 1.12 =
 Upgrade oik to version 1.12 before updating oik-nivo-slider to version 1.2. For more information see:
 [oik-nivo-slider-v1.2 for oik v1.12](http://www.oik-plugins.com/2012/04/oik-nivo-slider-v1-2-for-oik-v1-12-now-in-alpha-test/)
@@ -118,6 +123,10 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 1.12.1 = 
+* Fixed: Dependency checking didn't work in WordPress MultiSite installations.
+
+
 = 1.12 =
 * Added: oik extra shortcode options for shortcodes with alternative values ( alt=1 keyword )
 * Added: shortcode help page - listing all current shortcodes
@@ -125,6 +134,7 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Added: support for dependent plugins to indicate the minimum required plugin version
 * Added: link to "Getting started with oik plugins"
 * Added: New functions to set jQuery JSON parms from WordPress options
+* Added: License: and License URI: 
 * Changed: Improved styling of admin pages
 * Changed: Improved logic for the shortcodes that support the alt=1 keyword ( [bw_mailto], [bw_contact], [bw_telephone], [bw_mobile], [bw_address], [bw_show_googlemap], [bw_geo], [bw_directions] )
 * Changed: User configurable Google Maps intro text replaces hardcoded version
