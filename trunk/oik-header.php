@@ -3,8 +3,8 @@
 /*
 Plugin Name: oik custom header image
 Plugin URI: http://www.oik-plugins.com/oik
-Description: custom page header image selection 
-Version: 1.11
+Description: custom page header image selection for pages, posts and custom post types 
+Version: 1.12
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -29,8 +29,11 @@ License: GPL2
 
 require_once( 'bobbfunc.inc' );
 //require_once( 'bobbingwide.inc' );
+add_action( "oik_loaded", "oik_header_init" );
 
-add_action( 'wp_footer', 'bw_page_header_style' );
+function oik_header_init() {
+  add_action( 'wp_footer', 'bw_page_header_style' );
+}
 
 /** 
  * Dynamically add CSS for the header background image if the custom field is set
