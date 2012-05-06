@@ -500,9 +500,9 @@ function bw_lazy_trace2( $value=NULL, $text=NULL ) {
     {
       $function = $call2['function'];
       
-      $file = bw_array_get( $call2, 'file', NULL) ;
+      $file = bw_array_get( $call1, 'file', NULL) ;
       $file = bw_trace_file_part( $file );
-      $line = bw_array_get( $call2, 'line', 0 );
+      $line = bw_array_get( $call1, 'line', 0 );
       $args = $call2['args'];
       $cargs = count( $args );
       switch ( $cargs ) {
@@ -516,7 +516,7 @@ function bw_lazy_trace2( $value=NULL, $text=NULL ) {
           $targs = $args;
       }      
       bw_lazy_trace( $targs, $function, $line, $file, $cargs );
-      if ( $value ) 
+      if ( $value || $text ) 
         bw_lazy_trace( $value, $function, $line, $file, $text );
       bw_trace_context_all( $function, $line, $file );  
     }

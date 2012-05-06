@@ -29,14 +29,12 @@ oik_require( "includes/bw_images.inc" );
  * @param object $post - A post object
  * @param array $atts - Attributes array - passed from the shortcode
  * 
- * post_mime_type=image 
+ * e.g. post_mime_type=image 
  *
  */
 function bw_format_attachment( $post, $atts ) {
   setup_postdata( $post );
-  
-  bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
-  
+  bw_trace2();
   $atts['title'] = get_the_title( $post->ID );
   //$read_more = bw_array_get( $atts, "read_more", "read more" );
   //$thumbnail = bw_thumbnail( $post->ID, $atts );
@@ -44,39 +42,34 @@ function bw_format_attachment( $post, $atts ) {
   $in_block = bw_validate_torf( bw_array_get( $atts, "block", false));
   if ( $in_block ) { 
     e( bw_block( $atts ));
-    //sdiv( "avatar alignleft" );
-    //bw_link_thumbnail( $thumbnail, $post->ID, $atts );
-    //ediv();
   } else {
     $class = bw_array_get( $atts, "class", "" );
     sdiv( $class );
-    //sdiv( "avatar alignleft" );
-    //bw_link_thumbnail( $thumbnail, $post->ID, $atts );
-    //ediv();
-    //span( "title" );
-    //strong( $atts['title'] );
-    //epan();
-    //br();
   } 
   sp();
-  //e( $atts['title'] );
   // Display images as thumbnails and other attachments as text links
   // This call seems inefficient since we've already loaded the whole post
   // so wp_get_attachment_link is not doing much really! 
   $atts['thumbnail'] = bw_array_get( $atts, 'thumbnail', 'thumbnail' ); 
   if ( $atts['thumbnail'] == "full" ) { 
-      $thumbnail = retimage( "full", $post->guid );
-      bw_link_thumbnail( $thumbnail, $post->ID, $atts );
-      span( "title" );
-      e( $post->post_title );   // Title
-      epan();
-      p( $post->post_excerpt, "caption" ); // Caption
-      p( $post->post_content, "description" ); // Description
+    $thumbnail = retimage( "full", $post->guid );
+    bw_link_thumbnail( $thumbnail, $post->ID, $atts );
   } else {
-    // p( "Size:". $atts['thumbnail'] );
-    e( wp_get_attachment_link( $post->ID, $atts['thumbnail'], false, false )); 
-  }  
+    $thumbnail = bw_thumbnail( $post->ID, $atts, true );
+    bw_link_thumbnail( $thumbnail, $post->ID, $atts );
+  } 
+  if ( bw_validate_torf( bw_array_get( $atts, 'titles', 'y' )) ) { 
+    span( "title" );
+    e( $post->post_title );   // Title
+    epan();  
+  }
   ep(); 
+   
+  if ( bw_validate_torf( bw_array_get( $atts, 'captions', 'n' )) ) { 
+    p( $post->post_excerpt, "caption" ); // Caption
+    p( $post->post_content, "description" ); // Description
+  }
+  
   if ( $in_block )
     e( bw_eblock() ); 
   else {  
@@ -107,7 +100,7 @@ function bw_format_attachment( $post, $atts ) {
  *   order='ASC'
  *   posts_per_page=-1
  *   block=true or false
- *   thumbnail=specification - see bw_thumbnail
+ *   thumbnail=specification - see bw_thumbnail()
  *   customcategoryname=custom category value  
  */
 function bw_attachments( $atts = NULL ) {
