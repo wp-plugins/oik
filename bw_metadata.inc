@@ -1,10 +1,9 @@
-<?php
+<?php // (C) Copyright Bobbing Wide 2012
 
 /**
  * Logic to create metaboxes for each of the custom fields defined for a particular post type
  */
 
-oik_require( 'bobbforms.inc' );
   
 add_action( 'add_meta_boxes', 'bw_effort_meta_boxes' );
 
@@ -16,6 +15,7 @@ add_action( 'save_post', 'bw_effort_save_postdata', 10, 2 );
  * Create  "Fields" meta box for each field associated with each object type in the mapping
  */
 function bw_effort_meta_boxes() {
+oik_require( 'bobbforms.inc' );
   global $bw_mapping;
   bw_trace2( $bw_mapping );
   
@@ -50,7 +50,9 @@ function bw_default_value( $value, $args ) {
 function bw_form_field_( $name, $type, $title, $value, $args ) {
   $length = bw_array_get( $args, '#length', 40 );
   $value = bw_default_value( $value, $args );
-  bw_textfield( $name, $length, $title, $value );
+  $class = bw_array_get( $args, "#class", null );
+  $extras = bw_array_get( $args, "#extras", null );
+  bw_textfield( $name, $length, $title, $value, $class, $extras );
 } 
 
 /**
@@ -63,11 +65,28 @@ function bw_form_field_select( $name, $type, $title, $value, $args ) {
 
 /** 
  * Build a simple ID, title array from an array of $post objects
+ * @param array $post - array of post objects
+ * @return array - associative array of post ID to post_title
  */
 function bw_post_array( $posts ) {
   $options = array();
   foreach ($posts as $post ) {
     $options[$post->ID] = $post->post_title; 
+  }
+  return bw_trace2( $options );
+}
+
+/** 
+ * Build a simple ID, title array from an array of $term objects
+ * @param array $term - array of term objects
+ * @return array - associative array of term_id to name
+ */
+function bw_term_array( $terms ) {
+  $options = array();
+  if ( count( $terms ) ) {
+    foreach ($terms as $term ) {
+      $options[$term->term_id] = $term->name; 
+    }
   }
   return bw_trace2( $options );
 }
@@ -102,29 +121,70 @@ function bw_form_field_noderef( $name, $type, $title, $value, $args ) {
 }
 
 
+/**
+  * Dynamic jQuery setting the selector, function and option parameters
+  * When should we use?
+  * 
+  * jQuery(window).load(function() - when you need to wait for images to load?
+  * jQuery(function()
+  * jQuery(document).ready(function()
+  *
+*/  
+if ( !function_exists( "bw_jquery" ) ) {
+function bw_jquery( $selector, $method, $parms=null ) {
+  stag( "script type=\"text/javascript\"" );
+  $function = "jQuery(window).load(function() { jQuery( \"$selector\" ).$method( $parms ); });";
+  e( $function );
+  etag( "script" );
+} 
+}
+
+
+ 
+ 
+   
+/**
+ * Enqueue the debug script if needed otherwise enqueue the minified (packed) one
+*/
+function bw_datepicker_enqueue_script( ) {
+  if ( defined('SCRIPT_DEBUG' ) && SCRIPT_DEBUG == true) {
+    wp_enqueue_script( 'jquery-ui-datepicker' );
+  } else {
+    wp_enqueue_script( 'jquery-ui-datepicker' );
+  } 
+}
+    
+
 
 /** 
  * bw_form_field_date - format a date field
  *
  */
- 
 function bw_form_field_date( $name, $type, $title, $value, $args ) {
   $args['#length'] = bw_array_get( $args, '#length', 10 );
-  
+  //$args['#class'] = 'ui-datepicker';
+  //$args['#extras'] = 'dateformat="ATOM"' ;
+  wp_enqueue_style( "jquery-ui-datepicker-css", plugin_dir_url( __FILE__). "css/jquery.ui.datepicker.css" ); 
+  wp_enqueue_style( "jquery-ui-theme-css", plugin_dir_url( __FILE__). "css/jquery.ui.theme.css" );
+   
+  bw_datepicker_enqueue_script();
+  // bw_jquery( "#${name}", "datepicker", bw_jkv( "dateFormat : 'yy-mm-dd', changeMonth: true, changeYear: true" ) );
+  bw_jquery( "#${name}", "datepicker", bw_jkv( array( 'dateFormat' => 'yy-mm-dd', 'changeMonth' => "true" )));
   bw_form_field_( $name, $type, $title, bw_format_date( $value ), $args ); 
 }
-
 
 /** 
  * bw_form_field_numeric - format a numeric field
  *
  */
- 
 function bw_form_field_numeric( $name, $type, $title, $value, $args ) {
   $args['#length'] = bw_array_get( $args, '#length', 10 );
   bw_form_field_( $name, $type, $title, $value, $args ); 
 }
  
+function bw_form_field_checkbox( $name, $type, $title, $value, $args ) {
+  bw_checkbox( $name, $title, $value );
+}  
 
 /** 
  * Return the function name to be used to 'form' the field
@@ -156,7 +216,6 @@ function bw_form_function( $prefix="bw_form_field_", $field_type= 'text', $field
     
   return bw_trace2( $funcname );
 }   
-
 
 /** 
  *
@@ -217,15 +276,16 @@ if ( !function_exists( "bw_authorized" ) ) {
  */
 function bw_effort_save_postdata( $post_id, $post ) {
   if ( bw_authorized() ) {
-    bw_trace2( $_POST, "_POST" );
-    bw_trace( $post->post_type, __FUNCTION__, __LINE__, __FILE__, "post->post_type" );
-    //bw_trace2( $post['post_type'], "post[post_type]" );
-    //bw_bang();
+    $post_type = $post->post_type; 
+    
+    //bw_trace2( $_POST, "_POST" );
+    //bw_trace( $post_type, __FUNCTION__, __LINE__, __FILE__, "post->post_type" );
+    do_action( "save_post_${post_type}", $post_id, $post );
   
     global $bw_mapping; 
     bw_trace( $bw_mapping, __FUNCTION__, __LINE__, __FILE__, "bw_mapping" );
-    if ( isset(  $bw_mapping['field'][$post->post_type] )) {
-      foreach ( $bw_mapping['field'][$post->post_type] as $field ) {
+    if ( isset(  $bw_mapping['field'][$post_type] )) {
+      foreach ( $bw_mapping['field'][$post_type] as $field ) {
       
         bw_trace( $field, __FUNCTION__, __LINE__, __FILE__, "field" );
         $mydata = bw_array_get( $_POST, $field, NULL ) ;
@@ -234,7 +294,8 @@ function bw_effort_save_postdata( $post_id, $post ) {
         update_post_meta( $post_id, $field, $mydata );
       }
     }
-  } 
+  } else {
+  }   
 }
 
 

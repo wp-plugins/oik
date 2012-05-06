@@ -4,7 +4,7 @@
 Plugin Name: oik BuddyPress signup email
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Send sign up verification emails via site admin for verification before accepting a user
-Version: 1.12.1
+Version: 1.13
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2

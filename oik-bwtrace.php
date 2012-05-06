@@ -4,7 +4,7 @@
 Plugin Name: oik bwtrace 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Easy to use trace macros for oik plugins
-Version: 1.12.1
+Version: 1.13
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -35,13 +35,9 @@ oik_init();
 oik_require( "bwtrace_boot.inc" ); 
 oik_require( "includes/bwtrace.inc" );
 
-
-
 function oik_bwtrace_version() {
   return oik_version();
 }
-
-
 
 function bw_this_plugin_first() {
 	// ensure path to this file is via main wp plugin path
@@ -56,12 +52,9 @@ function bw_this_plugin_first() {
 	}
 }
 
-
-
 if (function_exists( "add_action" )) {
   bw_trace_plugin_startup();
 }
-
 
 /**
  * Return TRUE if option is '1', FALSE otherwise
@@ -74,7 +67,6 @@ function bw_torf( $array, $option ) {
 
 
 function bw_trace_plugin_startup() {
-
   global $bw_trace_options;
   add_action("activated_plugin", "bw_this_plugin_first");
 
@@ -138,6 +130,8 @@ function bw_trace_plugin_startup() {
     bw_lazy_trace( $_SERVER, __FUNCTION__, __LINE__, __FILE__, "_SERVER" ); 
     bw_lazy_trace( bw_getlocale(), __FUNCTION__, __LINE__, __FILE__, "locale" );
     bw_lazy_trace( $_REQUEST, __FUNCTION__, __LINE__, __FILE__, "_REQUEST" );
+    //bw_lazy_trace( $_POST, __FUNCTION__, __LINE__, __FILE__, "_POST" );
+    //bw_lazy_trace( $_GET, __FUNCTION__, __LINE__, __FILE__, "_GET" );
   } 
 
   add_action('admin_init', 'bw_trace_options_init' );
