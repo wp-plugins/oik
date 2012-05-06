@@ -5,9 +5,10 @@ Tags: shortcodes, PayPal, buttons, Artisteer, widget, key information, trace, bl
 Requires at least: 3.0.4
 Tested up to: 3.4
 Stable tag: 1.12
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Lazy smart shortcodes for displaying often included key-information and other WordPress content
-
+Lazy smart shortcodes for displaying often included key-information and other WordPress content. Over 70 shortcodes to use anywhere on your website.
 == Description ==
 oik is a set of plugins delivering over 70 lazy smart shortcodes for use just about anywhere on your website.
 
@@ -109,8 +110,8 @@ Yes - see above
 9. oik header image plugin - custom header image for a page 
 
 == Upgrade Notice ==
-= 1.12.1 = 
-For WordPress Multisite installations you actually need oik version 1.12.1 for oik-nivo-slider 1.2
+= 1.13 = 
+oik version 1.13 is required for the new oik-privacy-policy plugin. 
 
 = 1.12 =
 Upgrade oik to version 1.12 before updating oik-nivo-slider to version 1.2. For more information see:
@@ -123,9 +124,17 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
-= 1.12.1 = 
+= 1.13 = 
+* Added: Support for oik-privacy-plugin - new APIs below 
+* Added: Support for custom links on images. This change enhances [bw_images] and [nivo] (oik-nivo-slider)
+* Added: API - bw_image_get_link() - get the custom link or permalink for an attachment
+* Added: API - bw_textarea_cb_arr() - displays an textarea matched with a checkbox
+* Added: API - bw_recreate_options() - alter the value of "autoload" for a WordPress option fieldd
+* Added: API - bw_term_array() - build a simple ID, title array from an array of $term objects
+* Added: API - bw_datepicker_enqueue_script() - enqueue the jQuery UI datepicker
+* Added: API - includes/oik-menus.inc for nav menu functions
+* Changed: bw_tablerow() doesn't produce a row if the $td_array is empty
 * Fixed: Dependency checking didn't work in WordPress MultiSite installations.
-
 
 = 1.12 =
 * Added: oik extra shortcode options for shortcodes with alternative values ( alt=1 keyword )

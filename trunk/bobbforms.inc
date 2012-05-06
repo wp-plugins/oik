@@ -91,11 +91,13 @@ function bw_td( $text=NULL, $class=NULL, $id=NULL ) {
 }
 
 function bw_tablerow( $td_array= array() ) {
-  stag( "tr" );
-  foreach ( $td_array as $td ) {
-    bw_td( $td );
+  if ( count( $td_array ) ) {
+    stag( "tr" );
+    foreach ( $td_array as $td ) {
+      bw_td( $td );
+    }
+    etag( "tr"); 
   }
-  etag( "tr"); 
 }
 
 function textfield($name, $len, $text, $value, $class=null )
@@ -142,6 +144,14 @@ function iselect( $name, $value, $args ) {
   return( $iselect );
 } 
 
+
+/** 
+ * Create a select field for a form-table
+ * @param string $name - field name
+ * @param string $text - label for the field
+ * @param int $value - the selected item
+ * @param array $args - array of parameters where the options are keyed by #options
+ */
 function bw_select( $name, $text, $value, $args ) {
   $lab = label( $name, $text );
   $iselect = iselect( $name, $value, $args ); 
@@ -213,8 +223,6 @@ function bw_textarea_arr( $name, $text, $array, $index, $len, $rows=5 ) {
   bw_textarea( $name_index, $len, $text, $value, $rows );
 }
 
- 
-
 /**
  * Create a select for an array options field
 */ 
@@ -223,6 +231,28 @@ function bw_select_arr( $name, $text, $array, $index, $args ) {
   $value = bw_array_get( $array, $index, NULL );
   bw_select( $name_index, $text, $value, $args );
 }
+
+/** 
+ * Create an optional textarea  
+ * 
+ * If the _cb field is present we use this value. otherwise we default to "on"   
+ *
+ * Similar to this but the checkbox appears in the label for the textarea
+ *   bw_checkbox_arr( $option, "Include?", $options, 'intro_cb' );
+ *   bw_textarea_arr( $option, "Introduction", $text, 'intro', 60, 5 );
+ *
+ * TODO: In this version the checkbox appears next to the label. It might be nicer to have it next to the textarea. 
+ * 
+ */
+function bw_textarea_cb_arr( $name, $text, $array, $index, $len, $rows=5 ) {
+  $name_index = $name.'['.$index.'_cb]';
+  $cb_value = bw_array_get( $array, $index.'_cb', "on" );
+  $cb_text = $text; 
+  $cb_text .= "&nbsp;";
+  $cb_text .= icheckbox( $name_index, $cb_value );
+  bw_textarea_arr( $name, $cb_text, $array, $index, $len, $rows );
+}  
+
 
 
  

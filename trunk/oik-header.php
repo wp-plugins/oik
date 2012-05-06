@@ -4,7 +4,7 @@
 Plugin Name: oik custom header image
 Plugin URI: http://www.oik-plugins.com/oik
 Description: custom page header image selection for pages, posts and custom post types 
-Version: 1.12.1
+Version: 1.13
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2

@@ -199,6 +199,8 @@ function bw_trace_action_start( $arg1=null, $arg2=null, $arg3=null, $arg4=null, 
 function bw_trace_action_end( $arg1=null, $arg2=null, $arg3=null, $arg4=null, $arg5=null ) {  
   global $wp_filter, $bw_filter_count;
   bw_trace( $arg1, __FUNCTION__, __LINE__, __FILE__, "arg1" );
+  bw_trace( $arg2, __FUNCTION__, __LINE__, __FILE__, "arg2" );
+  
   bw_log_action( "E>" );
   if ( count( $wp_filter ) <> $bw_filter_count ) {
     bw_lazy_trace_actions();

@@ -2,7 +2,7 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '1.12.1' );
+  return( '1.13' );
 }
 
 require_once( "oik_boot.inc" );   /* Don't use oik_require here */
@@ -650,7 +650,6 @@ function bw_default( $value, $default=NULL ) {
   
 */
 function bw_gallery() {
-
   c( "gallery processing");
   global $post;
   bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
@@ -662,10 +661,7 @@ function bw_gallery() {
    
   $gallery_options = array( 'columns' => $columns, 'size' => $size );
   e( gallery_shortcode( $gallery_options ));
-
-
 }
-
 
 /**
  * Format a date with the specified format
@@ -696,7 +692,6 @@ function bw_format_date( $date=NULL, $format="Y-m-d" ) {
   return( $date );
 }
 
-
 /** Simple function to validate a field as TRUE or FALSE given a big list of strings that represent TRUE 
     Note: No need for the $falses parameter at present
  */
@@ -709,29 +704,21 @@ function bw_validate_torf( $field, $trues=",true,yes,1", $falses=NULL ) {
   bw_trace( $pos, __FUNCTION__, __LINE__, __FILE__, "pos" );
   if ( $pos )
     $torf = TRUE;
-    
   return( $torf );
-  
-  
 }
-
-
 
 /** 
  * Return what might be the plugin name with hyphens and lowercase chars
  * 
  * Strip any tags - the WordPress UI likes adding <br />'s where we don't want them
  */
- 
 function bw_plugin_namify( $name ) {
   $name = trim( $name );
   $name = str_replace( ' ', '-', $name );
   $name = str_replace( '_', '-', $name );
   $name = strtolower( $name );
-  
   return( bw_trace2( $name ) ); 
 }
-
   
 /**
  * Return the function name of the function to invoke built from parms
@@ -767,7 +754,6 @@ function bw_funcname( $prefix, $key, $value=NULL ) {
   return( $funcname );
 } 
 
-
 /**
  * Return the URL for a resource file
  * 
@@ -786,7 +772,6 @@ function oik_url( $file = null, $plugin='oik' ) {
  * but we might not know the location of the function that we can call 
  * if the shortcode is a lazy shortcode.
  */
- 
 function bw_sc_help( $shortcode="oik" ) {
   oik_require( "includes/oik-sc-help.inc" );
   bw_lazy_sc_help( $shortcode );
@@ -806,8 +791,6 @@ function bw_sc_snippet( $shortcode="oik" ) {
   oik_require( "includes/oik-sc-help.inc" );
   bw_lazy_sc_snippet( $shortcode );
 }
-
-
 
 /**
   * Dynamic jQuery setting the selector, function and option parameters
@@ -902,7 +885,7 @@ function bw_assoc( $array ) {
  * @param array $atts - attributes for get_post
  * @return array $urls
  * 
- * We filter the results to take into account  SOME of the possible parameters:
+ * We filter the results to take into account SOME of the possible parameters:
  * 
  * 'numberposts' - we accept ALL by default 
  *   'offset' - start from the first by default 
@@ -923,3 +906,34 @@ function bw_file_to_url( $files, $atts=null ) {
   bw_trace2( $urls );
   return( $urls );
 }    
+
+/** 
+ * Return the URL that this image links to
+ * @param int $postid - ID of the attachment
+ * @return string $permalink URL for the link
+ */
+function bw_get_image_link( $postid ) {
+  $permalink = get_post_meta( $postid, "_bw_image_link", true );    
+  if ( !$permalink ) {
+    $permalink = get_permalink( $postid );
+  }
+  return( $permalink );
+}
+
+/**
+ * Recreate a WordPress option with the defined autoload value 
+ * @param string $option name
+ * @param string $autoload value: 'yes'|'no'. default='no' 
+ * @return $options 
+ * 
+ * See 978-0-470-91622 p. 168 for the inspiration
+ */
+function bw_recreate_options( $option, $autoload="no" ) {
+  $options = get_option( $option );   
+  if ( $options !== FALSE ) {    
+    delete_option( $option );
+  }
+  add_option( $option, $options, null, $autoload );
+  bw_trace2( $options );
+  return( $options );
+}  
