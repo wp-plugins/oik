@@ -253,6 +253,44 @@ function bw_textarea_cb_arr( $name, $text, $array, $index, $len, $rows=5 ) {
   bw_textarea_arr( $name, $cb_text, $array, $index, $len, $rows );
 }  
 
+/**
+ * Start of a WordPress form for options fields
+ * @param string $option - name of the options field e.g. "bw_privacy_policy" ( 2nd parm to register_setting())
+ * @param string $settings - name of the "settings" e.g. "oik_privacy_policy_options" (1st parm to register_setting())
+ * @param string $action for the form - defaults to "options.php" 
+ * @return array $options - the stored options settings 
+ */
+function bw_form_start( $option, $settings, $action="options.php" ) {
+  bw_form( $action );
+  $options = get_option( $option );   
+  stag( 'table', "form-table" );
+  bw_flush();
+  settings_fields( $settings );
+  return( $options );
+}
 
+
+/**
+ * Reset the options to the default fields
+ * @param string $option - option name
+ * @param array $options - options 
+ * @param string $default_cb - callback function to create the defaults
+ * @param string $request_field - the field name that triggers the reset
+ * 
+ * Note: There really should be some security/nonce checking here **?** 
+ */
+function bw_reset_options( $option, $options, $default_cb, $request_field ) {     
+  $reset = bw_array_get( $_REQUEST, $request_field, null );
+  if ( $reset ) {
+    delete_option( $option );
+    $options = FALSE;
+  }  
+  if ( $options == FALSE ) {  
+    $options = $default_cb();
+  } else { 
+    $options = array_merge( $default_cb(), $options );
+  } 
+  return( $options );
+}
 
  

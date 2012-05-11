@@ -21,9 +21,6 @@
 oik_require( "includes/bw_posts.inc" );
 oik_require( "shortcodes/oik-attachments.php" );
 
-
-
-
 /**
  * Format the "thumb" 
  *

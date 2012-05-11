@@ -802,9 +802,14 @@ function bw_sc_snippet( $shortcode="oik" ) {
   *
 */  
 if ( !function_exists( "bw_jquery" ) ) {
-function bw_jquery( $selector, $method, $parms=null ) {
+function bw_jquery( $selector, $method, $parms=null, $windowload=false ) {
   stag( "script type=\"text/javascript\"" );
-  $function = "jQuery(window).load(function() { jQuery( \"$selector\" ).$method( $parms ); });";
+  if ( $windowload ) {
+    $jqfn = "jQuery(window).load(function()";
+  } else {
+    $jqfn = "jQuery(document).ready(function()"; 
+  }    
+  $function = "$jqfn { jQuery( \"$selector\" ).$method( $parms ); });";
   e( $function );
   etag( "script" );
 } 

@@ -22,7 +22,7 @@ function oik_options_init() {
   register_setting( 'oik_options_options', 'bw_options', 'oik_options_validate' );
   register_setting( 'oik_options_options1', 'bw_options1', 'oik_options_validate' );
   register_setting( 'oik_plugins_options', 'bw_plugins', 'oik_plugins_validate' ); // No validation yet
-  register_setting( 'oik_buttons_options', 'bw_buttons', 'oik_plugins_validate' ); // Ditto
+  register_setting( 'oik_buttons_options', 'bw_buttons', 'oik_buttons_validate' );
   
   bw_load_plugin( "bw_buttons", "oik-paypal-shortcodes" );
   bw_load_plugin( "bw_buttons", "oik-button-shortcodes" );
@@ -36,7 +36,7 @@ function oik_options_init() {
 
 /**
  * Add the custom image link using the same method as the Portfolio slideshow plugin which used the method documented here:
- * http://wpengineer.com/2076/add-custom-field-attachment-in-wordpress/
+ * @link http://wpengineer.com/2076/add-custom-field-attachment-in-wordpress/
  *
  * This is the method that adds fields to the form. Paired with 'attachment_fields_to_save'
  */
@@ -239,13 +239,29 @@ function oik_optional_plugins() {
 
 }
 
+function oik_default_tinymce_buttons() {
+  $defaults = array();
+  $defaults['oik-button-shortcodes'] = "on";
+  $defaults['oik-paypal-shortcodes'] = "on";
+  $defaults['oik-shortc-shortcodes'] = "on";
+  $defaults['oik-quicktags'] = "on";
+  return( $defaults );
+}  
+
+
+/**
+ * Allow selection of the TinyMCE buttons 
+ * 
+ * We call bw_recreate_options() to change the "bw_buttons" so that they are not autoloaded
+ * Note: The buttons aren't actually set until the user visits this page AND selects "Save changes".
+ */
+
 function oik_tinymce_buttons() {
-  //p( "Select the buttons you want to be able to use when editing content using TinyMCE Visual edit or HTML" );
-  $options = get_option( 'bw_buttons' );
-  bw_form( "options.php" );
-  stag( 'table', "form-table" );
-  bw_flush();
-  settings_fields('oik_buttons_options'); 
+  $option = 'bw_buttons'; 
+  $options = bw_form_start( $option, 'oik_buttons_options' );
+  $options = bw_reset_options( $option, $options, "oik_default_tinymce_buttons", "_oik_reset_buttons" );
+  $options = bw_recreate_options( 'bw_buttons' );
+  
   $imagefile_bw = retimage( NULL, plugin_dir_url(__FILE__ ).'bw-bn-icon.gif', "Button shortcodes" );
   $imagefile_pp = retimage( NULL, plugin_dir_url( __FILE__ ).'bw-pp-icon.gif', "PayPal shortcodes" );
   $imagefile_sc = retimage( NULL, plugin_dir_url( __FILE__ ).'bw-sc-icon.gif', "ALL shortcodes" );
@@ -331,15 +347,16 @@ function oik_menu() {
 }
 
 
-// Draw the oik buttons page
-
+/** 
+  * Draw the oik buttons page
+  *
+  */
 function oik_buttons_do_page() {
   oik_menu_header( "button selection" );
   oik_box( NULL, NULL, "TinyMCE buttons", "oik_tinymce_buttons" );
   oik_menu_footer();
   bw_flush();
 }  
-
 
 /** 
  * Draw the oik plugins page
@@ -356,12 +373,8 @@ function oik_plugins_do_page() {
 }
 
 function oik_plugin_selection() {  
-  bw_form( "options.php" );
-  $options = get_option('bw_plugins');
-  stag( 'table', "form-table" );
-  bw_flush();
-  settings_fields('oik_plugins_options'); 
-  // function bw_checkbox( $name, $text, $value=1, $args=NULL ) {
+  $option = 'bw_plugins'; 
+  $options = bw_form_start( $option, 'oik_plugins_options' );
   bw_checkbox_arr( "bw_plugins", "oik trace", $options, 'oik-bwtrace' ); 
   bw_checkbox_arr( "bw_plugins", "oik email signature", $options, 'oik-email-signature' );
   bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
@@ -369,7 +382,6 @@ function oik_plugin_selection() {
   etag( "form" );
   bw_flush();
 }  
-  
 
 /** 
  * Draw the oik options page 
@@ -383,90 +395,96 @@ function oik_options_do_page() {
   oik_menu_footer();
   bw_flush();
 } 
- 
+
+function oik_contact_numbers( $option, $options ) {
+  bw_textfield_arr( $option, "Telephone [bw_telephone] / [bw_tel]", $options, 'telephone', 50 );
+  bw_textfield_arr( $option, "Mobile [bw_mobile] / [bw_mob]", $options, 'mobile', 50 );
+  bw_textfield_arr( $option, "Fax [bw_fax]", $options, 'fax', 50 );
+  bw_textfield_arr( $option, "Emergency [bw_emergency]", $options, 'emergency', 50 );    
+} 
+
+function oik_company_info( $option, $options ) {  
+  bw_textfield_arr( $option, "Company [bw_company]", $options, 'company', 50 );    
+  bw_textfield_arr( $option, "Business [bw_business]", $options, 'business', 50 );    
+  bw_textfield_arr( $option, "Formal [bw_formal]", $options, 'formal', 50 );    
+  bw_textfield_arr( $option, "Abbreviation [bw_abbr]", $options, 'abbr', 50 );    
+  bw_textfield_arr( $option, "Main slogan [bw_slogan]", $options, 'main-slogan', 50 );    
+  bw_textfield_arr( $option, "Alt. slogan [bw_alt_slogan]", $options, 'alt-slogan', 50 );    
+}
+
+function oik_contact_info( $option, $options ) {  
+  bw_textfield_arr( $option, "Contact [bw_contact]", $options, 'contact', 50 );    
+  bw_textfield_arr( $option, "Email [bw_mailto]/[bw_email]", $options, 'email', 50 );    
+  bw_textfield_arr( $option, "Admin [bw_admin]", $options, 'admin', 50 );    
+  bw_textfield_arr( $option, "Contact button page permalink [bw_contact_button]", $options, 'contact-link', 50 );    
+  bw_textfield_arr( $option, "Contact button text", $options, 'contact-text', 50 );    
+  bw_textfield_arr( $option, "Contact button tooltip", $options, 'contact-title', 50 );    
+}  
+  
+/**
+ * Address and geo fields
+ *  
+ *  extended-address e.g.  Bobbing Wide
+ *  street-address   e.g.  41 Redhill Road
+ *  locality         e.g   Rowlands Castle
+ *  region           e.g.  HANTS
+ *  postal-code      e.g.  PO9 6DE                        
+ *  country-name     e.g.  UK 
+ */
+function oik_address_info( $option, $options ) {    
+  bw_textfield_arr( $option, "Extended-address [bw_address]", $options, 'extended-address', 50 );
+  bw_textfield_arr( $option, "Street-address", $options, 'street-address', 50 );
+  bw_textfield_arr( $option, "Locality", $options, 'locality', 50 );
+  bw_textfield_arr( $option, "Region", $options, 'region', 50 );
+  bw_textfield_arr( $option, "Post Code", $options, 'postal-code', 50 );
+  bw_textfield_arr( $option, "Country name", $options, 'country-name', 50 );
+  
+  bw_textarea_arr( $option, "Google Maps introductory text for [bw_show_googlemap]", $options, 'gmap_intro', 50 );
+  bw_textfield_arr( $option, "Latitude [bw_geo] [bw_directions]", $options, 'lat', 50 );
+  bw_textfield_arr( $option, "Longitude [bw_show_googlemap]", $options, 'long', 50 );
+}
+
+function oik_follow_me( $option, $options ) {
+  bw_textfield_arr( $option, "Twitter URL [bw_twitter]", $options, 'twitter', 50 );
+  bw_textfield_arr( $option, "Facebook URL [bw_facebook]", $options, 'facebook', 50 );
+  bw_textfield_arr( $option, "LinkedIn URL [bw_linkedin]", $options, 'linkedin', 50 );
+  bw_textfield_arr( $option, "Google Plus URL [bw_googleplus]", $options, 'googleplus', 50 );
+  bw_textfield_arr( $option, "YouTube URL [bw_youtube]", $options, 'youtube', 50 );
+  bw_textfield_arr( $option, "Flickr URL [bw_flickr]", $options, 'flickr', 50 );
+  bw_textfield_arr( $option, "Picasa URL [bw_picasa]", $options, 'picasa', 50 );
+  bw_textfield_arr( $option, "Skype Name [bw_skype]", $options, 'skype', 50 );
+} 
+
 function oik_main_shortcode_options() {
-  bw_form( "options.php" );
-  
-  // e( '<form method="post" action="options.php">' ); 
-  $options = get_option('bw_options');     
-  
-  stag( 'table class="form-table"' );
-  bw_flush();
-  settings_fields('oik_options_options'); 
-  
-  textfield( "bw_options[telephone]", 50, "Telephone [bw_telephone] / [bw_tel]", $options['telephone']  );
-  textfield( "bw_options[fax]", 50, "Fax [bw_fax]", $options['fax']  );
-  textfield( "bw_options[mobile]", 50, "Mobile [bw_mobile] / [bw_mob]", $options['mobile']  );
-  textfield( "bw_options[emergency]", 50, "Emergency [bw_emergency]", $options['emergency']  );
-  
-  textfield( "bw_options[company]", 50, "Company [bw_company]", $options['company']  );
-  textfield( "bw_options[business]", 50, "Business [bw_business]", $options['business']  );
-  textfield( "bw_options[formal]", 50, "Formal [bw_formal]", $options['formal']  );
-  textfield( "bw_options[abbr]", 50, "Abbreviation [bw_abbr]", $options['abbr']  );
-  
-  
-  textfield( "bw_options[main-slogan]", 50, "Main slogan [bw_slogan]", $options['main-slogan']  );
-  textfield( "bw_options[alt-slogan]", 50, "Alt. slogan [bw_alt_slogan]", $options['alt-slogan']  );
-  
-  textfield( "bw_options[contact]", 50, "Contact [bw_contact]", $options['contact']  );
-  textfield( "bw_options[email]", 50, "Email [bw_mailto]/[bw_email]", $options['email']  );
-  textfield( "bw_options[admin]", 50, "Admin [bw_admin]", $options['admin']  );
-  textfield( "bw_options[contact-link]", 50, "Contact button page permalink [bw_contact_button]", $options['contact-link'] );
-  textfield( "bw_options[contact-text]", 50, "Contact button text ", $options['contact-text'] );
-  textfield( "bw_options[contact-title]", 50, "Contact button tooltip", $options['contact-title'] );
+  $option = 'bw_options'; 
+  $options = bw_form_start( $option, 'oik_options_options' );
+  oik_contact_numbers( $option, $options );
+  oik_company_info( $option, $options );
+  oik_contact_info( $option, $options );
+  oik_address_info( $option, $options );
 
+  bw_textfield_arr( $option, "Google Map width", $options, 'width', 10 );
+  bw_textfield_arr( $option, "Google Map height", $options, 'height', 10 );
   
-  // extended-address e.g.  Bobbing Wide
-  // street-address   e.g.  41 Redhill Road
-  // locality         e.g   Rowlands Castle
-  // region           e.g.  HANTS
-  // postal-code      e.g.  PO9 6DE                        
-  // country-name     e.g.  UK 
+  bw_textfield_arr( $option, "Domain [bw_domain] [bw_wpadmin]", $options, 'domain', 50 );
+  bw_textfield_arr( $option, "Custom CSS in theme directory:<br />" . get_stylesheet_directory_uri(), $options, 'customCSS', 50 );
+  
+  oik_follow_me( $option, $options );
+  
+  bw_textfield_arr( $option, "PayPal email [bw_paypal]", $options, 'paypal-email', 50 );
+  bw_textfield_arr( $option, "PayPal country", $options, 'paypal-country', 50 );
+  bw_textfield_arr( $option, "PayPal currency", $options, 'paypal-currency', 50 );
 
-
-  textfield( "bw_options[extended-address]", 50, "Extended-address [bw_address]", $options['extended-address']  );
-  textfield( "bw_options[street-address]", 50, "Street-address", $options['street-address']  );
-  textfield( "bw_options[locality]", 50, "Locality", $options['locality']  );
-  textfield( "bw_options[region]", 50, "Region", $options['region']  );
-  textfield( "bw_options[postal-code]", 50, "Post code", $options['postal-code']  );
-  textfield( "bw_options[country-name]", 50, "Country name", $options['country-name']  );
-                       
-  textfield( "bw_options[lat]", 50, "Latitude [bw_geo] [bw_directions]", $options['lat']  );
-  textfield( "bw_options[long]", 50, "Longitude", $options['long']  );
-  
-  textarea( "bw_options[gmap_intro]", 50, "Google Maps intro text for [bw_show_googlemap]", $options['gmap_intro'], 5 );
-  textfield( "bw_options[width]", 10, "Google Map width", $options['width']  );
-  textfield( "bw_options[height]", 10, "Google Map height", $options['height']  );
-  
-
-  textfield( "bw_options[domain]", 50, "Domain [bw_domain] [bw_wpadmin]", $options['domain']  );
-  textfield( "bw_options[customCSS]", 50, "Custom CSS in theme directory " . get_stylesheet_directory_uri(), $options['customCSS'] );
-  
-  textfield( "bw_options[twitter]", 50, "Twitter URL [bw_twitter]", $options['twitter'] );
-  textfield( "bw_options[facebook]", 50, "Facebook URL [bw_facebook]", $options['facebook'] );
-  textfield( "bw_options[linkedin]", 50, "LinkedIn URL [bw_linkedin]", $options['linkedin'] );
-  textfield( "bw_options[googleplus]", 50, "Google Plus URL [bw_googleplus]", $options['googleplus'] );
-  textfield( "bw_options[youtube]", 50, "YouTube URL [bw_youtube]", $options['youtube'] );
-  textfield( "bw_options[flickr]", 50, "Flickr URL [bw_flickr]", $options['flickr'] );
-  textfield( "bw_options[picasa]", 50, "Picasa URL [bw_picasa]", $options['picasa'] );
-  textfield( "bw_options[skype]", 50, "Skype Name [bw_skype]", $options['skype'] );
-  
-  
-  textfield( "bw_options[paypal-email]", 50, "PayPal email [bw_paypal]", $options['paypal-email'] );
-  textfield( "bw_options[paypal-country]", 2, "PayPal country", $options['paypal-country'] );
-  textfield( "bw_options[paypal-currency]", 2, "PayPal currency", $options['paypal-currency'] );
-  
   $upload_dir = wp_upload_dir();
   $baseurl = $upload_dir['baseurl'];
     
-  textfield( "bw_options[logo-image]", 50, "Logo image [bw_logo] in uploads: " . $baseurl, $options['logo-image'] );
-  textfield( "bw_options[qrcode-image]", 50, "QR code image [bw_qrcode] in uploads", $options['qrcode-image'] );
-  textfield( "bw_options[art-version]", 50, "Artisteer version 31/30/25/na [bw_art_version]", $options['art-version'] );
-  
+  bw_textfield_arr( $option, "Logo image [bw_logo] in uploads:<br />" . $baseurl, $options, 'logo-image', 50 );
+  bw_textfield_arr( $option, "QR code image [bw_qrcode] in uploads", $options, 'qrcode-image', 50 );
+  bw_textfield_arr( $option, "Artisteer version 31/30/25/na [bw_art_version]", $options, 'art-version', 50 );
 
   $options['yearfrom'] = bw_array_get_dcb( $options, "yearfrom", NULL, "bw_get_yearfrom" );
-  textfield( "bw_options[yearfrom]", "4", "Copyright from year (used in [bw_copyright])", $options['yearfrom'] );
-    
+  bw_textfield_arr( $option, "Copyright from year (used in [bw_copyright])", $options, 'yearfrom', 4 );
+
   //tablerow( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" />" ); 
   
   bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
@@ -496,12 +514,10 @@ function oik_usage_notes() {
   bw_flush();
 }
 
-
 /** 
  * Draw the oik options-1 page
  *
- * This page is for additional fields to enable multiple sets of bw_options
- * $alt = 1;
+ * This page is for additional fields to enable multiple sets of bw_options, with $alt = 1;
 */
 function oik_options_do_page_1() {
   oik_menu_header( "extra shortcode options", "w60pc" );
@@ -513,14 +529,12 @@ function oik_options_do_page_1() {
   bw_flush();
 }
   
-function oik_extra_shortcode_options() {
-  bw_form( "options.php" );
+function oik_extra_shortcode_options() {    
   $alt = "1";
   $option = "bw_options$alt";
-  $options = get_option( $option );     
-  stag( 'table class="form-table"' );
-  bw_flush();
-  settings_fields("oik_options_options$alt");
+  $options = bw_form_start( $option, "oik_options_options$alt" );
+  
+  /* We can't use the function blocks until they support the shortcode parameter suffix " alt=1" */ 
 
   bw_textfield_arr( $option, "Contact [bw_contact alt=1]", $options, 'contact', 50 );
   bw_textfield_arr( $option, "Email [bw_email alt=1]", $options, 'email', 50 );
@@ -537,27 +551,8 @@ function oik_extra_shortcode_options() {
   bw_textarea_arr( $option, "Google Maps introductory text for [bw_show_googlemap alt=1]", $options, 'gmap_intro', 50 );
   bw_textfield_arr( $option, "Latitude [bw_geo alt=1] [bw_directions alt=1]", $options, 'lat', 50 );
   bw_textfield_arr( $option, "Longitude [bw_show_googlemap alt=1]", $options, 'long', 50 );
-  
-  /* these will come later - better to set them against the user rather than the site 
-  
-  textfield( "bw_options[twitter]", 50, "Twitter URL [bw_twitter]", $options['twitter'] );
-  textfield( "bw_options[facebook]", 50, "Facebook URL [bw_facebook]", $options['facebook'] );
-  textfield( "bw_options[linkedin]", 50, "LinkedIn URL [bw_linkedin]", $options['linkedin'] );
-  textfield( "bw_options[googleplus]", 50, "Google Plus URL [bw_googleplus]", $options['googleplus'] );
-  textfield( "bw_options[youtube]", 50, "YouTube URL [bw_youtube]", $options['youtube'] );
-  textfield( "bw_options[flickr]", 50, "Flickr URL [bw_flickr]", $options['flickr'] );
-  textfield( "bw_options[picasa]", 50, "Picasa URL [bw_picasa]", $options['picasa'] );
-  textfield( "bw_options[skype]", 50, "Skype Name [bw_skype]", $options['skype'] );
-  
-  
-  textfield( "bw_options[paypal-email]", 50, "PayPal email [bw_paypal]", $options['paypal-email'] );
-  textfield( "bw_options[paypal-country]", 2, "PayPal country", $options['paypal-country'] );
-  textfield( "bw_options[paypal-currency]", 2, "PayPal currency", $options['paypal-currency'] );
-  
-  */
  
   bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
-
   etag( "table" ); 			
   etag( "form" );
   bw_flush();
@@ -593,6 +588,13 @@ function oik_options_validate( $input ) {
   
   return $input;
 }
+
+
+/**
+ */
+function oik_buttons_validate( $input ) {
+  return( $input );
+}  
 
 /**
  * Create a file with the specified name in the specified directory 
