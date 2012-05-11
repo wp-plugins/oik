@@ -113,11 +113,12 @@ function bw_theme_field( $key, $value, $field=null ) {
   if ( $funcname == "bw_theme_field_" && $type ) { 
     $funcname = bw_funcname( "bw_theme_field_", $key );
   }  
+  bw_trace2( $funcname );
   
   if ( is_callable( $funcname ) ) {
-    call_user_func( $funcname,  $key, $value );
+    call_user_func( $funcname,  $key, $value, $field );
   } else {
-    _bw_theme_field_default( $key, $value );
+    _bw_theme_field_default( $key, $value, $field );
   }
 }  
 

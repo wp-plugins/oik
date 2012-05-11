@@ -126,15 +126,20 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 == Changelog ==
 = 1.13 = 
 * Added: Support for oik-privacy-plugin - new APIs below 
-* Added: Support for custom links on images. This change enhances [bw_images] and [nivo] (oik-nivo-slider)
+* Added: Support for custom links on images. This change enhances [bw_images] and [nivo] (see the oik-nivo-slider plugin)
 * Added: API - bw_image_get_link() - get the custom link or permalink for an attachment
 * Added: API - bw_textarea_cb_arr() - displays an textarea matched with a checkbox
 * Added: API - bw_recreate_options() - alter the value of "autoload" for a WordPress option fieldd
 * Added: API - bw_term_array() - build a simple ID, title array from an array of $term objects
 * Added: API - bw_datepicker_enqueue_script() - enqueue the jQuery UI datepicker
 * Added: API - includes/oik-menus.inc for nav menu functions
+* Added: API - bw_form_start() - start a WordPress form for options fields
+* Added: API - bw_reset_options() - reset or initialise an options field to "latest" defaults 
+* Changed: bw_jquery() - added $windowload parameter for jQuery(window).load or jQuery(document).ready
 * Changed: bw_tablerow() doesn't produce a row if the $td_array is empty
+* Changed: TinyMCE buttons now default to "on" when first displayed on the oik options > Buttons page 
 * Fixed: Dependency checking didn't work in WordPress MultiSite installations.
+* Fixed: Eliminated "Notices" displayed when oik options is first displayed.
 
 = 1.12 =
 * Added: oik extra shortcode options for shortcodes with alternative values ( alt=1 keyword )

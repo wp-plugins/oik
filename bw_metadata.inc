@@ -15,7 +15,7 @@ add_action( 'save_post', 'bw_effort_save_postdata', 10, 2 );
  * Create  "Fields" meta box for each field associated with each object type in the mapping
  */
 function bw_effort_meta_boxes() {
-oik_require( 'bobbforms.inc' );
+  oik_require( 'bobbforms.inc' );
   global $bw_mapping;
   bw_trace2( $bw_mapping );
   
@@ -119,29 +119,6 @@ function bw_form_field_noderef( $name, $type, $title, $value, $args ) {
   $options = bw_load_noderef( $args );
   bw_select( $name, $title, $value, array( '#options' => $options ));
 }
-
-
-/**
-  * Dynamic jQuery setting the selector, function and option parameters
-  * When should we use?
-  * 
-  * jQuery(window).load(function() - when you need to wait for images to load?
-  * jQuery(function()
-  * jQuery(document).ready(function()
-  *
-*/  
-if ( !function_exists( "bw_jquery" ) ) {
-function bw_jquery( $selector, $method, $parms=null ) {
-  stag( "script type=\"text/javascript\"" );
-  $function = "jQuery(window).load(function() { jQuery( \"$selector\" ).$method( $parms ); });";
-  e( $function );
-  etag( "script" );
-} 
-}
-
-
- 
- 
    
 /**
  * Enqueue the debug script if needed otherwise enqueue the minified (packed) one
@@ -152,9 +129,7 @@ function bw_datepicker_enqueue_script( ) {
   } else {
     wp_enqueue_script( 'jquery-ui-datepicker' );
   } 
-}
-    
-
+} 
 
 /** 
  * bw_form_field_date - format a date field
@@ -162,14 +137,11 @@ function bw_datepicker_enqueue_script( ) {
  */
 function bw_form_field_date( $name, $type, $title, $value, $args ) {
   $args['#length'] = bw_array_get( $args, '#length', 10 );
-  //$args['#class'] = 'ui-datepicker';
-  //$args['#extras'] = 'dateformat="ATOM"' ;
   wp_enqueue_style( "jquery-ui-datepicker-css", plugin_dir_url( __FILE__). "css/jquery.ui.datepicker.css" ); 
   wp_enqueue_style( "jquery-ui-theme-css", plugin_dir_url( __FILE__). "css/jquery.ui.theme.css" );
    
   bw_datepicker_enqueue_script();
-  // bw_jquery( "#${name}", "datepicker", bw_jkv( "dateFormat : 'yy-mm-dd', changeMonth: true, changeYear: true" ) );
-  bw_jquery( "#${name}", "datepicker", bw_jkv( array( 'dateFormat' => 'yy-mm-dd', 'changeMonth' => "true" )));
+  bw_jquery( "#${name}", "datepicker", bw_jkv( "dateFormat : 'yy-mm-dd', changeMonth: true, changeYear: true" ) );
   bw_form_field_( $name, $type, $title, bw_format_date( $value ), $args ); 
 }
 
@@ -246,8 +218,6 @@ function bw_effort_box( $post, $args ) {
   echo( bw_ret());
 }
 
-
-
 if ( !function_exists( "bw_authorized" ) ) {
   function bw_authorized() {
     $authorized = TRUE;
@@ -258,8 +228,6 @@ if ( !function_exists( "bw_authorized" ) ) {
     return $authorized;
   }
 }
-
-
 
 /**
  * Save the custom fields for this post when called for the 'save_post' action
