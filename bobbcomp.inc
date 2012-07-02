@@ -589,13 +589,12 @@ function bw_ediv( $atts ) {
  * Create an empty div for a particular set of classes, id or both
  * e.g. [sediv class="bd-100"] 
  */
-function bw_sediv( $atts ) {
-  $class = $atts['class'];
-  $id = $atts['id'];
+function bw_sediv( $atts=null ) {
+  $class = bw_array_get( $atts, 'class', null );
+  $id = bw_array_get( $atts, 'id', null );
   sediv( $class, $id );
   return( bw_ret());
 }
-
  
 /** 
  * Display the company abbreviation using an abbr tag

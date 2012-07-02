@@ -3,7 +3,7 @@ Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, key information, trace, blocks, buddypress, pages, bookmarks, images, attachments, smart, lazy
 Requires at least: 3.0.4
-Tested up to: 3.4
+Tested up to: 3.4.1
 Stable tag: 1.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -110,6 +110,10 @@ Yes - see above
 9. oik header image plugin - custom header image for a page 
 
 == Upgrade Notice ==
+= 1.14 =
+oik version 1.14 contains a fix for oik-nivo-slider on sites where jquery.js is not automatically loaded by the theme or other plugins
+It also includes changes for the cookie-cat plugin and website.
+
 = 1.13 = 
 oik version 1.13 is required for the new oik-privacy-policy plugin. 
 
@@ -123,7 +127,26 @@ There are many changes in version 1.11 to support lazy invocation of code.
 Some plugins have been created as separate plugins (e.g. uk-tides). Others have been changed so that you can activate them by changing oik settings, so are no longer activatable.
  
 
-== Changelog ==
+== Changelog == 
+= 1.14 =
+* Added: oik-options - use Google geocoding to find latitude and longitude if not specified
+* Added: oik-fields plugin supports display of custom columns in admin list; currency, numeric, date, select and noderef 
+* Added: API - bw_get_active_plugins() - to list active plugins for WordPress OR WordPress Multisite
+* Added: API - bw_get_post() - wrapper to get_posts to load the post identified by ID $post_id AND $post_type
+* Added: API - bw_get_theme() - wrapper to WordPress functions to get the current theme.
+* Added: API - bw_remote_get() - wrapper to wp_remote_get(). Used in geocoding
+* Added: Add support for textarea metadata for custom post types
+* Changed: oik-header now works for child themes of "Twenty Eleven"
+* Changed: oik options - PayPal currencies offered in a select list
+* Changed: oik options - Artisteer versions offered in a select list
+* Changed: [bw_editcss] support for WP 3.4 and above. 
+* Changed: API - bw_trace2() supports a 3rd parameter $show_args. Default=true. Slightly easier than using bw_trace()
+* Changed: API - bw_jquery() for oik-nivo-slider when jquery.js is not already included before </head>
+* Changed: API - bw_format_attachment() - default 'n' for block parameter
+* Fixed: API - bw_load_noderef() requires includes/bw_posts.inc
+* Fixed: Renamed quote() to bw_quote() due to function naming conflict
+* Fixed: Fixed more "Notices" messages for the [sediv] shortcode
+
 = 1.13 = 
 * Added: Support for oik-privacy-plugin - new APIs below 
 * Added: Support for custom links on images. This change enhances [bw_images] and [nivo] (see the oik-nivo-slider plugin)
@@ -135,7 +158,7 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Added: API - includes/oik-menus.inc for nav menu functions
 * Added: API - bw_form_start() - start a WordPress form for options fields
 * Added: API - bw_reset_options() - reset or initialise an options field to "latest" defaults 
-* Changed: bw_jquery() - added $windowload parameter for jQuery(window).load or jQuery(document).ready
+* Changed: bw_jquery() - added $windowload parameter for jQuery(window).load (when true) or jQuery(document).ready (when false = default)
 * Changed: bw_tablerow() doesn't produce a row if the $td_array is empty
 * Changed: TinyMCE buttons now default to "on" when first displayed on the oik options > Buttons page 
 * Fixed: Dependency checking didn't work in WordPress MultiSite installations.

@@ -39,8 +39,9 @@ function bw_format_attachment( $post, $atts ) {
   //$read_more = bw_array_get( $atts, "read_more", "read more" );
   //$thumbnail = bw_thumbnail( $post->ID, $atts );
   
-  $in_block = bw_validate_torf( bw_array_get( $atts, "block", false));
+  $in_block = bw_validate_torf( bw_array_get( $atts, "block", 'n'));
   if ( $in_block ) { 
+    oik_require( "shortcodes/oik-blocks.php" );
     e( bw_block( $atts ));
   } else {
     $class = bw_array_get( $atts, "class", "" );

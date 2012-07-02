@@ -164,6 +164,267 @@ function bw_show_googlemap__syntax( $shortcode = "bw_show_googlemap" ) {
                  , "height" => bw_skv( "400px", "height", "height of the map" )
                  );
   return( $syntax );
-}  
+}
+
+/**
+ * Update the input to the geocoded address 
+ * @param array $input - the set of input fields that WordPress is managing
+ * @param object $json - JSON object
+ 
+ * First get status
+ * then results[0]
+ * 
+ 
+
+
+stdClass Object
+(
+    [results] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [address_components] => Array
+                        (
+                            [0] => stdClass Object
+                                (
+                                    [long_name] => PO9 6DE
+                                    [short_name] => PO9 6DE
+                                    [types] => Array
+                                        (
+                                            [0] => postal_code
+                                        )
+
+                                )
+
+                            [1] => stdClass Object
+                                (
+                                    [long_name] => Rowland's Castle
+                                    [short_name] => Rowland's Castle
+                                    [types] => Array
+                                        (
+                                            [0] => locality
+                                            [1] => political
+                                        )
+
+                                )
+
+                            [2] => stdClass Object
+                                (
+                                    [long_name] => Hampshire
+                                    [short_name] => Hampshire
+                                    [types] => Array
+                                        (
+                                            [0] => administrative_area_level_2
+                                            [1] => political
+                                        )
+
+                                )
+
+                            [3] => stdClass Object
+                                (
+                                    [long_name] => United Kingdom
+                                    [short_name] => GB
+                                    [types] => Array
+                                        (
+                                            [0] => country
+                                            [1] => political
+                                        )
+
+                                )
+
+                            [4] => stdClass Object
+                                (
+                                    [long_name] => Rowland's Castle
+                                    [short_name] => Rowland's Castle
+                                    [types] => Array
+                                        (
+                                            [0] => postal_town
+                                        )
+
+                                )
+
+                        )
+
+                    [formatted_address] => Rowland's Castle, Hampshire PO9 6DE, UK
+                    [geometry] => stdClass Object
+                        (
+                            [bounds] => stdClass Object
+                                (
+                                    [northeast] => stdClass Object
+                                        (
+                                            [lat] => 50.8879055
+                                            [lng] => -0.9653666
+                                        )
+
+                                    [southwest] => stdClass Object
+                                        (
+                                            [lat] => 50.8865369
+                                            [lng] => -0.9666216
+                                        )
+
+                                )
+
+                            [location] => stdClass Object
+                                (
+                                    [lat] => 50.8869164
+                                    [lng] => -0.9662886
+                                )
+
+                            [location_type] => APPROXIMATE
+                            [viewport] => stdClass Object
+                                (
+                                    [northeast] => stdClass Object
+                                        (
+                                            [lat] => 50.888570180292
+                                            [lng] => -0.9646451197085
+                                        )
+
+                                    [southwest] => stdClass Object
+                                        (
+                                            [lat] => 50.885872219709
+                                            [lng] => -0.9673430802915
+                                        )
+
+                                )
+
+                        )
+
+                    [types] => Array
+                        (
+                            [0] => postal_code
+                        )
+
+                )
+
+        )
+
+    [status] => OK
+)
+
+Extract from @link https://developers.google.com/maps/documentation/geocoding/#StatusCodes
+
+Status Codes
+
+The "status" field within the Geocoding response object contains the status of the request, and may contain debugging information to help you track down why Geocoding is not working. The "status" field may contain the following values:
+
+"OK" indicates that no errors occurred; the address was successfully parsed and at least one geocode was returned.
+"ZERO_RESULTS" indicates that the geocode was successful but returned no results. This may occur if the geocode was passed a non-existent address or a latlng in a remote location.
+"OVER_QUERY_LIMIT" indicates that you are over your quota.
+"REQUEST_DENIED" indicates that your request was denied, generally because of lack of a sensor parameter.
+"INVALID_REQUEST" generally indicates that the query (address or latlng) is missing.
+
+Extract from @link https://developers.google.com/maps/documentation/geocoding/#Types
+
+Address Component Types
+
+The types[] array within the returned result indicates the address type. These types may also be returned within address_components[] arrays to indicate the type of the particular address component. Addresses within the geocoder may have multiple types; the types may be considered "tags". For example, many cities are tagged with the political and locality type.
+
+The following types are supported and returned by the HTTP Geocoder:
+
+street_address indicates a precise street address.
+route indicates a named route (such as "US 101").
+intersection indicates a major intersection, usually of two major roads.
+political indicates a political entity. Usually, this type indicates a polygon of some civil administration.
+country indicates the national political entity, and is typically the highest order type returned by the Geocoder.
+administrative_area_level_1 indicates a first-order civil entity below the country level. Within the United States, these administrative levels are states. Not all nations exhibit these administrative levels.
+administrative_area_level_2 indicates a second-order civil entity below the country level. Within the United States, these administrative levels are counties. Not all nations exhibit these administrative levels.
+administrative_area_level_3 indicates a third-order civil entity below the country level. This type indicates a minor civil division. Not all nations exhibit these administrative levels.
+colloquial_area indicates a commonly-used alternative name for the entity.
+locality indicates an incorporated city or town political entity.
+sublocality indicates an first-order civil entity below a locality
+neighborhood indicates a named neighborhood
+premise indicates a named location, usually a building or collection of buildings with a common name
+subpremise indicates a first-order entity below a named location, usually a singular building within a collection of buildings with a common name
+postal_code indicates a postal code as used to address postal mail within the country.
+natural_feature indicates a prominent natural feature.
+airport indicates an airport.
+park indicates a named park.
+point_of_interest indicates a named point of interest. Typically, these "POI"s are prominent local entities that don't easily fit in another category such as "Empire State Building" or "Statue of Liberty."
+In addition to the above, address components may exhibit the following types:
+
+post_box indicates a specific postal box.
+street_number indicates the precise street number.
+floor indicates the floor of a building address.
+room indicates the room of a building address.
+
+
+
+
+
+*/
+
+function bw_set_geocoded_address( $input, $json ) {
+  bw_trace2();
+  $status = bw_array_get( $json, "status", null );
+  if ( $status == "OK" ) {
+    $lat = $json->results[0]->geometry->location->lat;
+    $long = $json->results[0]->geometry->location->lng;
+    
+    /* We can't map these by number as the results vary depending on what we got
+       ALSO we may get more than one result! SO... how do we tell what's correct
+       **?** Future enhancement
+    $postal_code = $json->results[0]->address_components[0]->long_name;
+    $locality =  $json->results[0]->address_components[1]->long_name;
+    $region = $json->results[0]->address_components[2]->long_name;
+    $country_name = $json->results[0]->address_components[3]->long_name;  
+    $country_abbr =  $json->results[0]->address_components[3]->short_name; 
+    */
+  }
+  $input['lat'] = $lat;
+  $input['long'] = $long;
+  
+  
+  return( $input );
+} 
+
+
+/**
+ * Geocode the given address to return the lat and long 
+ 
+  bw_textfield_arr( $option, "Extended-address [bw_address alt=1]", $options, 'extended-address', 50 );
+  bw_textfield_arr( $option, "Street-address", $options, 'street-address', 50 );
+  bw_textfield_arr( $option, "Locality", $options, 'locality', 50 );
+  bw_textfield_arr( $option, "Region", $options, 'region', 50 );
+  bw_textfield_arr( $option, "Post Code", $options, 'postal-code', 50 );
+  bw_textfield_arr( $option, "Country name", $options, 'country-name', 50 );
+ */
+
+function bw_geocode_googlemap( $input ) {
+  $extended_address = bw_array_get( $input, 'extended-address', "" );
+  $street_address = bw_array_get( $input, 'street-address', "" );
+  $locality = bw_array_get( $input, 'locality', "" );
+  $region = bw_array_get( $input, 'region', "" );
+  $postal_code = bw_array_get( $input, 'postal-code', "" );
+  $country_name = bw_array_get( $input, 'country-name', "" );
+  
+  $address = bw_append( $extended_address, null );
+  $address .= bw_append( $street_address );
+  $address .= bw_append( $locality );
+  $address .= bw_append( $region );
+  $address .= bw_append( $postal_code );
+  $address .= bw_append( $country_name );
+  $address = urlencode( $address );
+  
+  if ( $address ) {
+  
+    $map_url = "http://maps.google.com/maps/api/geocode/json?sensor=false&address=";
+    // Google's documentation recommends using JSON since it's smaller than the XML output.
+    // $map_url = "http://maps.google.com/maps/api/geocode/xml?sensor=false&address=";
+    $map_url .= $address;
+  
+    oik_require( "includes/oik-remote.inc" );
+  
+    $json = bw_remote_get( $map_url );
+    if ( $json ) {
+      $input = bw_set_geocoded_address( $input, $json );
+   }
+  }    
+  return( $input );
+  
+
+} 
+
+
+
 
 

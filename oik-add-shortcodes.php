@@ -1,8 +1,6 @@
-<?php 
+<?php // (C) Copyright Bobbing Wide 2011, 2012
 
-// require_once( 'bwtrace.inc' );
 /* Shortcodes for each of the more useful "often included key-information" fields 
-   in Bobbing Wide's Wonder of WordPress websites
 */
 
 
@@ -83,7 +81,7 @@ function bw_load_shortcodefunc( $shortcodefunc, $shortcode ) {
  * If the function is not defined then simply return the tag inside []'s
  * Note: We use the HTML symbol for [ (&#91;) to prevent the shortcode being expanded multiple times
  
- * Extract from codes... 
+ * Extract from codex... 
  
  ; NOTE on confusing regex/callback name reference: 
  The zeroeth entry of the attributes array ('''$atts[0]''') will contain the string that matched the shortcode regex, 
@@ -102,24 +100,25 @@ by checking BOTH the third argument to the callback and the zeroeth attribute.
 (It is NOT an error to have two shortcodes reference the same callback routine, which allows for common code.) 
  
 */ 
-function bw_shortcode_event( $atts, $hmm=NULL, $tag=NULL ) {
+function bw_shortcode_event( $atts, $hmm=null, $tag=null) {
   global $bw_sc_ev, $bw_sc_ev_pp;
-  // bw_backtrace();
-  
   $cf = current_filter();
-  if ( empty( $cf ) ) { $cf = 'wp_footer'; }
-  
-  $result = '&#91;' . $tag . ']';
-  
-  //bw_trace( $cf, __FUNCTION__, __LINE__, __FILE__, "current_filter" );
+  if ( empty( $cf ) ) 
+    { $cf = 'wp_footer'; }
+  // bw_trace( "<$tag>", __FUNCTION__, __LINE__, __FILE__, "tag" ); 
+  if ( !isset($tag) || $tag == null ) {
+    $tag = bw_array_get( $atts, 0, null );
+  }  
   //bw_trace( $tag, __FUNCTION__, __LINE__, __FILE__, "tag" ); 
+  $result = '&#91;' . $tag . ']';
+  //bw_trace( $cf, __FUNCTION__, __LINE__, __FILE__, "current_filter" );
   if ( isset( $bw_sc_ev[ $tag ][ $cf ] ))  {
     //bw_trace( $bw_sc_ev, __FUNCTION__, __LINE__, __FILE__, "bw_sc_ev" );
     $shortcodefunc = $bw_sc_ev[ $tag ][ $cf ];
     $shortcodefunc = bw_load_shortcodefunc( $shortcodefunc, $tag ); 
     $result = call_user_func( $shortcodefunc, $atts, $hmm, $tag );   
   } 
-  bw_trace( $result, __FUNCTION__, __LINE__, __FILE__, "result" );
+  //bw_trace( $result, __FUNCTION__, __LINE__, __FILE__, "result" );
   if ( isset( $bw_sc_ev_pp[ $tag ][ $cf ] ))  {
     $ppfunc = $bw_sc_ev_pp[ $tag ][ $cf ];
     if ( function_exists( $ppfunc ) ) {
@@ -129,9 +128,8 @@ function bw_shortcode_event( $atts, $hmm=NULL, $tag=NULL ) {
       $result .= "<b>missing post processing function: $ppfunc</b>";
     }
        
-    bw_trace( $result, __FUNCTION__, __LINE__, __FILE__, "result" );
+    //bw_trace( $result, __FUNCTION__, __LINE__, __FILE__, "result" );
   }
-  
   return $result;  
 }
 
@@ -148,7 +146,6 @@ if ( !function_exists( "bw_strip_tags" ) ) {
   }
 }
 
-
 /** 
  * bw_admin_strip_tags() strips tags if the content is being displayed on an admin page 
  * but it also gets passed the current_filter - future use
@@ -162,8 +159,6 @@ function bw_admin_strip_tags( $string, $current_filter=NULL ) {
   }
   return $rstring;
 }
-
- 
 
 /**
  * Add a shortcode function for a specific set of events
@@ -180,8 +175,6 @@ function bw_admin_strip_tags( $string, $current_filter=NULL ) {
 function bw_add_shortcode_event( $shortcode, $function=NULL, $eventlist='the_content,widget_text,the_title', $postprocess=NULL ) {
   global $bw_sc_ev, $bw_sc_ev_pp;
   //bw_trace( $shortcode, __FUNCTION__, __LINE__, __FILE__, "shortcode" );
- 
-  
   if ( $function == NULL ) {
     $function = $shortcode;
   }
@@ -193,7 +186,6 @@ function bw_add_shortcode_event( $shortcode, $function=NULL, $eventlist='the_con
     }
   }  
   // bw_trace( $bw_sc_ev, __FUNCTION__, __LINE__, __FILE__, "bw_sc_ev" );
-
   add_shortcode( $shortcode, "bw_shortcode_event" );
 }
 
@@ -366,4 +358,6 @@ bw_add_shortcode_file( 'nggallery', oik_path( "shortcodes/oik-galleries.php" ) )
 
 bw_add_shortcode( "bw_power", "bw_power", oik_path( "shortcodes/oik-bob-bing-wide.php" ) );
 bw_add_shortcode( 'bw_editcss', 'bw_editcss', oik_path("shortcodes/oik-bob-bing-wide.php"), false );
+
+bw_add_shortcode( "bw_table", "bw_table", oik_path("shortcodes/oik-table.php"), false );
 

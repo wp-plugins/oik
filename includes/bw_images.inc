@@ -71,6 +71,7 @@ function bw_force_size( $thumbnail, $size ) {
   */
 function bw_get_thumbnail_size( $atts ) {
   $thumbnail = bw_array_get( $atts, 'thumbnail', 'thumbnail' );
+  $post_id = bw_array_get( $atts, "post_id", null );
   switch ( $thumbnail ) {
     case 'none';
       $thumbnail = false;
@@ -104,6 +105,7 @@ function bw_get_thumbnail_size( $atts ) {
  */
 function bw_thumbnail( $post_id, $atts=NULL, $attachment=false ) {
   bw_trace( $post_id, __FUNCTION__, __LINE__, __FILE__, "post_id" );
+  $atts['post_id'] = $post_id; 
   $thumbnail = bw_get_thumbnail_size( $atts );
   if ( $thumbnail ) {
     switch ( $thumbnail ) {

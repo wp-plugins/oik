@@ -18,11 +18,13 @@ function bw_effort_meta_boxes() {
   oik_require( 'bobbforms.inc' );
   global $bw_mapping;
   bw_trace2( $bw_mapping );
+  if ( is_array( $bw_mapping ) && count( $bw_mapping['field'] ) ) {
   
-  foreach ( $bw_mapping['field'] as $object_type => $fields ) {
-    bw_trace( "object_type", __FUNCTION__, __LINE__, __FILE__, $object_type );
-    bw_trace2( $fields );
-    add_meta_box( 'bw_effort', 'Fields', 'bw_effort_box', $object_type, 'normal' , 'high' , $fields );
+    foreach ( $bw_mapping['field'] as $object_type => $fields ) {
+      bw_trace( "object_type", __FUNCTION__, __LINE__, __FILE__, $object_type );
+      bw_trace2( $fields );
+      add_meta_box( 'bw_effort', 'Fields', 'bw_effort_box', $object_type, 'normal' , 'high' , $fields );
+    }
   }  
 }
 
@@ -106,6 +108,7 @@ function bw_term_array( $terms ) {
  */
 function bw_load_noderef( $args ) {
   $args['post_type'] = bw_array_get( $args, '#type', $args );
+  oik_require( "includes/bw_posts.inc" );
   $posts = bw_get_posts( $args );
   $options = bw_post_array( $posts );
   return( $options );
@@ -146,7 +149,7 @@ function bw_form_field_date( $name, $type, $title, $value, $args ) {
 }
 
 /** 
- * bw_form_field_numeric - format a numeric field
+ * Format a numeric field metabox
  *
  */
 function bw_form_field_numeric( $name, $type, $title, $value, $args ) {
@@ -156,7 +159,15 @@ function bw_form_field_numeric( $name, $type, $title, $value, $args ) {
  
 function bw_form_field_checkbox( $name, $type, $title, $value, $args ) {
   bw_checkbox( $name, $title, $value );
-}  
+}
+
+/**
+ * Format a textarea metabox
+ */
+function bw_form_field_textarea( $name, $type, $title, $value, $args ) {
+  $len = bw_array_get( $args, "#length", 80 );
+  bw_textarea( $name, $len, $title, $value, 10 ); 
+}
 
 /** 
  * Return the function name to be used to 'form' the field
@@ -206,7 +217,7 @@ function bw_effort_box( $post, $args ) {
   global $bw_fields; 
   $fields = $args['args'];
   //bw_trace2( $fields );
-  stag( 'table class="form-table"' );
+  stag( 'table', "form-table" );
   foreach ( $fields as $field ) {
     $data = $bw_fields[$field];
     //bw_trace2( $field );
@@ -258,8 +269,11 @@ function bw_effort_save_postdata( $post_id, $post ) {
         bw_trace( $field, __FUNCTION__, __LINE__, __FILE__, "field" );
         $mydata = bw_array_get( $_POST, $field, NULL ) ;
         
+        /* What happens if the field is blank **?** */
         bw_trace( $mydata, __FUNCTION__, __LINE__, __FILE__, "mydata" );
-        update_post_meta( $post_id, $field, $mydata );
+        if ( $mydata != null )
+          update_post_meta( $post_id, $field, $mydata );
+          
       }
     }
   } else {

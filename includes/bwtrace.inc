@@ -479,7 +479,8 @@ function bw_lazy_backtrace() {
  * Improved trace function that needs no parameters, but accepts two
  *
  * @param mixed $value - an optional field to be traced
- * @param string $text - an optional identifying text for the field to be traced
+ * @param string $text - an optional field identifying text for the field to be traced
+ * @param string $show_args - true to display the arguments to the call  
  * @return mixed $value - to allow this function to be called in return statements 
  * 
  * Using debug_backtrace this function can be used to trace the parameters to a function
@@ -488,7 +489,7 @@ function bw_lazy_backtrace() {
  * bw_backtrace should also perform the checks.
  *
  */
-function bw_lazy_trace2( $value=NULL, $text=NULL ) {
+function bw_lazy_trace2( $value=NULL, $text=NULL, $show_args=true ) {
   global $bw_trace_on;
   if ($bw_trace_on) {
     $backtrace = debug_backtrace();
@@ -503,22 +504,26 @@ function bw_lazy_trace2( $value=NULL, $text=NULL ) {
       $file = bw_array_get( $call1, 'file', NULL) ;
       $file = bw_trace_file_part( $file );
       $line = bw_array_get( $call1, 'line', 0 );
-      $args = $call2['args'];
-      $cargs = count( $args );
-      switch ( $cargs ) {
-        case 0: 
-          $targs = NULL;
-          break;
-        case 1:
-          $targs = $args[0]; 
-          break;
-        default:
-          $targs = $args;
-      }      
-      bw_lazy_trace( $targs, $function, $line, $file, $cargs );
+      
+      if ( $show_args ) {      
+        $args = $call2['args'];
+        $cargs = count( $args );
+        switch ( $cargs ) {
+          case 0: 
+            $targs = NULL;
+            break;
+          case 1:
+            $targs = $args[0]; 
+            break;
+          default:
+            $targs = $args;
+        }
+        bw_lazy_trace( $targs, $function, $line, $file, $cargs );
+      }  
       if ( $value || $text ) 
         bw_lazy_trace( $value, $function, $line, $file, $text );
-      bw_trace_context_all( $function, $line, $file );  
+      if ( $show_args )  
+        bw_trace_context_all( $function, $line, $file );  
     }
   } 
   //bw_bang(); 

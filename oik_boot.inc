@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Return the path of the oik base plugin or any particular file
  *
@@ -108,7 +108,7 @@ function oik_depends( $plugin=null, $dependencies="oik", $callback=null ) {
     oik_lazy_depends( $plugin, $dependencies, $callback );
   } else {
     if ( is_callable( $callback ) ) {
-      call_user_func( $callback, $plugin, $dependencies );
+      call_user_func( $callback, $plugin, $dependencies, "missing" );
     }  
   }  
 }

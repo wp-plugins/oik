@@ -2,7 +2,7 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '1.13' );
+  return( '1.14' );
 }
 
 require_once( "oik_boot.inc" );   /* Don't use oik_require here */
@@ -33,6 +33,7 @@ function bw_flush() {
   //bw_trace( $bwecho );
   //bw_trace( "after" );
   $bwecho = NULL;
+  // bw_backtrace();
 }
 
 /**
@@ -460,7 +461,10 @@ function blockquote( $text, $class=NULL, $id=NULL ) {
    etag( "blockquote" );    
 }
 
-function quote( $text, $class=NULL, $id=NULL ) {
+/**
+ * Produce a quotation tag
+ */
+function bw_quote( $text, $class=NULL, $id=NULL ) {
    stag( "quote", $class, $id ) ;
    e( $text );
    etag( "quote" );    
@@ -558,13 +562,18 @@ function bw_image_link( $link
 } 
 
 
+
 function bw( $bw_class_prefix=NULL ) {  
+  if ( is_array( $bw_class_prefix ) ) {
+    $bwcp = bw_array_get( $bw_class_prefix, "cp", null);
+    $cp = ' class="' . $bwcp;
+  } else {   
 
       if ( is_null( $bw_class_prefix )) 
          $cp = ' class="';
       else
          $cp = ' class="' . $bw_class_prefix;
-           
+  }         
       $bw  = '<em' .$cp .'b1">B</em>';
       $bw .= '<em' .$cp .'o">o</em>'; 
       $bw .= '<em' .$cp .'b2">b</em>';
@@ -702,7 +711,7 @@ function bw_validate_torf( $field, $trues=",true,yes,1", $falses=NULL ) {
   bw_trace( $trues, __FUNCTION__, __LINE__, __FILE__, "trues" );
   $pos = strpos( $trues, $field );
   bw_trace( $pos, __FUNCTION__, __LINE__, __FILE__, "pos" );
-  if ( $pos )
+  if ( $pos !== FALSE )
     $torf = TRUE;
   return( $torf );
 }
@@ -747,6 +756,7 @@ function bw_funcname( $prefix, $key, $value=NULL ) {
   $keys = explode( "-", bw_plugin_namify( $key ));
   foreach ( $keys as $keyword ) {
     $testname .= '_'.$keyword;
+    bw_trace2( $testname, "testname", false );
     if ( function_exists( $testname ) ) {
       $funcname = $testname;
     }  
@@ -803,17 +813,41 @@ function bw_sc_snippet( $shortcode="oik" ) {
 */  
 if ( !function_exists( "bw_jquery" ) ) {
 function bw_jquery( $selector, $method, $parms=null, $windowload=false ) {
-  stag( "script type=\"text/javascript\"" );
+  bw_jq( "<script type=\"text/javascript\">" );
   if ( $windowload ) {
     $jqfn = "jQuery(window).load(function()";
   } else {
     $jqfn = "jQuery(document).ready(function()"; 
   }    
   $function = "$jqfn { jQuery( \"$selector\" ).$method( $parms ); });";
-  e( $function );
-  etag( "script" );
+  bw_jq( $function );
+  bw_jq( "</script>" );
 } 
 }
+
+
+/**
+ * Flush the inline jQuery code to the WordPress footer 
+ * @globals bw_jq
+ */
+function bw_jq_flush() {
+  global $bw_jq;
+  echo $bw_jq;
+  $bw_jq = null;
+}  
+
+
+function bw_jq( $text ) {
+  global $bw_jq;
+  if ( !isset( $bw_jq ) ) {
+    wp_enqueue_script( 'jquery' ); 
+    add_action( 'wp_footer', "bw_jq_flush", 25 );
+    //bw_trace2( $bw_jq, "bw_jq not set" );  
+  }
+  $bw_jq .=$text;
+  //bw_trace2( $bw_jq, "bw_jq", false );  
+
+}  
 
 /**
  * Format an array of parms for jQuery 
@@ -941,4 +975,60 @@ function bw_recreate_options( $option, $autoload="no" ) {
   add_option( $option, $options, null, $autoload );
   bw_trace2( $options );
   return( $options );
+} 
+
+/**
+ * Return a non null string following the separator or null 
+ * @param string $value - if null we return null
+ * @param string $sep - separating string
+ * @return null or $sep followed immediately by $value
+ */
+function bw_append( $value=null, $sep=" " ) {
+  if ( $value ) 
+    $value = $sep . $value;
+  return $value;  
+}
+
+/**
+ * This is very much like bw_default but it uses trim() to strip blanks
+ * Can we change bw_default to do the same?
+ */
+function bw_pick_one( $preferred, $alternate ) {
+  $picked = trim( $preferred );
+  //bw_trace2( "!$picked!", "picked preferred" );
+  if ( !$picked  ) {
+    $picked = trim( $alternate );
+    
+    //bw_trace2( $picked, "picked alternate" );
+  }
+  return( $picked );
+}
+
+/**
+ * Load the language specific stuff for "oik"
+ *
+ * @link http://codex.wordpress.org/Function_Reference/load_plugin_textdomain
+ * If the path is not given then it will be the root of the plugin directory.
+ */
+function bw_load_plugin_textdomain( $domain="oik" ) {
+  load_plugin_textdomain( $domain, false, dirname( plugin_basename(__FILE__)).'/languages/' );
 }  
+
+/**
+ * Return the current theme name
+ * 
+ * Note: get_current_theme() was deprecated in WP 3.4 but wp_get_theme() is NEW
+ * It didn't exist in WP 3.3.1.
+ * So we need a wrapper to test the WordPress version
+ * 
+ */
+function bw_get_theme() { 
+  global $wp_version;
+  if ( version_compare( $wp_version, '3.4', "ge" ) ) {
+    $current_theme = wp_get_theme(); 
+  } else {
+    $current_theme = get_current_theme();
+  }  
+  //bw_trace2( $current_theme, "current theme" );
+  return( $current_theme );
+}    

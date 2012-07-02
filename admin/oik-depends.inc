@@ -1,4 +1,4 @@
-<?php
+<?php // (C) Copyright Bobbing Wide 2012
 
 /**
  * Return an associative version of the active plugins array  
@@ -32,7 +32,6 @@ function bw_get_all_plugin_names( $active_plugins ) {
   return( $names ); 
 } 
 
-
 /**
  * Return an associative version of the sitewide active plugins array
  *
@@ -55,21 +54,24 @@ function bw_ms_get_all_plugin_names( $active_plugins ) {
   return( $names );
 }
 
-/** 
- * Produce a message when a dependent plugin is inactive or the wrong version
+/**
+ * Produce a message when a dependent plugin is inactive or the wrong version 
  *
  * @param string $plugin - the plugin we're checking 
  * @param string $dependencies - format plug_name:version e.g. oik:1.12.1, where :version is optional
- * 
- */
-function oik_plugin_inactive( $plugin, $dependencies ) {
+ * @return string $message. The message, including a link to: install, activate or upgrade the dependent plugin
+*/
+if ( !function_exists( "oik_plugin_inactive" ) ) {
+function oik_plugin_inactive( $plugin=null, $dependencies=null, $problem=null ) {
   $plug_name = basename( $plugin, '.php' );
   $dependencies = str_replace( ":", " version ", $dependencies );
-  $text = "<p><b>$plug_name may not be fully functional</b>.  ";
+  list( $depends ) = explode(' ', trim( $dependencies ));
+  $text = "<p><b>$plug_name may not be fully functional</b>. ";
   $text.= "Please install and activate the required version of this plugin: $dependencies</p>";
   if ( current_filter() == "admin_notices" ) {
     $message = '<div class=" updated fade">';
     $message .= $text;
+    $message .= oik_oik_install_link( $depends, $problem );
     $message .= '</div>'; 
   } else {
     $message = '<tr class="plugin-update-tr">';
@@ -82,6 +84,7 @@ function oik_plugin_inactive( $plugin, $dependencies ) {
   }
   echo $message; 
 }
+}
 
 /** 
  * Checks that the version of the plugin is at least the value we specify
@@ -89,19 +92,37 @@ function oik_plugin_inactive( $plugin, $dependencies ) {
  *  If there is no version function then we assume it's OK
  *  If no version is specified then we assume it's OK
  *  We perform string compares on the version - allowing for 1.0.995a etc
- *
 */ 
 function oik_check_version( $depend, $version ) {
   $active = true;
   $version_func = "${depend}_version";
   if ( is_callable( $version_func )) {
     $active_version = $version_func();
-    if ( $active_version < $version ) { 
-      $active = false; 
-    }  
+    $active = version_compare( $active_version, $version, "ge" ); 
+    bw_trace2( $active_version, $version );
   }
   return( $active );    
 }
+
+/**
+ * Return an array of ALL active plugins - for single or multisite 
+ * @return associative array
+ * 
+ */
+function bw_get_active_plugins() {
+  $active_plugins = get_option( 'active_plugins' );
+  //bw_trace2( $active_plugins, "active plugins" );
+  $names = bw_get_all_plugin_names( $active_plugins );
+  if ( is_multisite() ) {
+    $active_plugins = get_site_option( 'active_sitewide_plugins');
+    $ms_names = bw_ms_get_all_plugin_names( $active_plugins );
+    //bw_trace2( $ms_names, "ms plugin names" );
+    $names = array_merge( $names, $ms_names ); 
+  }
+  //bw_trace2( $names, "active plugin names" );
+    
+  return( $names );
+}  
 
 /**
  * Check that the plugins that this plugin is dependent upon are active
@@ -115,14 +136,8 @@ function oik_check_version( $depend, $version ) {
  */
 function oik_lazy_depends( $plugin=null, $dependencies, $callback="oik_plugin_inactive" ) {
   //bw_backtrace();
-  if ( is_multisite() ) {
-    $active_plugins = get_site_option( 'active_sitewide_plugins');
-    $names = bw_ms_get_all_plugin_names( $active_plugins );
-  } else {
-    $active_plugins = get_option( 'active_plugins' );
-    $names = bw_get_all_plugin_names( $active_plugins );
-  }  
-  bw_trace2( $active_plugins, "active plugins" );
+  $names = bw_get_active_plugins();
+  //bw_trace2( $names );
   
   $depends = explode( ",", $dependencies );
   foreach ( $depends as $dependcolver ) {
@@ -131,9 +146,15 @@ function oik_lazy_depends( $plugin=null, $dependencies, $callback="oik_plugin_in
     //bw_trace2( $depend, "depend" );
     //bw_trace2( $version, "version" );
     
+    $problem = null;
     $active = bw_array_get( $names, $depend, null );
     if ( $active ) {
       $active = oik_check_version( $depend, $version );
+      if ( !$active ) {
+        $problem = "version";
+      }  
+    } else {
+      $problem = "missing";
     } 
     
     if ( !$active ) {
@@ -141,10 +162,155 @@ function oik_lazy_depends( $plugin=null, $dependencies, $callback="oik_plugin_in
       
       if ( !is_callable( $callback ) )
         $callback = "oik_plugin_inactive" ;
-      call_user_func( $callback, $plugin, $dependcolver );
+      call_user_func( $callback, $plugin, $dependcolver, $problem  );
       //deactivate_plugins( array( $plugin ) );
     }
   }
 }
 
+
+
+/** 
+ * Produce an install plugin link
+ */
+function oik_install_plugin( $plugin ) {
+    $path = "update.php?action=install-plugin&plugin=$plugin";
+    $url = admin_url( $path );
+    $url = wp_nonce_url( $url, "install-plugin_$plugin" ); 
+    $link = '<a href="';
+    $link .= $url;
+    $link .= '">Install';
+    $link .= " $plugin</a>";
+    return( $link );
+}
+
+/**
+ * Produce an "activate" plugin link
+ *
+ * @param string $plugin_file - e.g. oik/oik-header.php
+ * We may not be activating the main plugin, so we need the relative path filename of the plugin to activate
+ * @return string link to enable activation - which user must choose
+ * We probably don't need plugin_status OR paged parameters
+ 
+ 
+   http://qw/oobit/wp-admin/plugins.php?
+     action=activate
+     &plugin=oik%2Foik.php
+     &plugin_status=all
+     &paged=1&s
+     &_wpnonce=a53a158be5
+*/                              
+function oik_activate_plugin( $plugin, $plugin_name) {
+    $path = "plugins.php?action=activate&plugin_status=all&paged=1&s&plugin=$plugin";
+    $url = admin_url( $path );
+    $url = wp_nonce_url( $url, "activate-plugin_$plugin" ); 
+    $link = '<a href="';
+    $link .= $url;
+    $link .= '">Activate';
+    $link .= " ${plugin_name}</a>";
+    return( $link );
+} 
+ 
+/**    
+    $path = "update.php?action=install-plugin&plugin=$plugin";
+    $url = admin_url( $path );
+    $url = wp_nonce_url( $url, "install-plugin_oik" ); 
+    $link = '<a href="';
+    $link .= $url;
+    $link .= '">Install oik</a>';
+    
+  $url = wp_nonce_url(self_admin_url('update.php?action=upgrade-plugin&plugin=' . $update_file), 'upgrade-plugin_' . $update_file);
+ */
+function oik_update_plugin( $plugin ) {
+    $path = "update.php?action=upgrade-plugin&plugin=$plugin";
+    $url = admin_url( $path );
+    $url = wp_nonce_url( $url, "upgrade-plugin_$plugin" ); 
+    $link = '<a href="';
+    $link .= $url;
+    $link .= '">Upgrade';
+    $link .= " $plugin</a>";
+    return( $link );
+}
+
+/** 
+ * Find out of we think the plugin is installed but not activated or not even installed
+ * @param string $plugin - the plugin file name ( without plugin path info? )
+ * @return string - null if it's not installed or plugin to be activated
+ C:\apache\htdocs\wordpress\wp-content\plugins\oik\shortcodes\oik-bob-bing-wide.php(289:0) 2012-05-23T07:52:15+00:00 696 cf=the_content bw_get_plugins(4)  Array
+(
+
+    [oik/oik.php] => Array
+        (
+            [Name] => oik base plugin
+            [PluginURI] => http://www.oik-plugins.com/oik
+            [Version] => 1.13
+            [Description] => Lazy smart shortcodes for displaying often included key-information and other WordPress content
+            [Author] => bobbingwide
+            [AuthorURI] => http://www.bobbingwide.com
+            [TextDomain] => 
+            [DomainPath] => 
+            [Network] => 
+            [Title] => oik base plugin
+            [AuthorName] => bobbingwide
+        )
+
+
+
+    [oik/oik-bwtrace.php] => Array
+        (
+            [Name] => oik bwtrace
+            [PluginURI] => http://www.oik-plugins.com/oik
+            [Version] => 1.13
+            [Description] => Easy to use trace macros for oik plugins
+            [Author] => bobbingwide
+            [AuthorURI] => http://www.bobbingwide.com
+            [TextDomain] => 
+            [DomainPath] => 
+            [Network] => 
+            [Title] => oik bwtrace
+            [AuthorName] => bobbingwide
+        )
+
+)
+
+ */
+function oik_check_installed_plugin( $plugin ) { 
+  $plugin_to_activate = null;
+  $needle = "/$plugin.php"; 
+  
+  $plugins = get_plugins();
+  //bw_trace2( $plugins ); 
+  if ( count( $plugins )) {
+    foreach ( $plugins as $plugin_name => $plugin_details ) {
+      if ( strpos( $plugin_name, $needle ) ) {
+        $plugin_to_activate['Name'] = $plugin_details['Name'];
+        $plugin_to_activate['file'] = $plugin_name;
+        break;
+      }  
+    }
+  }
+  return( $plugin_to_activate );
+}
+
+/** 
+ * oik_oik_install_link
+  
+    http://qw/oobit/wp-admin/update.php?action=install-plugin&plugin=oik&_wpnonce=eb1c632af5
+    http://qw/oobit/wp-admin/plugin-install.php?tab=search&s=oik&plugin-search-input=Search+Plugins
+ */
+function oik_oik_install_link( $plugin, $problem ) { 
+  if ( $problem == "missing" ) {
+    /* Is it missing or just inactive ? */
+    $plugin_to_activate = oik_check_installed_plugin( $plugin );
+    if ( $plugin_to_activate ) {
+      $link = oik_activate_plugin( $plugin_to_activate['file'], $plugin_to_activate['Name'] );
+    } else {
+      $link = oik_install_plugin( $plugin );
+    }
+  } else {
+    $link = oik_update_plugin( $plugin );
+  }  
+  return( $link );
+}
+ 
    

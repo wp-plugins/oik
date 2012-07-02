@@ -302,7 +302,8 @@ function _sc_classes() {
 function _sc_posts() {
   return( array( 'numberposts'  => bw_skv( "5", "numeric", "number to return" )
                , 'offset'          => bw_skv( 0, "numeric", "offset from which to start" )
-               , 'category'        => bw_skv( null, "<i>category-slug</i>", "category slugs (comma separated)" )
+               , 'category'        => bw_skv( null, "<i>category ID</i>", "numeric ID of the post category" )
+               , 'category_name'        => bw_skv( null, "<i>category-slug</i>", "category slugs (comma separated)" )
                , 'customcategoryname' => bw_skv( null, "category-slug", "custom category slug" )
                , 'orderby'         => bw_skv( 'date', "ID|title|parent|rand|menu_order", "Sort sequence" )
                , 'order'           => bw_skv( 'DESC', "ASC", "Sort order." )
