@@ -183,18 +183,12 @@ function oik_shortcode_options( ) {
   
 }
 
-
 function oik_custom_css_box() {
-  $theme = get_current_theme();
-  // p( "Note: This only works when the file is in the current theme directory." );
+  $theme = bw_get_theme();
   p( "To style the output from shortcodes you can create and edit a custom CSS file for your theme ($theme)." );
   p( "Use the [bw_editcss] shortcode to create the <b>edit CSS</b> link anywhere on your website." ); 
   p( "Note: If you change themes then you will start with a new custom CSS file." );
   p( "You should save your custom CSS file before updating theme $theme." );
-  
-
-  // p( "$theme in " . get_stylesheet_directory()  );
-  
   $options = get_option('bw_options');     
   $customCSS = bw_array_get( $options, 'customCSS', NULL );
   if ( $customCSS ) {
@@ -202,7 +196,6 @@ function oik_custom_css_box() {
     oik_custom_css( $theme );
   } else {
     p( "You have not defined a custom CSS file." );
-    
     alink( "button-secondary", admin_url("admin.php?page=oik_options"), "Name your custom CSS file", "Enter the name of your custom CSS file on the Options page" );
   }
 }
@@ -222,21 +215,16 @@ function oik_optional_plugins() {
   $options = get_option( 'bw_plugins' );
   p( "oik comes with a set of companion plugins. Activate these when you find a need for them." );
   sul();
-  li( "email signature" );
-  li( "custom header image" );
-  li( "oik sidebar" );
-  li( "oik fields" );
-  li( "oik trace - " );
-  li( "oik action trace" );
-  
- li( "oik bbpress - strip tags from bbPress forum title tooltips" );
- li( "oik bob bing wide shortcodes - activate this plugin to enable the <code>[bw_plug]</code> shortcode" );
- li( "oik BuddyPress signup email - Send sign up verification emails via site admin for verification before accepting a user" );
+  li( "email signature - build an email signature for your email client" );
+  li( "custom header image - define a custom header image for any post/page" );
+  li( "oik sidebar - apply widget wrangler sidebar functionality to Artisteer themes" );
+  li( "oik fields - allow custom fields to be shown within the content of your page or post" );
+  li( "oik trace - problem determination trace " );
+  li( "oik action trace - trace WordPress actions and filters" );
+  li( "oik bbpress - strip tags from bbPress forum title tooltips" );
+  li( "oik bob bing wide shortcodes - activate this plugin to enable the <code>[bw_plug]</code> shortcode" );
+  li( "oik BuddyPress signup email - Send sign up verification emails via site admin for verification before accepting a user" );
   eul();
-  
-  //bw_flush();
- 
-
 }
 
 function oik_default_tinymce_buttons() {
@@ -473,14 +461,35 @@ function oik_main_shortcode_options() {
   
   bw_textfield_arr( $option, "PayPal email [bw_paypal]", $options, 'paypal-email', 50 );
   bw_textfield_arr( $option, "PayPal country", $options, 'paypal-country', 50 );
-  bw_textfield_arr( $option, "PayPal currency", $options, 'paypal-currency', 50 );
+  
+  /** Extracted from 
+      @link https://www.paypalobjects.com/WEBSCR-640-20120609-1/en_US/GB/pdf/PP_OrderManagement_IntegrationGuide.pdf
+      
+   * AUD Australian Dollar 12,500 AUD
+   * CAD Canadian Dollar 12,500 CAD
+   * EUR Euro 8,000 EUR
+   * GBP Pound Sterling 5,500 GBP
+   * JPY Japanese Yen 1,000,000 JPY
+   * USD U.S. Dollar 10,000 USD
+   * whereas the list below was extracted from a WordPress plugin [bw_plug name="
+   
+  
+  */
+  $paypal_currency_list = array("GBP", "USD", "EUR", "AUD", "BRL", "CAD", "CHF", "CZK", "DKK", "HKD", "HUF", "ILS", "JPY", "MXN", "MYR", "NOK", "NZD", "PHP", "PLN", "SEK", "SGD", "THB", "TRY", "TWD");
+  
+  $paypal_currency_assoc = bw_assoc( $paypal_currency_list );                
+  bw_select_arr( $option, "PayPal currency", $options, 'paypal-currency',array( "#options" => $paypal_currency_assoc ) );
+  
 
   $upload_dir = wp_upload_dir();
   $baseurl = $upload_dir['baseurl'];
     
   bw_textfield_arr( $option, "Logo image [bw_logo] in uploads:<br />" . $baseurl, $options, 'logo-image', 50 );
   bw_textfield_arr( $option, "QR code image [bw_qrcode] in uploads", $options, 'qrcode-image', 50 );
-  bw_textfield_arr( $option, "Artisteer version 31/30/25/na [bw_art_version]", $options, 'art-version', 50 );
+  
+  $artisteer_versions = array( "na", "31", "30" ,"25" );
+  $artisteer_assoc = bw_assoc( $artisteer_versions );
+  bw_select_arr( $option, "Artisteer version [bw_art_version]", $options, 'art-version', array( "#options" => $artisteer_assoc ) );
 
   $options['yearfrom'] = bw_array_get_dcb( $options, "yearfrom", NULL, "bw_get_yearfrom" );
   bw_textfield_arr( $option, "Copyright from year (used in [bw_copyright])", $options, 'yearfrom', 4 );
@@ -586,9 +595,47 @@ function oik_options_validate( $input ) {
     bw_create_file( get_stylesheet_directory(), $sanfile, plugin_dir_path( __FILE__ ) . 'custom.css' );  
   }
   
+  $input = oik_set_latlng( $input ); 
+  
   return $input;
 }
 
+/**
+ * Set the lat and lng fields for the given address
+ * if the address is set but either the lat/lng is not.
+ *
+ */
+function oik_set_latlng( $input ) {
+  $long = false;
+  bw_trace2( $long, "long", false);
+  
+  $lat = bw_array_get( $input, "lat", false );
+  $long = bw_array_get( $input, "long", $long );
+  
+  bw_trace2( $lat, "lat" );
+  if ( $lat ) {
+    $latlng = explode( ",",  $lat );
+    bw_trace2( $latlng, "latlng" );
+    $lat = bw_array_get( $latlng, 0, $lat );
+    
+    $long2 = bw_array_get( $latlng, 1, false );
+    $long = bw_pick_one( $long, $long2 ); 
+    
+    
+  }
+  
+  $input['lat'] = $lat;
+  $input['long'] = $long;
+  bw_trace2( $lat, "lat" );
+  bw_trace2( $long, "long",  false );
+  if ( $lat && $long ) {
+    /* We seem to be sorted  but they could be wrong? Let's trust the user to know what they meant. It could just be 0,0! */
+  } else {
+    oik_require( "shortcodes/oik-googlemap.php" );
+    $input = bw_geocode_googlemap( $input );
+  }
+  return( $input );
+}
 
 /**
  */
@@ -644,10 +691,15 @@ function bw_create_file( $base, $path, $default ) {
 function bw_edit_custom_css_link( $customCSS, $theme ) {
   
   if ( $customCSS != NULL ) {
+    global $wp_version; 
     $link = network_admin_url( "theme-editor.php" );
     $link .= '?file=';
     //$link .= 'oik/custom.css';
-    $link .= path_join( get_stylesheet_directory(), $customCSS );
+    if ( version_compare( $wp_version, '3.4', "ge" ) ) {
+      $link .= $customCSS;
+    } else {  
+      $link .= path_join( get_stylesheet_directory(), $customCSS );
+    }  
     $link .= "&theme=$theme";
     $img = retimage( null, oik_url( 'images/editcss_48.png') , "Edit custom CSS" );
     alink( null, $link, $img, "Edit custom CSS" ); 

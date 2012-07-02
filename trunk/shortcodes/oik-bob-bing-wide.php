@@ -1,6 +1,5 @@
 <?php // (C) Copyright Bobbing Wide 2010-2012
 
-
 /*
     Copyright 2010-2012 Bobbing Wide (email : herb@bobbingwide.com )
 
@@ -20,11 +19,9 @@
 
 */
 
-
 oik_require( "bobbcomp.inc" );
 
-function bw_bob( $class = NULL)
-{
+function bw_bob( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
   $bw .= '<span class="b1 bold">B</span>';
   $bw .= '<span class="o bold">o</span>'; 
@@ -34,8 +31,7 @@ function bw_bob( $class = NULL)
 
 }
 
-function bw_fob( $class = NULL)
-{
+function bw_fob( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
   $bw .= '<span class="W bold">f</span>';
   $bw .= '<span class="i2 bold">o</span>'; 
@@ -45,21 +41,17 @@ function bw_fob( $class = NULL)
 
 }
 
-function bw_bing( $class = NULL)
-{
+function bw_bing( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
   $bw .= '<span class="b3 bold">b</span>';
   $bw .= '<span class="i1 bold">i</span>';
   $bw .= '<span class="n bold">n</span>';
   $bw .= '<span class="g bold">g</span>';
   $bw .= nullretetag( "span", $class ); 
-
   return( $bw );
-
 }
 
-function bw_wide( $class=NULL )
-{
+function bw_wide( $class=NULL ) {
   $bw = nullretstag( "span", $class ); 
   $bw .= '<span class="W">W</span>';
   $bw .= '<span class="i2">i</span>';
@@ -69,41 +61,34 @@ function bw_wide( $class=NULL )
   return( $bw );
 } 
 
-function bw_bong( $class = NULL)
-{
+function bw_bong( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
   $bw .= '<span class="W">b</span>';
   $bw .= '<span class="i2">o</span>';
   $bw .= '<span class="d">n</span>';
   $bw .= '<span class="e">g</span>';
   $bw .= nullretetag( "span", $class ); 
-
   return( $bw );
-
 }
-function bw_hide( $class = NULL)
-{
+
+function bw_hide( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
   $bw .= '<span class="W">h</span>';
   $bw .= '<span class="i2">i</span>';
   $bw .= '<span class="d">d</span>';
   $bw .= '<span class="e">e</span>';
   $bw .= nullretetag( "span", $class ); 
-
   return( $bw );
 
 }
 
-function bw_wow ( $class = NULL )
-{
+function bw_wow ( $class = NULL ) {
   $bw = nullretstag( "span", $class ); 
   $bw .= '<span class="B1">W</span>';
   $bw .= '<span class="o">o</span>';
   $bw .= '<span class="B2">W</span>';
   $bw .= nullretetag( "span", $class ); 
-
   return( $bw );
-
 }
 
 /* These are non-translatable */
@@ -115,9 +100,7 @@ function bw_wow_long ( $class = NULL ) {
   $bw .= ' ';
   $bw .= '<span class="B2">WordPress</span>';
   $bw .= nullretetag( "span", $class ); 
-
   return( $bw );
-
 }
 
 /**
@@ -273,18 +256,16 @@ function bw_page( $atts ) {
  */
 function bw_editcss( $atts ) {
   oik_require( "admin/oik-admin.inc" );
-  oik_custom_css();
+  $theme = bw_get_theme();
+  oik_custom_css( $theme );
   return( bw_ret());
 }
-
-
 
 /**
  * Extract unique plugin names from an array of plugins
  *
  * given an array of (active) plugin names return a list of the uniquely downloadable plugins
 */ 
- 
 function bw_get_unique_plugin_names( $plugins ) {
   $names = array();
   foreach ( $plugins as $plugin ) {
@@ -298,6 +279,14 @@ function bw_get_unique_plugin_names( $plugins ) {
 }
 
 /**
+ *
+ */
+function bw_get_plugins() {
+  require_once( ABSPATH . "wp-admin/includes/plugin.php" );
+  $plugins = get_plugins();
+  bw_trace2( $plugins );
+}
+/**
  * get a simple list of plugin names satisfying the option value
  * Note: 'active-plugins' is the only value you can currently use
  *
@@ -307,6 +296,7 @@ function bw_plug_list_plugins( $option='active_plugins' ) {
   bw_trace( $plugins, __FUNCTION__, __LINE__, __FILE__, "plugins" );
   
   $names = bw_get_unique_plugin_names( $plugins );
+  //bw_get_plugins();
   return( $names );
 }
 
@@ -372,7 +362,7 @@ function bw_plug( $atts ) {
     
     if ( !$plugininfo->name ) {
       if ( $table ) {
-        bw_format_table( $name, $link, FALSE );
+        bw_format_plug_table( $name, $link, FALSE );
       }  
       else {
         bw_format_default( $name, $link );
@@ -380,7 +370,7 @@ function bw_plug( $atts ) {
     }   
     else {
       if ( $table ) {
-        bw_format_table( $name, $link, $plugininfo );
+        bw_format_plug_table( $name, $link, $plugininfo );
       }  
       else {
         bw_format_link( $name, $link, $plugininfo );
@@ -491,7 +481,7 @@ function bw_get_plugin_info( $plugin_slug ) {
  * 2. link to plugin, link to plugin's home page, link to [bw]'s notes on the plugin
  * 3. other stuff: version, number times downloaded, last update date, tested up to WP x.x.xx 
  */  
-function bw_format_table( $name, $link, $plugininfo ) {
+function bw_format_plug_table( $name, $link, $plugininfo ) {
 
   stag( "tr");
    
@@ -561,7 +551,7 @@ function bw_module( $atts ) {
   /*
   if ( !$plugininfo->name ) {
     if ( $table ) {
-      bw_format_table( $name, $link, FALSE );
+      bw_format_plug_table( $name, $link, FALSE );
     }  
     else {
       bw_format_default( $name, $link );
@@ -569,7 +559,7 @@ function bw_module( $atts ) {
   }   
   else {
     if ( $table ) {
-      bw_format_table( $name, $link, $plugininfo );
+      bw_format_plug_table( $name, $link, $plugininfo );
     }  
     else {
       bw_format_link( $name, $link, $plugininfo );

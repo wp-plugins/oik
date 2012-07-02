@@ -10,10 +10,10 @@ function bw_trace( $text, $function=__FUNCTION__, $lineno=__LINE__, $file=__FILE
     bw_lazy_trace( $text, $function, $lineno, $file, $text_label );  
 }
 
-function bw_trace2( $value=NULL, $text=NULL ) { 
+function bw_trace2( $value=NULL, $text=NULL, $show_args=true ) { 
   global $bw_trace_on;
   if ( $bw_trace_on ) 
-    return( bw_lazy_trace2( $value, $text ));
+    return( bw_lazy_trace2( $value, $text, $show_args ));
   else  
     return( $value );
 } 

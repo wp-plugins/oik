@@ -257,5 +257,21 @@ function bw_get_posts( $atts = NULL ) {
   
 }
 
+/**
+ * Get the post / custom post type identified by the ID and post type
+ */
+function bw_get_post( $post_id, $post_type ) {
+  $atts['include']= $post_id;
+  $atts['numberposts'] = 1;
+  $atts['post_type'] = $post_type;
+  $posts = get_posts( $atts ); 
+  if ( $posts ) {
+    $post = bw_array_get( $posts, 0, null );
+  } else {
+    // gobang() or doingitwrong or something
+  }  
+  bw_trace2( $post );
+  return( $post );
+}
 
 

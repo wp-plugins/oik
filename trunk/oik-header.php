@@ -4,7 +4,7 @@
 Plugin Name: oik custom header image
 Plugin URI: http://www.oik-plugins.com/oik
 Description: custom page header image selection for pages, posts and custom post types 
-Version: 1.13
+Version: 1.14
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -27,7 +27,7 @@ License: GPL2
 
 */
 
-require_once( 'bobbfunc.inc' );
+//require_once( 'bobbfunc.inc' );
 //require_once( 'bobbingwide.inc' );
 add_action( "oik_loaded", "oik_header_init" );
 
@@ -66,8 +66,6 @@ function bw_page_header_style() {
   }  
 }
 
-
-
 /** 
  * Return a candidate function name from the given string
  * 
@@ -84,12 +82,10 @@ function bw_function_namify( $name ) {
   return( bw_trace2( $name ) ); 
 }  
 
-
 /** 
  * Return the function name to be used to 'theme' the output
  * 
- * 
- * We append to the function name to find the most precise name present
+ * We append to the function name prefix to find the most precise name present
  *
  * @param string $prefix - This routine assumes that the $prefix function exists
  * @param string $suffix - optional suffix for multiple theming functions 
@@ -98,11 +94,24 @@ function bw_function_namify( $name ) {
  */
 function bw_theme_function( $prefix="_", $suffix = NULL ) {
   $funcname = $prefix;
+  $current_theme = bw_get_theme();
   
-  $current_theme = get_current_theme();
   $testname = $funcname . bw_function_namify( $current_theme );
-  if ( function_exists( $testname ) ) 
+  if ( function_exists( $testname ) ) { 
     $funcname = $testname;
+  } else {
+    $child_theme = is_child_theme();
+    bw_trace2( $child_theme, "child_theme?", false );
+    if ( $child_theme ) {
+       // get parent theme name 
+       $template = get_template();
+       $testname = $funcname . bw_function_namify( $template );
+       bw_trace2( $testname, "testname", false );
+       if ( function_exists( $testname ) ) { 
+         $funcname = $testname;
+       }  
+    }
+  }  
     
   $testname .= $suffix;
   
@@ -111,7 +120,6 @@ function bw_theme_function( $prefix="_", $suffix = NULL ) {
     
   return bw_trace2( $funcname );
 }   
-
 
 /**
  * Locate and call the function to "theme" the custom page header image
@@ -137,6 +145,11 @@ function _bw_page_header_( $post_id, $header_image ) {
   e('</style>');
   echo( bw_ret());
 }
+
+
+function _bw_page_header_twentyeleven ( $post_id, $header_image ) {
+  _bw_page_header_twenty_eleven( $post_id, $header_image );
+}  
 
 /**
  * Generate the CSS to display a custom page header for the twenty eleven theme

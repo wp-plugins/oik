@@ -4,7 +4,7 @@
 Plugin Name: oik base plugin 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Lazy smart shortcodes for displaying often included key-information and other WordPress content
-Version: 1.13
+Version: 1.14
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -37,13 +37,13 @@ require_once( "oik_boot.inc" );
 
 /**
  * Return the oik_version
- * @returns string oik version number e.g. 1.13
+ * @returns string oik version number e.g. 1.14
  */  
 function oik_version() {
   return bw_oik_version();
 }
 
- 
+
   require_once( "oik-add-shortcodes.php" );
 
   add_filter('widget_text', 'do_shortcode');
@@ -89,33 +89,21 @@ function oik_version() {
  */
 function oik_enqueue_stylesheets() {
   //global $wp_styles;
-  bw_trace2();
+  //bw_trace2();
   wp_enqueue_style( 'oikCSS', WP_PLUGIN_URL . '/oik/oik.css' ); 
-  
   // **?** suggest this stylesheet is only enqueued for bob-bing-wide and oik admin
-  wp_enqueue_style( 'bwlinkCSS', WP_PLUGIN_URL . '/oik/bwlink.css' ); 
+  wp_enqueue_style( 'bwlinkCSS', WP_PLUGIN_URL . '/oik/bwlink.css', 'oikCSS' ); 
   
   $customCSS =  bw_get_option( 'customCSS' );
   if ( !empty( $customCSS) ) {
-  
-    //bw_trace( $wp_styles, __FUNCTION__, __LINE__, __FILE__, "wp_styles");
-  
-    //$deps = array( get_current_theme() );
-    
-    //bw_trace( $deps, __FUNCTION__, __LINE__, __FILE__, "deps");
-    //bw_trace( $customCSS, __FUNCTION__, __LINE__, __FILE__, "customCSS");
     $customCSSurl = get_stylesheet_directory_uri() . '/' .  $customCSS;
     
     bw_trace( $customCSSurl, __FUNCTION__, __LINE__, __FILE__, "customCSSurl");
 
-    //wp_register_style( 'customCSS', $customCSSurl, $deps);
     wp_register_style( 'customCSS', $customCSSurl );
     
     wp_enqueue_style( 'customCSS' );
   }
-  // bw_trace( $wp_styles, __FUNCTION__, __LINE__, __FILE__, "wp_styles");
- 
-  //bw_button_options();
 }
   
 
@@ -127,6 +115,8 @@ function oik_enqueue_stylesheets() {
 function oik_main_init() {
   add_action( 'admin_menu', 'oik_admin_menu' );
   add_action( "activate_plugin", "oik_load_plugins" );
+  add_action( "network_admin_notices", "oik_admin_menu" );
+  bw_load_plugin_textdomain();
   do_action( 'oik_loaded' );
 }
 
