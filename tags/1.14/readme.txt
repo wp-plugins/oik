@@ -4,7 +4,7 @@ Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, key information, trace, blocks, buddypress, pages, bookmarks, images, attachments, smart, lazy
 Requires at least: 3.0.4
 Tested up to: 3.4.1
-Stable tag: 1.13
+Stable tag: 1.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

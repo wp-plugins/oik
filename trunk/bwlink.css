@@ -1,41 +1,6 @@
 /* (C) Copyright Bobbing Wide 2010-2012 */
 /* bwlink.css */
 
-/* Colour table copied from bobb-bobbingwide.css
-   Except for the logo (class prefixed with an h) the darker colours should now be used instead of the brighter ones
-   
-   relative dir    classname     color    note                    darker color
-   ------------    -----         -----    ------------------      ------------
-   ../bwb1         home          #36e2b7  turquoise               #159374
-   ../bwo          static        #61e236  light green             #359315
-   ../bwb2         dynamic       #e2b736  orange                  #937415
-   ../bwb3         portfolio     #e23661  red                     #931535
-   ../bwi          quote         #3661e2  blue                    #153593
-   ../bwn          contactus     #6136e2  purple                  #351593
-   ../bwg          aboutus       #b736e2  magenta                 #741593
-
-   ../bw           offers        #555     greys
-   ../bwi2         bwi2          #666     NOT IMPLEMENTED
-   ../bwd          bwd           #777     "
-   ../bwe          bwe           #888     "
-
-
-em.hB1 { color:  #213623; color: #36e2b7; color: #159374; font-size: 1.9em; vertical-align: -0.15em; text-transform: uppercase}
-em.hb1 { color:  #213623; color: #36e2b7; color: #159374;font-size: 1.9em; vertical-align: -0.13em; text-transform: lowercase;}
-em.ho { color: #61e236; color: #359315; font-size: 1.8em; vertical-align: -0.2em;} 
-em.hb2  { color: #e2b736; color: #937415; font-size: 1.7em; vertical-align: -0.1em;} 
-em.hb3  { color: #e23661; color:  #931535; font-size: 1.6em; vertical-align: 0.1em;} 
-em.hi1  { color: #3661e2; color:  #153593; vertical-align: 0.3em;} 
-em.hn  { color: #6136e2; color:  #351593; } 
-em.hg { color: #b736e2; color:  #741593; vertical-align: -0.2em;}
-em.hW { font-weight: bold; color: #555; letter-spacing: 2pt; font-size: 1.5em; text-transform: lowercase;}
-em.hi2 { font-weight: bold; color: #666; letter-spacing: 3pt; font-size: 1.5em; }
-em.hd { font-weight: bold; color: #777; letter-spacing: 4pt; font-size: 1.5em; }
-em.he { font-weight: bold; color: #888; letter-spacing: 5pt; font-size: 1.6em; } 
-
-
-font-family: 'Trebuchet MS', Verdana, fantasy;
-*/         
 
 
 em.hB1 { color: #159374; font-size: 1.9em; text-transform: uppercase; }

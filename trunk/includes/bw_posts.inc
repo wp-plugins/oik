@@ -84,11 +84,11 @@ function bw_excerpt( $post ) {
   */    
   if ( bw_process_this_post( $post->ID ) ) {
 
-    if ( empty( $post->excerpt ) ) {
+    if ( empty( $post->post_excerpt ) ) {
       $content = explode( '<!--more-->', $post->post_content); 
       $excerpt = $content[0];
     } else {
-      $excerpt = $post->excerpt;
+      $excerpt = $post->post_excerpt;
     }
     $excerpt = bw_do_shortcode( $excerpt );
   } else {
