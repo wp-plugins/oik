@@ -110,6 +110,9 @@ Yes - see above
 9. oik header image plugin - custom header image for a page 
 
 == Upgrade Notice ==
+= 1.15 =
+Contains a bug fix preventing  oik-nivo-slider working on admin pages: oik options > nivo settings
+
 = 1.14 =
 oik version 1.14 contains a fix for oik-nivo-slider on sites where jquery.js is not automatically loaded by the theme or other plugins
 It also includes changes for the cookie-cat plugin and website.
@@ -128,6 +131,10 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog == 
+= 1.15 =
+* Fixed: New solution for bw_jquery() API broke oik-nivo-slider on admin pages
+* Added: Support for [bw_table] shortcode
+
 = 1.14 =
 * Added: oik-options - use Google geocoding to find latitude and longitude if not specified
 * Added: oik-fields plugin supports display of custom columns in admin list; currency, numeric, date, select and noderef 
