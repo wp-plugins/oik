@@ -2,7 +2,7 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '1.14' );
+  return( '1.15' );
 }
 
 require_once( "oik_boot.inc" );   /* Don't use oik_require here */
@@ -841,12 +841,17 @@ function bw_jq( $text ) {
   global $bw_jq;
   if ( !isset( $bw_jq ) ) {
     wp_enqueue_script( 'jquery' ); 
-    add_action( 'wp_footer', "bw_jq_flush", 25 );
+    if ( !is_admin() ) {
+      add_action( 'wp_footer', "bw_jq_flush", 25 );
+    }  
     //bw_trace2( $bw_jq, "bw_jq not set" );  
   }
   $bw_jq .=$text;
   //bw_trace2( $bw_jq, "bw_jq", false );  
 
+  if ( is_admin() ) {
+    bw_jq_flush();
+  }  
 }  
 
 /**

@@ -254,7 +254,7 @@ function bw_page( $atts ) {
 /** 
  * Create an Edit (custom) CSS button. Similar code to bw_addpost()
  */
-function bw_editcss( $atts ) {
+function bw_editcss( $atts=null ) {
   oik_require( "admin/oik-admin.inc" );
   $theme = bw_get_theme();
   oik_custom_css( $theme );
