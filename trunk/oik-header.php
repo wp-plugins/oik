@@ -4,7 +4,7 @@
 Plugin Name: oik custom header image
 Plugin URI: http://www.oik-plugins.com/oik
 Description: custom page header image selection for pages, posts and custom post types 
-Version: 1.15
+Version: 1.16
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -27,11 +27,12 @@ License: GPL2
 
 */
 
-//require_once( 'bobbfunc.inc' );
-//require_once( 'bobbingwide.inc' );
 add_action( "oik_loaded", "oik_header_init" );
 
 function oik_header_init() {
+  if ( is_admin() ) {
+    require_once( 'admin/oik-header.inc' );
+  }
   add_action( 'wp_footer', 'bw_page_header_style' );
 }
 
@@ -52,17 +53,7 @@ function bw_page_header_style() {
   $post_meta = get_post_meta( $post_id, '_bw_header_image', TRUE );
   bw_trace2( $post_meta );
   if ( $post_meta ) {
-    
     bw_theme_page_header( $post_id, $post_meta );
-    
-    /*
-    e('<style type="text/css">');
-    
-    e( "body.postid-$post_id div.art-header, body.page-id-$post_id div.art-header, body.page-id-$post_id div#header { background-image: url('$header_image'); } " );
-    e( "div.art-headerobject { display: none; } ");
-    e('</style>');
-    echo( bw_ret());
-    */
   }  
 }
 
@@ -78,7 +69,6 @@ function bw_function_namify( $name ) {
   $name = str_replace( ' ', '_', $name );
   $name = str_replace( '-', '_', $name );
   $name = strtolower( $name );
-  
   return( bw_trace2( $name ) ); 
 }  
 
@@ -165,14 +155,6 @@ function _bw_page_header_twentyeleven ( $post_id, $header_image ) {
  * 
  */
 function _bw_page_header_twenty_eleven( $post_id, $header_image ) {
-
-  // We don't actually need to find the height of the image as it's not used in the CSS
-  // list($width, $height, $type, $attr) = bw_getimagesize( $header_image );
-  // $padding_bottom = 0;  /* less than 14px * 3.65625em */
-  // //if ( $height ) 
-  // $padding_bottom += $height;
-    
-  
   // **?** - code to produce style tags different browsers
   // Note: the current solution seems OK for Chrome and Firefox
   //  -o-background-size: 100% 100%, auto;
@@ -217,9 +199,6 @@ function bw_getimagesize( $image ) {
 
  
   
-if ( is_admin() ) {
-  require_once( 'admin/oik-header.inc' );
-}
 
 
 

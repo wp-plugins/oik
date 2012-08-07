@@ -65,14 +65,13 @@ For use in bbPress sites:
 Other plugins which use the oik API are also available on WordPress.org: 
 
 * [oik-nivo-slider](http://wordpress.org/extend/plugins/oik-nivo-slider/) - [nivo] shortcode for the jQuery "Nivo slider" for posts, pages, attachments and custom post types
+* [oik-privacy-policy](http://www.wordpress.org/extend/plugins/oik-privacy-policy) - generate a privacy policy page, compliant with UK cookie law (EU cookie directive)
+* [cookie-cat](http://www.wordpress.org/extend/plugins/cookie-cat) - [cookies] shortcode to list the cookies your website may use
 * [uk-tides](http://wordpress.org/extend/plugins/uk-tides/) - [bw_tides] shortcode for tide times and heights in the UK  (replaces oik-tides)
 * [bbboing](http://www.wordpress.org/extend/plugins/bbboing) - obfuscate text but leave it readable
-* more coming soon! 
-
 
 ALL of the plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
 These are known as the bobbing wide application programming interface (bw API).
-
 
 == Installation ==
 1. Upload the contents of the oik plugin to the `/wp-content/plugins/oik' directory
@@ -80,6 +79,7 @@ These are known as the bobbing wide application programming interface (bw API).
 1. Go to **oik options** > **options** to fill in your **o**ften **i**ncluded **k**ey information
 1. Use the shortcodes when writing your content
 1. Activate other oik plugins when you need them
+
 
 == Frequently Asked Questions ==
 = Where is the FAQ? =
@@ -110,8 +110,11 @@ Yes - see above
 9. oik header image plugin - custom header image for a page 
 
 == Upgrade Notice ==
+= 1.16 = 
+Contains a fix for Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2
+
 = 1.15 =
-Contains a bug fix preventing  oik-nivo-slider working on admin pages: oik options > nivo settings
+Contains a bug fix preventing oik-nivo-slider working on admin pages: oik options > nivo settings
 
 = 1.14 =
 oik version 1.14 contains a fix for oik-nivo-slider on sites where jquery.js is not automatically loaded by the theme or other plugins
@@ -124,13 +127,16 @@ oik version 1.13 is required for the new oik-privacy-policy plugin.
 Upgrade oik to version 1.12 before updating oik-nivo-slider to version 1.2. For more information see:
 [oik-nivo-slider-v1.2 for oik v1.12](http://www.oik-plugins.com/2012/04/oik-nivo-slider-v1-2-for-oik-v1-12-now-in-alpha-test/)
 
-
 = 1.11 =
 There are many changes in version 1.11 to support lazy invocation of code.  
 Some plugins have been created as separate plugins (e.g. uk-tides). Others have been changed so that you can activate them by changing oik settings, so are no longer activatable.
  
 
 == Changelog == 
+= 1.16 =
+* Fixed: Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2
+* Added: CSS to disable the background image for links to .pdf files ( selector: div.noicon a )
+
 = 1.15 =
 * Fixed: New solution for bw_jquery() API broke oik-nivo-slider on admin pages
 * Added: Support for [bw_table] shortcode
@@ -373,10 +379,6 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * renamed bwtrace.php to oik-bwtrace.php 
 = 0.1 =
 * initial version 
-
-== Upgrade notice ==
-= 0.01 =
-Needed for Bobbing Wide's Wonder of WordPress websites 
 
 == Further reading ==
 If you want to read more about the oik plugins then please visit the
