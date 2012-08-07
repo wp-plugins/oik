@@ -2,7 +2,7 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '1.15' );
+  return( '1.16' );
 }
 
 require_once( "oik_boot.inc" );   /* Don't use oik_require here */
@@ -701,18 +701,27 @@ function bw_format_date( $date=NULL, $format="Y-m-d" ) {
   return( $date );
 }
 
-/** Simple function to validate a field as TRUE or FALSE given a big list of strings that represent TRUE 
-    Note: No need for the $falses parameter at present
+/**
+ * Validate as true or false
+ * 
+ * Simple function to validate a field as TRUE or FALSE given a big list of strings that represent TRUE 
+ *
+ * @param string $field - value to be validated. If null then the value returned is FALSE
+ * @param string $trues - list of TRUE values
+ * @param string $falses - list of FALSE values  Note: No need for the $falses parameter at present
+ * @return bool true or false
  */
 function bw_validate_torf( $field, $trues=",true,yes,1", $falses=NULL ) {
   $torf = FALSE;
-  $field = ",".strtolower( $field );
-  bw_trace( $field, __FUNCTION__, __LINE__, __FILE__, "field" );
-  bw_trace( $trues, __FUNCTION__, __LINE__, __FILE__, "trues" );
-  $pos = strpos( $trues, $field );
-  bw_trace( $pos, __FUNCTION__, __LINE__, __FILE__, "pos" );
-  if ( $pos !== FALSE )
-    $torf = TRUE;
+  if ( $field ) {
+    $field = ",".strtolower( $field );
+    //bw_trace( $field, __FUNCTION__, __LINE__, __FILE__, "field" );
+    //bw_trace( $trues, __FUNCTION__, __LINE__, __FILE__, "trues" );
+    $pos = strpos( $trues, $field );
+    //bw_trace( $pos, __FUNCTION__, __LINE__, __FILE__, "pos" );
+    if ( $pos !== FALSE )
+      $torf = TRUE;
+  }    
   return( $torf );
 }
 
@@ -1026,14 +1035,45 @@ function bw_load_plugin_textdomain( $domain="oik" ) {
  * It didn't exist in WP 3.3.1.
  * So we need a wrapper to test the WordPress version
  * 
+ 
+C:\apache\htdocs\wordpress\wp-content\plugins\oik\bobbfunc.inc(1037:0) 2012-07-18T11:03:12+00:00 617 cf=the_content bw_get_theme(4) current theme WP_Theme Object
+(
+    [theme_root:WP_Theme:private] => C:\apache\htdocs\wordpress/wp-content/themes
+    [headers:WP_Theme:private] => Array
+        (
+            [Name] => Twenty Eleven
+            [ThemeURI] => http://wordpress.org/extend/themes/twentyeleven
+            [Description] => The 2011 theme for WordPress is sophisticated, lightweight, and adaptable. Make it yours with a custom menu, header image, and background -- then go further with available theme options for light or dark color scheme, custom link colors, and three layout choices. Twenty Eleven comes equipped with a Showcase page template that transforms your front page into a showcase to show off your best content, widget support galore (sidebar, three footer areas, and a Showcase page widget area), and a custom "Ephemera" widget to display your Aside, Link, Quote, or Status posts. Included are styles for print and for the admin editor, support for featured images (as custom header images on posts and pages and as large images on featured "sticky" posts), and special styles for six different post formats.
+            [Author] => the WordPress team
+            [AuthorURI] => http://wordpress.org/
+            [Version] => 1.4
+            [Template] => 
+            [Status] => 
+            [Tags] => dark, light, white, black, gray, one-column, two-columns, left-sidebar, right-sidebar, fixed-width, flexible-width, custom-background, custom-colors, custom-header, custom-menu, editor-style, featured-image-header, featured-images, full-width-template, microformats, post-formats, rtl-language-support, sticky-post, theme-options, translation-ready
+            [TextDomain] => twentyeleven
+            [DomainPath] => 
+        )
+
+    [headers_sanitized:WP_Theme:private] => 
+    [name_translated:WP_Theme:private] => 
+    [errors:WP_Theme:private] => 
+    [stylesheet:WP_Theme:private] => twentyeleven
+    [template:WP_Theme:private] => twentyeleven
+    [parent:WP_Theme:private] => 
+    [theme_root_uri:WP_Theme:private] => 
+    [textdomain_loaded:WP_Theme:private] => 
+    [cache_hash:WP_Theme:private] => a3e6a9c1d55ef4070d99b81dc839928b
+)
+ * 
  */
 function bw_get_theme() { 
   global $wp_version;
   if ( version_compare( $wp_version, '3.4', "ge" ) ) {
-    $current_theme = wp_get_theme(); 
+    $theme = wp_get_theme();
+    $current_theme = $theme->stylesheet;  
   } else {
     $current_theme = get_current_theme();
   }  
-  //bw_trace2( $current_theme, "current theme" );
+  bw_trace2( $current_theme, "current theme" );
   return( $current_theme );
 }    

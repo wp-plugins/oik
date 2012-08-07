@@ -432,6 +432,8 @@ ul.cross li, li.cross, .tick li.x { background: transparent url( 'images/red_x_6
 
 /* For rules on using the PDF logo see "Adobe PDF file icon" in http://www.adobe.com/misc/linking.html */
 a[href*='.pdf'] { background: transparent url( 'images/pdficon_small.png' ) no-repeat; background-size: auto; padding-left: 32px; }
+div.noicon a[href*='.pdf'] { background-image: none; padding-left: 3px; }
+
 a.portfolio { background: none; padding-left: 0px;  }
 /* columns required %ages to use
    ---------------- ---------------
