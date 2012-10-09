@@ -1,4 +1,6 @@
 <?php 
+if ( defined( 'OIK_ATTACHMENTS_SHORTCODES_INCLUDED' ) ) return;
+define( 'OIK_ATTACHMENTS_SHORTCODES_INCLUDED', true );
 
 /*
     Copyright 2012 Bobbing Wide (email : herb@bobbingwide.com )
@@ -20,6 +22,73 @@
 */
 oik_require( "includes/bw_posts.inc" );
 oik_require( "includes/bw_images.inc" );
+
+/**
+ * 
+  find the correct file name for this image
+  C:\apache\htdocs\wordpress\wp-content\plugins\oik\shortcodes\oik-attachments.php(26:0) 2012-07-16T10:14:35+00:00 397 cf=the_content bw_thumbnail_full(2) attachment_meta Array
+(
+    [0] => Array
+        (
+            [width] => 350
+            [height] => 178
+            [hwstring_small] => height='65' width='128'
+            [file] => 2012/03/nggallery-example1.jpg
+            [sizes] => Array
+                (
+                    [thumbnail] => Array
+                        (
+                            [file] => nggallery-example1-150x150.jpg
+                            [width] => 150
+                            [height] => 150
+                        )
+
+                    [medium] => Array
+                        (
+                            [file] => nggallery-example1-256x130.jpg
+                            [width] => 256
+                            [height] => 130
+                        )
+
+                )
+
+            [image_meta] => Array
+                (
+                    [aperture] => 0
+                    [credit] => 
+                    [camera] => 
+                    [caption] => 
+                    [created_timestamp] => 0
+                    [copyright] => 
+                    [focal_length] => 0
+                    [iso] => 0
+                    [shutter_speed] => 0
+                    [title] => 
+                )
+
+        )
+
+)
+*/
+function bw_thumbnail_full( $post ) {
+  $attachment_meta = get_post_meta( $post->ID, "_wp_attachment_metadata", false );
+  bw_trace2( $attachment_meta, "attachment_meta", false );
+  $first = bw_array_get( $attachment_meta, 0, null );
+  
+  if ( $first ) { 
+    $file = bw_array_get( $first, "file", null );
+  }     
+  
+  if ( $first && $file)  {
+  
+    $upload_dir = wp_upload_dir();
+    $baseurl = $upload_dir['baseurl'];
+    $retimage = retimage( "full", $baseurl . '/' . $file );
+  } else {
+    $retimage = retimage( "full", $post->guid );
+  }  
+  return( $retimage );  
+}
 
 /**
  * Format the "attachment" - basic first version
@@ -53,7 +122,8 @@ function bw_format_attachment( $post, $atts ) {
   // so wp_get_attachment_link is not doing much really! 
   $atts['thumbnail'] = bw_array_get( $atts, 'thumbnail', 'thumbnail' ); 
   if ( $atts['thumbnail'] == "full" ) { 
-    $thumbnail = retimage( "full", $post->guid );
+    $thumbnail = bw_thumbnail_full( $post );
+    // $thumbnail = retimage( "full", $post->guid );
     bw_link_thumbnail( $thumbnail, $post->ID, $atts );
   } else {
     $thumbnail = bw_thumbnail( $post->ID, $atts, true );

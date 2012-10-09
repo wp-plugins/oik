@@ -19,7 +19,7 @@
 
 */
 
-
+/*
 if ( !defined('ABSPATH') ) {
   define('ABSPATH', dirname(__FILE__) . '/');
   function oik_path( $file = NULL, $plugin='oik') {
@@ -30,6 +30,7 @@ if ( !defined('ABSPATH') ) {
   require_once( '../bobbfunc.inc' );
   require_once( '../bobbforms.inc' );
 }
+*/
 
 function bw_average( $elapsed, $count ) { 
   if ( $count ) {
@@ -97,14 +98,47 @@ function bw_action_end_time( $action, $ts, $msec ) {
  * The input data is expected to be in the following format:
  * $ts - made from data[0] and data[1] - it doesn't matter if there's no space between dd and hh
  * $msec - microsecs 
- * $storend = start '<S' or end 'E>'
+ * $storend = start '<S' or end 'E>' or "<I" or "I>" - for "Immediate invocation"
  * $count = trace action count ( it may get reset )
  * $action = action name - extracted from cf=action name
  * where cf stands for "current filter"
+ * If there is no current filter the value is 
+ * $data[6] = function: 'apply_filters' or 'do_action'
+ * $data[7] = filter/action: the 'immediate' filter or action being applied
    
  
 2012-03-27 11:00:37 0.49518200 <S 607 cf=shutdown
 2012-03-27 11:00:37 0.49676500 E> 608 cf=shutdown
+
+The version 1.17 code now includes "immediate" actions which are created by bw_lazy_trace_action_immediate(),
+which is called by manually added bw_trace_action_immediate() calls in wp-includes/plugins.php 
+
+Sample output: 
+
+2012-10-04 14:10:20 0.03808400 <I 909 cf! apply_filters pre_option_blog_charset
+2012-10-04 14:10:20 0.03973400 <I 911 cf! apply_filters option_blog_charset
+2012-10-04 14:10:20 0.04081100 <S 912 cf=option_blog_charset 
+2012-10-04 14:10:20 0.04248700 E> 914 cf=option_blog_charset 
+2012-10-04 14:10:20 0.04394300 I> 916 cf! apply_filters option_blog_charset
+2012-10-04 14:10:20 0.04776700 <I 918 cf! apply_filters gettext
+2012-10-04 14:10:20 0.04914900 <I 920 cf! apply_filters gettext
+
+Before After   Means
+-----  -----   ---------
+<I     <I      The before invocation returned without calling a filter or function
+<I     I>      The filter has ended normally **?** - but our interceptor wasn't there 
+I>     <I      one filter has ended, another has started
+<I     <S      this should indicate that our action filter is working... it means that a user defined function is going to be invoked...
+               so why don't we log what these are? 
+               
+<S     E>      end of our action filter
+>E     E>      end of another action filter
+etc...
+
+The code to analyze the performance is not yet complete. But it's good enough to enable preliminary performance investigations.
+Perhaps we could keep a count of the number of SQL queries that have been performed to date! 
+
+
 
 */ 
 
@@ -118,9 +152,20 @@ function bw_handle_action( $data ) {
   if ( $storend == "<S" ) {
     bw_array_inc( $actions, $action );
     bw_action_start_time( $action, $ts, $msec );
-  } else {
+  } elseif ( $storend == "E>" ) {
     bw_action_end_time( $action, $ts, $msec );
-  } 
+  } else {
+    $action = $data[7];
+    if ( !$action ) { 
+      bw_backtrace(); 
+      bw_trace2(); 
+      //gobang(); 
+    } else {
+      bw_array_inc( $actions, $action );
+      bw_action_start_time( $action, $ts, $msec );
+      bw_action_end_time( $action, $ts, $msec );
+    }  
+  }
 }
 
 

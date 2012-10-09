@@ -1,4 +1,6 @@
 <?php
+if ( defined( 'OIK_BOOT_INCLUDED' ) ) return;
+define( 'OIK_BOOT_INCLUDED', true );
 /**
  * Return the path of the oik base plugin or any particular file
  *
@@ -39,8 +41,30 @@ if (!function_exists( 'oik_require' )) {
   function oik_require( $include_file = "bobbfunc.inc", $plugin="oik" ) {
     require_once( oik_path( $include_file, $plugin ) ); 
   }  
-}  
+} 
 
+if( !function_exists( "oik_require2" )) {
+/**
+ * Load a file which could have been relocated from one plugin to another
+ * 
+ * @param string $include_file - file name within the chosen $pluging e.g. admin/oik-header.inc
+ * @param string $to_plugin - the first plugin to try - this is the "to" plugin to where the file has been relocated
+ * @param string $from_plugin - this is the original plugin, defaulting to "oik"
+ * 
+ * Note: we try to be as efficient as possible loading the "new" file 
+ * Note: this code does not allow for files to be renamed during relocation
+ * This code does REQUIRE the file to exist somewhere! 
+ */
+function oik_require2( $include_file="bobbfunc.inc", $to_plugin, $from_plugin="oik" ) {
+  $new_path = oik_path( $include_file, $to_plugin );
+  if ( file_exists( $new_path ) ) {
+    require_once( $new_path );
+  } else {
+    oik_require( $include_file, $from_plugin );
+  }  
+}
+}
+  
 /**
  * load up the functions required to allow use of the bw/oik API
  *

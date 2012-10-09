@@ -18,7 +18,6 @@
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
-//oik_require( "includes/bw_posts.inc" );
 
 
 // Init plugin options to white list our options
@@ -103,7 +102,7 @@ function oik_action_reset_notes() {
 }
 
 function oik_action_summary() {  
-  oik_require( "admin/oik-bwaction.inc" ); 
+  oik_require2( "admin/oik-bwaction.inc", "oik-bwtrace" ); 
   bw_action_summary();  
 }
 

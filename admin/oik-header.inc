@@ -1,4 +1,7 @@
 <?php
+if ( defined( 'OIK_HEADER_INC_INCLUDED' ) ) return;
+define( 'OIK_HEADER_INC_INCLUDED', true );
+
 oik_require( 'bobbforms.inc' );
   
 add_action( 'add_meta_boxes', 'bw_oik_header_meta_boxes' );

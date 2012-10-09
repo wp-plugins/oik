@@ -1,4 +1,6 @@
-<?php 
+<?php
+if ( defined( 'OIK_TRACE_SHORTCODES_INCLUDED' ) ) return;
+define( 'OIK_TRACE_SHORTCODES_INCLUDED', true );
 /*
 
     Copyright 2012 Bobbing Wide (email : herb@bobbingwide.com )
@@ -56,7 +58,7 @@ function bw_trace_button( $atts = NULL ) {
 
     switch ( $option ) {
       case 'view':
-        oik_require( 'admin/oik-bwtrace.inc' );
+        oik_require2( 'admin/oik-bwtrace.inc', "oik-bwtrace" );
         $bw_trace_url = bw_trace_url();
         alink( NULL, $bw_trace_url, "View trace log", "View trace output in your browser. $bw_trace_url");
         break;
@@ -84,10 +86,7 @@ function bw_trace_button( $atts = NULL ) {
 function bw_trace_reset_form() {
   oik_require( "bobbforms.inc" );
   e( '<form method="post" action="" class="inline">' ); 
-  //stag( 'table class="form-table"' );
-  //bw_tablerow( array( "", 
   e( "<input type=\"submit\" name=\"_bw_trace_reset\" value=\"Trace reset\" />" ); 
-  //etag( "table" ); 			
   etag( "form" );
 }
 

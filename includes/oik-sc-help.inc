@@ -537,7 +537,7 @@ function oik__example( $shortcode=NULL ) {
 } 
 
 /**
- * Function to call a shortcode for a simple example
+ * Call a shortcode for a simple example
  * 
  * @param string $shortcode - name of shortcode
  * @param string $atts - attribute parameters to the shortcode
@@ -550,7 +550,7 @@ function oik__example( $shortcode=NULL ) {
  
  * Now I need to convert all unnecessary calls to bw_add_shortcode_event (or current_filter) to use this function instead **?**
 */
-function bw_invoke_shortcode( $shortcode, $atts=null, $text ) {
+function bw_invoke_shortcode( $shortcode, $atts=null, $text=null ) {
   p( $text );
   $example = "[$shortcode";
   if ($atts ) 

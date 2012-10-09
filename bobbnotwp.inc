@@ -16,15 +16,20 @@ function bw_get_option( $field ) {
 /** 
  * Dummy implementation of add_filter() so that shortcodes.php can be copied unchanged from WordPress.
  */
+if ( !function_exists( "add_filter" ) ) {
 function add_filter() {
  // Dummy implementation of add_filter() so that shortcodes.php can be copied unchanged from WordPress.
 } 
+}
 
 /**
  * Dummy implementation of add_action for non WordPress sites
  */
+ 
+if ( !function_exists( "add_action" ) ) {
 function add_action( $tag, $function_to_add, $priority=NULL, $accepted_args=NULL ) {
 // e.g. add_action( admin_init', array($this, 'bw_pp_admin_init'));
+}
 }
 
 /** 

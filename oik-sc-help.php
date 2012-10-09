@@ -1,10 +1,12 @@
 <?php
+if ( defined( 'OIK_SC_HELP_INCLUDED' ) ) return;
+define( 'OIK_SC_HELP_INCLUDED', true );
 
 /*
 Plugin Name: oik shortcode help shortcodes
-Plugin URI: http://www.oik-plugins.com/oik
+Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-sc-help
 Description: [bw_code] and [bw_codes] shortcodes
-Version: 1.16
+Version: 1.17
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -31,6 +33,16 @@ add_action( "oik_loaded", "oik_sc_help_init" );
 function oik_sc_help_init() { 
   bw_add_shortcode( "bw_codes", "bw_codes", oik_path( "shortcodes/oik-codes.php") , false );
   bw_add_shortcode( "bw_code", "bw_code", oik_path( "shortcodes/oik-codes.php") , false ); 
+}
+
+add_action( "oik_admin_menu", "oik_sc_help_admin_menu" );
+
+/**
+ * Relocate the plugin to become its own plugin and set the plugin server
+ */
+function oik_sc_help_admin_menu() {
+  oik_register_plugin_server( __FILE__ );
+  bw_add_relocation( 'oik/oik-sc-help.php', 'oik-sc-help/oik-sc-help.php' );
 }
 
 

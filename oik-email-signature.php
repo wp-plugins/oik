@@ -1,10 +1,12 @@
 <?php
+if ( defined( 'OIK_EMAIL_SIGNATURE_INCLUDED' ) ) return;
+define( 'OIK_EMAIL_SIGNATURE_INCLUDED', true );
 
 /*
 Plugin Name: oik email signature 
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-email-signature
 Description: Generate an email signature file for your email client
-Version: 1.16
+Version: 1.17
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -26,38 +28,31 @@ License: GPL2
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
-require_once( 'bwtrace.inc');
-require_once( 'bobbfunc.inc' );
-require_once( 'oik-add-shortcodes.php' );
 
-function oik_email_signature_version() {
-  return oik_version();
-  
-}
-
-
-  add_action('admin_init', 'bw_email_signature_init' );
-  add_action('admin_menu', 'bw_email_signature_add_page');
-  bw_add_shortcode( 'bw_email_signature', 'bw_email_signature' );
+add_action( "oik_loaded", "bw_email_signature_init" );
 
 
 // Init plugin options to white list our options
 function bw_email_signature_init(){
   bw_trace2();
-	register_setting( 'bw_email_signature_options', 'bw_email_signature', 'bw_email_signature_validate' );
+  add_action('admin_init', 'bw_email_signature_admin_init' );
+  add_action('admin_menu', 'bw_email_signature_add_page');
+  bw_add_shortcode( 'bw_email_signature', 'bw_email_signature' );
 }
 
+function bw_email_signature_admin_init() {
+  register_setting( 'bw_email_signature_options', 'bw_email_signature', 'bw_email_signature_validate' );
+}
 
 // Add menu page
 function bw_email_signature_add_page() {
-	add_options_page('oik email signature', 'oik email signature', 'manage_options', 'bw_email_signature', 'bw_email_signature_do_page');
+  add_options_page('oik email signature', 'oik email signature', 'manage_options', 'bw_email_signature', 'bw_email_signature_do_page');
+  // add_submenu_page( 'oik_menu', 'oik email signature', "oik email signature", 'manage_options', 'oik_email_signature', "bw_email_signature_do_page" );
 }
-
-
 
 // Draw the menu page itself
 function bw_email_signature_do_page() { 
-  require_once( "bobbforms.inc" );
+  //require_once( "bobbforms.inc" );
 
   sdiv( "wrap" );
   h2( bw_oik(). " email signature" );
@@ -93,8 +88,12 @@ function bw_email_signature_do_page() {
   bw_flush();
   $text = $options['text'];    
   $formatted_text = do_shortcode( $text );
-  
   e( $formatted_text );
+  
+  // Even though we might want to do this it's very silly as we go recursive! 
+  
+  // $formatted_text = apply_filters( 'settings_page_bw_email_signature', $example );
+  
   bw_flush();
   
   // Now create the version that the user can copy and paste into a file
@@ -135,3 +134,13 @@ function bw_email_signature( $atts ) {
 }
 
 
+add_action( "oik_admin_menu", "oik_email_signature_admin_menu" );
+
+
+/**
+ * Relocate the plugin to become its own plugin and set the plugin server
+ */
+function oik_email_signature_admin_menu() {
+  oik_register_plugin_server( __FILE__ );
+  bw_add_relocation( 'oik/oik-email-signature.php', 'oik-email-signature/oik-email-signature.php' );
+}

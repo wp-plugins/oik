@@ -71,6 +71,36 @@ function iarea( $name, $len, $value, $rows=10 ) {
   $it .= $value;
   $it .= "</textarea>";
   return( $it );
+}
+
+/**
+ * Create an email field 
+ * @link http://www.w3.org/TR/html-markup/input.email.html
+ */
+function iemail( $name, $len, $value, $class=null, $extras=null ) {
+  $it = "<input";
+  $it .= kv( "type", "email" );
+  $it .= kv( "name", $name );
+  $it .= kv( "value", $value );
+  $it .= kv( "size", $len );
+  $it .= kv( "class", $class );
+  $it.= $extras;
+  $it .= " />";
+  return( $it );
+}
+
+/**
+ * Create a submit button
+ */
+function isubmit( $name, $value, $class=null, $extras=null ) {
+  $it = "<input";
+  $it .= kv( "type", "submit" );
+  $it .= kv( "name", $name );
+  $it .= kv( "value", $value );
+  $it .= kv( "class", $class );
+  $it .= $extras;
+  $it .= " />";
+  return( $it );
 }  
     
 function tablerow( $td1, $td2 )
@@ -123,6 +153,15 @@ function bw_textfield( $name, $len, $text, $value, $class=null, $extras=null ) {
   bw_tablerow( array( $lab, $itext ) );
   return;
 }
+
+
+function bw_emailfield( $name, $len, $text, $value, $class=null, $extras=null ) {
+  $lab = label( $name, $text );
+  $itext = iemail( $name, $len, $value, $class, $extras ); 
+  bw_tablerow( array( $lab, $itext ) );
+  return;
+}
+
 
 function bw_textarea( $name, $len, $text, $value, $rows=10 ) {
   $lab = label( $name, $text );
@@ -212,10 +251,10 @@ function bw_checkbox_arr( $name, $text, $array, $index ) {
 /**
  * Create a textfield for an array options field 
  */
-function bw_textfield_arr( $name, $text, $array, $index, $len ) {
+function bw_textfield_arr( $name, $text, $array, $index, $len, $class=null, $extras=null ) {
   $name_index = $name.'['.$index.']';
   $value = bw_array_get( $array, $index, NULL );
-  bw_textfield( $name_index, $len, $text, $value );
+  bw_textfield( $name_index, $len, $text, $value, $class, $extras );
 } 
 
 /**
@@ -264,6 +303,7 @@ function bw_textarea_cb_arr( $name, $text, $array, $index, $len, $rows=5 ) {
  * @param string $action for the form - defaults to "options.php" 
  * @return array $options - the stored options settings 
  */
+if ( !function_exists( "bw_form_start" ) ) { 
 function bw_form_start( $option, $settings, $action="options.php" ) {
   bw_form( $action );
   $options = get_option( $option );   
@@ -271,6 +311,7 @@ function bw_form_start( $option, $settings, $action="options.php" ) {
   bw_flush();
   settings_fields( $settings );
   return( $options );
+}
 }
 
 

@@ -1,10 +1,13 @@
 <?php
+if ( defined( 'OIK_BP_SIGNUP_EMAIL_INCLUDED' ) ) return;
+define( 'OIK_BP_SIGNUP_EMAIL_INCLUDED', true );
+  
 
 /*
 Plugin Name: oik BuddyPress signup email
-Plugin URI: http://www.oik-plugins.com/oik
+Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-bp-signup-email
 Description: Send sign up verification emails via site admin for verification before accepting a user
-Version: 1.16
+Version: 1.17
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -114,4 +117,12 @@ function bw_core_signup_send_validation_email_to( $user_email, $user_id ) {
   return( bw_send_validation_email_to() );
 }
 
+add_action( "oik_admin_menu", "oik_bp_signup_email_admin_menu" );
 
+/**
+ * Relocate the plugin to become its own plugin and set the plugin server
+ */
+function oik_bp_signup_email_admin_menu() {
+  oik_register_plugin_server( __FILE__ );
+  bw_add_relocation( 'oik/oik-bp-signup-email.php', 'oik-bp-signup-email/oik-bp-signup-email.php' );
+}

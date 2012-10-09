@@ -1,10 +1,12 @@
 <?php
+if ( defined( 'OIK_FIELDS_INCLUDED' ) ) return;
+define( 'OIK_FIELDS_INCLUDED', true );
 
 /*
 Plugin Name: oik fields
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-fields
-Description: [bw_field] [bw_fields] shortcodes to display Custom Fields (post metadata)
-Version: 1.16
+Description:  Field formatting for custom post type meta data using [bw_field] or [bw_fields] shortcodes
+Version: 1.17
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -42,7 +44,9 @@ function oik_fields_init() {
 
 
 /**
- * Format a field - by what method? 
+ * Theme an array of custom fields
+ * 
+ * @param array $customfield - array of custom fields
  *
 */
 function bw_format_field( $customfield ) {
@@ -56,7 +60,6 @@ function bw_format_field( $customfield ) {
  * format the meta data for the 'post'
  */
 function bw_format_meta( $customfields ) {
-  
   bw_trace2();
   foreach  ( $customfields as $key => $customfield ) {
     $cf = array( $key => $customfield[0] );
@@ -237,26 +240,39 @@ function bw_theme_field_date( $key, $value ) {
 
 
 function bw_theme_field_select( $key, $value, $field ) {
+  e( bw_return_field_select( $key, $value, $field ) );
+}
+
+function bw_return_field_select( $key, $value, $field ) {
   bw_trace2();
   $args = bw_array_get( $field, '#args', null );
   if ( $args ) {
     $select = bw_array_get( $args, '#options', null );
   } 
-  $val = bw_array_get( $value, 0, null );
-  if ( $val ) { 
+  $val = bw_array_get( $value, 0, $value );
+  if ( null != $val ) { 
     $result = bw_array_get( $select, $val, $val );   
-    e( $result );
+  } else {
+    $result = $value;
   }  
+  
+  return( $result );  
 }
 
 function bw_theme_field_noderef( $key, $value ) {
- e( get_the_title( $value[0] ));
+ $v0 = bw_array_get( $value, 0, $value );
+ e( get_the_title( $v0 ));
 }
 
 function bw_theme_field_URL( $key, $value ) {
   $link = retlink( null, $value[0], $value[0] );
   e( $link );
    
+}
+
+function bw_theme_field_text( $key, $value ) {
+  if ( count( $value ) )
+    e( $value[0] );
 }
 
 
@@ -307,10 +323,20 @@ function bw_format_custom_column( $column=null, $data=null ) {
 /**
  * Simple wrapper to the_meta() for displaying the meta data 
  * The best way of displaying this would be to put it into a text widget
- * then it would work regardless of the content being displayted
+ * then it would work regardless of the content being displayed
  *
  */
 function bw_meta( $atts = null ) {
   the_meta();
   return;  
+}
+
+add_action( "oik_admin_menu", "oik_fields_admin_menu" );
+
+/**
+ * Relocate the plugin to become its own plugin and set the plugin server
+ */
+function oik_fields_admin_menu() {
+  oik_register_plugin_server( __FILE__ );
+  bw_add_relocation( 'oik/oik-fields.php', 'oik-fields/oik-fields.php' );
 }

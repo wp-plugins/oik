@@ -2,7 +2,7 @@
 // bobbfunc.inc
 
 function bw_oik_version() {  
-  return( '1.16' );
+  return( '1.17' );
 }
 
 require_once( "oik_boot.inc" );   /* Don't use oik_require here */
@@ -225,8 +225,8 @@ function sol( $class=NULL, $id=NULL ) {
 
 /* renamed uls to sul to be consistent with stag */ 
    
-function sul( $class=NULL, $id=NULL ) {
-   stag( "ul", $class, $id );
+function sul( $class=NULL, $id=NULL, $extra=null ) {
+   stag( "ul", $class, $id, $extra );
 }        
 
 function sdiv( $class=NULL, $id=NULL, $extra=NULL ) {
@@ -1077,3 +1077,8 @@ function bw_get_theme() {
   bw_trace2( $current_theme, "current theme" );
   return( $current_theme );
 }    
+
+function bw_wp_error( $code, $text=null, $data=null ) {
+  oik_require( "includes/bw_error.inc" );
+  return( bw_lazy_wp_error( $code, $text, $data ) );
+}  

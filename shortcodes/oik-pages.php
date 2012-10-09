@@ -1,5 +1,6 @@
 <?php // (C) Copyright Bobbing Wide 2012
-
+if ( defined( 'OIK_PAGES_SHORTCODES_INCLUDED' ) ) return;
+define( 'OIK_PAGES_SHORTCODES_INCLUDED', true );
 /*
 
     Copyright 2012 Bobbing Wide (email : herb@bobbingwide.com )

@@ -1,4 +1,7 @@
-<?php 
+<?php
+ 
+if ( defined( 'OIK_TIDES_SHORTCODES_INCLUDED' ) ) return;
+define( 'OIK_TIDES_SHORTCODES_INCLUDED', true );
 
 /*
 

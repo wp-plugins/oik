@@ -1,16 +1,16 @@
-<?php 
-// (C) Copyright Bobbing Wide 2011-2012
-//require_once( "oik_boot.inc" );
-
-
+<?php // (C) Copyright Bobbing Wide 2011-2012
+if ( defined( 'OIK_BWTRACE_INCLUDES_INCLUDED' ) ) return;
+define( 'OIK_BWTRACE_INCLUDES_INCLUDED', true );
+ 
 /**
  * Programmatically enable tracing
- * Note:bw_trace and bw_trace2 are lazy functions that are not loaded until trace is first turned on.
- *
+ * Note: bw_trace() and bw_trace2() are lazy functions that are not loaded until trace is first turned on.
+ * **?** This code must be in the wrong place! since it tries to include itself. 
+ * We'll leave it like this until we determine where this API should go **?**
  */
 function bw_trace_on( $default_options=false ) {
   global $bw_trace_on;
-  oik_require( "includes/bwtrace.inc" );
+  oik_require2( "includes/bwtrace.inc", "oik-bwtrace" );
   $bw_trace_on = TRUE;
   if ( $default_options ) { 
     global $bw_include_trace_count, $bw_include_trace_date, $bw_trace_anonymous;
@@ -27,10 +27,6 @@ function bw_trace_off() {
   global $bw_trace_on;
   $bw_trace_on = FALSE;
 } 
-
-
-//bw_trace_inc_init();  
-// bw_trace_on();
 
 function bw_trace_inc_init() {   
   global $bw_trace_options;   
@@ -112,11 +108,24 @@ function bw_current_filter() {
   return( null );  
 }
 
+/**
+ * Return the number of database queries performed so far
+ */
+function bw_get_num_queries() {
+  global $wpdb;
+  If ( $wpdb ) {
+    $num_queries = " " . $wpdb->num_queries;
+  } else {
+    $num_queries = " 0";   
+  } 
+  return( $num_queries ); 
+}
+
 /** 
  * Trace contextal information set using bw_set_context 
+ *
  * If the context is "act" then we trace the number of times this has been processed
  */
-
 function bw_trace_context() {	
   global $bw_context;
   $context = bw_current_filter(); 
@@ -134,7 +143,9 @@ function bw_trace_context() {
         $context .= "(".$wp_actions[$value].")";
       }  
     }
-  }    
+  } 
+  
+  $context .= bw_get_num_queries();
   return( $context );
 } 
 
@@ -177,7 +188,7 @@ function bw_flf( $function, $lineno, $file, $count,  $text, $text_label = NULL )
   $ref .= " ";
   $ref .= $text_label;
   $ref .= " ";
-  $ref .= print_r( $text, TRUE );
+  $ref .= print_r( $text, TRUE) ; //obsafe_print_r( $text, TRUE );
   $ref .= "\n";
   return( $ref );
 } 
@@ -295,8 +306,10 @@ function bw_write( $file, $line ) {
 
 
 function bw_trace_reset() {
-  global $bw_trace_options;   
-  $reset_done = bw_array_get( $bw_trace_options, 'reset_done', false );
+  static $reset_done = false; 
+  
+  //global $bw_trace_options;   
+  //$reset_done = bw_array_get( $bw_trace_options, 'reset_done', false );
   if ( ! $reset_done ) {
     $file = bw_trace_file();
     // This file may not exist so we have two choices. 1. precede with an @, 2. test for it
@@ -304,8 +317,9 @@ function bw_trace_reset() {
     if ( is_file($file) )
       unlink( $file ); 
     // echo( "<p>Attempted to unlink: $file</p>" );  
-    $bw_trace_options['reset_done'] = true; 
+    //$bw_trace_options['reset_done'] = true; 
   } 
+  $reset_done = true;
       
 } 
 
@@ -528,7 +542,57 @@ function bw_lazy_trace2( $value=NULL, $text=NULL, $show_args=true ) {
   } 
   //bw_bang(); 
   return( $value );
-}    
+}
+
+/**
+ * Implement (lazy) trace startup from wp-config.php
+ * We cater for the follow defined constants
+ * - define( 'BW_TRACE_ON', true );
+ * - define( 'BW_ACTIONS_ON', true );
+ * - define( 'BW_TRACE_RESET', true );
+ * - define( 'BW_ACTIONS_RESET', true );
+ */
+function bw_lazy_trace_config_startup() {
+     
+  if ( defined( 'BW_TRACE_ON' ) )
+    $trace_on = BW_TRACE_ON;
+  else
+    $trace_on = false;
+  
+  if ( defined( 'BW_ACTIONS_ON' ) )
+    $actions_on = BW_ACTIONS_ON;
+  else
+    $actions_on = false;
+    
+  if ( defined( 'BW_TRACE_RESET' ) )
+    $trace_reset = BW_TRACE_RESET;
+  else
+    $trace_reset = false;
+    
+  if ( defined( 'BW_ACTIONS_RESET' ) )
+    $actions_reset = BW_ACTIONS_RESET;
+  else
+    $actions_reset = false;
+    
+  if ( $trace_on ) {
+    bw_trace_inc_init();
+    bw_trace_on( true );
+    if ( $trace_reset ) {
+      bw_trace_reset();
+    }   
+  }
+
+  if ( $actions_on ) {     
+    oik_require2( "includes/oik-bwtrace.inc", "oik-bwtrace" );
+    bw_action_inc_init();
+    bw_trace_actions_on();     
+    if ( $actions_reset ) {
+      bw_actions_reset();
+    }  
+  }
+}
+  
+    
    
    
 

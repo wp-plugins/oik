@@ -63,25 +63,11 @@ function bw_clear_processed_posts() {
 
 /**
  * Return the excerpt from the $post 
- * Note: The function _theme_get_excerpt is not expected to exist. 
- * Artisteer doesn't "properly" extract the excerpt, so the '_' prefix disables the call to the Artisteer function.
- * 
  * @param  post $post- post from which to extract the excerpt
  * @return string $excerpt the excerpt from the post
  * 
  */
 function bw_excerpt( $post ) {
-  /*
-  if ( function_exists( '_theme_get_excerpt' ) ) {
-  
-    global $post;
-    $save_post = $post;
-    $post = $post_id;
-    $excerpt = theme_get_excerpt();
-    $post = $save_post; 
-    
-  } else
-  */    
   if ( bw_process_this_post( $post->ID ) ) {
 
     if ( empty( $post->post_excerpt ) ) {
@@ -90,7 +76,9 @@ function bw_excerpt( $post ) {
     } else {
       $excerpt = $post->post_excerpt;
     }
-    $excerpt = bw_do_shortcode( $excerpt );
+    bw_trace( $excerpt, "excerpt" );
+    //$excerpt = bw_do_shortcode( $excerpt );
+    $excerpt = apply_filters( "get_the_excerpt", $excerpt );
   } else {
     $excerpt = "post already processed: " . $post->ID;
   }  
@@ -260,8 +248,15 @@ function bw_get_posts( $atts = NULL ) {
 /**
  * Get the post / custom post type identified by the ID and post type
  */
-function bw_get_post( $post_id, $post_type ) {
-  $atts['include']= $post_id;
+function bw_get_post( $post_id, $post_type, $atts=null ) {
+  if ( null == $atts ) {
+    $atts = array();
+  }  
+  if ( is_int( $post_id ) ) { 
+    $atts['include']= $post_id;
+  } else {
+    $atts['name'] = $post_id;  
+  }    
   $atts['numberposts'] = 1;
   $atts['post_type'] = $post_type;
   $posts = get_posts( $atts ); 

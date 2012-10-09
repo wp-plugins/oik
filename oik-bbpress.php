@@ -1,10 +1,12 @@
 <?php
+if ( defined( 'OIK_BBPRESS_INCLUDED' ) ) return;
+define( 'OIK_BBPRESS_INCLUDED', true );
 
 /*
 Plugin Name: oik bbpress
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-bbpress-plugin/
 Description: strip tags from bbPress forum title tooltips  
-Version: 1.16
+Version: 1.17
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -46,6 +48,18 @@ if ( !function_exists( "bw_strip_tags" ) ) {
  * the title is being used in a text= attribute
  */
 add_filter( 'bbp_get_forum_title', 'bw_strip_tags' );
+
+
+add_action( "oik_admin_menu", "oik_bbpress_admin_menu" );
+
+
+/**
+ * Relocate the plugin to become its own plugin and set the plugin server
+ */
+function oik_bbpress_admin_menu() {
+  oik_register_plugin_server( __FILE__ );
+  bw_add_relocation( 'oik/oik-bbpress.php', 'oik-bbpress/oik-bbpress.php' );
+}
 
 
 
