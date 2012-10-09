@@ -3,7 +3,7 @@ Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, key information, trace, blocks, buddypress, pages, bookmarks, images, attachments, smart, lazy
 Requires at least: 3.0.4
-Tested up to: 3.4.1
+Tested up to: 3.4.2
 Stable tag: 1.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -40,38 +40,6 @@ Features:
 * oik is extendable - plugin developers can build on the oik base functionality 
 * using the oik API: help, syntax information, examples AND HTML snippets can be produced for any plugin or theme that provides shortcodes
 
-oik includes a number of optional modules which can be activated as and when you need them:
-
-* oik-email-signature to help generate an email signature file for all your email messages
-* oik-header for custom page header image selection for pages, posts and custom post types
-* oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
- 
-
-For WordPress designers, web site developers and plugin developers:
-
-* oik-bob-bing-wide to provide more lazy smart shortcodes: bw_plug, bob/fob bing/bong wide/hide wow, oik and loik, wp, wpms, bp, artisteer, drupal
-* oik-bwtrace provides an advanced trace function, which logs trace information to a file, rather than including it within the web page output
-* oik-shortc-shortcodes - shortcode help shortcodes: provides [bw_code] and [bw_codes] shortcodes
-* oik-fields - [bw_field] [bw_fields] shortcodes to display Custom Fields (post metadata) (beta version)
-
-For use in BuddyPress sites:
-
-* oik-bp-signup-email to intercept BuddyPress registration emails
-
-For use in bbPress sites:
-
-* oik-bbpress to strip tags from bbPress forum title tooltips  
-
-Other plugins which use the oik API are also available on WordPress.org: 
-
-* [oik-nivo-slider](http://wordpress.org/extend/plugins/oik-nivo-slider/) - [nivo] shortcode for the jQuery "Nivo slider" for posts, pages, attachments and custom post types
-* [oik-privacy-policy](http://www.wordpress.org/extend/plugins/oik-privacy-policy) - generate a privacy policy page, compliant with UK cookie law (EU cookie directive)
-* [cookie-cat](http://www.wordpress.org/extend/plugins/cookie-cat) - [cookies] shortcode to list the cookies your website may use
-* [uk-tides](http://wordpress.org/extend/plugins/uk-tides/) - [bw_tides] shortcode for tide times and heights in the UK  (replaces oik-tides)
-* [bbboing](http://www.wordpress.org/extend/plugins/bbboing) - obfuscate text but leave it readable
-
-ALL of the plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
-These are known as the bobbing wide application programming interface (bw API).
 
 == Installation ==
 1. Upload the contents of the oik plugin to the `/wp-content/plugins/oik' directory
@@ -90,6 +58,8 @@ Yes - please use the standard WordPress forum - http://wordpress.org/tags/oik?fo
 
 = Can I get support? = 
 Yes - see above 
+
+
 
 == Screenshots ==
 1. oik overview - main settings page
@@ -110,6 +80,9 @@ Yes - see above
 9. oik header image plugin - custom header image for a page 
 
 == Upgrade Notice ==
+= 1.17 =
+This new version includes support for FREE and Premium oik plugins which are hosted on www.oik-plugins.com or www.oik-plugins.co.uk rather than WordPress.org 
+
 = 1.16 = 
 Contains a fix for Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2
 
@@ -132,7 +105,30 @@ There are many changes in version 1.11 to support lazy invocation of code.
 Some plugins have been created as separate plugins (e.g. uk-tides). Others have been changed so that you can activate them by changing oik settings, so are no longer activatable.
  
 
-== Changelog == 
+== Changelog ==
+= 1.17 =
+* Added: bw_wp_error() and includes\bw_error.inc - wrapper to WP_error
+* Added: support for plugin relocation during "pre_current_active_plugins"
+* Added: support for receiving updates and plugin information from diverse plugin repositories (e.g. www.oik-plugins.com or www.oik-plugins.co.uk )
+* Added: oik_register_plugin_server() to allow a plugin to specify its source repository for updates 
+* Added: BW_OIK_PLUGINS_SERVER constant defaults to http://www.oik-plugins.com, if not defined in wp-config.php
+* Added: admin\oik-relocate.inc to perform plugin relocation
+* Changed: bw_thumbnail() and bw_get_thumbnail_size() to improve support for thumbnail image size selection
+* Changed: bw_get_post() - add $atts parameter, allow $post_id to be either the post ID or name
+* Added: Added bw_remote_post() to includes\oik-remote.inc. Used by oik_lazy_altapi_check()
+* Changed: bw_invoke_shortcode() - make $text parameter optional
+* Fixed: Use bw_thumbnail_full() to find the file name for the full size image attachment. No longer relies on $post->guid
+* Changed: Improved some phpdoc comments - part of API documentation
+* Added:  bw_emailfield(), iemail() and isubmit()
+* Changed: bw_textfield() and bw_textfield_arr() to support for HTML 5 input field parameters and jQuery validation
+* Added: "oik_admin_menu" action, to allow dependent routines to know when oik has responded to "admin_menu".
+* Added: Support for select fields in admin page lists (oik-fields plugin)
+* Added: apikey support for premium plugins
+* Added: Plugins menu item to define plugin settings: server and API key
+* Changed: readme.txt
+* Added: bw_load_noderef() now supports multiple post_types
+* Added: noderef meta field supports #optional parameter
+
 = 1.16 =
 * Fixed: Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2
 * Added: CSS to disable the background image for links to .pdf files ( selector: div.noicon a )
@@ -236,6 +232,7 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Fixed: Changed CSS fix for Artisteer nested blocks; original solution broke hmenus
 * Fixed: edit custom CSS links works on Multisite
 * Fixed: elimination of as many "Notice" messages as possible 
+
 = 1.10 =
 * Added: [bw_attachments] for listing attachments 
 * Added: [bw_pdf] for .pdf type attachments
@@ -384,7 +381,48 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 If you want to read more about the oik plugins then please visit the
 [oik plugin](http://www.oik-plugins.com/oik) 
 **"the oik plugin - for often included key-information"**
-If you're interested in the Drupal version then please visit the 
+
+Up to and including version 1.17 the oik plugin includes a number of optional modules which can be activated as and when you need them.
+
+In oik version 1.17, any activated module will automatically relocate itself to become a separately maintainable plugin.
+Each individual plugin will be supported from an oik-plugins server. 
+In a future version of oik, the child plugins will be deprecated and/or removed from the oik base package.
+
+Plugins that will relocate and be served from the oik-plugins servers are:
+
+* oik-email-signature to help generate an email signature file for all your email messages
+* oik-header for custom page header image selection for pages, posts and custom post types
+* oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
+ 
+
+PLUS, for WordPress designers, web site developers and plugin developers:
+
+* oik-bob-bing-wide to provide more lazy smart shortcodes: bw_plug, bob/fob bing/bong wide/hide wow, oik and loik, wp, wpms, bp, artisteer, drupal
+* oik-bwtrace provides an advanced trace function, which logs trace information to a file, rather than including it within the web page output
+* oik-sc-help - shortcode help shortcodes: provides [bw_code] and [bw_codes] shortcodes
+* oik-fields - [bw_field] [bw_fields] shortcodes to display Custom Fields (post metadata) (beta version)
+
+ALSO, for use in BuddyPress sites:
+
+* oik-bp-signup-email to intercept BuddyPress registration emails
+
+AND, for use in bbPress sites:
+
+* oik-bbpress to strip tags from bbPress forum title tooltips  
+
+Other plugins which use the oik API are also available on WordPress.org: 
+
+* [oik-nivo-slider](http://wordpress.org/extend/plugins/oik-nivo-slider/) - [nivo] shortcode for the jQuery "Nivo slider" for posts, pages, attachments and custom post types
+* [oik-privacy-policy](http://www.wordpress.org/extend/plugins/oik-privacy-policy) - generate a privacy policy page, compliant with UK cookie law (EU cookie directive)
+* [cookie-cat](http://www.wordpress.org/extend/plugins/cookie-cat) - [cookies] shortcode to list the cookies your website may use
+* [uk-tides](http://wordpress.org/extend/plugins/uk-tides/) - [bw_tides] shortcode for tide times and heights in the UK  (replaces oik-tides)
+* [bbboing](http://www.wordpress.org/extend/plugins/bbboing) - obfuscate text but leave it readable
+
+ALL of the plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
+These are known as the bobbing wide application programming interface (bw API).
+
+
+If you're interested in a Drupal version then please visit the 
 [oik module](http://www.bobbingwidewebdevelopment.com/content/often-included-key-information-oik-drupal-module)
 
 
@@ -399,6 +437,3 @@ If you also want to track action and filter processing then you should precede t
 
 
 Don't forget to remove this code before deleting the plugin.
-
-
-

@@ -1,5 +1,6 @@
 <?php // (C) Copyright Bobbing Wide 2012
-
+if ( defined( 'OIK_LIST_SHORTCODES_INCLUDED' ) ) return;
+define( 'OIK_LIST_SHORTCODES_INCLUDED', true );
 /*
 
     Copyright 2012 Bobbing Wide (email : herb@bobbingwide.com )
@@ -21,7 +22,6 @@
 */
 
 
-oik_require( "includes/bw_posts.inc" );
 
 /**
  * List sub-pages of the current or selected page - in a simple list 
@@ -40,6 +40,7 @@ oik_require( "includes/bw_posts.inc" );
  *   customcategoryname=custom category value  
  */
 function bw_list( $atts = NULL ) {
+  oik_require( "includes/bw_posts.inc" );
   
   $posts = bw_get_posts( $atts );
   

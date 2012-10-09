@@ -1,10 +1,12 @@
 <?php
+if ( defined( 'OIK_BOB_BING_WIDE_INCLUDED' ) ) return;
+define( 'OIK_BOB_BING_WIDE_INCLUDED', true );
 
 /*
 Plugin Name: oik bob bing wide shortcodes
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-bob-bing-wide-plugin
 Description: More lazy smart shortcodes: bw_plug, bw_page, bw_post, bob/fob bing/bong wide/hide & wow, oik and loik, wp, wpms, bp, artisteer, drupal
-Version: 1.16
+Version: 1.17
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -84,3 +86,14 @@ function oik_bob_bing_wide_init() {
   bw_add_shortcode( 'wp-3', 'wp3', oik_path("shortcodes/oik-bob-bing-wide.php"), true);
 
 }
+
+add_action( "oik_admin_menu", "oik_bob_bing_wide_admin_menu" );
+
+/**
+ * Relocate the plugin to become its own plugin and set the plugin server
+ */
+function oik_bob_bing_wide_admin_menu() {
+  oik_register_plugin_server( __FILE__ );
+  bw_add_relocation( 'oik/oik-bob-bing-wide.php', 'oik-bob-bing-wide/oik-bob-bing-wide.php' );
+}
+

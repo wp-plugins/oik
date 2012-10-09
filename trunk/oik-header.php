@@ -1,10 +1,12 @@
 <?php
+if ( defined( 'OIK_HEADER_INCLUDED' ) ) return;
+define( 'OIK_HEADER_INCLUDED', true );
 
 /*
 Plugin Name: oik custom header image
-Plugin URI: http://www.oik-plugins.com/oik
+Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-header
 Description: custom page header image selection for pages, posts and custom post types 
-Version: 1.16
+Version: 1.17
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -30,11 +32,12 @@ License: GPL2
 add_action( "oik_loaded", "oik_header_init" );
 
 function oik_header_init() {
-  if ( is_admin() ) {
-    require_once( 'admin/oik-header.inc' );
-  }
+  //if ( is_admin() ) {
+  //  require_once( 'admin/oik-header.inc' );
+  //}
   add_action( 'wp_footer', 'bw_page_header_style' );
 }
+
 
 /** 
  * Dynamically add CSS for the header background image if the custom field is set
@@ -64,12 +67,14 @@ function bw_page_header_style() {
  * and converts to lowercase - which is not actually necessary for PHP code but can help in legibility
  *
  */
+if ( !function_exists( "bw_function_namify" ) ) {
 function bw_function_namify( $name ) {
   $name = trim( $name );
   $name = str_replace( ' ', '_', $name );
   $name = str_replace( '-', '_', $name );
   $name = strtolower( $name );
   return( bw_trace2( $name ) ); 
+}
 }  
 
 /** 
@@ -197,8 +202,27 @@ function bw_getimagesize( $image ) {
   
 }
 
- 
+add_action( "oik_admin_menu", "oik_header_admin_menu" );
+
+/**
+ * Relocate the plugin to become its own plugin and set the plugin server
+ * Note: We also need to relocate the admin file for the plugin
+ */
+function oik_header_admin_menu() {
+  oik_register_plugin_server( __FILE__ );
+  bw_add_relocation( 'oik/oik-header.php', 'oik-header/oik-header.php' );
+  bw_add_relocation( 'oik/admin/oik-header.inc', 'oik-header/admin/oik-header.inc' );
   
+  /* Should we create a new function for this? **?** */
+  // function oik_require_alternate( $filename, $plugin, $alternate_plugin );
+  
+  $new_path = oik_path( "admin/oik-header.inc", "oik-header" );
+  if ( file_exists( $new_path ) ) {
+    oik_require( 'admin/oik-header.inc', "oik-header" );
+  } else {
+    oik_require( 'admin/oik-header.inc' );
+  }  
+}
 
 
 

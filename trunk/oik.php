@@ -4,7 +4,7 @@
 Plugin Name: oik base plugin 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Lazy smart shortcodes for displaying often included key-information and other WordPress content
-Version: 1.16
+Version: 1.17
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -37,7 +37,7 @@ require_once( "oik_boot.inc" );
 
 /**
  * Return the oik_version
- * @returns string oik version number e.g. 1.16
+ * @returns string oik version number e.g. 1.17
  */  
 function oik_version() {
   return bw_oik_version();
@@ -130,6 +130,7 @@ function oik_admin_menu() {
   require_once( 'admin/oik-admin.inc' );
   oik_options_add_page();
   add_action('admin_init', 'oik_admin_init' );
+  do_action( 'oik_admin_menu' );
 }
 
 /**

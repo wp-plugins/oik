@@ -1,4 +1,6 @@
 <?php // (C) Copyright Bobbing Wide 2012
+if ( defined( 'OIK_TREE_SHORTCODES_INCLUDED' ) ) return;
+define( 'OIK_TREE_SHORTCODES_INCLUDED', true );
 
 /*
 

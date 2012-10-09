@@ -1,4 +1,6 @@
-<?php 
+<?php
+if ( defined( 'OIK_BLOCKS_SHORTCODES_INCLUDED' ) ) return;
+define( 'OIK_BLOCKS_SHORTCODES_INCLUDED', true );
 /*
 
     Copyright 2010-2012 Bobbing Wide (email : herb@bobbingwide.com )

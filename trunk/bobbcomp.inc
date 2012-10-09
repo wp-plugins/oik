@@ -11,7 +11,7 @@ function bw_get_cms_type() {
   }   
   if ( function_exists( 'drupal_bootstrap' )) {
     $bw_cms_type = "Drupal"; 
-    if (defined( VERSION ) ) {
+    if (defined( 'VERSION' ) ) {
       $bw_cms_version = VERSION;
       
     return( $bw_cms_type );       
@@ -33,14 +33,18 @@ function bw_is_drupal() {
 
 
 if ( bw_is_wordpress() ) {
+  /**
+   * Get the value of an option field
+   *
+   * @param string $field field name within set
+   * @param string $set option name
+   * @return mixed option value
+   */
   function bw_get_option( $field, $set="bw_options" ) {
-    //global $company;
     /* WordPress code */
-    //global $bw_options;
     /* Need to put some code here to see if it's been loaded */
     $bw_options = get_option( $set );
-    
-    bw_trace( $bw_options, __FUNCTION__,  __LINE__, __FILE__, "bw_options" );  
+    //bw_trace( $bw_options, __FUNCTION__,  __LINE__, __FILE__, "bw_options" );  
     if ( isset( $bw_options[ $field ] ) )
       $option = $bw_options[ $field ] ; 
     else
@@ -51,7 +55,8 @@ if ( bw_is_wordpress() ) {
     return( $option ); 
   }
   
-  /** Set the value of an oik option field in the "bw_options" field
+  /** 
+   * Set the value of an oik option field in the "bw_options" field
    *
    * @param string $field the option field to be set
    * @param mixed $value the value of the option

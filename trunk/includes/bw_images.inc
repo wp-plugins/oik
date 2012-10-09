@@ -67,20 +67,26 @@ function bw_force_size( $thumbnail, $size ) {
 }
 
 /**
-  * Validate the thumbnail size, returning appropriate value for subsequent calls
-  */
+ * Validate the thumbnail size, returning appropriate value for subsequent calls
+ *
+ * @param array $atts - containing the required specification for "thumbnail"
+ * @return mixed - as below
+ * false      for thumbnail="none" 
+ * string     for thumbnail="thumbnail|medium|large|full"
+ * thumbnail  for "Y" or "T" ( from torf = True or False )
+ * array      for anything else e.g. 150 or 250x150
+ *
+ * 
+ */
 function bw_get_thumbnail_size( $atts ) {
   $thumbnail = bw_array_get( $atts, 'thumbnail', 'thumbnail' );
   $post_id = bw_array_get( $atts, "post_id", null );
   switch ( $thumbnail ) {
-    case 'none';
+    case 'none':
       $thumbnail = false;
     break; 
      
-    case 'full';
-      $thumbnail = bw_get_fullimage( $post_id, $thumbnail, $atts );
-    break;
-    
+    case 'full':
     case 'thumbnail':
     case 'medium':
     case 'large':
@@ -101,7 +107,10 @@ function bw_get_thumbnail_size( $atts ) {
 /**
  * Get the thumbnail of the specified size
  *
- * Note: I don't think getting the 'full' size thumbnail makes any sense **?**
+ * @param integer $post_id - ID of the post
+ * @param array $atts - shortcode attributes
+ * @param bool $attachment - true if we're finding the thumbnail for an attachment
+ * @return $thumbnail - formatted <img> tag
  */
 function bw_thumbnail( $post_id, $atts=NULL, $attachment=false ) {
   bw_trace( $post_id, __FUNCTION__, __LINE__, __FILE__, "post_id" );
@@ -110,6 +119,7 @@ function bw_thumbnail( $post_id, $atts=NULL, $attachment=false ) {
   if ( $thumbnail ) {
     switch ( $thumbnail ) {
       case 'full';
+        // From oik v1.17 onwards we do get here. 
         $thumbnail = bw_get_fullimage( $post_id, $thumbnail, $atts );
       break;     
       case 'thumbnail':
@@ -127,6 +137,10 @@ function bw_thumbnail( $post_id, $atts=NULL, $attachment=false ) {
   return( $thumbnail ); 
 }
 
+
+/**
+ *
+ */
 
 function bw_get_fullimage( $post_id, $size='full', $atts=null ) {
   $return_value = FALSE;

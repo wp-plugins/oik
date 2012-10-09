@@ -1,5 +1,6 @@
 <?php
-
+if ( defined( 'OIK_BOOKMARKS_SHORTCODES_INCLUDED' ) ) return;
+define( 'OIK_BOOKMARKS_SHORTCODES_INCLUDED', true );
 /*
     Copyright 2011,2012 Bobbing Wide (email : herb@bobbingwide.com )
 

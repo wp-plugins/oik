@@ -1,10 +1,12 @@
 <?php
+if ( defined( 'OIK_BWTRACE_INCLUDED' ) ) return;
+define( 'OIK_BWTRACE_INCLUDED', true );
 
 /*
 Plugin Name: oik bwtrace 
-Plugin URI: http://www.oik-plugins.com/oik
+Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-bwtrace
 Description: Easy to use trace macros for oik plugins
-Version: 1.16
+Version: 1.17
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -29,16 +31,29 @@ License: GPL2
 global $bw_trace_options, $bw_trace_on, $bw_trace_level;
 
 // Since this plugin is defined to load first... so that it can perform the trace reset
-// then we need to load oik_boot ourselves. We need bw_array_get().
-require_once( "oik_boot.inc" );
-oik_init();
-oik_require( "bwtrace_boot.inc" ); 
-oik_require( "includes/bwtrace.inc" );
+// then we need to load oik_boot ourselves... We need bw_array_get().
+if (!function_exists( 'oik_require' )) {
+  // check that oik is available.
+  $oik_boot = dirname(dirname(__FILE__)) . "/oik/oik_boot.inc";
+  if ( $oik_boot ) { 
+    require_once( $oik_boot );
+  }
+}
+
+/* Only carry on if "oik_require2()" exists - which indicates oik is version 1.17 or higher */
+if ( function_exists( "oik_require2" )) {
+  oik_init();
+  oik_require( "bwtrace_boot.inc" ); 
+  oik_require2( "includes/bwtrace.inc", "oik-bwtrace" );
+}  
 
 function oik_bwtrace_version() {
   return oik_version();
 }
 
+/**
+ * Arrange for this plugin to be loaded first
+ */
 function bw_this_plugin_first() {
 	// ensure path to this file is via main wp plugin path
 	$wp_path_to_this_file = preg_replace('/(.*)plugins\/(.*)$/', WP_PLUGIN_DIR."/$2", __FILE__);
@@ -52,9 +67,6 @@ function bw_this_plugin_first() {
 	}
 }
 
-if (function_exists( "add_action" )) {
-  bw_trace_plugin_startup();
-}
 
 /**
  * Return TRUE if option is '1', FALSE otherwise
@@ -65,18 +77,11 @@ function bw_torf( $array, $option ) {
   return $ret;
 }
 
-
+/**
+ */
 function bw_trace_plugin_startup() {
-  global $bw_trace_options;
+  global $bw_trace_options, $bw_action_options;
   add_action("activated_plugin", "bw_this_plugin_first");
-
-  // Moved the calls to bw_add_shortcode into oik-add-shortcodes
-  // 
-
-  //add_filter('widget_text', 'do_shortcode');
-  //add_filter('the_title', 'do_shortcode' ); 
-  //add_filter('wpbody-content', 'do_shortcode' );
-
 
   $bw_trace_options = get_option( 'bw_trace_options' );
 
@@ -101,8 +106,9 @@ function bw_trace_plugin_startup() {
   if ( !empty( $_REQUEST['_bw_trace_reset'] ) ) {
     $bw_trace_reset = TRUE;
   } 
-  
  
+  // Shouldn't this be moved so that it's only performed if trace actions is enabled?  **?** 
+  
   $bw_action_options = get_option( 'bw_action_options' );
   $bw_action_reset = bw_torf( $bw_action_options, 'reset' );
   if ( !empty( $_REQUEST['_bw_action_reset'] ) ) {
@@ -110,20 +116,15 @@ function bw_trace_plugin_startup() {
   } 
   
   if ( $bw_trace_reset ) {
-    oik_require( "includes/bwtrace.inc" );
+    oik_require2( "includes/bwtrace.inc", "oik-bwtrace" );
     bw_trace_reset();
     $bw_action_reset = true;
   } 
   
   if ( $bw_action_reset ) {
-    oik_require( "includes/oik-bwtrace.inc" );
-    bw_action_reset();
+    oik_require2( "includes/oik-bwtrace.inc", "oik-bwtrace" );
+    bw_actions_reset();
   }
-  
-  //$bw_trace_errors = $bw_trace_options[ 'errors']; 
-  //bw_trace_errors( $bw_trace_errors );
-
-  // bw_trace_log( "Trace log starting"  );
 
   if ( $bw_trace_level > '0' ) {
     bw_lazy_trace( ABSPATH . $bw_trace_options['file'], __FUNCTION__, __LINE__, __FILE__, 'tracelog' );
@@ -132,6 +133,7 @@ function bw_trace_plugin_startup() {
     bw_lazy_trace( $_REQUEST, __FUNCTION__, __LINE__, __FILE__, "_REQUEST" );
     //bw_lazy_trace( $_POST, __FUNCTION__, __LINE__, __FILE__, "_POST" );
     //bw_lazy_trace( $_GET, __FUNCTION__, __LINE__, __FILE__, "_GET" );
+    bw_lazy_trace( $bw_action_options, __FUNCTION__, __LINE__, __FILE__, "bw_action_options" );
   } 
 
   add_action('admin_init', 'bw_trace_options_init' );
@@ -141,6 +143,7 @@ function bw_trace_plugin_startup() {
 
 }
 
+
 /** 
  * Start the trace action logic if required 
 */ 
@@ -149,17 +152,41 @@ function bw_trace_actions() {
   $trace_actions = bw_array_get( $bw_action_options, "actions", "off" );
   bw_trace2( $bw_action_options, "bw_action_options" );
   if ( $trace_actions ) {
-    oik_require( "includes/oik-bwtrace.inc" );
+    oik_require2( "includes/oik-bwtrace.inc", "oik-bwtrace" );
+    bw_trace_actions_on();
     bw_lazy_trace_actions();
-  }  
+  } else {
+    bw_trace_actions_off();
+  }    
+}
+
+
+if (function_exists( "add_action" )) {
+  bw_trace_plugin_startup();
 }
 
 if ( function_exists( "is_admin" ) ) {
 if ( is_admin() ) {   
 
-  require_once( 'admin/oik-bwtrace.inc' );
+  //require_once(  dirname(dirname(__FILE__)) .'/oik/admin/oik-bwtrace.inc' );
+  oik_require2( "admin/oik-bwtrace.inc", "oik-bwtrace" );
 }
 }
 
+
+add_action( "oik_admin_menu", "oik_bwtrace_admin_menu" );
+
+
+/**
+ * Relocate the plugin to become its own plugin and set the plugin server
+ */
+function oik_bwtrace_admin_menu() {
+  oik_register_plugin_server( __FILE__ );
+  bw_add_relocation( "oik/oik-bwtrace.php", "oik-bwtrace/oik-bwtrace.php" );
+  bw_add_relocation( "oik/includes/bwtrace.inc", "oik-bwtrace/includes/bwtrace.inc" );
+  bw_add_relocation( "oik/includes/oik-bwtrace.inc", "oik-bwtrace/includes/oik-bwtrace.inc" );
+  bw_add_relocation( "oik/admin/oik-bwtrace.inc", "oik-bwtrace/admin/oik-bwtrace.inc" );
+  bw_add_relocation( "oik/admin/oik-bwaction.inc", "oik-bwtrace/admin/oik-bwaction.inc" );
+}
 
 

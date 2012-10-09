@@ -1,4 +1,7 @@
 <?php // (C) Copyright Bobbing Wide 2011,2012 
+if ( defined( 'OIK_ADMIN_ADMIN_INCLUDED' ) ) return;
+define( 'OIK_ADMIN_ADMIN_INCLUDED', true );
+
 
 /**
  * Load 'plugin' file if the options checkbox is set on
@@ -31,6 +34,9 @@ function oik_options_init() {
   
   add_filter( "attachment_fields_to_edit", "oik_attachment_fields_to_edit", null, 2 ); 
   add_filter( "attachment_fields_to_save", "oik_attachment_fields_to_save", null, 2 );
+  
+  // Add support for plugin relocation during "pre_current_active_plugins" 
+  add_action( "pre_current_active_plugins", "bw_relocate_pre_current_active_plugins", 10, 1 );
   
 }
 
@@ -97,7 +103,7 @@ function oik_options_add_page() {
   add_submenu_page( 'oik_menu', 'oik overview', 'Overview', 'manage_options', 'oik_menu', 'oik_menu');
   add_submenu_page( 'oik_menu', 'oik options', 'Options', 'manage_options', 'oik_options', 'oik_options_do_page');
   add_submenu_page( 'oik_menu', 'oik options-1', 'More Options', 'manage_options', 'oik_options-1', 'oik_options_do_page_1');
-  // add_submenu_page( 'oik_menu', 'oik plugins', 'Plugins', 'manage_options', 'oik_plugins', 'oik_plugins_do_page' );
+  add_submenu_page( 'oik_menu', 'oik plugins', 'Plugins', 'manage_options', 'oik_plugins', 'oik_plugins_do_page' );
   add_submenu_page( 'oik_menu', 'oik buttons', 'Buttons', 'manage_options', 'oik_buttons', 'oik_buttons_do_page' );
   add_submenu_page( 'oik_menu', 'oik shortcode help', "Shortcode help", 'manage_options', 'oik_sc_help', "oik_help_do_page" );
   //add_submenu_page( 'oik_menu', 'Trace options', 
@@ -211,8 +217,15 @@ function oik_custom_css( $theme=null ) {
   }    
 } 
 
-function oik_optional_plugins() {
+function oik_plugins_servers() {
   $options = get_option( 'bw_plugins' );
+  p( "Some oik plugins are supported from servers other than WordPress.org" );
+  p( "Premium plugin versions require API keys." );
+  p( "Use the Plugins page to manage oik plugins servers and API keys" );
+  alink( "button-primary", admin_url("admin.php?page=oik_plugins"), "Plugins", "Manage plugin servers and API keys" );
+}
+
+function oik_optional_plugins() {
   p( "oik comes with a set of companion plugins. Activate these when you find a need for them." );
   sul();
   li( "email signature - build an email signature for your email client" );
@@ -325,7 +338,8 @@ function oik_menu() {
   oik_menu_header( "overview", "w70pc" );
   oik_box( NULL, NULL, "Shortcode options", "oik_shortcode_options" );
   oik_box( NULL, NULL, "Custom CSS", "oik_custom_css_box" );
-  oik_box( NULL, NULL, "Optional plugins", "oik_optional_plugins" );
+  oik_box( NULL, NULL, "Servers and keys", "oik_plugins_servers" );
+  // oik_box( NULL, NULL, "Optional plugins", "oik_optional_plugins" ); 
   ecolumn();
   scolumn( "w30pc" );
   oik_box( NULL, NULL, "oik documentation", "oik_documentation" );
@@ -352,23 +366,21 @@ function oik_buttons_do_page() {
  * This page is under construction **?** Herb 2012/04/24
 */ 
 function oik_plugins_do_page() {
-  oik_menu_header( "plugin selection" );
+  //oik_menu_header( "plugin servers and API keys" );
   
   //e( '<form method="post" action="options.php">' );
-  oik_box( null, null, "choose optional function to enable", "oik_plugin_selection" );
+  //oik_box( null, null, "Current settings", "oik_plugins_server_settings" );
+  oik_plugins_server_settings();
   oik_menu_footer();
   bw_flush();
 }
 
-function oik_plugin_selection() {  
-  $option = 'bw_plugins'; 
-  $options = bw_form_start( $option, 'oik_plugins_options' );
-  bw_checkbox_arr( "bw_plugins", "oik trace", $options, 'oik-bwtrace' ); 
-  bw_checkbox_arr( "bw_plugins", "oik email signature", $options, 'oik-email-signature' );
-  bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
-  etag( "table" ); 			
-  etag( "form" );
-  bw_flush();
+/**
+ * Process the oik plugins server settings page
+ */
+function oik_plugins_server_settings() { 
+  oik_require( "admin/oik-plugins.inc" ); 
+  oik_lazy_plugins_server_settings();
 }  
 
 /** 
@@ -763,4 +775,170 @@ function oik_code_snippet() {
 function oik_code_table() {
 
   $shortcodes = bw_list_shortcodes( array( "ordered" => "y") );
-}  
+} 
+
+/**
+ * Constants for the oik-plugins servers
+ * oik-plugins.co.uk is the test site so we don't break oik-plugins.com
+ * as we test oik v1.17 and the transition to oik v2.0
+ */
+define( 'OIK_PLUGINS_COM', "http://www.oik-plugins.com" );
+define( 'OIK_PLUGINS_COUK', "http://www.oik-plugins.co.uk" );
+/** 
+ * Return the URL for the Premium (Pro) or Freemium version
+ * 
+ * THIS could also append the other parameters such as the key value pairs for registration codes
+ * We're trying to find the value for 
+ * 
+ * $transient->response[$plugin_slug]->url
+ 
+
+  // define( 'BW_OIK_PLUGINS_SERVER', "http://qw/wpit" );     
+  // $url = "http://api.wordpress.org/plugins/info/1.0/";
+  // $url = "http://qw/wpit/plugins/update-check/1.0/";
+  // $url = "http://qw/wpit/plugins/update-check/";
+
+ * 
+ */
+function oik_get_plugins_server() {
+  if ( defined( 'BW_OIK_PLUGINS_SERVER' )) {
+    $url = BW_OIK_PLUGINS_SERVER;
+  } else {
+    $url = OIK_PLUGINS_COM;
+  }
+  return( $url );
+}
+
+/**
+ * Register this plugin as one that is served from a different server to WordPress.org
+ *
+ * @param string $file - fully qualified plugin file name
+ * @param string $server - server name initial value - only set when the server value in the options is blank 
+ * @param string $apikey - hard coded apikey initial value
+ *
+ * 
+ * Notes: Plugins registered using the API set the default value for the server ... which may be null
+ * i.e. they set the intention to be served from somewhere other than WordPress.org
+ * When required we determine the actual server location AND other fields as needed during oik_query_plugins_server() 
+ *
+ * At least ONE plugin needs to call this API for the oik plugin server logic to be activated 
+ */
+function oik_register_plugin_server( $file, $server=null, $apikey=null ) {
+  global $bw_registered_plugins;
+  if ( !isset( $bw_registered_plugins ) ) {
+    oik_lazy_altapi_init();
+  }
+  $bw_registered_plugins[] = array( "file" => $file, "server" => $server, "apikey" => $apikey );
+  bw_trace2( $bw_registered_plugins );
+}
+
+/**
+ * Return the slug part of a plugin name
+ *
+ * This function should only be called when we know it's a plugin name with a directory 
+ *
+ * Sample results
+ * "slug" for "slug/plugin_name.php" - when called for "update-check"
+ * "slugonly" for "slugonly" - when called for "plugin_information"
+ * "hello" for "hello.php" - does this ever happen?
+*/
+function bw_get_slug( $plugin ) {
+  $pathinfo = pathinfo( $plugin );
+  $slug = $pathinfo['dirname'] ;
+  if ( $slug == '.' ) 
+    $slug = $pathinfo['filename'];
+  return( $slug );    
+}
+
+/**
+ * Return the plugins server if the requested plugin is one of ours
+ * Note: $bw_registered_plugins is an array of filenames
+ * we create $bw_slugs as an array of "slug" => array( 'basename' => "slug/plugin_name.php", 'file'=> 'server'=>, 'apikey'=> )
+ * $bw_plugins (stored in WordPress options) also contains 'server' and 'apikey'
+ * 
+ */
+function oik_query_plugins_server( $slug ) {
+  global $bw_registered_plugins, $bw_slugs;
+  if ( !isset( $bw_slugs ) ) {
+    foreach ( $bw_registered_plugins as $key => $value ) {
+      $file = bw_array_get( $value, "file", null );
+      $plugin_basename = plugin_basename( $file );
+      $bw_slug = pathinfo( $plugin_basename, PATHINFO_DIRNAME );
+      $value['basename'] = $plugin_basename;
+      $bw_slugs[ $bw_slug ] = $value;
+    }
+    bw_trace2( $bw_slugs );
+  }
+  $plugin_settings = bw_get_option( $slug, "bw_plugins" ); 
+  bw_trace2( $plugin_settings );
+  /* return the saved settings, with any registered defaults, otherwise just get the registered settings */
+  if ( $plugin_settings ) {
+    $server = bw_array_get( $plugin_settings, "server", null );
+    $apikey = bw_array_get( $plugin_settings, "apikey", null ); 
+    if ( !$server || !$apikey ) { 
+       $value = bw_array_get( $bw_slugs, $slug, null );
+    }   
+    if ( !$server ) {   
+      $server = bw_array_get_dcb( $value, "server", null, "oik_get_plugins_server" );
+    }
+    if ( !$apikey ) {
+      $plugin_settings['apikey'] = bw_array_get( $value, "apikey", null );
+    } 
+  } else {
+    $plugin_settings = bw_array_get( $bw_slugs, $slug, null );
+    if ( $plugin_settings ) {
+        $server = bw_array_get_dcb( $plugin_settings, "server", null, "oik_get_plugins_server" );
+    }
+    // apikey doesn't default here 
+  }  
+
+  if ( $plugin_settings ) {
+    $plugin_settings['server'] = $server;
+    bw_trace2( $server, "server" );  
+  }
+  
+  return( $plugin_settings ); 
+}
+
+
+/** 
+ * Only register our plugin server when needed
+ */
+function oik_lazy_altapi_init() {
+  add_action( "pre_set_site_transient_update_plugins", "oik_altapi_check" );
+  add_action( "plugins_api", "oik_pluginsapi", 10, 3 );
+}
+
+function oik_altapi_check( $transient ) {
+  oik_require( "includes/oik-remote.inc" );
+  return( oik_lazy_altapi_check( $transient ) );
+}
+
+function oik_pluginsapi( $false, $action, $args ) {
+  oik_require( "includes/oik-remote.inc" );
+  return( oik_lazy_pluginsapi( $false, $action, $args ) );
+}
+
+/**
+ * Perform plugin relocation just before the plugins are listed on the admin page
+ * for action: pre_current_active_plugins
+ */
+function bw_relocate_pre_current_active_plugins( $plugins ) {
+  oik_require( "admin/oik-relocate.inc" );
+  bw_lazy_relocate_pre_current_active_plugins( $plugins );
+}
+
+/** 
+ * Add a plugin relocation to the $bw_relocations list
+ * @param string $from - from plugin basename
+ * @param string $to - to plugin basename
+ */
+function bw_add_relocation( $from, $to ) {
+  global $bw_relocations;
+  if ( !isset( $bw_relocations ) ) {
+    $bw_relocations = array();
+  }
+  $bw_relocations[ $from ] = $to;
+  bw_trace2( $bw_relocations );
+}
+

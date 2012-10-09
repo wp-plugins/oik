@@ -97,6 +97,7 @@ function bw_term_array( $terms ) {
  * Load an array of node references
  *
  * @param string/array $args - array of args containing the #type of the node to load
+ * Note: #type may also be an array of post_types
  * @returns array $options - array of nodes keyed by ID with value of title
  *
  * Note: You can simply pass this as a string if you so wish 
@@ -107,10 +108,21 @@ function bw_term_array( $terms ) {
  * 
  */
 function bw_load_noderef( $args ) {
-  $args['post_type'] = bw_array_get( $args, '#type', $args );
   oik_require( "includes/bw_posts.inc" );
-  $posts = bw_get_posts( $args );
-  $options = bw_post_array( $posts );
+  $post_types = array();
+  $post_type = bw_array_get( $args, '#type', $args );
+  if ( is_array( $post_type ) ) { 
+    $post_types = $post_type;
+  } else {
+    $post_types[] = $post_type;
+  }   
+    
+  $options = array();
+  foreach ( $post_types as $post_type ) {
+    $args['post_type'] = $post_type;
+    $posts = bw_get_posts( $args );
+    $options += bw_post_array( $posts );
+  }
   return( $options );
 }
 
@@ -120,6 +132,10 @@ function bw_load_noderef( $args ) {
  */
 function bw_form_field_noderef( $name, $type, $title, $value, $args ) {
   $options = bw_load_noderef( $args );
+  $optional = bw_array_get( $args, "#optional", false );
+  if ( $optional ) {
+    $options = array( "None" ) + $options;
+  }  
   bw_select( $name, $title, $value, array( '#options' => $options ));
 }
    

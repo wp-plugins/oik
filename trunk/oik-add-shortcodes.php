@@ -328,12 +328,6 @@ bw_add_shortcode( 'bw_eblock', 'bw_eblock', oik_path("shortcodes/oik-blocks.php"
                                            
 bw_add_shortcode( 'paypal', 'bw_pp_shortcodes', oik_path( "shortcodes/oik-paypal.php"), false );
 
-
-//if ( $bw_plugins['oik-tides'] ) {
-//  bw_add_shortcode( 'bw_tides', 'bw_tides', oik_path( "shortcodes/oik-tides.php"), false );
-//}
-
-
 /* Allow the NextGEN slideshow to be used in widgets as well as in context 
 */
 

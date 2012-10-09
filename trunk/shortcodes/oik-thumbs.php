@@ -1,4 +1,7 @@
-<?php 
+<?php
+
+if ( defined( 'OIK_THUMBS_SHORTCODES_INCLUDED' ) ) return;
+define( 'OIK_THUMBS_SHORTCODES_INCLUDED', true );
 /*
 
     Copyright 2012 Bobbing Wide (email : herb@bobbingwide.com )

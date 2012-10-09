@@ -1,10 +1,12 @@
 <?php
+if ( defined( 'OIK_SIDEBAR_INCLUDED' ) ) return;
+define( 'OIK_SIDEBAR_INCLUDED', true );
 
 /*
 Plugin Name: oik sidebar
-Plugin URI: http://www.oik-plugins.com/oik
+Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-sidebar
 Description: Applies widget wrangler sidebar functionality to Artisteer themes
-Version: 1.16
+Version: 1.17
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -26,12 +28,11 @@ License: GPL2
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
-global $oik_options;
-require_once( 'bobbfunc.inc' );
+//require_once( 'bobbfunc.inc' );
 
-function oik_sidebar_api_version() {
-  return bw_oik_version();
-}
+//function oik_sidebar_api_version() {
+//  return bw_oik_version();
+//}
 
 /* Note: for this plugin to do anything you need to do the following: 
    o change your Artisteer theme to call bw_dynamic_sidebar instead of art_dynamic_sidebar
@@ -58,13 +59,13 @@ function bw_dynamic_sidebar( $name ) {
   $wwsb = function_exists( 'ww_dynamic_sidebar' );
   
   
-  bw_trace( $wwsb, __FUNCTION__, __LINE__, __FILE__, 'wwsb' );
-  bw_trace( $name, __FUNCTION__, __LINE__, __FILE__, 'name' );
+  //bw_trace( $wwsb, __FUNCTION__, __LINE__, __FILE__, 'wwsb' );
+  //bw_trace( $name, __FUNCTION__, __LINE__, __FILE__, 'name' );
 
   if ( $wwsb ) {
     $success_b = ww_dynamic_sidebar($name.'_before');
     
-    bw_trace( $success_b, __FUNCTION__, __LINE__, __FILE__ );
+    //bw_trace( $success_b, __FUNCTION__, __LINE__, __FILE__ );
     
   }
   
@@ -85,3 +86,12 @@ function bw_dynamic_sidebar( $name ) {
   return( $success );
 }
 
+add_action( "oik_admin_menu", "oik_sidebar_admin_menu" );
+
+/**
+ * Relocate the plugin to become its own plugin and set the plugin server
+ */
+function oik_sidebar_admin_menu() {
+  oik_register_plugin_server( __FILE__ );
+  bw_add_relocation( 'oik/oik-sidebar.php', 'oik-sidebar/oik-sidebar.php' );
+}

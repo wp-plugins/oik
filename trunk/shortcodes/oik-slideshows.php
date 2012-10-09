@@ -1,4 +1,6 @@
-<?php 
+<?php
+if ( defined( 'OIK_SLIDESHOWS_SHORTCODES_INCLUDED' ) ) return;
+define( 'OIK_SLIDESHOWS_SHORTCODES_INCLUDED', true );
 /*
 
     Copyright 2011, 2012 Bobbing Wide (email : herb@bobbingwide.com )
@@ -18,7 +20,6 @@
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
-//oik_require( "includes/bw_posts.inc" );
 
 /**
  * Safely invoke SlideShow Gallery Pro
