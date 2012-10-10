@@ -213,15 +213,8 @@ function oik_header_admin_menu() {
   bw_add_relocation( 'oik/oik-header.php', 'oik-header/oik-header.php' );
   bw_add_relocation( 'oik/admin/oik-header.inc', 'oik-header/admin/oik-header.inc' );
   
-  /* Should we create a new function for this? **?** */
-  // function oik_require_alternate( $filename, $plugin, $alternate_plugin );
+  oik_require2( "admin/oik-header.inc", "oik-require" );
   
-  $new_path = oik_path( "admin/oik-header.inc", "oik-header" );
-  if ( file_exists( $new_path ) ) {
-    oik_require( 'admin/oik-header.inc', "oik-header" );
-  } else {
-    oik_require( 'admin/oik-header.inc' );
-  }  
 }
 
 
