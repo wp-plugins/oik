@@ -207,6 +207,7 @@ function bw_summarise_actions( $file="bwaction.loh" ) {
  *
 */ 
 function bw_action_summary() {
+  oik_require2( "includes/oik-bwtrace.inc", "oik-bwtrace" );
   $file = bw_action_file();
   if ( $file ) {
     stag( "table", "form-table" );
