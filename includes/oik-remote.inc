@@ -99,11 +99,13 @@ function bw_remote_post( $url, $args ) {
  *
  */
 function oik_lazy_altapi_check( $transient ) {
-  //bw_trace2();
+  bw_backtrace();
   static $checks = 0;
   $checks++;
+  bw_trace2( $checks, "checks" );
   if ( 2 == $checks ) {
     //bw_backtrace();
+  //gobang();
     $checked = bw_array_get( $transient, "checked", array() );
     foreach ( $checked as $plugin => $version ) {
       $plugin_settings = oik_query_plugins_server( bw_get_slug( $plugin ) );

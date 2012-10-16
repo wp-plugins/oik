@@ -115,7 +115,8 @@ function oik_enqueue_stylesheets() {
 function oik_main_init() {
   add_action( 'admin_menu', 'oik_admin_menu' );
   add_action( "activate_plugin", "oik_load_plugins" );
-  add_action( "network_admin_notices", "oik_admin_menu" );
+  add_action( 'network_admin_menu', "oik_network_admin_menu" );
+  add_action( "network_admin_notices", "oik_network_admin_menu" );
   bw_load_plugin_textdomain();
   do_action( 'oik_loaded' );
 }
@@ -132,6 +133,26 @@ function oik_admin_menu() {
   add_action('admin_init', 'oik_admin_init' );
   do_action( 'oik_admin_menu' );
 }
+
+/** 
+ * Implement the 'network_admin_menu' or 'network_admin_notices' for multisite
+ * 
+ * network_admin_menu is used to determine if plugins need updating
+ * network_admin_notices is used in plugin dependency checking
+ */
+function oik_network_admin_menu() {
+  static $actioned = null;
+  if ( !$actioned ) { 
+    $actioned = current_filter();
+    require_once( 'admin/oik-admin.inc' );
+    oik_options_add_page();
+    add_action('admin_init', 'oik_admin_init' );
+    do_action( 'oik_admin_menu' );
+  } else {
+    bw_trace2( $actioned, "actioned" );
+  }   
+}
+ 
 
 /**
  * Implement 'admin_init'

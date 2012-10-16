@@ -213,7 +213,7 @@ function oik_header_admin_menu() {
   bw_add_relocation( 'oik/oik-header.php', 'oik-header/oik-header.php' );
   bw_add_relocation( 'oik/admin/oik-header.inc', 'oik-header/admin/oik-header.inc' );
   
-  oik_require2( "admin/oik-header.inc", "oik-require" );
+  oik_require2( "admin/oik-header.inc", "oik-header" );
   
 }
 

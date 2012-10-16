@@ -906,10 +906,30 @@ function oik_query_plugins_server( $slug ) {
  */
 function oik_lazy_altapi_init() {
   add_action( "pre_set_site_transient_update_plugins", "oik_altapi_check" );
+  add_action( "site_transient_update_plugins", "oik_site_transient_update_plugins", 10, 1 );
   add_action( "plugins_api", "oik_pluginsapi", 10, 3 );
 }
 
+/**
+ * If required, unset last_checked to force another "check for updates"
+ * 
+ * Note: Only use this when testing the oik plugin update logic
+ */
+function oik_site_transient_update_plugins( $transient ) {
+  if ( defined( "OIK_FORCE_CHECK" ) && OIK_FORCE_CHECK ) {
+    static $last_checked = null; 
+    if ( !$last_checked ) {
+      $last_checked = $transient->last_checked;
+      unset( $transient->last_checked ); 
+      bw_trace2( $last_checked, "transient" );
+    }  
+  }     
+  bw_backtrace();
+  return( $transient );
+}  
+
 function oik_altapi_check( $transient ) {
+  bw_backtrace();
   oik_require( "includes/oik-remote.inc" );
   return( oik_lazy_altapi_check( $transient ) );
 }
