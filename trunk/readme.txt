@@ -128,6 +128,11 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Changed: readme.txt
 * Added: bw_load_noderef() now supports multiple post_types
 * Added: noderef meta field supports #optional parameter
+* Added: iradio() and bw_radio() APIs in order to support the jQuery star rating plugin
+* Added: OIK_FORCE_CHECK constant for use during debugging only
+* Changed: ihidden() always produces a hidden input field regardless of the value
+* Added: bw_current_url() - return the current URL
+* Changed: Improved support for multisite requests to an oik plugins server
 
 = 1.16 =
 * Fixed: Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2

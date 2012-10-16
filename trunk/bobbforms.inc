@@ -14,11 +14,8 @@ function form( $action="", $method="post" ) {
 function bw_form( $action="", $method="post" ) {
   e( form( $action, $method ) );
 }  
-  
 
-
-function label( $name, $text )
-{
+function label( $name, $text ) {
    $lab = "<label for=\"";
    $lab.= $name;
    $lab.= "\">";
@@ -29,19 +26,18 @@ function label( $name, $text )
 
 function ihidden( $name, $value ) {
   $it = "";
-  if ( $value != "" ) {
+  //if ( $value != "" ) {
     $it = "<input type=\"hidden\" ";
     $it.= "name=\"";
     $it.= $name;
     $it.= "\" value=\"";
     $it.= $value;
     $it.= "\" />"; 
-  }  
+  //}  
   return $it;
 }  
 
-function itext( $name, $len, $value, $class=null, $extras=null )
-{
+function itext( $name, $len, $value, $class=null, $extras=null ) {
   $width = ($len * 20) ;
   $it = "<input type=\"text\" size=\"";
   $it.= $len;
@@ -92,10 +88,26 @@ function iemail( $name, $len, $value, $class=null, $extras=null ) {
 /**
  * Create a submit button
  */
-function isubmit( $name, $value, $class=null, $extras=null ) {
+function isubmit( $name, $value, $id=null, $class=null,  $extras=null ) {
   $it = "<input";
   $it .= kv( "type", "submit" );
   $it .= kv( "name", $name );
+  $it .= kv( "value", $value );
+  $it .= kv( "id", $id );
+  $it .= kv( "class", $class );
+  $it .= $extras;
+  $it .= " />";
+  return( $it );
+} 
+
+/**
+ * Create a radio button 
+ */
+function iradio( $name, $id, $value, $class, $extras ) {
+  $it = "<input";
+  $it .= kv( "type", "radio" );
+  $it .= kv( "name", $name );
+  $it .= kv( "id", $id );
   $it .= kv( "value", $value );
   $it .= kv( "class", $class );
   $it .= $extras;
@@ -170,6 +182,28 @@ function bw_textarea( $name, $len, $text, $value, $rows=10 ) {
   return;
 }
 
+/**
+ * Display a group of radio buttons
+ * 
+ * @param string $name - the name of the group
+ * @param string $text - the title for the radio button group
+ * @param array $values - array of $id => $value - one for each button in the group
+ * @param array $labels - arraof of $id => $label - one for each button in the group
+ * @param string $class - CSS class names e.g. "star"
+ * @param array $extras - sparse array of $id -> $extra where $id matches the key of the $value array 
+ * and $extra are any additional key=value parameters. This is where the "selected" radio button is defined
+*/ 
+function bw_radio( $name, $text, $values, $labels, $class=null, $extras=null ) {
+  $iradios = null;
+  foreach ( $values as $id => $value ) {
+    $label = bw_array_get( $labels, $id, $value );
+    $extra = bw_array_get( $extras, $id, null );
+    $iradios .= label( $name, $label );
+    $iradios .= iradio( $name, $id, $value, $class, $extra );
+  }   
+  $lab = label( $name, $text );
+  bw_tablerow( array( $lab, $iradios ) );
+}
 
 function iselect( $name, $value, $args ) {
   $iselect = "<select name=\"$name\">" ;
@@ -339,3 +373,24 @@ function bw_reset_options( $option, $options, $default_cb, $request_field ) {
 }
 
  
+/**
+ * Return the current URL - fully qualified so that it can be passed as a parameter to another site
+ * Code copied from WordPress-SEO and @link http://webcheatsheet.com/PHP/get_current_page_url.php
+ *
+ */
+function bw_current_url() {
+  $pageURL = 'http';
+  // Does it matter what it's set to? "on" or 1 **?**
+  if ( isset( $_SERVER["HTTPS"] ) ) {  
+    $pageURL .= "s";
+  }
+  $pageURL .= "://";
+  $pageURL .= $_SERVER["SERVER_NAME"];
+  // We know that SERVER_PORT is set by apache
+  if ($_SERVER["SERVER_PORT"] != "80") {
+    $pageURL .= $_SERVER["SERVER_PORT"];
+  }
+  $pageURL .= $_SERVER["REQUEST_URI"];
+  bw_trace2( $pageURL, "pageURL", false );
+  return( $pageURL );
+}
