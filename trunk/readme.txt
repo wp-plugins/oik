@@ -133,6 +133,7 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Changed: ihidden() always produces a hidden input field regardless of the value
 * Added: bw_current_url() - return the current URL
 * Changed: Improved support for multisite requests to an oik plugins server
+* Changed: started decoupling action trace from basic trace functions (oik-bwtrace plugin)
 
 = 1.16 =
 * Fixed: Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2
