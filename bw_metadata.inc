@@ -1,4 +1,6 @@
 <?php // (C) Copyright Bobbing Wide 2012
+if ( defined( 'BW_METADATA_INCLUDED' ) ) return;
+define( 'BW_METADATA_INCLUDED', true );
 
 /**
  * Logic to create metaboxes for each of the custom fields defined for a particular post type

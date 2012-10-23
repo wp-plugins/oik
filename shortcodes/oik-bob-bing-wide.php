@@ -25,9 +25,9 @@ oik_require( "bobbcomp.inc" );
 
 function bw_bob( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="b1 bold">B</span>';
-  $bw .= '<span class="o bold">o</span>'; 
-  $bw .= '<span class="b2 bold">b</span>';
+  $bw .= '<span class="bw_b1 bold">B</span>';
+  $bw .= '<span class="bw_o bold">o</span>'; 
+  $bw .= '<span class="bw_b2 bold">b</span>';
   $bw .= nullretetag( "span", $class );
   return( $bw );
 
@@ -35,9 +35,9 @@ function bw_bob( $class = NULL) {
 
 function bw_fob( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="W bold">f</span>';
-  $bw .= '<span class="i2 bold">o</span>'; 
-  $bw .= '<span class="d bold">b</span>';
+  $bw .= '<span class="bw_W bold">f</span>';
+  $bw .= '<span class="bw_i2 bold">o</span>'; 
+  $bw .= '<span class="bw_d bold">b</span>';
   $bw .= nullretetag( "span", $class );
   return( $bw );
 
@@ -45,40 +45,40 @@ function bw_fob( $class = NULL) {
 
 function bw_bing( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="b3 bold">b</span>';
-  $bw .= '<span class="i1 bold">i</span>';
-  $bw .= '<span class="n bold">n</span>';
-  $bw .= '<span class="g bold">g</span>';
+  $bw .= '<span class="bw_b3 bold">b</span>';
+  $bw .= '<span class="bw_i1 bold">i</span>';
+  $bw .= '<span class="bw_n bold">n</span>';
+  $bw .= '<span class="bw_g bold">g</span>';
   $bw .= nullretetag( "span", $class ); 
   return( $bw );
 }
 
 function bw_wide( $class=NULL ) {
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="W">W</span>';
-  $bw .= '<span class="i2">i</span>';
-  $bw .= '<span class="d">d</span>';
-  $bw .= '<span class="e">e</span>';
+  $bw .= '<span class="bw_W">W</span>';
+  $bw .= '<span class="bw_i2">i</span>';
+  $bw .= '<span class="bw_d">d</span>';
+  $bw .= '<span class="bw_e">e</span>';
   $bw .= nullretetag( "span", $class ); 
   return( $bw );
 } 
 
 function bw_bong( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="W">b</span>';
-  $bw .= '<span class="i2">o</span>';
-  $bw .= '<span class="d">n</span>';
-  $bw .= '<span class="e">g</span>';
+  $bw .= '<span class="bw_W">b</span>';
+  $bw .= '<span class="bw_i2">o</span>';
+  $bw .= '<span class="bw_d">n</span>';
+  $bw .= '<span class="bw_e">g</span>';
   $bw .= nullretetag( "span", $class ); 
   return( $bw );
 }
 
 function bw_hide( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="W">h</span>';
-  $bw .= '<span class="i2">i</span>';
-  $bw .= '<span class="d">d</span>';
-  $bw .= '<span class="e">e</span>';
+  $bw .= '<span class="bw_W">h</span>';
+  $bw .= '<span class="bw_i2">i</span>';
+  $bw .= '<span class="bw_d">d</span>';
+  $bw .= '<span class="bw_e">e</span>';
   $bw .= nullretetag( "span", $class ); 
   return( $bw );
 
@@ -86,9 +86,9 @@ function bw_hide( $class = NULL) {
 
 function bw_wow ( $class = NULL ) {
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="B1">W</span>';
-  $bw .= '<span class="o">o</span>';
-  $bw .= '<span class="B2">W</span>';
+  $bw .= '<span class="bw_B1">W</span>';
+  $bw .= '<span class="bw_o">o</span>';
+  $bw .= '<span class="bw_B2">W</span>';
   $bw .= nullretetag( "span", $class ); 
   return( $bw );
 }
@@ -96,11 +96,11 @@ function bw_wow ( $class = NULL ) {
 /* These are non-translatable */
 function bw_wow_long ( $class = NULL ) {
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="B1">Wonder</span>';
+  $bw .= '<span class="bw_B1">Wonder</span>';
   $bw .= ' ';
-  $bw .= '<span class="o">of</span>';
+  $bw .= '<span class="bw_o">of</span>';
   $bw .= ' ';
-  $bw .= '<span class="B2">WordPress</span>';
+  $bw .= '<span class="bw_B2">WordPress</span>';
   $bw .= nullretetag( "span", $class ); 
   return( $bw );
 }
@@ -145,22 +145,22 @@ function bw_lbw( $atts=NULL ) {
 
 }
 
-function bw_loik() {
+function bw_loik( $atts=null) {
   return( retlink( NULL, "http://www.oik-plugins.com/oik", bw_oik(), "Link to the oik plugin")) ;
 } 
 
 function bw_wp( ) {
   $bw = nullretstag( "span", "wordpress"); 
-  $bw .= '<span class="word">Word</span>';
-  $bw .= '<span class="press">Press</span>';
+  $bw .= '<span class="bw_word">Word</span>';
+  $bw .= '<span class="bw_press">Press</span>';
   $bw .= nullretetag( "span", "wordpress" ); 
   return( $bw );
 }
 
 function bw_bp( ) {
   $bw = nullretstag( "span", "buddypress"); 
-  $bw .= '<span class="buddy">Buddy</span>';
-  $bw .= '<span class="bpress">Press</span>';
+  $bw .= '<span class="bw_buddy">Buddy</span>';
+  $bw .= '<span class="bw_bpress">Press</span>';
   $bw .= nullretetag( "span", "buddypress" ); 
   return( $bw );
 }
@@ -204,17 +204,17 @@ function bw_lart() {
 function bw_wpms() {
   $bw = bw_wp();
   $bw .= ' ';
-  $bw .= '<span class="multisite">Multisite</span>';
+  $bw .= '<span class="bw_multisite">Multisite</span>';
   return( $bw );
 }
   
 function bw_drupal() {
-  $bw = '<span class="drupal">Drupal</span>';
+  $bw = '<span class="bw_drupal">Drupal</span>';
   return( $bw );
 } 
  
 function bw_art() {
-  $bw = '<span class="artisteer">Artisteer</span>';
+  $bw = '<span class="bw_artisteer">Artisteer</span>';
   return( $bw );
 }  
 

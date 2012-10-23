@@ -62,7 +62,7 @@ function bw_button__example( $shortcode='bw_button' ) {
    
   Create a contact me button which links to the contact form page.
   Parameters are:
-    [bw_contact_button link='URL' text='button text' title='button tooltip text']
+    [bw_contact_button link='URL' text='button text' title='button tooltip text' class='classes' ]
   
   Defaults:
   Field      option field used    hardcoded default
@@ -83,7 +83,7 @@ function bw_contact_button( $atts=NULL ) {
   $text = bw_default_empty_arr( $atts, 'text', "contact-text", "Contact" );
   $title = bw_default_empty_arr( $atts, 'title', "contact-title", "Contact " . $contact);
    
-  $class = bw_array_get( $atts, 'class', NULL ) . "contact" ;
+  $class = bw_array_get( $atts, 'class', NULL ) . "bw_contact" ;
   art_button( $link, $text, $title, $class ); 
   
   return( bw_ret());  
@@ -95,7 +95,7 @@ function bw_contact_button__syntax( $shortcode='bw_contact_button' ) {
                  , "link" => bw_skv( "/contact/", "URL", "URL for the link" ) 
                  , "text" => bw_skv( "Contact", "contact-text", "text for the button" )
                  , "title" => bw_skv( "Contact <i>contact name</i>", "contact-title", "title for the tooltip" )
-                 , "class" => bw_skv( "", "", "CSS classes for the button" )
+                 , "class" => bw_skv( "bw_contact", "", "CSS classes for the button" )
                  );
   return( $syntax ); 
 }

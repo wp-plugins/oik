@@ -235,7 +235,7 @@ function bw_action_summary() {
  */
 function bw_action_reset_form() {
   oik_require( "bobbforms.inc" );
-  e( '<form method="post" action="" class="inline">' ); 
+  e( '<form method="post" action="" class="bw_inline">' ); 
   e( "<input type=\"submit\" name=\"_bw_action_reset\" value=\"Action reset\" />" ); 
   etag( "form" );
 }

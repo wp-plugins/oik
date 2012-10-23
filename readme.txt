@@ -134,6 +134,17 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Added: bw_current_url() - return the current URL
 * Changed: Improved support for multisite requests to an oik plugins server
 * Changed: started decoupling action trace from basic trace functions (oik-bwtrace plugin)
+* Changed: [bw_pages] now supports custom text for "read more" links extracted from the <!--more custom read more text -->
+* Changed: bw_excerpt() restructured to support shortcode expansion using the "get_the_excerpt" filter
+* Changed: Inclusion of oik.css is now optional.
+* Changed: oik.css should better respect your theme's styling. e.g. Attachment links now have class bw_attachment
+* Changed: Altered generated HTML for a number of shortcodes in line with oik.css changes 
+* Changed: bwlink.css is now only enqueued by the oik-bob-bing-wide plugin. Note: A lot of oik.css was moved to bwlink.css
+* Deleted: deprecated; bw_add_ajaxurl(), bw_preload_button_options(), oik_optional_plugins()
+* Fixed: Corrected syntax help for the [div] shortcode
+* Fixed: bw_format_attachment() no longer produces an empty link when no image is required
+* Changed: bw_array_get_dcb() will accept null parameters e.g. [bw_email prefix='' suffix='']
+* Added: Syntax help for quite a few shortcodes where the parameters were previously undocumented: bw_address, bw_email and variation, bw_tel and variations, bw_copyright, bw_qrcode
 
 = 1.16 =
 * Fixed: Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2

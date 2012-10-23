@@ -335,10 +335,18 @@ function div__help() {
   return( "start a &lt;div&gt; tag" );
 }
 
-function _div__syntax( ) {
+function div__syntax( ) {
   $syntax = _sc_classes();
   return( $syntax );
 } 
+
+/** We don't provide an example for the [div] shortcode as we want to deliver it using the shortcode server
+  where it can be created in the __oik_sc_example field
+function div__example() {
+
+  return( $example );
+}
+*/
  
 function ediv__help() { 
   return( esc_html( "end a <div> with </div>") );
@@ -536,6 +544,136 @@ function oik__example( $shortcode=NULL ) {
  }  
 } 
 
+function bw_address__syntax( $shortcode="bw_address" ) {
+  $syntax = array( "type" => bw_skv( "Work", "<i>type</i>", "Address type." )
+                 , "alt" => bw_skv( "", "1", "suffix for alternative address" )
+                 );
+  return( $syntax );
+}
+
+function bw_address__example( $shortcode="bw_address" ) {
+ p( "Display the address defined in oik options" );
+ e( bw_address() );
+}
+
+/**
+ * Common parameters for bw_email, bw_mailto, etc. 
+ */ 
+function _sc_email() {
+  $syntax = array( "prefix" => bw_skv( "Email", "<i>string</i>", "Prefix string" )
+                 , "sep" => bw_skv( ": ", "<i>string</i>", "Separator string" )
+                 , "alt" => bw_skv( null, "1", "Use alternative value" )
+                 , "title" => bw_skv( "Send email to: ", "<i>title string</i>", "Tool tip text" )
+                 );
+  return( $syntax );
+}                   
+
+function bw_email__syntax( $shortcode="bw_email" ) {
+  $syntax = _sc_email();
+  $syntax_email = array( "tag" => bw_skv( "span", "<i>tag</i>", "enclosing HTML tag" )
+                 , "index" => bw_skv( "email", "<i>field</i>", "oik options field to use" )
+                 );
+  $syntax += $syntax_email;                 
+  return( $syntax );
+}
+
+function bw_mailto__syntax( $shortcode="bw_mailto" ) {
+  $syntax = _sc_email();
+  $syntax_mailto = array( "tag" => bw_skv( "p", "<i>tag</i>", "enclosing HTML tag" )
+                 , "index" => bw_skv( "email", "<i>field</i>", "oik options field to use" )
+                 );
+  $syntax += $syntax_mailto;                
+  return( $syntax );
+}
+
+function _sc_telephone() {
+  $syntax = array( "sep" => bw_skv( ": ", "<i>string</i>", "Separator string" )
+                 , "alt" => bw_skv( null, "1", "Use alternative value" )
+                 , "number" => bw_skv( null, "<i>number</i>", "Number override" )  
+                 , "tag" => bw_skv( "div", "<i>tag</i>", "enclosing HTML tag" )
+                 , "class"=> bw_skv( "", "<i>class names</i>", "CSS class names" )
+                 );
+  return( $syntax );
+}
+
+function bw_telephone__syntax( $shortcode="bw_telephone" ) {
+  $syntax = _sc_telephone();
+  $syntax_telephone = array( "prefix" => bw_skv( "Tel", "<i>string</i>", "Prefix string" ) );
+  $syntax_after = array( "index" => bw_skv( "telephone", "<i>field</i>", "oik options field to use" ) );
+  $syntax_telephone += $syntax;
+  $syntax_telephone += $syntax_after; 
+  return( $syntax_telephone );
+} 
+
+function bw_tel__syntax( $shortcode="bw_tel" ) {
+  $syntax = bw_telephone__syntax();
+  $syntax['tag'] = bw_skv( "span", "<i>tag</i>", "enclosing HTML tag" );
+  return( $syntax );
+}
+
+function bw_fax__syntax( $shortcode="bw_fax" ) {
+  $syntax = _sc_telephone();
+  $syntax_fax = array( "prefix" => bw_skv( "Fax", "<i>string</i>", "Prefix string" ) );
+  $syntax_after = array( "index" => bw_skv( "fax", "<i>field</i>", "oik options field to use" ) );
+  $syntax_fax += $syntax;
+  $syntax_fax += $syntax_after; 
+  return( $syntax_fax );
+}
+
+function bw_mobile__syntax( $shortcode="bw_mobile" ) {
+  $syntax = _sc_telephone();
+  $syntax_mobile = array( "prefix" => bw_skv( "Mobile", "<i>string</i>", "Prefix string" ) );
+  $syntax_after = array( "index" => bw_skv( "mobile", "<i>field</i>", "oik options field to use" ) );
+  $syntax_mobile += $syntax;
+  $syntax_mobile += $syntax_after; 
+  return( $syntax_mobile );
+}
+
+function bw_mob__syntax( $shortcode="bw_mob" ) {
+  $syntax = bw_mobile__syntax();
+  $syntax['tag'] = bw_skv( "span", "<i>tag</i>", "enclosing HTML tag" );
+  return( $syntax );
+}
+
+function bw_emergency__syntax( $shortcode="bw_emergency" ) {
+  $syntax = _sc_telephone();
+  $syntax_emergency = array( "prefix" => bw_skv( "Emergency", "<i>string</i>", "Prefix string" ) );
+  $syntax_after = array( "index" => bw_skv( "emergency", "<i>field</i>", "oik options field to use" ) );
+  $syntax_emergency += $syntax;
+  $syntax_emergency += $syntax_after; 
+  $syntax_emergency['class'] = bw_skv( "bw_emergency", "<i>class names</i>", "additional CSS class names" ); 
+  return( $syntax_emergency );
+}
+
+function bw_skype__syntax( $shortcode="bw_skype" ) {
+  $syntax = _sc_telephone();
+  $syntax_skype = array( "prefix" => bw_skv( "Skype name", "<i>string</i>", "Prefix string" ) );
+  $syntax_after = array( "index" => bw_skv( "skype", "<i>field</i>", "oik options field to use" ) );
+  $syntax_skype += $syntax;
+  $syntax_skype += $syntax_after; 
+  $syntax_skype['class'] = bw_skv( "bw_skype", "<i>class names</i>", "additional CSS class names" ); 
+  return( $syntax_skype );
+}
+
+function bw_copyright__syntax( $shortcode="bw_copyright" ) {
+  $syntax = array( "prefix" => bw_skv( "&copy; Copyright", "<i>string</i>", "Copyright text prefix" )
+                 , "company" => bw_skv( bw_get_option( "company" ), "<i>company name</i>", "from oik options - company" )
+                 , "suffix" => bw_skv( ". All rights reserved.", "<i>string</i>", "copyright suffix text" )
+                 , "from" => bw_skv( bw_get_option( "yearfrom" ), "<i>year</i>", "from oik options - yearfrom" )
+                 , "sep" => bw_skv( "-", ",|<i>string</i>", "default: ',' if one year difference '-' otherwise" )
+                 );
+  return( $syntax );
+} 
+
+function bw_qrcode__syntax( $shortcode="bw_qrcode" ) {
+  $syntax = array( "link" => bw_skv( null, "<i>URL</i>", "Link URL for QR code image" )
+                 , "text" => bw_skv( bw_get_option( "company" ), "<i>string</i>", "from oik options - company" )
+                 , "width" => bw_skv( null, "<i>width</i>", "width of QR code image, if required" )
+                 , "height" => bw_skv( null, "<i>height</i>", "height of QR code image, if required" )
+                 );
+  return( $syntax );
+}                   
+                   
 /**
  * Call a shortcode for a simple example
  * 

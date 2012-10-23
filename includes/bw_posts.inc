@@ -42,7 +42,26 @@ function bw_global_post_type() {
     $post_type = NULL;
   }  
   return( $post_type ) ;
-}  
+}
+
+/** 
+ * Return the value of the GLOBAL post's excerpt field setting it to the new value
+ * 
+ * @param string $excerpt - the new value that we want to set
+ * @return string the previously stored value
+ * 
+ * Use this function in pairs to save and then reset the global value.
+ * 
+ */
+function bw_global_excerpt( $excerpt=null ) {
+  if ( isset( $GLOBALS['post'] )) {
+    $excerpt_to_return = $GLOBALS['post']->post_excerpt;
+    $GLOBALS['post']->post_excerpt = $excerpt;
+  } else {
+    $excerpt_to_return = null;
+  }  
+  return( $excerpt_to_return );   
+}
 
 function bw_process_this_post( $id ) {
   global $processed_posts;
@@ -57,34 +76,76 @@ function bw_process_this_post( $id ) {
 function bw_clear_processed_posts() {
   global $processed_posts;
   $processed_posts = array();
-}  
+}
 
+/**
+ * Safely invoke the "get_the_excerpt" filter
+ * 
+ * The reason we apply filters here is to expand shortcodes.
+ * And we want to expand only those shortcodes that are allowed to expand in excerpts.
+ * 
+ * There is no need to do this if there aren't any shortcodes. So we do a simple check for the starting character '['
+ *
+ * Note: We don't want other filters to try doing things based on the global post, so we use bw_global_excerpt() to make
+ * it look as if there isn't an excerpt
+ *
+ */
+function bw_get_the_excerpt( $excerpt ) { 
+  $doit = strpos( $excerpt, "[" );
+  if ( $doit !== false ) { 
+    $saved_excerpt = bw_global_excerpt( null ); 
+    $excerpt = apply_filters( "get_the_excerpt", $excerpt );
+    bw_trace2( $excerpt, "excerpt after", false );
+    bw_global_excerpt( $saved_excerpt );
+  }  
+  return( $excerpt );
+}
 
+/**
+ * Set and retrieve the custom "read more" text
+ *
+ * Whenever we call bw_excerpt() call bw_more_text() to set the custom "read more" text
+ * The custom "read more" text can then be accessed using the same function when creating the read more link
+ */
+function bw_more_text( $more_text=null, $atts=null ) {   
+  static $bw_more_text = null;
+  if ( $more_text ) {
+    $bw_more_text = $more_text; 
+  } else {
+    if ( !$bw_more_text ) { 
+      $bw_more_text = bw_array_get_dcb( $atts, "read_more", "read more" );
+    }  
+  }
+  bw_trace2( $bw_more_text, "bw_more_text" );
+  return( $bw_more_text );
+}
 
 /**
  * Return the excerpt from the $post 
  * @param  post $post- post from which to extract the excerpt
  * @return string $excerpt the excerpt from the post
- * 
+ *
+ * Note: Most of the routines that implement the "get_the_excerpt" filter assume we're dealing with the excerpt of the main post
+ * Here we are getting the excerpt of something else. We only want shortcodes to be expanded. See bw_get_the_excerpt();
+ * In order to achieve this we have to make sure that the global post's excerpt is not set
  */
 function bw_excerpt( $post ) {
   if ( bw_process_this_post( $post->ID ) ) {
-
     if ( empty( $post->post_excerpt ) ) {
-      $content = explode( '<!--more-->', $post->post_content); 
-      $excerpt = $content[0];
+      $excerpt = $post->post_content;
     } else {
       $excerpt = $post->post_excerpt;
     }
-    bw_trace( $excerpt, "excerpt" );
-    //$excerpt = bw_do_shortcode( $excerpt );
-    $excerpt = apply_filters( "get_the_excerpt", $excerpt );
+    $content = get_extended( $excerpt ); 
+    $excerpt = $content['main'];
+    bw_more_text( $content['more_text'] );
+    
+    $excerpt = bw_get_the_excerpt( $excerpt );
   } else {
     $excerpt = "post already processed: " . $post->ID;
   }  
   return( $excerpt );
 }
-
 
 /**
  * Format the "post" - basic first version
@@ -102,7 +163,6 @@ function bw_format_post( $post, $atts ) {
   bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
   
   $atts['title'] = get_the_title( $post->ID );
-  $read_more = bw_array_get( $atts, "read_more", "read more" );
   $thumbnail = bw_thumbnail( $post->ID, $atts );
   
   $in_block = bw_validate_torf( bw_array_get( $atts, "block", TRUE ));
@@ -129,6 +189,7 @@ function bw_format_post( $post, $atts ) {
   }  
   e( bw_excerpt( $post ) );
   sp();
+  $read_more = bw_more_text( null, $atts );
   art_button( get_permalink( $post->ID ), $read_more, $read_more ); 
   ep(); 
   if ( $in_block )
@@ -139,21 +200,17 @@ function bw_format_post( $post, $atts ) {
   }    
 }
 
-
 /**
  * Format the "post" - in a simple list item list
  */
 function bw_format_list( $post, $atts ) {
   setup_postdata( $post );
-  
   // bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
   $title = get_the_title( $post->ID );
   stag( 'li' );
   alink( NULL, get_permalink( $post->ID ), $title );
   etag( 'li' );
-  
 }
-
 
 /**
  * Get the list of categories for this "post" as a string of slugs separated by commas 
@@ -170,9 +227,6 @@ function bw_get_categories() {
   $cats = str_replace( ' ',',', $cats );
   return bw_trace2( $cats );
 }
-
-
-
 
 /**
  * Wrapper to get_posts() 

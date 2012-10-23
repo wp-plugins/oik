@@ -1,4 +1,4 @@
-<?php
+<?php // (C) Copyright Bobbing Wide 2012
 if ( defined( 'OIK_BOOT_INCLUDED' ) ) return;
 define( 'OIK_BOOT_INCLUDED', true );
 /**

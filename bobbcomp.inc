@@ -125,7 +125,7 @@ function bw_geo( $atts=null ) {
 function _bw_telephone( $atts = null ) {
   $prefix = bw_array_get_dcb( $atts, "prefix", "Tel" );
   $sep = bw_array_get( $atts, "sep", ": " );
-  $number = bw_array_get_dcb( $atts, "number", null );
+  $number = bw_array_get( $atts, "number", null );
   $alt = bw_array_get( $atts, "alt", null );
   $index = bw_array_get( $atts, "index", "telephone" );
   $tag = bw_array_get( $atts, "tag", "div" );
@@ -177,21 +177,19 @@ function bw_mobile( $atts = null ) {
 function bw_emergency( $atts = null ) {
   $atts['index'] = bw_array_get( $atts, "index", "emergency" );
   $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Emergency" );
-  $atts['class'] = bw_array_get_dcb( $atts, "class", "emergency" );
+  $atts['class'] = bw_array_get( $atts, "class", "bw_emergency" );
   return( _bw_telephone( $atts ) );
 }  
 
-// Notes: Using class=email for Microformat
-
 /**
- *
+ * Internal function for bw_email and bw_mailto
  *
  *  use [bw_email] - for an inline mailto link 
  *  or [bw_mailto] for a more formal mailto link
- * I'm sure I used antispambot() once upon a time. Reintroduced but it needs more work
- 
-*/   
-
+ * 
+ * Note: I'm sure I used antispambot() once upon a time. Reintroduced but it needs more work
+ * Notes: Using class=email for Microformat
+ */   
 function _bw_email( $atts = null ) {
   $prefix = bw_array_get_dcb( $atts, "prefix", "Email" );
   $sep = bw_array_get( $atts, "sep", ": " );
@@ -199,42 +197,46 @@ function _bw_email( $atts = null ) {
   $alt = bw_array_get( $atts, "alt", null );
   $title = bw_array_get_dcb( $atts, "title", "Send email to: " );
   $tag = bw_array_get( $atts, "tag", "span" );
-   
   stag( $tag, "email");
-  
   e( $prefix );
   e( $sep );
   $email = bw_get_option( $index, "bw_options$alt" ); 
   $emailasb = antispambot( $email, 1 ); 
   alink( NULL, "mailto:". $emailasb, $email, $title . $email );
   etag( $tag );
-  
   return( bw_ret() );
 }
 
+/**
+ * [bw_email] shortcode for an inline mailto: link
+ * @param array $atts - shortcode parameters
+ * @return string expanded shortcode
+ */
 function bw_email( $atts = null ) {
   $atts['tag'] = bw_array_get( $atts, "tag", "span" );
   return( _bw_email( $atts) ); 
 }  
 
-/* [bw_mailto] is for a mailto link in a paragraph or div
+/**
+ * [bw_mailto] shortcode for a mailto: link
+ * @param array $atts - shortcode parameters
+ * @return string expanded shortcode
+ * 
+ * Use the tag parameter to control the formatting. e.g. div
 */
 function bw_mailto( $atts=null ) {
   $atts['tag'] = bw_array_get( $atts, "tag", "p" );
   return( _bw_email( $atts ) );
 }  
 
-
 /**
- * Return address using Microformats
- *
- * 
+ * [bw_address] shortcode - address using Microformats
  */
 function bw_address( $atts = NULL ) {
   $type = bw_array_get( $atts, "type", "Work" );
   $alt = bw_array_get( $atts, "alt", null );
   
-  sdiv("adr" );
+  sdiv("adr bw_address" );
   
     sdiv("type");
     e( $type );
@@ -269,19 +271,6 @@ function bw_address( $atts = NULL ) {
   
   
 }
-
-function bw_address__syntax( $shortcode="bw_address" ) {
-  $syntax = array( "type" => bw_skv( "Work", "<i>type</i>", "Address type." )
-                 , "alt" => bw_skv( "", "1", "suffix for alternative address" )
-                 );
-  return( $syntax );
-}
-
-function bw_address__example( $shortcode="bw_address" ) {
- p( "Display the address defined in oik options" );
- e( bw_address() );
-} 
-
 /* Return a link to the site's wp-admin 
 */
 function bw_wpadmin() {
@@ -319,26 +308,17 @@ function bw_contact( $atts=null ) {
  * network= the name of the social network - this gets lowercased to choose the button class and the oik option field
  * url = override of who to follow. value defaults to the oik option for the network
  * me = who to follow - defaults to "me"
- * text = parameter that gets ignored at present! 
+ * text = currently ignored 
  */
 function bw_follow( $atts = NULL ) {
   $social_network = bw_array_get( $atts, 'network', 'Facebook' );
-  $text = bw_array_get( $atts, 'text', null );
-  
+  // $text = bw_array_get( $atts, 'text', null );
   $lc_social = strtolower( $social_network );
   $social = bw_array_get_dcb( $atts, 'url', $lc_social, "bw_get_option" );
   $me = bw_array_get( $atts, "me", "me" );
-  // bw_trace( $text, __FUNCTION__, __LINE__, __FILE__ , "text" );
-  //if ( $text ) {
-  //  $text = $social_network;
-  //}
-    
   $imagefile = plugins_url( 'images/'. $lc_social . '_48.png', __FILE__ );
-    
-  $image = retimage( NULL, $imagefile, $social_network );
+  $image = retimage( NULL, $imagefile, "Follow $me on ".$social_network );
   alink( NULL, $social, $image, "Follow $me on ".$social_network );
-  //  alink( $social_network, $social, $text, "Follow $me on ".$social_network );
-       
   return( bw_ret());
 }  
 
@@ -428,7 +408,7 @@ function bw_clear() {
 function bw_skype( $atts ) {
   $atts['index'] = bw_array_get( $atts, "index", "skype" );
   $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Skype name" );
-  $atts['class'] = bw_array_get( $atts, "class", "skype" );
+  $atts['class'] = bw_array_get( $atts, "class", "bw_skype" );
   return( _bw_telephone( $atts ) );
 }  
 
@@ -436,7 +416,7 @@ function bw_skype( $atts ) {
  * Inline telephone number, using span
 */ 
 function bw_tel( $atts=null ) {
-  $atts['tag'] = 'span';
+  $atts['tag'] = bw_array_get( $atts, "tag", "span" );
   return _bw_telephone( $atts );
 }
 
@@ -444,12 +424,11 @@ function bw_tel( $atts=null ) {
  * Inline mobile number, using span
 */ 
 function bw_mob( $atts=null ) {
-  $atts['tag'] = 'span';
+  $atts['tag'] = bw_array_get( $atts, "tag", "span" );
   $atts['index'] = bw_array_get( $atts, "index", "mobile" );
   $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Mobile" );
   return _bw_telephone( $atts );
 }
-
 
 /**
  * Generate a button to get directions from Google Maps e.g.
@@ -487,19 +466,17 @@ function bw_google_plus( $atts ) {
 */ 
 function bw_follow_e( $atts ) {
   $social_network = $atts['network'];
-  $text = bw_array_get( $atts, 'text', NULL );
-  
+  // $text = bw_array_get( $atts, 'text', NULL );
   $lc_social = strtolower( $social_network );
   $social = bw_get_option( $lc_social );
   if ( $social ) {
-    bw_trace( $text, __FUNCTION__, __LINE__, __FILE__ , "text" );
+    $me = bw_array_get( $atts, "me", "me" );
     $imagefile = plugins_url( 'images/'. $lc_social . '_48.png', __FILE__ );
-    
-    $image = retimage( NULL, $imagefile, $social_network );
-    alink( NULL, $social, $image, "Follow me on ".$social_network );
+    $image = retimage( NULL, $imagefile, "Follow $me on ".$social_network );
+    alink( NULL, $social, $image, "Follow $me on ".$social_network );
   }     
-} 
-
+}
+ 
 /**
  * Produce a Follow me button for each of these social networks:  Twitter, Facebook, LinkedIn, GooglePlus, YouTube, Flickr
 */
@@ -516,12 +493,12 @@ function bw_follow_me( $atts = NULL ) {
  * bw_oik() is needed here since it's used in the oik admin pages
  *   
  */
-function bw_oik ( $class = NULL ) {
-  $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="b1">o</span>';
-  $bw .= '<span class="o">i</span>';
-  $bw .= '<span class="b2">k</span>';
+function bw_oik( $atts=null ) {
+  $class = bw_array_get( $atts, "class", "bw_oik" );
+  $bw = nullretstag( "span", $class );
+  $bw .= "oik"; 
   $bw .= nullretetag( "span", $class ); 
+  bw_trace2( $bw, "bw" );
   return( $bw );
 }
 
@@ -529,12 +506,11 @@ function bw_oik ( $class = NULL ) {
  * bw_oik_long - spells out Often Included Key-information
  *   
  */
-function bw_oik_long( $class = NULL ) {
+ 
+function bw_oik_long( $atts=null ) {
+  $class = bw_array_get( $atts, "class", "bw_oik" );
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="B1">O</span>';
-  $bw .= '<span class="b1">ften </span>';
-  $bw .= '<span class="o">Included </span>';
-  $bw .= '<span class="b2">Key-information</span>';
+  $bw .= "Often Included Key-information"; 
   $bw .= nullretetag( "span", $class ); 
   return( $bw );
 }
@@ -645,9 +621,6 @@ function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL,
   return( $val );
 }
 
-
-
-
 /** 
  * Return the array[index] or build the result by calling $callback, passing the $default as the arg.
  *
@@ -657,18 +630,25 @@ function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL,
  * @param string $callback - function name to invoke - defaults to invoking __()
  *
  * Notes: dcb = deferred callback
- * Use this function when the applying the default might take some time but would be unnecessary
- * if the $array[$index] is already set.
+ * Use this function when applying the default might take some time but would be unnecessary if the $array[$index] is already set.
+ *
  * You can also use this function when the default value is a string that you want to be translated.
+ *
+ * 2012/10/23 - When the parameter was passed as a null value e.g. "" then it was being treated as NULL
+ * hence the default processing took effect. 
+ * In this new verision we replace the NULLs in the code body with $default
+ * So bw_array_get() can return a given NULL value which will then override the default.
+ * In this case, if the parameter that is passed turns out to be the default value then this will also be translated.
+ * Note: It could could still match a default null value
+ * Also: We don't expect a null value for the default callback function __()
  */
 function bw_array_get_dcb( $array = array(), $index, $default = NULL, $callback='__' ) {
-  $value = bw_array_get( $array, $index, NULL );
-  if ( $value == NULL ) {
+  $value = bw_array_get( $array, $index, $default );
+  if ( $value == $default ) {
     $value = $callback( $default ); 
   }  
   return( $value );  
 }
-
 
 /**
  * Set a default value for an empty array[ index]
@@ -829,10 +809,11 @@ function bw_get_users( $atts = NULL ) {
 /** 
  * Display the copyright statement for the company
  * showing start and end years
- * e.g. (C) Copyright [bw_company] [bw_from]&sep[year] 
+ * e.g. (C) Copyright [bw_company] [bw_from]&sep[year]&suffix
  * where [bw_from] is the first year of the site
- * &sep is the separator ( defaults to ',' for one year apart and '-' for a range 
+ * &sep is the separator ( defaults to ',' for one year apart and '-' for a range ) 
  * [year] represents the current year
+ * &suffix defaults to ". All rights reserved." 
  *
  */ 
 function bw_copyright( $atts = NULL ) {
@@ -844,7 +825,7 @@ function bw_copyright( $atts = NULL ) {
   $yearfrom = bw_array_get_dcb( $atts, "from", "yearfrom", "bw_get_option" );
   
   $years = bw_year_range( $yearfrom, $yearto, $atts );
-  span( "copyright" );
+  span( "bw_copyright" );
   e( "$copyright " );
   e( bw_do_shortcode( "$company ") );
   e( "$years" );
