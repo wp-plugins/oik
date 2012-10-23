@@ -91,6 +91,25 @@ function bw_thumbnail_full( $post ) {
 }
 
 /**
+ * Create a direct link to the attached file rather than a permalink to the attachment
+ * 
+ * @param object $post - the post for the attached file
+ * @param array $atts - the shortcode parameters
+ *
+ * If there is no attached file for the $post then something is wrong - create a trace record
+ */
+function bw_link_attachment( $post, $atts ) {
+  $file = get_post_meta( $post->ID, "_wp_attached_file", true );
+  if ( $file ) {
+    $upload_dir = wp_upload_dir();
+    $file = $upload_dir['baseurl'] . '/' . $file;
+    alink( "bw_attachment", $file , $atts['title'], null, "link-".$post->ID );  
+  } else {
+    bw_trace2();
+  }    
+}
+
+/**
  * Format the "attachment" - basic first version
  *
  * Format the 'post' in a block or div with title and link to the attachment
@@ -113,7 +132,7 @@ function bw_format_attachment( $post, $atts ) {
     oik_require( "shortcodes/oik-blocks.php" );
     e( bw_block( $atts ));
   } else {
-    $class = bw_array_get( $atts, "class", "" );
+    $class = bw_array_get( $atts, "class", "bw_attachment" );
     sdiv( $class );
   } 
   sp();
@@ -124,11 +143,15 @@ function bw_format_attachment( $post, $atts ) {
   if ( $atts['thumbnail'] == "full" ) { 
     $thumbnail = bw_thumbnail_full( $post );
     // $thumbnail = retimage( "full", $post->guid );
-    bw_link_thumbnail( $thumbnail, $post->ID, $atts );
+    // bw_link_thumbnail( $thumbnail, $post->ID, $atts );
   } else {
     $thumbnail = bw_thumbnail( $post->ID, $atts, true );
+  }
+  if ( $thumbnail ) { 
     bw_link_thumbnail( $thumbnail, $post->ID, $atts );
-  } 
+  } else {
+    bw_link_attachment( $post, $atts );
+  }  
   if ( bw_validate_torf( bw_array_get( $atts, 'titles', 'y' )) ) { 
     span( "title" );
     e( $post->post_title );   // Title
@@ -178,16 +201,18 @@ function bw_attachments( $atts = NULL ) {
   $atts[ 'post_type'] = bw_array_get( $atts, "post_type", "attachment" );
   $posts = bw_get_posts( $atts );
   bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
-  
   foreach ( $posts as $post ) {
     bw_format_attachment( $post, $atts );
   }
-  
   return( bw_ret() );
-} 
+}
 
+/**
+ * [bw_pdf] shortcode - display attached PDF files
+ */
 function bw_pdf( $atts = NULL ) {
   $atts['post_mime_type'] = 'application/pdf';
+  $atts['thumbnail'] = "none";
   return( bw_attachments( $atts ));
 }  
 
@@ -199,7 +224,6 @@ function bw_images( $atts = NULL ) {
   $atts['thumbnail'] = bw_array_get( $atts, 'thumbnail', 'full' );
   return( bw_attachments( $atts ));
 }
-
 
 /** 
  * Return TRUE if the file names of the files are the same and the first is of type $extension
@@ -236,33 +260,35 @@ function bw_find_post( $posts, $given, $matchfunc="bw_match_byguid_name" ) {
 }
 
 /**
- * Format the matched post link 
+ * Format the matched post link
+ * 
  * @param post $post - the .pdf file for the link
  * @param post $matched_post - the image file with the matching name
+ * @param array $atts - shortcode parameters  
  */
 function bw_format_matched_link( $post, $matched_post, $atts ) {
   $class = bw_array_get( $atts, "class", "" );
   sdiv( $class );
-  $image = retimage( "portfolio", $matched_post->guid, $post->post_title );
+  $image = retimage( "bw_portfolio", $matched_post->guid, $post->post_title );
   $ptspan = "<span>".$post->post_title."</span>";
-  alink( "portfolio", $post->guid, $image.$ptspan );
+  alink( "bw_portfolio", $post->guid, $image.$ptspan );
   ediv( $class );
 }
 
 /**
  * Process pairs of attachments
+ * @param array $posts - array of posts
+ * @param array $atts - shortcode parameters
+ * @return output produced by bw_format_matched_link()
  */
 function bw_paired_attachments( $posts, $atts ) {
   bw_trace2( $posts, "posts" );
   foreach ( $posts as $post ) {
-  
     $matched_post = bw_find_post( $posts, $post );
-    
     if ( $matched_post )
       bw_format_matched_link( $post, $matched_post, $atts ); 
   }
   return( bw_ret());
-    
 } 
 
 /**
@@ -270,9 +296,12 @@ function bw_paired_attachments( $posts, $atts ) {
  * For each .PDF file that is linked to an image pair them up and display
  * with the image and the PDF file name as the selector and the 
  * PDF file name as the link.
+ * 
+ * @param array $atts - shortcode parameters
+ * @return string expanded shortcode
  */
 function bw_portfolio( $atts = NULL ) {
-  $atts[ 'post_type'] = bw_array_get( $atts, "post_type", "attachment" );
+  $atts['post_type'] = bw_array_get( $atts, "post_type", "attachment" );
   $atts['post_mime_type'] = bw_array_get( $atts, "post_mime_type", "image,application/pdf" );
   $atts['orderby'] = bw_array_get( $atts, "orderby", "title" );
   $atts['order'] = bw_array_get( $atts, "order", "ASC" );

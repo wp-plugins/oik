@@ -36,6 +36,7 @@ function oik_bob_bing_wide_api_version() {
 add_action( "oik_loaded", "oik_bob_bing_wide_init" );
 
 function oik_bob_bing_wide_init() {
+  wp_enqueue_style( 'bwlinkCSS', WP_PLUGIN_URL . '/oik/bwlink.css', 'oikCSS' ); 
 
   /* Shortcodes for each of the more useful bobbingwide babbles  */
   bw_add_shortcode( 'bob', 'bw_bob', oik_path("shortcodes/oik-bob-bing-wide.php"), true );
@@ -50,7 +51,8 @@ function oik_bob_bing_wide_init() {
   bw_add_shortcode( 'wow', 'bw_wow', oik_path("shortcodes/oik-bob-bing-wide.php"), true );
   bw_add_shortcode( 'WoW', 'bw_wow', oik_path("shortcodes/oik-bob-bing-wide.php"), true );
   bw_add_shortcode( 'WOW', 'bw_wow_long', oik_path("shortcodes/oik-bob-bing-wide.php"), true);
-
+  
+  // Note: The bw_oik() & bw_oik_long() functions are actually delivered from bobbcomp.inc 
   bw_add_shortcode( 'oik', 'bw_oik', oik_path("shortcodes/oik-bob-bing-wide.php"), true );  
   bw_add_shortcode( 'loik', 'bw_loik', oik_path("shortcodes/oik-bob-bing-wide.php"), false ); // Link to the plugin  
   bw_add_shortcode( 'OIK', 'bw_oik_long', oik_path("shortcodes/oik-bob-bing-wide.php"), true); // Spells out often included key-information

@@ -115,8 +115,7 @@ function iradio( $name, $id, $value, $class, $extras ) {
   return( $it );
 }  
     
-function tablerow( $td1, $td2 )
-{  
+function tablerow( $td1, $td2 ) {  
    echo '<tr>';
    echo '<td>'.$td1.'</td>';
    echo '<td>'.$td2.'</td>';
@@ -142,23 +141,20 @@ function bw_tablerow( $td_array= array() ) {
   }
 }
 
-function textfield($name, $len, $text, $value, $class=null )
-{
+function textfield($name, $len, $text, $value, $class=null ) {
   $lab = label( $name, $text );
   $itext = itext( $name, $len, $value, $class ); 
   tablerow( $lab, $itext );
   return;
 }
 
-function textarea( $name, $len, $text, $value, $rows=10 )
-{
+function textarea( $name, $len, $text, $value, $rows=10 ) {
   $lab = label( $name, $text );
   $itext = iarea( $name, $len, $value, $rows ); 
   tablerow( $lab, $itext );
   return;
 }
-
-
+  
 function bw_textfield( $name, $len, $text, $value, $class=null, $extras=null ) {
   $lab = label( $name, $text );
   $itext = itext( $name, $len, $value, $class, $extras ); 
@@ -166,14 +162,12 @@ function bw_textfield( $name, $len, $text, $value, $class=null, $extras=null ) {
   return;
 }
 
-
 function bw_emailfield( $name, $len, $text, $value, $class=null, $extras=null ) {
   $lab = label( $name, $text );
   $itext = iemail( $name, $len, $value, $class, $extras ); 
   bw_tablerow( array( $lab, $itext ) );
   return;
 }
-
 
 function bw_textarea( $name, $len, $text, $value, $rows=10 ) {
   $lab = label( $name, $text );
@@ -217,7 +211,6 @@ function iselect( $name, $value, $args ) {
   return( $iselect );
 } 
 
-
 /** 
  * Create a select field for a form-table
  * @param string $name - field name
@@ -231,7 +224,6 @@ function bw_select( $name, $text, $value, $args ) {
   bw_tablerow( array( $lab, $iselect ) );
   return;
 }
-
 
 /** 
  * Create a checkbox input field
@@ -347,8 +339,7 @@ function bw_form_start( $option, $settings, $action="options.php" ) {
   return( $options );
 }
 }
-
-
+  
 /**
  * Reset the options to the default fields
  * @param string $option - option name
@@ -371,7 +362,6 @@ function bw_reset_options( $option, $options, $default_cb, $request_field ) {
   } 
   return( $options );
 }
-
  
 /**
  * Return the current URL - fully qualified so that it can be passed as a parameter to another site

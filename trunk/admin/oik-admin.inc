@@ -225,20 +225,6 @@ function oik_plugins_servers() {
   alink( "button-primary", admin_url("admin.php?page=oik_plugins"), "Plugins", "Manage plugin servers and API keys" );
 }
 
-function oik_optional_plugins() {
-  p( "oik comes with a set of companion plugins. Activate these when you find a need for them." );
-  sul();
-  li( "email signature - build an email signature for your email client" );
-  li( "custom header image - define a custom header image for any post/page" );
-  li( "oik sidebar - apply widget wrangler sidebar functionality to Artisteer themes" );
-  li( "oik fields - allow custom fields to be shown within the content of your page or post" );
-  li( "oik trace - problem determination trace " );
-  li( "oik action trace - trace WordPress actions and filters" );
-  li( "oik bbpress - strip tags from bbPress forum title tooltips" );
-  li( "oik bob bing wide shortcodes - activate this plugin to enable the <code>[bw_plug]</code> shortcode" );
-  li( "oik BuddyPress signup email - Send sign up verification emails via site admin for verification before accepting a user" );
-  eul();
-}
 
 function oik_default_tinymce_buttons() {
   $defaults = array();
@@ -339,7 +325,6 @@ function oik_menu() {
   oik_box( NULL, NULL, "Shortcode options", "oik_shortcode_options" );
   oik_box( NULL, NULL, "Custom CSS", "oik_custom_css_box" );
   oik_box( NULL, NULL, "Servers and keys", "oik_plugins_servers" );
-  // oik_box( NULL, NULL, "Optional plugins", "oik_optional_plugins" ); 
   ecolumn();
   scolumn( "w30pc" );
   oik_box( NULL, NULL, "oik documentation", "oik_documentation" );
@@ -363,13 +348,8 @@ function oik_buttons_do_page() {
 /** 
  * Draw the oik plugins page
  *
- * This page is under construction **?** Herb 2012/04/24
 */ 
 function oik_plugins_do_page() {
-  //oik_menu_header( "plugin servers and API keys" );
-  
-  //e( '<form method="post" action="options.php">' );
-  //oik_box( null, null, "Current settings", "oik_plugins_server_settings" );
   oik_plugins_server_settings();
   oik_menu_footer();
   bw_flush();
@@ -467,6 +447,8 @@ function oik_main_shortcode_options() {
   bw_textfield_arr( $option, "Google Map height", $options, 'height', 10 );
   
   bw_textfield_arr( $option, "Domain [bw_domain] [bw_wpadmin]", $options, 'domain', 50 );
+  
+  bw_checkbox_arr( $option, "Do NOT use the oik.css styling. <br />Check this is you don't want to use the oik provide CSS styling", $options, "oikCSS" ); 
   bw_textfield_arr( $option, "Custom CSS in theme directory:<br />" . get_stylesheet_directory_uri(), $options, 'customCSS', 50 );
   
   oik_follow_me( $option, $options );

@@ -343,3 +343,48 @@ function bw_get_page() {
    
   return $page;
 }  
+
+/**
+ * let ajax know what to call on jQuery.post **?** not necessary as we can use WordPress's ajaxurl variable
+ * 
+ */
+
+function bw_add_ajaxurl() { 
+  // Do we need the protocol? 
+  
+  wp_enqueue_script( 'otherbits', plugin_dir_url( __FILE__). 'otherbits.js', array( 'jquery' ) );
+  //wp_enqueue_script( 'otherbits2', plugin_dir_url( __FILE__). 'otherbits2.js', array( 'jquery' ) );
+  $otherbits = array( "ajaxurl" => admin_url( 'admin-ajax.php' ));
+  wp_localize_script( 'otherbits', 'otherbits', $otherbits ); 
+} 
+
+/**
+ * Return all the jQuery/JavaScript to enable shortcode creation from the editor buttons 
+   **?** Changed to not working 2012/03/19
+ */
+function bw_preload_button_options() {
+
+  wp_enqueue_script( 'bw_shortcodes', plugin_dir_url( __FILE__). 'bw_shortcodes.js', array( 'jquery' ) );
+
+  // $data = array( 'some_string' => __( 'Some string to translate' ) );
+  oik_require( "shortcodes/oik-codes.php" );
+  $data = bw_shortcode_list();
+  wp_localize_script( 'bw_shortcodes', 'bw_shortcodes', $data );
+}  
+
+
+
+function oik_optional_plugins() {
+  p( "oik comes with a set of companion plugins. Activate these when you find a need for them." );
+  sul();
+  li( "email signature - build an email signature for your email client" );
+  li( "custom header image - define a custom header image for any post/page" );
+  li( "oik sidebar - apply widget wrangler sidebar functionality to Artisteer themes" );
+  li( "oik fields - allow custom fields to be shown within the content of your page or post" );
+  li( "oik trace - problem determination trace " );
+  li( "oik action trace - trace WordPress actions and filters" );
+  li( "oik bbpress - strip tags from bbPress forum title tooltips" );
+  li( "oik bob bing wide shortcodes - activate this plugin to enable the <code>[bw_plug]</code> shortcode" );
+  li( "oik BuddyPress signup email - Send sign up verification emails via site admin for verification before accepting a user" );
+  eul();
+}

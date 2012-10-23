@@ -55,7 +55,7 @@ function bw_gmap_infowindow( $title, $postcode ) {
  * 7. Loads synchronously - rather than Asynchronously
  * 8. Does not specify the version. v=3 being the default
  *
- * If this doesn't work don't forget to set: #map_canvas { height: 100% } in oik.css
+ * If this doesn't work don't forget to set: #bw_map_canvas { height: 100% } in oik.css or your custom CSS file
  * Note: the default height is 100%
 */
  
@@ -71,7 +71,7 @@ function bw_googlemap_v3(  $title, $lat, $lng, $postcode, $width, $height ) {
   
   // Choose from ROADMAP, SATELLITE, HYBRID, TERRAIN 
   bw_echo( 'var myOptions = { zoom: 12, center: latlng, mapTypeId: google.maps.MapTypeId.ROADMAP };' );
-  bw_echo( 'var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions); ' );
+  bw_echo( 'var map = new google.maps.Map(document.getElementById("bw_map_canvas"), myOptions); ' );
 
   if ( $postcode ) {
     bw_gmap_marker( $postcode );
@@ -90,7 +90,7 @@ function bw_googlemap_v3(  $title, $lat, $lng, $postcode, $width, $height ) {
   } else {
     $hv = '';  
   }  
-  bw_echo( '<div id="map_canvas" style="min-height: 200px; width:' . $width. ';' .$hv .';"></div>');
+  bw_echo( '<div id="bw_map_canvas" style="min-height: 200px; width:' . $width. ';' .$hv .';"></div>');
 
 
 }

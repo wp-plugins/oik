@@ -102,7 +102,7 @@ function bw_email_signature_do_page() {
   h2(bw_oik() . " email signature HTML");
   p( "This is the HTML to copy and paste into your email signature file.");
   p( "Note: you may also need to include some CSS styling in order to make your email signature match what you see above");
-  p( "This will be part of a future version of " . bw_oik() );
+  // p( "This will be part of a future version of " . bw_oik() );
   
   
   $escaped_text = esc_html( $formatted_text );
@@ -123,7 +123,7 @@ function bw_email_signature_validate($input) {
 	return $input;
 }
 
-function bw_email_signature( $atts ) {
+function bw_email_signature( $atts=null ) {
 
   $options = get_option('bw_email_signature'); 
    

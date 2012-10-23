@@ -85,7 +85,7 @@ function bw_trace_button( $atts = NULL ) {
  */
 function bw_trace_reset_form() {
   oik_require( "bobbforms.inc" );
-  e( '<form method="post" action="" class="inline">' ); 
+  e( '<form method="post" action="" class="bw_inline">' ); 
   e( "<input type=\"submit\" name=\"_bw_trace_reset\" value=\"Trace reset\" />" ); 
   etag( "form" );
 }

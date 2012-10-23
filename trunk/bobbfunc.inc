@@ -574,23 +574,24 @@ function bw( $bw_class_prefix=NULL ) {
       else
          $cp = ' class="' . $bw_class_prefix;
   }         
-      $bw  = '<em' .$cp .'b1">B</em>';
-      $bw .= '<em' .$cp .'o">o</em>'; 
-      $bw .= '<em' .$cp .'b2">b</em>';
-      $bw .= '<em' .$cp .'b3">b</em>';
-      $bw .= '<em' .$cp .'i1">i</em>';
-      $bw .= '<em' .$cp .'n">n</em>';
-      $bw .= '<em' .$cp .'g">g</em>';
-      $bw .= '<em' .$cp .'space">&nbsp;</em>';
-      $bw .= '<em' .$cp .'W">W</em>';
-      $bw .= '<em' .$cp .'i2">i</em>';
-      $bw .= '<em' .$cp .'d">d</em>';
-      $bw .= '<em' .$cp .'e">e</em>';
+      $bw  = '<em' .$cp .'bw_b1">B</em>';
+      $bw .= '<em' .$cp .'bw_o">o</em>'; 
+      $bw .= '<em' .$cp .'bw_b2">b</em>';
+      $bw .= '<em' .$cp .'bw_b3">b</em>';
+      $bw .= '<em' .$cp .'bw_i1">i</em>';
+      $bw .= '<em' .$cp .'bw_n">n</em>';
+      $bw .= '<em' .$cp .'bw_g">g</em>';
+      $bw .= '<em' .$cp .'bw_space">&nbsp;</em>';
+      $bw .= '<em' .$cp .'bw_W">W</em>';
+      $bw .= '<em' .$cp .'bw_i2">i</em>';
+      $bw .= '<em' .$cp .'bw_d">d</em>';
+      $bw .= '<em' .$cp .'bw_e">e</em>';
       
          
       return $bw;
 }
-  
+
+
   
 
   
