@@ -1,19 +1,5 @@
 <?php
 
-  
-/**
-  $option = 'bw_plugins'; 
-  $options = bw_form_start( $option, 'oik_plugins_options' );
-  bw_checkbox_arr( "bw_plugins", "oik trace", $options, 'oik-bwtrace' ); 
-  bw_checkbox_arr( "bw_plugins", "oik email signature", $options, 'oik-email-signature' );
-  bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
-  etag( "table" ); 			
-  etag( "form" );
-  bw_flush();
-  
-}
-*/
-
 
 /**
  * oik plugins settings page 
@@ -96,9 +82,12 @@ function _oik_plugins_settings_row( $plugin, $server, $apikey, $expiration ) {
   $row[] = $plugin;
   $row[] = $server . "&nbsp;"; //itext( "server[$plugin]", 100, $server ); //esc_html( stripslashes( $server ) )); //iarea( $plugin, 100, $server, 10 );
   $row[] = $apikey . "&nbsp;"; //itext( "apikey[$plugin]", 26, $apikey );
+  $row[] = $expiration . "&nbsp;";
   // $row[] = itext( "expand[$plugin]", $expand, true );
-  $links = retlink( null, admin_url("admin.php?page=oik_plugins&amp;preview_plugin=$plugin"), "Preview" );
-  $links .= "&nbsp;";
+  // **?** Preview not yet implemented.
+  // $links = retlink( null, admin_url("admin.php?page=oik_plugins&amp;preview_plugin=$plugin"), "Preview" );
+  // $links .= "&nbsp;";
+  $links = null;
   $links .= retlink( null, admin_url("admin.php?page=oik_plugins&amp;delete_plugin=$plugin"), "Delete" ); 
   $links .= "&nbsp;";
   $links .= retlink( null, admin_url("admin.php?page=oik_plugins&amp;edit_plugin=$plugin"), "Edit" );   
@@ -207,7 +196,7 @@ function oik_plugins_settings() {
   bw_form();
   stag( "table", "widefat" );
   stag( "thead");
-  bw_tablerow( array( "plugin", "server", "apikey", "expiration", "Preview link" ));
+  bw_tablerow( array( "plugin", "server", "apikey", "expiration", "actions" ));
   etag( "thead");
   _oik_plugins_settings_table();
   bw_tablerow( array( "", "<input type=\"submit\" name=\"_oik_plugins_add_plugin\" value=\"Add plugin\" class=\"button-primary\"/>") ); 
@@ -233,7 +222,6 @@ function oik_plugins_edit_settings( ) {
   global $bw_plugin;
   bw_form();
   stag( "table", "wide-fat" );
-  
   bw_tablerow( array( "plugin", $bw_plugin['plugin'] . ihidden( 'plugin', $bw_plugin['plugin']) ) );
   bw_textfield( "server", 100, "server", stripslashes( $bw_plugin['server'] ), 10 );
   bw_textfield( "apikey", 26, "apikey?", $bw_plugin["apikey"] );
@@ -249,8 +237,6 @@ function oik_plugins_preview() {
     // Preview the plugin from the remote server ? What does this mean? Validate the apikey perhaps?
   }
 }
-
-
 
 if ( !function_exists( "bw_update_option" ) ) {
 /** Set the value of an option field in the options group
@@ -269,6 +255,7 @@ function bw_update_option( $field, $value=NULL, $options="bw_options" ) {
   update_option( $options, $bw_options );
   return( $value );
 }
+}
 
 
 /** Remove an option field from a set
@@ -278,6 +265,7 @@ function bw_update_option( $field, $value=NULL, $options="bw_options" ) {
  * @return mixed $value - current values for the options
  *
  */
+if ( !function_exists( "bw_delete_option" ) ) {
 function bw_delete_option( $field, $options="bw_options" ) {
   $bw_options = get_option( $options );
   unset( $bw_options[ $field ] );
