@@ -281,6 +281,15 @@ function bw_textfield_arr( $name, $text, $array, $index, $len, $class=null, $ext
   $name_index = $name.'['.$index.']';
   $value = bw_array_get( $array, $index, NULL );
   bw_textfield( $name_index, $len, $text, $value, $class, $extras );
+}
+
+/**
+ * Create an emailfield for an array options field 
+ */
+function bw_emailfield_arr( $name, $text, $array, $index, $len, $class=null, $extras=null ) {
+  $name_index = $name.'['.$index.']';
+  $value = bw_array_get( $array, $index, NULL );
+  bw_emailfield( $name_index, $len, $text, $value, $class, $extras );
 } 
 
 /**

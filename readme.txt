@@ -119,7 +119,7 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Changed: bw_invoke_shortcode() - make $text parameter optional
 * Fixed: Use bw_thumbnail_full() to find the file name for the full size image attachment. No longer relies on $post->guid
 * Changed: Improved some phpdoc comments - part of API documentation
-* Added:  bw_emailfield(), iemail() and isubmit()
+* Added: bw_emailfield(), iemail() and isubmit()
 * Changed: bw_textfield() and bw_textfield_arr() to support for HTML 5 input field parameters and jQuery validation
 * Added: "oik_admin_menu" action, to allow dependent routines to know when oik has responded to "admin_menu".
 * Added: Support for select fields in admin page lists (oik-fields plugin)
@@ -145,6 +145,7 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Fixed: bw_format_attachment() no longer produces an empty link when no image is required
 * Changed: bw_array_get_dcb() will accept null parameters e.g. [bw_email prefix='' suffix='']
 * Added: Syntax help for quite a few shortcodes where the parameters were previously undocumented: bw_address, bw_email and variation, bw_tel and variations, bw_copyright, bw_qrcode
+* Added: bw_emailfield_arr() 
 
 = 1.16 =
 * Fixed: Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2
