@@ -5,7 +5,7 @@ define( 'OIK_BWTRACE_INCLUDED', true );
 /*
 Plugin Name: oik bwtrace 
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-bwtrace
-Description: Debug trace for WordPress
+Description: Debug trace for WordPress, including action and filter tracing
 Version: 1.17
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com

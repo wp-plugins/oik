@@ -101,48 +101,75 @@ function bw_remote_post( $url, $args ) {
 function oik_lazy_altapi_check( $transient ) {
   bw_backtrace();
   static $checks = 0;
+  static $responses = array();
+  static $responses_built = false;
   $checks++;
   bw_trace2( $checks, "checks" );
-  if ( 2 == $checks ) {
-    //bw_backtrace();
-  //gobang();
-    $checked = bw_array_get( $transient, "checked", array() );
-    foreach ( $checked as $plugin => $version ) {
-      $plugin_settings = oik_query_plugins_server( bw_get_slug( $plugin ) );
-      
-      if ( $plugin_settings ) {
-        $url = bw_array_get( $plugin_settings, 'server', null );
-        $url .= '/plugins/update-check/';
-        $apikey = bw_array_get( $plugin_settings, 'apikey', null );
-        $body = array( "action" => "update-check" 
-                     , "plugin_name" => $plugin 
-                     , "version" => $version
-                     , "apikey" => $apikey
-                     );
-        $args = array( "body" => $body );
-        $result = bw_remote_post( $url, $args ); 
-        if ( $result ) {
-           bw_trace2( $result );
-           if ( is_wp_error( $result ) ) { 
-             // gobang();
-           } else { 
-             //bw_trace2( $result->new_version, "$version!", false ); 
-             //$vc = version_compare( $result->new_version, $version, ">" );
-             //bw_trace2( $result->new_version, "new version", false );
-             //bw_trace2( $version, "old version", false );
-             //bw_trace2( $vc, "vc result", false );
-             if( version_compare( $result->new_version, $version, '>' ) ) {
-               $transient->response[$plugin] = $result;  
-               bw_trace2();
-             }  
-           }  
-        } 
-      }
+  if ( !$responses_built ) {
+    $checked = bw_array_get( $transient, "checked", null );
+    if ( $checked ) {
+      foreach ( $checked as $plugin => $version ) {
+        $response = oik_check_for_update( $plugin, $version );
+        if ( $response && !is_wp_error( $response ) ) {
+          $responses[$plugin] = $response;
+        }  
+      } 
+      $responses_built = true;
     }
-  }    
+  }
+  if ( $responses_built ) {
+    foreach ( $responses as $plugin => $response ) {      
+      $transient->response[$plugin] = $response;
+    }
+    bw_trace2( $responses, "transient updated" );
+  }  
   return( $transient );  
 }
 
+
+/**
+ * Check an oik-plugins server for an updated plugin 
+ * @param string $plugin plugin name e.g. oik-edd/oik-edd.php
+ * @param string $version currently installed version e.g 1.03
+ * @return $response if there is a new version else null
+ *
+ * Note: We pass the API key even if it doesn't get used in the server
+ *
+ */
+function oik_check_for_update( $plugin, $version ) {
+  bw_trace2();
+  $response = null;
+  $plugin_settings = oik_query_plugins_server( bw_get_slug( $plugin ) );
+  if ( $plugin_settings ) {
+    $url = bw_array_get( $plugin_settings, 'server', null );
+    $url .= '/plugins/update-check/';
+    $apikey = bw_array_get( $plugin_settings, 'apikey', null );
+    $body = array( "action" => "update-check" 
+                 , "plugin_name" => $plugin 
+                 , "version" => $version
+                 , "apikey" => $apikey
+                 );
+    $args = array( "body" => $body );
+    $result = bw_remote_post( $url, $args ); 
+    if ( $result ) {
+      bw_trace2( $result );
+      if ( is_wp_error( $result ) ) {
+          $response = $result;
+      } else { 
+        //bw_trace2( $result->new_version, "$version!", false ); 
+        //$vc = version_compare( $result->new_version, $version, ">" );
+        //bw_trace2( $result->new_version, "new version", false );
+        //bw_trace2( $version, "old version", false );
+        //bw_trace2( $vc, "vc result", false );
+        if( version_compare( $result->new_version, $version, '>' ) ) {
+          $response = $result;  
+          bw_trace2();
+        }  
+      }  
+    } 
+  }
+  return( $response );    
+}
 
 
 /**
@@ -165,9 +192,6 @@ function oikp_our_plugin( $args ) {
     $server = null;
   return( $server );
 } 
-
-
-
 
 /**
  * Implement "plugin_information" for our own plugins

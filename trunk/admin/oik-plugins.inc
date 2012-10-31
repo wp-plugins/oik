@@ -6,13 +6,13 @@
  *
  * Processing depends on the button that was pressed. There should only be one!
  * 
- * Selection                       Validate? Perform action        Display preview Display add  Display edit Display select list
- * ------------------------------- --------  -------------------   --------------- ------------ ------------ -------------------
- * preview_plugin                    No        n/a                   Yes             -            -            -
- * delete_plugin                     No        delete selected plugin  -               -            -            Yes
- * edit_plugin                       No        n/a                   -               -            Yes          Yes
- *
- * _oik_plugins_edit_settings      Yes       update selected plugin  -               -            Yes          Yes
+ * Selection                       Validate? Perform action          Display check Display add  Display edit Display select list
+ * ------------------------------- --------  -------------------     ------------- ------------ ------------ -------------------
+ * check_plugin                    No        n/a                     Yes           -            -            -
+ * delete_plugin                   No        delete selected plugin  -             -            -            Yes
+ * edit_plugin                     No        n/a                     -             -            Yes          Yes
+ *                                                                              
+ * _oik_plugins_edit_settings      Yes       update selected plugin  -             -            Yes          Yes
  * _oik_plugins_add_plugin
  * _oik_plugins_add_settings
  * 
@@ -21,7 +21,7 @@ function oik_lazy_plugins_server_settings() {
   oik_menu_header( "plugin server settings", "w100pc" );
   $validated = false;
   
-  $preview_plugin = bw_array_get( $_REQUEST, "preview_plugin", null );
+  $check_plugin = bw_array_get( $_REQUEST, "check_plugin", null );
   $delete_plugin = bw_array_get( $_REQUEST, "delete_plugin", null );
   $edit_plugin = bw_array_get( $_REQUEST, "edit_plugin", null );
   
@@ -33,14 +33,13 @@ function oik_lazy_plugins_server_settings() {
   $oik_plugins_add_settings = bw_array_get( $_REQUEST, "_oik_plugins_add_settings", null );
   $oik_plugins_add_plugin = bw_array_get( $_REQUEST, "_oik_plugins_add_plugin", null );
   if ( $oik_plugins_add_plugin || $oik_plugins_add_settings ) {
-    $preview_plugin = null;
+    $check_plugin = null;
     $delete_plugin = null;
     $edit_plugin = null; 
   }  
   
-  
-  if ( $preview_plugin ) {
-    oik_box( NULL, NULL, "Preview", "oik_plugins_preview" );
+  if ( $check_plugin ) {
+    oik_box( NULL, NULL, "Check", "oik_plugins_check" );
   } 
   
   if ( $delete_plugin ) { 
@@ -75,35 +74,41 @@ function oik_lazy_plugins_server_settings() {
 }
 
 /** 
- * Display a current settings
+ * Display current settings for a plugin
  */
-function _oik_plugins_settings_row( $plugin, $server, $apikey, $expiration ) {
+function _oik_plugins_settings_row( $plugin, $version, $server, $apikey, $expiration ) {
   $row = array();
   $row[] = $plugin;
+  $row[] = $version . "&nbsp;"; 
   $row[] = $server . "&nbsp;"; //itext( "server[$plugin]", 100, $server ); //esc_html( stripslashes( $server ) )); //iarea( $plugin, 100, $server, 10 );
   $row[] = $apikey . "&nbsp;"; //itext( "apikey[$plugin]", 26, $apikey );
   $row[] = $expiration . "&nbsp;";
   // $row[] = itext( "expand[$plugin]", $expand, true );
-  // **?** Preview not yet implemented.
-  // $links = retlink( null, admin_url("admin.php?page=oik_plugins&amp;preview_plugin=$plugin"), "Preview" );
-  // $links .= "&nbsp;";
   $links = null;
   $links .= retlink( null, admin_url("admin.php?page=oik_plugins&amp;delete_plugin=$plugin"), "Delete" ); 
   $links .= "&nbsp;";
-  $links .= retlink( null, admin_url("admin.php?page=oik_plugins&amp;edit_plugin=$plugin"), "Edit" );   
+  $links .= retlink( null, admin_url("admin.php?page=oik_plugins&amp;edit_plugin=$plugin"), "Edit" ); 
+  $links .= "&nbsp;"; 
+  $links .= retlink( null, admin_url("admin.php?page=oik_plugins&amp;check_plugin=$plugin&amp;check_version=$version"), "Check" );
+  $links .= "&nbsp;";
   $row[] = $links;
   bw_tablerow( $row );
 }
+
+/**
+ * This should also list the plugins that have registered themselves using oik_register_plugin_server **?**
+ */
 
 function _oik_plugins_settings_table() {
   $bw_plugins = get_option( "bw_plugins" );
   if ( is_array( $bw_plugins) && count( $bw_plugins )) {
     foreach ( $bw_plugins as $plugin => $plugin_data ) {
       //$plugin = bw_array_get( $plugin, "plugin", null );
+      $version = bw_get_plugin_version( $plugin );
       $server = bw_array_get( $plugin_data, "server", "&nbsp;" );
       $apikey = bw_array_get( $plugin_data, "apikey", null );
       $expiration = bw_array_get( $plugin_data, "expiration", null );
-      _oik_plugins_settings_row( $plugin, $server, $apikey, $expiration );
+      _oik_plugins_settings_row( $plugin, $version, $server, $apikey, $expiration );
     }
   }  
 }
@@ -196,7 +201,7 @@ function oik_plugins_settings() {
   bw_form();
   stag( "table", "widefat" );
   stag( "thead");
-  bw_tablerow( array( "plugin", "server", "apikey", "expiration", "actions" ));
+  bw_tablerow( array( "plugin", "version", "server", "apikey", "expiration", "actions" ));
   etag( "thead");
   _oik_plugins_settings_table();
   bw_tablerow( array( "", "<input type=\"submit\" name=\"_oik_plugins_add_plugin\" value=\"Add plugin\" class=\"button-primary\"/>") ); 
@@ -231,11 +236,68 @@ function oik_plugins_edit_settings( ) {
   etag( "form" );
 }
 
-function oik_plugins_preview() {
-  $preview_plugin = bw_array_get( $_REQUEST, "preview_plugin", null );
-  if ( $preview_plugin ) {
-    // Preview the plugin from the remote server ? What does this mean? Validate the apikey perhaps?
+
+/**
+ *
+ (
+    [slug] => oik
+    [new_version] => 1.17.1030.1702
+    [url] => http://oik-plugins.co.uk/oik_plugin/oik
+    [package] => http://oik-plugins.co.uk/plugins/download?plugin=oik-often-included-key-information-kit&version=1.17.1030.1702&id=419&action=update
+)
+
+ */
+
+function oik_plugins_check() {
+  $check_plugin = bw_array_get( $_REQUEST, "check_plugin", null );
+  $check_version = bw_array_get( $_REQUEST, "check_version", null );
+  if ( $check_plugin && $check_version ) {
+    // Check the plugin from the remote server ? What does this mean? Validate the apikey perhaps?
+    //$response = oik_plugins
+    oik_require( "includes/oik-remote.inc" );
+    $response = oik_check_for_update( $check_plugin, $check_version, true );
+    bw_trace2( $response );
+    if ( is_wp_error( $response ) ) {
+      p( "Error checking the plugin: $check_plugin" );
+      $error_message =  $response->get_error_message();
+      p( $error_message );
+    } else {
+      $new_version = bw_array_get( $response, "new_version", null );
+      if ( $new_version ) { 
+        p( "A new version of the plugin is available" );
+        p( "Plugin: $check_plugin" );
+        p( "Current version: $check_version " );
+        p( "New version: $new_version " );
+        oik_plugin_new_version( $response );
+      } else {
+        p( "Plugin is up to date." );
+        p( "Plugin: $check_plugin" );
+        p( "Current version: $check_version " );
+      }  
+      
+    }
   }
+}
+
+
+/** 
+ *
+ 
+ (
+    [slug] => oik
+    [new_version] => 1.17.1030.1702
+    [url] => http://oik-plugins.co.uk/oik_plugin/oik
+    [package] => http://oik-plugins.co.uk/plugins/download?plugin=oik-often-included-key-information-kit&version=1.17.1030.1702&id=419&action=update
+    
+  http://oik-plugins.co.uk/wp-admin/plugin-install.php?tab=plugin-information&plugin=oik&section=changelog&TB_iframe=true&width=640&height=662
+  http://oik-plugins.co.uk/wp-admin/update.php?action=upgrade-plugin&plugin=oik%2Foik.php&_wpnonce=7efefad99d
+)
+ */
+function oik_plugin_new_version( $response ) {
+  $slug = bw_array_get( $response, "slug", null );
+  $plugin_name = bw_get_plugin_name( $slug );
+  p( oik_update_plugin( $plugin_name ) );
+
 }
 
 if ( !function_exists( "bw_update_option" ) ) {
@@ -274,3 +336,57 @@ function bw_delete_option( $field, $options="bw_options" ) {
   return( $options );
 }
 }
+
+
+function bw_get_plugin_slugs() {
+  $plugin_slugs = get_transient( 'plugin_slugs' );
+  if ( false === $plugin_slugs ) {
+    $plugin_slugs = array_keys( get_plugins() );
+    set_transient( 'plugin_slugs', $plugin_slugs, 86400 );
+  }
+  bw_trace2( $plugin_slugs );
+  return( $plugin_slugs );
+}
+
+function _bw_get_plugin_version( $plugin_name ) {
+  $file = WP_PLUGIN_DIR . '/'. $plugin_name;
+  $plugin_data = get_plugin_data( $file, false, false );
+  // We assume get_plugins() is loaded since we're doing admin stuff! 
+  //$plugin_folder = get_plugins( $plugin_name );
+  //bw_trace2( $plugin_folder, "plugin_folder" );
+  //$plugin_data = bw_array_get( $plugin_folder, $plugin_name, null ); 
+  $version = bw_array_get( $plugin_data, 'Version', null );
+  return( $version );
+}
+
+function _bw_get_plugins() {
+  static $plugins = null;
+  if ( !$plugins ) {
+    $plugin_slugs = bw_get_plugin_slugs();
+    oik_require( "admin/oik-depends.inc" );
+    $plugins = bw_get_all_plugin_names( $plugin_slugs);
+  }
+  return( $plugins );
+} 
+
+function bw_get_plugin_name( $plugin="oik" ) {
+  $plugins = _bw_get_plugins();
+  $plugin_name = bw_array_get( $plugins, $plugin, null );
+  return( $plugin_name ); 
+}
+
+/**
+ * Returns current plugin version.
+ * 
+ * @return string Plugin version
+ */
+function bw_get_plugin_version( $plugin="oik" ) {
+  $plugin_name = bw_get_plugin_name( $plugin );
+  if ( $plugin_name ) {
+    $version = _bw_get_plugin_version( $plugin_name );
+  } else {
+    $version = null;
+  }
+  return( $version );      
+}  
+
