@@ -124,7 +124,7 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Added: "oik_admin_menu" action, to allow dependent routines to know when oik has responded to "admin_menu".
 * Added: Support for select fields in admin page lists (oik-fields plugin)
 * Added: apikey support for premium plugins
-* Added: Plugins menu item to define plugin settings: server and API key
+* Added: Plugins menu item to define plugin settings ( server and API key ) and perform a manual check for updates
 * Changed: readme.txt
 * Added: bw_load_noderef() now supports multiple post_types
 * Added: noderef meta field supports #optional parameter
@@ -145,7 +145,7 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Fixed: bw_format_attachment() no longer produces an empty link when no image is required
 * Changed: bw_array_get_dcb() will accept null parameters e.g. [bw_email prefix='' suffix='']
 * Added: Syntax help for quite a few shortcodes where the parameters were previously undocumented: bw_address, bw_email and variation, bw_tel and variations, bw_copyright, bw_qrcode
-* Added: bw_emailfield_arr() 
+* Added: bw_emailfield_arr()  
 
 = 1.16 =
 * Fixed: Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2
