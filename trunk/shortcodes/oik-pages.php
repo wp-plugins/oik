@@ -80,7 +80,7 @@ function bw_pages__example( $shortcode="bw_pages" ) {
  e( "The item may be a page, post or custom post type" );
  e( "The default display is formatted with a featured image, excerpt and a read more link." );
  e( "For examples visit ");  
- $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode";
+ $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode/$shortcode";
  alink( NULL, $link, "$shortcode help" );   
 
 } 

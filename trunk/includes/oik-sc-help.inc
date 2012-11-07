@@ -323,13 +323,9 @@ function _sc_thumbnail() {
                ));
 }        
 
-              
-
-
 /**  
  * These functions return the help and syntax for the shortcodes that are activated
 */
-
 
 function div__help() {
   return( "start a &lt;div&gt; tag" );
@@ -358,7 +354,6 @@ function ediv__syntax() {
 
 function caption__help() {
   return( "Display the caption for an image. Standard WordPress shortcode" );
-  
 }
 
 function caption__example() {    
@@ -367,8 +362,6 @@ function caption__example() {
   $ics = img_caption_shortcode( array( 'width' => 70, 'caption' => 'This is a caption') );
   e( $ics );
 }
-
-
 
 function wp_caption__help() {
   return( caption__help() );
@@ -420,7 +413,6 @@ function embed__syntax( $shortcode='embed' ) {
   return( $syntax );
 }
 
-
 function wp__help() {
   return( "Display a styled form of WordPress. " );
 }
@@ -429,8 +421,6 @@ function wp__example() {
   oik_require( "shortcodes/oik-bob-bing-wide.php" );
   e( "e.g.". bw_wp());
 }
-
-
 
 function bw_code__help() {
   return( "Display the help and syntax for a shortcode" );
@@ -447,7 +437,6 @@ function bw_code__syntax() {
   return( $syntax );
 }
 
-
 function bw_code__example() {
   br();
   e( "e.g. [bw_code shortcode=\"oik\"]" );
@@ -460,6 +449,12 @@ function bw_code__example() {
   oik__example();
 }
 
+function bw_codes__syntax() {
+  $syntax = array( "ordered" => bw_skv( "N", "Y", "Sort the shortcode codes by name." ) 
+                 ); 
+  return( $syntax );
+}
+
 /** 
  * Return the default, values and notes for a shortcode parameter
  *  bw_skv is an abbreviation of bw_sc_key_values  
@@ -470,7 +465,6 @@ function bw_skv( $default, $values, $notes ) {
                , "notes" => $notes
                )  );
 }
-
 
 /**
  * Return the choices and notes for a keywords values
@@ -494,16 +488,14 @@ function bw_codes__help() {
 }
 
 function bw_codes__example() {
-  e( "The currently available shortcodes are displayed in a table with the known syntax a brief description and an example" );
-  e( "For some shortcodes it's not that easy to give an inline example. In these cases there should be a link to an external page." );
-  alink( null, "http://www.oik-plugins.com/oik-shortcodes/bw_codes-shortcode/", "[bw_codes] - list shortcodes" );
+  e( "The currently available shortcodes are displayed in a table with a brief description, the known syntax and a link to further help. " );
+  alink( null, "http://www.oik-plugins.com/oik-shortcodes/bw_codes/bw_codes", "[bw_codes] - list shortcodes" );
   
   // br( "Note: The default display lists the order in which the shortcodes are <i>evaluated</i>" );
   // e( "If you have a problem with hyphenated shortcodes not being chosen then it could be due to the order in which the shortcodes were registered using add_shortcode();" );
   // because the shortest shortcode has been added before the longer ones. 
   // See wp-1, wp-2, wp and wp-3 ");
 }
-
 
 function bw_directions__help() {
   return( "Display a 'Google directions' button.");
@@ -672,7 +664,36 @@ function bw_qrcode__syntax( $shortcode="bw_qrcode" ) {
                  , "height" => bw_skv( null, "<i>height</i>", "height of QR code image, if required" )
                  );
   return( $syntax );
-}                   
+}
+                   
+function bw_blockquote__syntax( $shortcode="bw_blockquote" ) {
+  $syntax = array( "text" => bw_skv( "", "<i>text</i>", "Text for the blockquote" )
+                 ,  "class"=> bw_skv( "", "<i>class names</i>", "CSS class names" )
+                 );
+  return( $syntax );
+}
+  
+function bw_cite__syntax( $shortcode="bw_cite" ) {
+  $syntax = array( "text" => bw_skv( "", "<i>text</i>", "Text for the blockquote" )
+                 ,  "class"=> bw_skv( "", "<i>class names</i>", "CSS class names" )
+                 );
+  return( $syntax );
+}
+
+function bw_contact__syntax( $shortcode="bw_contact" ) {
+  $syntax = array( "alt" => bw_skv( null, "1", "Use alternative value" ) );
+  return( $syntax );
+}
+  
+function bw_directions__syntax( $shortcode="bw_directions" ) {
+  $syntax = array( "alt" => bw_skv( null, "1", "Use alternative value" ) );
+  return( $syntax );
+}
+  
+function bw_geo__syntax( $shortcode="bw_geo" ) {
+  $syntax = array( "alt" => bw_skv( null, "1", "Use alternative value" ) );
+  return( $syntax );
+}  
                    
 /**
  * Call a shortcode for a simple example

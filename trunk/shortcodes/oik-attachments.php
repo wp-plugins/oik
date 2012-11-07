@@ -309,3 +309,47 @@ function bw_portfolio( $atts = NULL ) {
   return( bw_paired_attachments( $posts, $atts ));
 } 
 
+function _sc_captions() {
+  $syntax = array( "captions" => bw_skv( "n", "y", "Display attachment's Caption and Description" ) );
+  return ( $syntax );
+}
+
+function bw_attachments__syntax( $shortcode="bw_attachments" ) {
+  $syntax = _sc_posts(); 
+  $syntax['post_type'] = bw_skv( "attachment", "<i>post type</i>", "Post type to display" );
+  $syntax += _sc_thumbnail();
+  $syntax += _sc_captions();
+  $syntax += _sc_classes();
+  return( $syntax );   
+}
+
+function bw_pdf__syntax( $shortcode="bw_pdf" ) {
+  $syntax = _sc_posts(); 
+  $syntax['post_type'] = bw_skv( "attachment", "<i>post type</i>", "Post type to display" );
+  $syntax['post_mime_type'] = bw_skv( "application/pdf", "", "Cannot be overridden" );
+  $syntax += _sc_captions();
+  $syntax += _sc_classes();
+  return( $syntax );   
+}
+
+function bw_portfolio__syntax( $shortcode="bw_portfolio" ) {
+  $syntax = _sc_posts(); 
+  $syntax['post_type'] = bw_skv( "attachment", "<i>post type</i>", "Post type to display" );
+  $syntax['post_mime_type'] = bw_skv( "image,application/pdf", "", "Attachment types to pair" );
+  $syntax['orderby'] = bw_skv( "title", "date|ID|parent|rand|menu_order", "Sort sequence" );
+  $syntax['order'] = bw_skv( 'ASC', "DESC", "Sort order." );
+  $syntax += _sc_classes();
+  return( $syntax ); 
+} 
+
+function bw_images__syntax( $shortcode="bw_images" ) {
+  $syntax = _sc_posts(); 
+  $syntax['post_type'] = bw_skv( "attachment", "<i>post type</i>", "Post type to display" );
+  $syntax['post_mime_type'] = bw_skv( "image", "<i>post mime types</i>", "Image type" );
+  $syntax['thumbnail'] = bw_skv( "full", "thumbnail|medium|large|nnn|wxh", "image size" ); 
+  $syntax += _sc_captions();
+  $syntax += _sc_classes();
+  return( $syntax );
+}    
+   
+

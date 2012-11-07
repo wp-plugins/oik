@@ -144,8 +144,10 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Fixed: Corrected syntax help for the [div] shortcode
 * Fixed: bw_format_attachment() no longer produces an empty link when no image is required
 * Changed: bw_array_get_dcb() will accept null parameters e.g. [bw_email prefix='' suffix='']
-* Added: Syntax help for quite a few shortcodes where the parameters were previously undocumented: bw_address, bw_email and variation, bw_tel and variations, bw_copyright, bw_qrcode
-* Added: bw_emailfield_arr()  
+* Added: Syntax help for quite a few shortcodes where the parameters were previously undocumented: bw_address, bw_email and variations, bw_tel and variations, bw_copyright, bw_qrcode, bw_attachments, bw_pdf, bw_portfolio, bw_codes
+* Added: bw_emailfield_arr()
+* Changed: Improved support for shortcode help
+* Changed: bw_validate_torf() now accepts "on" as true  
 
 = 1.16 =
 * Fixed: Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2
