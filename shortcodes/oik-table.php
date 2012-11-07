@@ -189,6 +189,9 @@ function bw_table__help( $shortcode="bw_table" ) {
 }
 
 function bw_table__example( $shortcode="bw_table" ) {
-  gobang();
+ $text = "To display a table of the 4 most recent posts" ;
+ $example = 'post_type="post" orderby="post_date" order=DESC numberposts=4';
+ // oops it went into a loop! 
+ //bw_invoke_shortcode( $shortcode, $example, $text );
 } 
 

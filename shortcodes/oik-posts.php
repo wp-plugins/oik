@@ -51,9 +51,9 @@ function bw_posts( $atts = NULL ) {
   return( bw_list( $atts )) ;
 }
 
-
 function bw_posts__syntax( $shortcode="bw_posts" ) {
   $syntax = _sc_posts(); 
   $syntax = array_merge( $syntax, _sc_classes() );
+  $syntax['numberposts'] = bw_skv( 10, "numeric", "number to return" );
   return( $syntax );   
 }

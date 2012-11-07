@@ -21,8 +21,6 @@ define( 'OIK_LIST_SHORTCODES_INCLUDED', true );
 
 */
 
-
-
 /**
  * List sub-pages of the current or selected page - in a simple list 
  *
@@ -36,21 +34,24 @@ define( 'OIK_LIST_SHORTCODES_INCLUDED', true );
  *   order='ASC'
  *   posts_per_page=-1
  *   block=true or false
- *   thumbnail=specification - see bw_thumbnail
+ *   thumbnail=specification - see bw_thumbnail()
  *   customcategoryname=custom category value  
  */
 function bw_list( $atts = NULL ) {
   oik_require( "includes/bw_posts.inc" );
-  
   $posts = bw_get_posts( $atts );
-  
   sul( bw_array_get( $atts, 'class', 'bw_list' ));
-  
   foreach ( $posts as $post ) {
     bw_format_list( $post, $atts );
   }
   eul();
-  
   return( bw_ret() );
 } 
+
+function bw_list__syntax( $shortcode="bw_list" ) {
+  $syntax = _sc_posts(); 
+  $syntax['numberposts'] = bw_skv( "-1", "numeric", "number of items to list. -1=list all" );
+  return( $syntax );
+}
+
 

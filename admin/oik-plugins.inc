@@ -157,7 +157,7 @@ function _oik_plugins_delete_settings( $plugin ) {
 /**
  * plugin must not be blank
  */
-function oik_diy_validate_plugin( $plugin ) {
+function oik_plugins_validate_plugin( $plugin ) {
   $valid = isset( $plugin );
   if ( $valid ) { 
     $plugin = trim( $plugin );
@@ -175,12 +175,12 @@ function oik_diy_validate_plugin( $plugin ) {
 function _oik_plugins_settings_validate( $add_plugin=true ) {
 
   global $bw_plugin;
-  $bw_plugin['plugin'] = bw_array_get( $_REQUEST, "plugin", null );
-  $bw_plugin['server'] = bw_array_get( $_REQUEST, "server", null );
-  $bw_plugin['apikey'] = bw_array_get( $_REQUEST, "apikey", null );
-  $bw_plugin['expiration'] = bw_array_get( $_REQUEST, "expiration", null );
+  $bw_plugin['plugin'] = trim( bw_array_get( $_REQUEST, "plugin", null ) );
+  $bw_plugin['server'] = trim( bw_array_get( $_REQUEST, "server", null ) );
+  $bw_plugin['apikey'] = trim( bw_array_get( $_REQUEST, "apikey", null ) );
+  $bw_plugin['expiration'] = trim( bw_array_get( $_REQUEST, "expiration", null ) );
   
-  $ok = oik_diy_validate_plugin( $bw_plugin['plugin'] );
+  $ok = oik_plugins_validate_plugin( $bw_plugin['plugin'] );
   
   // validate the fields and add the settings IF it's OK to add
   // $add_plugin = bw_array_get( $_REQUEST, "_oik_plugins_add_settings", false );

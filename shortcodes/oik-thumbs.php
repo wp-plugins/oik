@@ -32,17 +32,16 @@ oik_require( "shortcodes/oik-attachments.php" );
  * @param object $post - A post object
  * @param array $atts - Attributes array - passed from the shortcode
  * 
+ * Note: If the post_type is 'attachment' then we should not look for an attached image
+ * since this is probably already the attached image that we've loaded. 
+ * Until we change this code the example won't work! 
  *
  */
 function bw_format_thumb( $post, $atts ) {
   setup_postdata( $post );
-  
   bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
-  
   $atts['title'] = get_the_title( $post->ID );
-  //$read_more = bw_array_get( $atts, "read_more", "read more" );
   $thumbnail = bw_thumbnail( $post->ID, $atts );
-  
   $in_block = bw_validate_torf( bw_array_get( $atts, "block", false ));
   if ( $in_block ) {
     oik_require( "shortcodes/oik-blocks.php" );
@@ -69,11 +68,32 @@ function bw_thumbs( $atts = NULL ) {
   $posts = bw_get_posts( $atts );
   if ( count( $posts ) ) {
     foreach ( $posts as $post ) {
-      bw_format_thumb( $post, $atts );
+      if ( $post->post_type == 'attachment' ) {
+        $atts['titles'] = 'n';
+        bw_format_attachment( $post, $atts );
+      } else {
+        bw_format_thumb( $post, $atts );
+      }
     }
   }  
   return( bw_ret() );
+}
+
+function bw_thumbs__syntax( $shortcode="bw_thumbs" ) {
+  $syntax = _sc_posts(); 
+  $syntax += _sc_classes();
+  $syntax['orderby'] = bw_skv( 'title', "date|ID|parent|rand|menu_order", "Sort sequence" );
+  $syntax['order'] = bw_skv( 'ASC', "DESC", "Sort order" );
+  $syntax['block'] = bw_skv( "false", "true", "Enclose in an Artisteer block" );
+  return( $syntax );   
 } 
+
+function bw_thumbs__example( $shortcode="bw_thumbs" ) {
+ 
+ $text = "To display 3 thumbnail images" ;
+ $example = 'numberposts=3 post_type=attachment post_mime_type=image';
+ bw_invoke_shortcode( $shortcode, $example, $text );
+}
 
 
 

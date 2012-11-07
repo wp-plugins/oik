@@ -151,8 +151,8 @@ function bw_trace_actions() {
   $bw_action_options = get_option( 'bw_action_options' );
   $trace_actions = bw_array_get( $bw_action_options, "actions", "off" );
   bw_trace2( $bw_action_options, "bw_action_options" );
-  if ( $trace_actions ) {
     oik_require2( "includes/oik-bwtrace.inc", "oik-bwtrace" );
+  if ( $trace_actions ) {
     bw_trace_actions_on();
     bw_lazy_trace_actions();
   } else {

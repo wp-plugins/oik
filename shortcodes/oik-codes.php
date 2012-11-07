@@ -31,6 +31,37 @@ function bw_code_link( $shortcode ) {
   e( " - " );
 }
 
+function bw_get_shortcode_callback( $shortcode ) {
+  global $shortcode_tags; 
+  $callback = bw_array_get( $shortcode_tags, $shortcode, null );
+  return( $callback ); 
+}
+
+/**
+ * We need to cater for callbacks which are defined as object and function
+     Array
+        (
+            [0] => AudioShortcode Object
+                (
+                )
+
+            [1] => audio_shortcode
+        )
+   Given that $callback is passed in and that is_callable should have already been called
+   then we should always expect $callable_name to be set!         
+
+ */
+function bw_get_shortcode_function( $shortcode, $callback=null ) {
+  global $bw_sc_ev;
+  $events = bw_array_get( $bw_sc_ev, $shortcode, null );
+  $function = bw_array_get( $events, 'the_content', $callback );
+  $callable_name = null;
+  if ( !is_callable( $function, false, $callable_name ) ) {
+    $callable_name = bw_array_get( $function, 1, $shortcode );
+    bw_trace2( $bw_sc_ev, "unexpected result!" ); 
+  } 
+  return( $callable_name );  
+}
 
 function bw_get_shortcode_syntax_link( $shortcode, $callback ) {
 
@@ -48,7 +79,8 @@ function bw_get_shortcode_syntax_link( $shortcode, $callback ) {
   etag( "td" );
   
   stag( "td" );
-  $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode";
+  $function = bw_get_shortcode_function( $shortcode, $callback );
+  $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode/$function"; 
   alink( NULL, $link, "$shortcode help" );   
   etag( "td");
   //bw_td( $shortcode );
@@ -85,7 +117,7 @@ function bw_help_table( $table=true ) {
 }
 
 /**
- * table footer for bw_plug 
+ * table footer for bw_codes
  */
 function bw_help_etable( $table=true ) { 
   if ( $table ) {
@@ -114,15 +146,16 @@ function bw_shortcode_list( $atts=null ) {
   return( $sc_list );
 }  
 
-
-  
+/**
+ * Produce a table of shortcodes
+ * @param array $atts - shortcode parameters
+ */
 function bw_list_shortcodes( $atts = NULL ) {
   global $shortcode_tags;
   $ordered = bw_array_get( $atts, "ordered", "N" );
   $ordered = bw_validate_torf( $ordered ); 
   //bw_trace2( $shortcode_tags );
   //bw_trace2( $ordered, "ordered" );
-  
   if ( $ordered ) {
     ksort( $shortcode_tags );
   }
@@ -130,28 +163,33 @@ function bw_list_shortcodes( $atts = NULL ) {
   add_action( "bw_sc_help", "bw_sc_help" );
   add_action( "bw_sc_example", "bw_sc_example" );
   add_action( "bw_sc_syntax", "bw_sc_syntax" );
-  
-  
   bw_help_table();
   foreach ( $shortcode_tags as $shortcode => $callback ) {
     bw_get_shortcode_syntax_link( $shortcode, $callback );
   }
   bw_help_etable();
-
-  
 }
 
-
+/** 
+ * Display a table of active shortcodes
+ * @param array $atts - shortcode parameters
+ * @return results of the shortcode
+ * @uses bw_list_shortcodes()
+ */
 function bw_codes( $atts = NULL ) {
   $text = "&#91;bw_codes] is intended to show you all the active shortcodes and give you some help on how to use them. ";
   $text .= "If a shortcode is not listed then it could be that the plugin that provides the shortcode is not activated. ";
   $text .= "Click on the link to find detailed help on the shortcode and its syntax. "; 
   e( $text );  
   $shortcodes = bw_list_shortcodes( $atts );
-
   return( bw_ret());
 } 
 
+/**
+ * Display information about a specific shortcode
+ * @param array $atts - shortcode parameters
+ * @return results of the shortcode
+ */
 function bw_code( $atts = NULL ) {
   $shortcode = bw_array_get( $atts, "shortcode", 'bw_code' );
   $help = bw_array_get( $atts, "help", "Y" );
@@ -174,10 +212,8 @@ function bw_code( $atts = NULL ) {
   $example = bw_validate_torf( $example );
   if ( $example ) {
     p( "Example", "bw_code_example");
-    
     do_action( "bw_sc_example", $shortcode );
   }
-  
 
   $live = bw_validate_torf( $live ) ;
   if ( $live ) {
@@ -191,7 +227,6 @@ function bw_code( $atts = NULL ) {
     p( "Snippet", "bw_code_snippet" );
     do_action( "bw_sc_snippet", $shortcode );
   }
-
   return( bw_trace2( bw_ret(), "bw_code_return"));
 } 
    

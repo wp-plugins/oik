@@ -301,6 +301,8 @@ function bw_get_posts( $atts = NULL ) {
 
 /**
  * Get the post / custom post type identified by the ID and post type
+ * 
+ * Note: If we know the ID then why not just call get_post()? **?**  2012/11/03
  */
 function bw_get_post( $post_id, $post_type, $atts=null ) {
   if ( null == $atts ) {

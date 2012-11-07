@@ -296,10 +296,6 @@ function bw_contact( $atts=null ) {
   return( bw_ret() );
 } 
 
-
-
-
-
 /**
  * create a styled follow me button
  * 
@@ -437,7 +433,6 @@ function bw_mob( $atts=null ) {
  */
 function bw_directions( $atts=null ) {
   $alt = bw_array_get( $atts, "alt", null );
-  
   $lat = bw_get_option( "lat", "bw_options$alt" );
   $long = bw_get_option( "long", "bw_options$alt" );
   $company = bw_get_option( "company" );
@@ -454,7 +449,6 @@ function bw_directions( $atts=null ) {
   art_button( $link, $text, $title, $class ); 
   return( bw_ret());
 }
-
 
 function bw_google_plus( $atts ) { 
   $atts['network'] = "GooglePlus";  
@@ -691,8 +685,6 @@ if (!function_exists( 'bw_wp_title' )) {
     return $title;
   }
 }
-
-
 
 /** 
  * Display a blockquote unaffected by wpautop

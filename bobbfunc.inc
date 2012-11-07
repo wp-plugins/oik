@@ -708,11 +708,11 @@ function bw_format_date( $date=NULL, $format="Y-m-d" ) {
  * Simple function to validate a field as TRUE or FALSE given a big list of strings that represent TRUE 
  *
  * @param string $field - value to be validated. If null then the value returned is FALSE
- * @param string $trues - list of TRUE values
+ * @param string $trues - list of TRUE values. Now includes "on" to allow for checkbox fields
  * @param string $falses - list of FALSE values  Note: No need for the $falses parameter at present
  * @return bool true or false
  */
-function bw_validate_torf( $field, $trues=",true,yes,1", $falses=NULL ) {
+function bw_validate_torf( $field, $trues=",true,yes,1,on", $falses=NULL ) {
   $torf = FALSE;
   if ( $field ) {
     $field = ",".strtolower( $field );
