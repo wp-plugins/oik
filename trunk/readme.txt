@@ -147,7 +147,8 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Added: Syntax help for quite a few shortcodes where the parameters were previously undocumented: bw_address, bw_email and variations, bw_tel and variations, bw_copyright, bw_qrcode, bw_attachments, bw_pdf, bw_portfolio, bw_codes
 * Added: bw_emailfield_arr()
 * Changed: Improved support for shortcode help
-* Changed: bw_validate_torf() now accepts "on" as true  
+* Changed: bw_validate_torf() now accepts "on" as true 
+* Changed: [bw_plug] (activated by oik-bob-bing-wide plugin) supports oik-plugins servers 
 
 = 1.16 =
 * Fixed: Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2

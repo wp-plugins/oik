@@ -306,13 +306,37 @@ function bw_plug_list_plugins( $option='active_plugins' ) {
  * Syntax for bw_plug shortcode
 */ 
 function bw_plug__syntax( $shortcode='bw_plug' ) {
-  $syntax = array( "name" => bw_skv( 'oik', "plugin-a,plugin-b", "names of plugins to summarise" )
+  $syntax = array( "name" => bw_skv( 'oik', "<i>plugin-a,plugin-b</i>", "names of plugins to summarise" )
                  , "table" => bw_skv( 'Y', 'N|t|f|1|0', "Show detailed information. Defaults to 'Y' if more than one plugin is listed" )
                  , "option" => bw_skv( '', "active_plugins", "Summarise the activated plugins" )
-                 , "link" => bw_skv( '', 'http://www.bobbingwidewebdesign.com/plugins/<i>name</i>', "URL for where to find additional information" )
+                 , "link" => bw_skv( 'n', "y|<i>URL</i>", "URL for where to find additional information" )
                  );
   return( $syntax );
-}                   
+}
+
+/**
+ * Get the URL structure for the notes page
+ * $link can be "true" or "false" or an URL
+ * If there is a defined notes_page this value should become the default on the bw_array_get() 
+ * NOT the 'n' we're now setting it to. 
+ * So we need to reset that logic AND provide the admin page
+ * **?** we'll leave this for oik-bob-bing-wide v2 Herb 2012/11/08
+ */   
+function bw_get_notes_page_url( $link ) {
+  $torf = bw_validate_torf( $link );
+  if ( $torf ) {
+    $link = bw_get_option( "notes_page", "bw_bobbingwide" );  // **?** Not yet implemented
+    if ( !$link ) {
+      $link = "http://www.bobbingwidewebdesign.com/plugins";  // For some backward compatability
+    }  
+  } else {
+    // It's false so it could have been an URL
+    if ( false === strpos( $link, "http" ) ) {
+      $link = null;
+    }
+  }
+  return( $link );
+}               
 
 
 /** Added [bw_plug name="plugin name" link="URL" table="t/f,y/n,1/0"] shortcode
@@ -331,12 +355,13 @@ function bw_plug__syntax( $shortcode='bw_plug' ) {
 */
 function bw_plug( $atts ) {
   $name = bw_array_get( $atts, 'name', 'oik' );
-  $link = bw_array_get( $atts, 'link', NULL );
+  $link = bw_array_get( $atts, 'link', 'n' );
   $table = bw_array_get( $atts, 'table', NULL ); 
   $option = bw_array_get( $atts, 'option', NULL );
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
   
   $table = bw_validate_torf( $table );
+  $link = bw_get_notes_page_url( $link );
   
   bw_trace( $table, __FUNCTION__, __LINE__, __FILE__, "table" );
   
@@ -358,11 +383,9 @@ function bw_plug( $atts ) {
     $name = bw_plugin_namify( $name );
   
     $plugininfo = bw_get_plugin_info_cache( $name );
-  
     bw_trace( $plugininfo, __FUNCTION__, __LINE__, __FILE__, "plugininfo" );
-  
     
-    if ( !$plugininfo->name ) {
+    if ( is_wp_error( $plugininfo ) || !$plugininfo->name ) {
       if ( $table ) {
         bw_format_plug_table( $name, $link, FALSE );
       }  
@@ -416,30 +439,27 @@ function bw_plug_etable( $table=false ) {
   }  
 }
 
-
-function bw_format_default( $name, $link ) {          
+/**
+ * We don't know about this plugin so we assume it's a WordPress one
+ * WordPress will do its 404 processing t help us
+ * The link to the notes page, if required, may have difficult too
+ */
+function bw_format_default( $name, $link ) { 
   $title = "Link to the $name plugin on wordpress.org" ;
   alink( NULL, "http://wordpress.org/extend/plugins/".$name, $name, $title );  
-  if (empty( $link )) {
-    $link = "http://www.bobbingwidewebdesign.com/plugins/$name";
-  }
-  e( "(" );
-  alink( "bwlink", $link, "...", "Read bobbing wide's notes on ".$name );
-  e( ")" ); 
+  bw_link_notes_page( $name, $link, "(", ")" );
 }
 
-    
-function bw_format_link( $name, $link, $plugininfo ) {          
-  $title = "Link to the $plugininfo->name ($name: $plugininfo->short_description) plugin on wordpress.org" ;
-  alink( NULL, "http://wordpress.org/extend/plugins/".$name, $plugininfo->name, $title );  
-  if (empty( $link )) {
-    $link = "http://www.bobbingwidewebdesign.com/plugins/$name";
-  }
-  e( "(" );
-  alink( "bwlink", $link, "...", "Link to bobbing wide's notes on ".$name );
-  e( ")" ); 
+/**
+ * Format a link or links to the plugin
+ * 
+ * When formatting two links they appear as: plugin(notes)
+ * 
+ */    
+function bw_format_link( $name, $link, $plugininfo ) { 
+  bw_link_plugin_download( $name, $plugininfo );          
+  bw_link_notes_page( $name, $link, "(", ")" );
 }
-
 
 function tdlink( $class=NULL, $url, $text, $title=NULL, $id=NULL ) {
   stag( "td" );
@@ -450,19 +470,71 @@ function tdlink( $class=NULL, $url, $text, $title=NULL, $id=NULL ) {
  
 /**
  * Cache load of plugin info
+ * 
+ * - If no response then try our registered plugins
+ * - If we can find the server then we try talking to that
+ * - If no response then try WordPress 
+ * - 
+ * Rather than assume it's a WordPress plugin we can check if we know about it
+ * by looking in the plugin directory
  *  
 */ 
 function bw_get_plugin_info_cache( $plugin_slug ) {
+  bw_trace2();
 
   $response_xml = wp_cache_get( "bw_plug", $plugin_slug );
   if ( empty( $response_xml )) {
-    $response_xml = bw_get_plugin_info( $plugin_slug );
+    $response = bw_get_oik_plugins_info( $plugin_slug );
+    if ( $response ) {
+      $response_xml = $response; 
+    } else {
+      $response_xml = bw_get_plugin_info( $plugin_slug );
+    }  
     if ( !empty( $response_xml ) ) {
       wp_cache_set( "bw_plug", $response_xml, $plugin_slug, 43200 );
     }  
+  } else {
+    bw_trace2( $response_xml, "response_xml from cache" );
   }
   return $response_xml;
 }
+
+/**
+ * Get defined plugin server
+ */
+function bw_get_defined_plugin_server( $plugin_slug ) {
+  $plugin = bw_get_option( $plugin_slug, "bw_plugins" );
+  if ( $plugin ) { 
+    $server = bw_array_get_dcb( $plugin, "server", null, "oik_get_plugins_server" );
+  } else {
+    $server = null;
+  }
+  return( $server );
+}
+
+/**
+ * Return information on an oik-plugins plugin.
+ * 
+ * perhaps we should switch to the php serialized version... it could be easier
+ 
+ * 
+ */
+function bw_get_oik_plugins_info( $plugin_slug ) {
+  oik_require( "admin/oik-admin.inc" );
+  oik_require( "includes/oik-remote.inc" );
+  $server = bw_get_defined_plugin_server( $plugin_slug ); 
+  if ( $server ) {
+    oik_register_plugin_server( $plugin_slug, $server );
+    $result = oik_lazy_pluginsapi( false, "plugin_information", array( "slug" => $plugin_slug) );
+    if ( $result ) {
+      $result->oik_server = $server;
+    }
+  } else {
+    $result = false; 
+  }
+  bw_trace2( $result ); 
+  return( $result ); 
+} 
 
 /**
   * Code copied and cobbled from http://snippet.me/wordpress/wordpress-plugin-info-api/
@@ -476,7 +548,34 @@ function bw_get_plugin_info( $plugin_slug ) {
   bw_trace( $response_xml, __FUNCTION__, __LINE__, __FILE__, "response_xml" );
   return $response_xml;
 }
- 
+
+/**
+ * Create a link to the plugin's download page
+ * 
+ */
+function bw_link_plugin_download( $name, $plugininfo ) {
+  $title = "Link to the $plugininfo->name ($name: $plugininfo->short_description) plugin" ;
+  $download_page = bw_array_get( $plugininfo, "oik_server", null );
+  if ( !$download_page ) {
+    $download_page =  "http://wordpress.org/extend/plugins/".$name;
+  } else {
+    $download_page .= "/oik-plugins/$name"; 
+  }
+  alink( "plugin", $download_page , $plugininfo->slug, $title );  
+}
+
+/** 
+ * Create a link to the notes page.
+ */
+function bw_link_notes_page( $name, $link, $lp=null, $rp=null ) {
+  if ( $link ) {
+    $link .= "/";
+    $link .= $name;
+    e( $lp );
+    alink( "bwlink", $link, "...", "Link to notes on ".$name );
+    e( $rp ); 
+  }  
+}
 
 /** Format the bw_plug output as a table with a number of columns
  * 1. plugin name and short description
@@ -484,12 +583,11 @@ function bw_get_plugin_info( $plugin_slug ) {
  * 3. other stuff: version, number times downloaded, last update date, tested up to WP x.x.xx 
  */  
 function bw_format_plug_table( $name, $link, $plugininfo ) {
-
   stag( "tr");
-   
   if ( $plugininfo === FALSE ) {
     td( $name );
     td( "No info available" );
+    td( "&nbsp;" );
     }
   else {
     stag( "td" );
@@ -497,27 +595,17 @@ function bw_format_plug_table( $name, $link, $plugininfo ) {
     br();
     e( $plugininfo->short_description );
     etag( "td" );
-      
-    
     stag( "td" );
-    
-    $title = "Link to the $plugininfo->name ($name: $plugininfo->short_description) plugin on wordpress.org" ;
-    alink( "plugin", "http://wordpress.org/extend/plugins/".$name, $plugininfo->slug, $title );  
+    bw_link_plugin_download( $name, $plugininfo );
     br();
     alink( "home", $plugininfo->homepage, "home", "Link to plugin homepage" ); 
     br();
-    
-    if (empty( $link )) {
-      $link = "http://www.bobbingwidewebdesign.com/plugins/$name";
-    }
-    alink( "bwlink", $link, "...", "Link to bobbing wide's notes on ".$name );
+    bw_link_notes_page( $name, $link );
     etag( "td" );
-    
     td( $plugininfo->version . '<br />' . $plugininfo->downloaded . '<br />'. $plugininfo->last_updated . '<br />' . $plugininfo->tested );
   } 
   etag("tr");  
 }
-
 
 /**
  * Load module information for a Drupal module
@@ -550,27 +638,8 @@ function bw_module( $atts ) {
   bw_trace( $moduleinfo, __FUNCTION__, __LINE__, __FILE__, "moduleinfo" );
   
   bw_format_modlink( $name, $link, $moduleinfo );
-  /*
-  if ( !$plugininfo->name ) {
-    if ( $table ) {
-      bw_format_plug_table( $name, $link, FALSE );
-    }  
-    else {
-      bw_format_default( $name, $link );
-    } 
-  }   
-  else {
-    if ( $table ) {
-      bw_format_plug_table( $name, $link, $plugininfo );
-    }  
-    else {
-      bw_format_link( $name, $link, $plugininfo );
-    }  
-  } 
-  */ 
   return( bw_ret());  
 }
-
 
 /**
   * Create a link to the Drupal module
@@ -579,7 +648,8 @@ function bw_module( $atts ) {
 function bw_format_modlink( $name, $link, $moduleinfo ) {  
         
   $title = "Link to the $moduleinfo->name ($name: $moduleinfo->short_description) module on drupal.org" ;
-  alink( NULL, "http://drupal.org/project/".$name, $moduleinfo->name, $title );  
+  alink( NULL, "http://drupal.org/project/".$name, $moduleinfo->name, $title ); 
+   
   if (empty( $link )) {
     $link = "http://www.bobbingwidewebdevelopment.com/modules/$name";
   }
@@ -587,19 +657,6 @@ function bw_format_modlink( $name, $link, $moduleinfo ) {
   alink( "bwlink", $link, "...", "Link to bobbing wide's notes on ".$name );
   e( ")" ); 
 }
-
-
-
-
-
-
-    
-        
-
-
-
-
-
 
 function wp1( $atts=NULL) {
   return( 'wp1 done');

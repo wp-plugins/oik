@@ -202,6 +202,9 @@ function oikp_our_plugin( $args ) {
             [slug] => backwpup
             [per_page] => 24
         )
+        
+"http://api.wordpress.org/plugins/info/1.0/$plugin_slug.xml";
+
 
  */
 function oik_lazy_pluginsapi( $false, $action, $args ) {
