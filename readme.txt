@@ -148,7 +148,8 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Added: bw_emailfield_arr()
 * Changed: Improved support for shortcode help
 * Changed: bw_validate_torf() now accepts "on" as true 
-* Changed: [bw_plug] (activated by oik-bob-bing-wide plugin) supports oik-plugins servers 
+* Changed: [bw_plug] (activated by oik-bob-bing-wide plugin) supports oik-plugins servers
+* Added: includes/oik-filters.inc providing new functions to replace and restore filters 
 
 = 1.16 =
 * Fixed: Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2
