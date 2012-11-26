@@ -6,7 +6,7 @@ define( 'OIK_SIDEBAR_INCLUDED', true );
 Plugin Name: oik sidebar
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-sidebar
 Description: Applies widget wrangler sidebar functionality to Artisteer themes
-Version: 1.17
+Version: 1.18
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -28,11 +28,6 @@ License: GPL2
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
-//require_once( 'bobbfunc.inc' );
-
-//function oik_sidebar_api_version() {
-//  return bw_oik_version();
-//}
 
 /* Note: for this plugin to do anything you need to do the following: 
    o change your Artisteer theme to call bw_dynamic_sidebar instead of art_dynamic_sidebar

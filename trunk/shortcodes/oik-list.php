@@ -33,13 +33,14 @@ define( 'OIK_LIST_SHORTCODES_INCLUDED', true );
  *   orderby='title'
  *   order='ASC'
  *   posts_per_page=-1
- *   block=true or false
+
  *   thumbnail=specification - see bw_thumbnail()
  *   customcategoryname=custom category value  
  */
 function bw_list( $atts = NULL ) {
   oik_require( "includes/bw_posts.inc" );
   $posts = bw_get_posts( $atts );
+  $atts['thumbnail'] = bw_array_get( $atts, "thumbnail", "none" );
   sul( bw_array_get( $atts, 'class', 'bw_list' ));
   foreach ( $posts as $post ) {
     bw_format_list( $post, $atts );

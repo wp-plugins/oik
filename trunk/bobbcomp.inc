@@ -140,7 +140,9 @@ function _bw_telephone( $atts = null ) {
     span( "type");
     e( $prefix );
     epan();
+    span( "sep" );
     e( $sep );
+    epan();
     span( "value" );
     e( $number );
     epan();

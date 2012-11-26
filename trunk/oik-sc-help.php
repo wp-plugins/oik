@@ -6,7 +6,7 @@ define( 'OIK_SC_HELP_INCLUDED', true );
 Plugin Name: oik shortcode help shortcodes
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-sc-help
 Description: [bw_code] and [bw_codes] shortcodes
-Version: 1.17
+Version: 1.18
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2

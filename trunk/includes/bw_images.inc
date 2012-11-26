@@ -150,7 +150,7 @@ function bw_get_fullimage( $post_id, $size='full', $atts=null ) {
   $img = bw_array_get( $thumbnail, 0, null );
   if ( $img ) {
     $text = bw_array_get( $atts, "title", NULL );
-    $return_value = retimage( "bw_thumbnail", $img, $text);
+    $return_value = retimage( "bw_thumbnail", $img, $text, null, null, kv( "data-thumb", $img) );
   }      
   bw_trace( $return_value, __FUNCTION__, __LINE__, __FILE__, "return_value" ); 
   return( $return_value );
@@ -220,7 +220,8 @@ function bw_get_thumbnail( $post_id = null, $size = 'thumbnail', $atts=NULL ) {
   if ( bw_array_get( $thumbnail, 0, FALSE)  ) {
     $text = bw_array_get( $atts, "title", NULL );
     $thumbnail = bw_force_size( $thumbnail, $size );
-    $return_value = retimage( "bw_thumbnail", $thumbnail[0], $text, $thumbnail[1], $thumbnail[2] ); 
+    $data_thumb = kv( "data-thumb", $thumbnail[0] );
+    $return_value = retimage( "bw_thumbnail", $thumbnail[0], $text, $thumbnail[1], $thumbnail[2], $data_thumb ); 
   }
   bw_trace( $return_value, __FUNCTION__, __LINE__, __FILE__, "return_value" ); 
   return( $return_value );

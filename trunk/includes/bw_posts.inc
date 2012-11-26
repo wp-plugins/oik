@@ -20,6 +20,9 @@
 */
 
 
+oik_require( "includes/bw_images.inc" );
+
+
 /** 
  *
  */
@@ -106,18 +109,22 @@ function bw_get_the_excerpt( $excerpt ) {
  *
  * Whenever we call bw_excerpt() call bw_more_text() to set the custom "read more" text
  * The custom "read more" text can then be accessed using the same function when creating the read more link
+ * 
+ * @param string $more_text - the new value for the read more text
+ * @param array $atts - contains the default "read_more" text. This is null when setting and not null when retrieving 
+ * @return string the current value of $bw_more_text or the default value when null
+ *  
  */
 function bw_more_text( $more_text=null, $atts=null ) {   
   static $bw_more_text = null;
-  if ( $more_text ) {
-    $bw_more_text = $more_text; 
+  if ( ( $atts !== null ) && !$bw_more_text ) { 
+    $bw_more = bw_array_get_dcb( $atts, "read_more", "read more" );
   } else {
-    if ( !$bw_more_text ) { 
-      $bw_more_text = bw_array_get_dcb( $atts, "read_more", "read more" );
-    }  
+    $bw_more = $bw_more_text;
   }
-  bw_trace2( $bw_more_text, "bw_more_text" );
-  return( $bw_more_text );
+  $bw_more_text = $more_text; 
+  bw_trace2( $bw_more, "bw_more" );
+  return( $bw_more );
 }
 
 /**
@@ -158,7 +165,7 @@ function bw_excerpt( $post ) {
  *
  */
 function bw_format_post( $post, $atts ) {
-  setup_postdata( $post );
+  //  setup_postdata( $post );
   
   bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
   
@@ -202,11 +209,19 @@ function bw_format_post( $post, $atts ) {
 
 /**
  * Format the "post" - in a simple list item list
+ * If there is a thumbnail parameter we include the image as well! 
+ * We expect the thumbnail parameter to be a small number e.g. thumbnail=80
  */
 function bw_format_list( $post, $atts ) {
-  setup_postdata( $post );
+  //setup_postdata( $post );
   // bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
-  $title = get_the_title( $post->ID );
+  $atts['title'] = get_the_title( $post->ID );
+  $thumbnail = bw_thumbnail( $post->ID, $atts );
+  if ( $thumbnail ) {
+    $title = $thumbnail . $atts['title'];
+  } else {
+    $title = $atts['title'];
+  }
   stag( 'li' );
   alink( NULL, get_permalink( $post->ID ), $title );
   etag( 'li' );

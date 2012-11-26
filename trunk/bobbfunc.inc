@@ -79,8 +79,6 @@ function bw_do_shortcode( $content ) {
   return( $content );
 }
 
-
-
 /**
  * Return an image tag
  * 
@@ -93,7 +91,7 @@ function bw_do_shortcode( $content ) {
  
  * Note: This function does not handle an id= attribute
  */
-function retimage( $class, $jpg, $title=NULL, $width=NULL, $height=NULL ) {
+function retimage( $class, $jpg, $title=NULL, $width=NULL, $height=NULL, $extras=null ) {
   $img = '<img class="' .  $class . '" ';  
   $img .= 'src="' .  bw_expand_link( $jpg ) . '" ';
   if ( !is_null( $width))
@@ -104,17 +102,18 @@ function retimage( $class, $jpg, $title=NULL, $width=NULL, $height=NULL ) {
     $title = strip_tags( $title );
     $img .= 'title="' . $title . '" ';
     $img .= 'alt="' . $title . '" ';
-  }  
+  } 
+  if ( $extras ) { 
+    $img .= $extras; 
+  }
   $img .= " />";
   return( $img );
 }
-
  
 function image( $class, $jpg, $title=NULL, $width=NULL, $height=NULL ) {
   $img = retimage( $class, $jpg, $title, $width, $height ); 
   bw_echo( $img );
 }
-
 
 function kv( $keyword, $value=null ) {
   if ( $value != null ) {
@@ -125,13 +124,10 @@ function kv( $keyword, $value=null ) {
   return( $kv );  
 } 
 
-
-
 function atitle( $title = NULL ) {
   $title = wp_strip_all_tags( $title );
   return( kv( "title", $title ) );
 } 
-
 
 /**
  * Create an anchor tag for linking within a page
@@ -142,8 +138,6 @@ function aname( $name ) {
   etag( 'a' );
   // return( bw_ret() );
 } 
-
-
 
 /**
  * Create a link

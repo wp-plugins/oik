@@ -6,7 +6,7 @@ define( 'OIK_FIELDS_INCLUDED', true );
 Plugin Name: oik fields
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-fields
 Description:  Field formatting for custom post type meta data, plus [bw_field] & [bw_fields] shortcodes
-Version: 1.17
+Version: 1.18
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2

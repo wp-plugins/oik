@@ -42,6 +42,7 @@ function bw_art_level( $art_version, $array = array(), $index, $new_version ) {
  *
  *  art_version version     array[index] to check for 
  *  ----------- ----------- ------------------------------------------------
+ *  40          4.0         theme_default_options[ theme_header_clickable ]
  *  31          3.1         theme_default_options[ theme_posts_headline_tag] 
  *  30          3.0         theme_default_options[ theme_show_headline ]
  *  25          2.5.0.31067 art_config[ theme  ]
@@ -61,11 +62,14 @@ function bw_art_level( $art_version, $array = array(), $index, $new_version ) {
 */ 
 function bw_artisteer_version() {
   global $theme_default_options, $art_config;
-  // bw_trace( $theme_default_options, __FUNCTION__,  __LINE__, __FILE__, "theme_default_options" );  
+  bw_trace( $theme_default_options, __FUNCTION__,  __LINE__, __FILE__, "theme_default_options" );  
   $art_version = FALSE;
   
   $art_version = bw_get_option( 'art-version' );
   
+  if ( $art_version == FALSE )
+    $art_version = bw_art_level( $art_version, $theme_default_options, 'theme_header_clickable', '40' );
+    
   if ( $art_version == FALSE )
     $art_version = bw_art_level( $art_version, $theme_default_options, 'theme_posts_headline_tag', '31' );
     

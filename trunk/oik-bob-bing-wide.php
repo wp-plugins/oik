@@ -6,7 +6,7 @@ define( 'OIK_BOB_BING_WIDE_INCLUDED', true );
 Plugin Name: oik bob bing wide shortcodes
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-bob-bing-wide-plugin
 Description: More lazy smart shortcodes: bw_plug, bw_page, bw_post, bob/fob bing/bong wide/hide & wow, oik and loik, wp, wpms, bp, artisteer, drupal
-Version: 1.17
+Version: 1.18
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -81,11 +81,12 @@ function oik_bob_bing_wide_init() {
   // if it's registered before the shortcode that is the same as the prefix before the '-' it's OK
   // it it's registed after, then the shorter shortcode will take precedence
 
+  // 2012/11/25 - Ticket has been fixed so no need to include these dummy shortcodes any more, just [wp]
 
-  bw_add_shortcode( 'wp-1', 'wp1', oik_path("shortcodes/oik-bob-bing-wide.php"), true);
-  bw_add_shortcode( 'wp-2', 'wp2', oik_path("shortcodes/oik-bob-bing-wide.php"), true);
+  //bw_add_shortcode( 'wp-1', 'wp1', oik_path("shortcodes/oik-bob-bing-wide.php"), true);
+  //bw_add_shortcode( 'wp-2', 'wp2', oik_path("shortcodes/oik-bob-bing-wide.php"), true);
   bw_add_shortcode( 'wp', 'bw_wp', oik_path("shortcodes/oik-bob-bing-wide.php"), true );   // WordPress
-  bw_add_shortcode( 'wp-3', 'wp3', oik_path("shortcodes/oik-bob-bing-wide.php"), true);
+  //bw_add_shortcode( 'wp-3', 'wp3', oik_path("shortcodes/oik-bob-bing-wide.php"), true);
 
 }
 

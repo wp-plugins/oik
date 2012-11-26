@@ -74,6 +74,28 @@ function bw_load_shortcodefunc( $shortcodefunc, $shortcode ) {
   }    
   return( $scfunc );
 } 
+
+/**
+ * Save/restore the global post and id
+ * 
+ * @param post $saved_post - the post to restore to the globals
+ * @return post $post
+ * 
+ * Note: Using $GLOBALS['var'] is (almost) equivalent to using global $var;
+ * 
+ */
+function bw_global_post( $saved_post=null ) {
+  if ( isset( $GLOBALS['post'] ) ) {
+    $post = $GLOBALS['post'];
+  } else { 
+    $post = null;
+  }  
+  if ( $saved_post ) {
+    $GLOBALS['post'] = $saved_post;
+    $GLOBALS['id'] = $saved_post->ID;
+  }  
+  return( $post );   
+}
  
 /** 
  * Expand a shortcode if the function is defined for the event
@@ -110,6 +132,7 @@ function bw_shortcode_event( $atts, $hmm=null, $tag=null) {
     $tag = bw_array_get( $atts, 0, null );
   }  
   //bw_trace( $tag, __FUNCTION__, __LINE__, __FILE__, "tag" ); 
+  $saved_post = bw_global_post();
   $result = '&#91;' . $tag . ']';
   //bw_trace( $cf, __FUNCTION__, __LINE__, __FILE__, "current_filter" );
   if ( isset( $bw_sc_ev[ $tag ][ $cf ] ))  {
@@ -129,7 +152,9 @@ function bw_shortcode_event( $atts, $hmm=null, $tag=null) {
     }
        
     //bw_trace( $result, __FUNCTION__, __LINE__, __FILE__, "result" );
+    
   }
+  bw_global_post( $saved_post );
   return $result;  
 }
 
