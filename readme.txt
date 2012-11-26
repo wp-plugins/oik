@@ -40,7 +40,6 @@ Features:
 * oik is extendable - plugin developers can build on the oik base functionality 
 * using the oik API: help, syntax information, examples AND HTML snippets can be produced for any plugin or theme that provides shortcodes
 
-
 == Installation ==
 1. Upload the contents of the oik plugin to the `/wp-content/plugins/oik' directory
 1. Activate the oik base plugin through the 'Plugins' menu in WordPress
@@ -59,6 +58,16 @@ Yes - please use the standard WordPress forum - http://wordpress.org/tags/oik?fo
 = Can I get support? = 
 Yes - see above 
 
+= Where are the shortcodes documented? =
+
+* [oik shortcodes](http://www.oik-plugins.com/shortcodes)
+
+The shortcode reference also includes the standard WordPress shortcodes and help for other shortcodes provided by other plugins (e.g. Easy-Digital-Downloads)
+
+= Where are the APIs documented? =
+* [oik APIs](http://www.oik-plugins.com/apis) 
+
+The Application Programming Interface (API) reference is constantly being updated
 
 
 == Screenshots ==
@@ -81,7 +90,9 @@ Yes - see above
 
 == Upgrade Notice ==
 = 1.17 =
-This new version includes support for FREE and Premium oik plugins which are hosted on www.oik-plugins.com or www.oik-plugins.co.uk rather than WordPress.org 
+This new version includes support for FREE and Premium oik plugins which are hosted on www.oik-plugins.com (or www.oik-plugins.co.uk) rather than WordPress.org
+Child plugins relocate themselves when activated. Child plugins have a version number of 1.18 
+WordPress Multi Site users should read the guidance at http://www.oik-plugins.com/2012/11/oik-base-plugin-v1-17-and-wordpress-multi-site/
 
 = 1.16 = 
 Contains a fix for Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2
@@ -144,12 +155,20 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Fixed: Corrected syntax help for the [div] shortcode
 * Fixed: bw_format_attachment() no longer produces an empty link when no image is required
 * Changed: bw_array_get_dcb() will accept null parameters e.g. [bw_email prefix='' suffix='']
-* Added: Syntax help for quite a few shortcodes where the parameters were previously undocumented: bw_address, bw_email and variations, bw_tel and variations, bw_copyright, bw_qrcode, bw_attachments, bw_pdf, bw_portfolio, bw_codes
+* Added: Syntax help for quite a few shortcodes where the parameters were previously undocumented: bw_address, bw_email and variations, bw_tel and variations, bw_copyright, bw_qrcode, bw_attachments, bw_pdf, bw_portfolio, bw_codes, sdiv, stag, etag
 * Added: bw_emailfield_arr()
 * Changed: Improved support for shortcode help
 * Changed: bw_validate_torf() now accepts "on" as true 
 * Changed: [bw_plug] (activated by oik-bob-bing-wide plugin) supports oik-plugins servers
 * Added: includes/oik-filters.inc providing new functions to replace and restore filters 
+* Changed: Wrapped the separator string for bw_telephone in a span, enabling it to be styled using custom CSS.
+* Changed: All child plugins now use version 1.18
+* Fixed: Comments should no longer be assigned to the wrong post. Calls to setup_postdata() eliminated.
+* Added: [bw_list] and [bw_post] now support the thumbnail parameter - default "none"
+* Added: Support for nivo jQuery 3.1 - by allowing the addition of the data-thumb attribute to img tags
+* Added: Support for themes built using Artisteer 4.0
+* Changed: [bw_block] and [bw_eblock] are much simpler for Artisteer 4.0 themes
+* Changed: Removed [wp-1], [wp-2] and [wp-3] shortcodes - they were only used to test ticket #17657 
 
 = 1.16 =
 * Fixed: Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2
@@ -409,28 +428,19 @@ Up to and including version 1.17 the oik plugin includes a number of optional mo
 In oik version 1.17, any activated module will automatically relocate itself to become a separately maintainable plugin.
 Each individual plugin will be supported from an oik-plugins server. 
 In a future version of oik, the child plugins will be deprecated and/or removed from the oik base package.
+The version number of child plugins delivered with oik v1.17 is v1.18.
 
 Plugins that will relocate and be served from the oik-plugins servers are:
 
-* oik-email-signature to help generate an email signature file for all your email messages
-* oik-header for custom page header image selection for pages, posts and custom post types
-* oik-sidebar gives you the ability to use Widget Wrangler with Artisteer v3 themes
- 
-
-PLUS, for WordPress designers, web site developers and plugin developers:
-
-* oik-bob-bing-wide to provide more lazy smart shortcodes: bw_plug, bob/fob bing/bong wide/hide wow, oik and loik, wp, wpms, bp, artisteer, drupal
-* oik-bwtrace provides an advanced trace function, which logs trace information to a file, rather than including it within the web page output
-* oik-sc-help - shortcode help shortcodes: provides [bw_code] and [bw_codes] shortcodes
-* oik-fields - [bw_field] [bw_fields] shortcodes to display Custom Fields (post metadata) (beta version)
-
-ALSO, for use in BuddyPress sites:
-
-* oik-bp-signup-email to intercept BuddyPress registration emails
-
-AND, for use in bbPress sites:
-
-* oik-bbpress to strip tags from bbPress forum title tooltips  
+* [oik-bbpress](http://www.oik-plugins.com/oik-plugins/oik-bbpress-strip-tags-from-bbpress-forum-title-tooltips/) - to strip tags from bbPress forum title tooltips  
+* [oik-bob-bing-wide](http://www.oik-plugins.com/oik-plugins/oik-bob-bing-wide-more-lazy-smart-shortcodes/) - to provide more lazy smart shortcodes: [bw_plug], bob/fob bing/bong wide/hide wow, oik and loik, wp, wpms, bp, artisteer, drupal
+* [oik-bp-signup-email](http://www.oik-plugins.com/oik-plugins/oik-buddypress-signup-email/) - to intercept BuddyPress registration emails
+* [oik-bwtrace](http://www.oik-plugins.com/oik-plugins/oik-bwtrace-debug-trace-for-wordpress/) - provides an advanced WordPress trace debug function, which logs trace information to a file, rather than including it within the web page output
+* [oik-email-signature](http://www.oik-plugins.com/oik-plugins/oik-email-signature/) - to help generate an email signature file for all your email messages
+* [oik-fields](http://www.oik-plugins.com/oik-plugins/oik-fields-custom-post-type-field-apis/) - custom post type field APIs 
+* [oik-header](http://www.oik-plugins.com/oik-plugins/oik-header-custom-header-image/) - for custom page header image selection for pages, posts and custom post types
+* [oik-sc-help](http://www.oik-plugins.com/oik-plugins/oik-sc-help-shortcode-help-shortcodes/) - shortcode help shortcodes: provides [bw_code] and [bw_codes] shortcodes
+* [oik-sidebar](http://www.oik-plugins.com/oik-plugins/oik-sidebar-widget-wrangler-for-artisteer-themes/) - gives you the ability to use Widget Wrangler with Artisteer v3 themes
 
 Other plugins which use the oik API are also available on WordPress.org: 
 
@@ -440,22 +450,22 @@ Other plugins which use the oik API are also available on WordPress.org:
 * [uk-tides](http://wordpress.org/extend/plugins/uk-tides/) - [bw_tides] shortcode for tide times and heights in the UK  (replaces oik-tides)
 * [bbboing](http://www.wordpress.org/extend/plugins/bbboing) - obfuscate text but leave it readable
 
+More FREE and Premium plugins are available from [oik-plugins.com](http://www.oik-plugins.com)
+
+oik plugins are suitable for:
+* site owners
+* site administrators
+* WordPress designers
+* web site developers 
+* plugin developers
+
+oik plugins are tested with: WordPress Multi Site, BuddyPress and bbPress.
+
+
 ALL of the plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
-These are known as the bobbing wide application programming interface (bw API).
+These are known as the OIK Application Programming Interface (OIK API).
 
 
 If you're interested in a Drupal version then please visit the 
 [oik module](http://www.bobbingwidewebdevelopment.com/content/often-included-key-information-oik-drupal-module)
 
-
-If you are a developer and want to try the oik-bwtrace plugin then you may find you need to add a line to your wp-config.php file.
-Put this before the require_once for wp-settings.php
-
-`require_once(ABSPATH . '/wp-content/plugins/oik/bwtrace.inc' );`
-
-If you also want to track action and filter processing then you should precede that line with:
-
-`define( 'BW_TRACE_CONFIG_STARTUP', true );`
-
-
-Don't forget to remove this code before deleting the plugin.

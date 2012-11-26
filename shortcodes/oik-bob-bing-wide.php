@@ -658,6 +658,8 @@ function bw_format_modlink( $name, $link, $moduleinfo ) {
   e( ")" ); 
 }
 
+/**
+ * No longer needed - ticket #17657 has been fixed 
 function wp1( $atts=NULL) {
   return( 'wp1 done');
 } 
@@ -667,3 +669,4 @@ function wp2( $atts=NULL) {
 function wp3( $atts=NULL) {
   return( 'wp3 done');
 }  
+*/

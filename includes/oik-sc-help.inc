@@ -180,7 +180,7 @@ function _sc__help( $shortcode="bw_code" ) {
 "bw_flickr" => "Flickr link",
 "bw_follow_me" => "Display defined social media follow me links",
 "bw_formal" => "Formal company name",
-"bw_geo" => "Latitude and Longitide",
+"bw_geo" => "Latitude and Longitude",
 "bw_google" => "Google+ link",
 "bw_google-plus" => "Google+ link",
 "bw_google_plus" => "Google+ link",
@@ -334,7 +334,12 @@ function div__help() {
 function div__syntax( ) {
   $syntax = _sc_classes();
   return( $syntax );
-} 
+}
+
+function sdiv__syntax() {
+  $syntax = _sc_classes();
+  return( $syntax );
+}
 
 /** We don't provide an example for the [div] shortcode as we want to deliver it using the shortcode server
   where it can be created in the __oik_sc_example field
@@ -674,7 +679,7 @@ function bw_blockquote__syntax( $shortcode="bw_blockquote" ) {
 }
   
 function bw_cite__syntax( $shortcode="bw_cite" ) {
-  $syntax = array( "text" => bw_skv( "", "<i>text</i>", "Text for the blockquote" )
+  $syntax = array( "text" => bw_skv( "", "<i>text</i>", "Text for the citation" )
                  ,  "class"=> bw_skv( "", "<i>class names</i>", "CSS class names" )
                  );
   return( $syntax );
@@ -693,8 +698,19 @@ function bw_directions__syntax( $shortcode="bw_directions" ) {
 function bw_geo__syntax( $shortcode="bw_geo" ) {
   $syntax = array( "alt" => bw_skv( null, "1", "Use alternative value" ) );
   return( $syntax );
-}  
-                   
+}
+  
+function stag__syntax( $shortcode="stag" ) {
+  $syntax = array( "name" => bw_skv( "", "<i>tag</i>", "HTML start tag" ) );
+  $syntax += _sc_classes();
+  return( $syntax );
+}
+
+function etag__syntax( $shortcode="etag" ) {
+  $syntax = array( "name" => bw_skv( "", "<i>tag</i>", "paired HTML tag for the stag shortcode" ) );
+  return( $syntax );
+}
+                  
 /**
  * Call a shortcode for a simple example
  * 
@@ -721,5 +737,8 @@ function bw_invoke_shortcode( $shortcode, $atts=null, $text=null ) {
   etag( "code" ); 
   ep();
   //p( $example );
-  e( apply_filters( 'the_content', $example ) );
+  $expanded = apply_filters( 'the_content', $example );
+  e( $expanded );
+  bw_trace2( $expanded );
+  bw_backtrace();
 }  

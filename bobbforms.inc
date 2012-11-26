@@ -3,7 +3,11 @@
 // Note: This file uses functions from bobbfunc.inc. You must ensure this is already loaded
 
 function form( $action="", $method="post" ) {
-  return( "<form method=\"${method}\" action=\"${action}\">" ); 
+  $form = "<form";
+  $form .= kv( "method", $method );
+  $form .= kv( "action", $action );
+  $form .= ">";
+  return( $form ); 
 }
 
 /**

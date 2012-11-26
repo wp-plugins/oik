@@ -6,7 +6,7 @@ define( 'OIK_HEADER_INCLUDED', true );
 Plugin Name: oik custom header image
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-header
 Description: custom page header image selection for pages, posts and custom post types 
-Version: 1.17
+Version: 1.18
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2

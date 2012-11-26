@@ -121,6 +121,28 @@ function bw_get_num_queries() {
   return( $num_queries ); 
 }
 
+/**
+ * Return the global post_id and, if different global id, for tracing
+ *
+ * @return string $post->ID and, if different "<>"$id
+ * @global post post
+ * @global post_id id
+ */
+function bw_get_post_id() {
+  if ( isset( $GLOBALS['post'] )) {
+    $post_id = $GLOBALS['post']->ID;
+  } else {
+    $post_id = 0;
+  }
+  if ( isset( $GLOBALS['id'] ) ) {
+    $id = $GLOBALS['id'];
+    if ( $id <> $post_id ) { 
+      $post_id .= "<>" . $id; 
+    }
+  }
+  return( $post_id ) ;
+}  
+
 /** 
  * Trace contextal information set using bw_set_context 
  *
@@ -146,6 +168,8 @@ function bw_trace_context() {
   } 
   
   $context .= bw_get_num_queries();
+  $context .= " ";
+  $context .= bw_get_post_id();
   return( $context );
 } 
 

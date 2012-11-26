@@ -32,45 +32,15 @@ function oik_options_init() {
   bw_load_plugin( "bw_buttons", "oik-shortc-shortcodes" );
   bw_load_plugin( "bw_buttons", "oik-quicktags" );
   
-  add_filter( "attachment_fields_to_edit", "oik_attachment_fields_to_edit", null, 2 ); 
-  add_filter( "attachment_fields_to_save", "oik_attachment_fields_to_save", null, 2 );
+  // For WordPress 3.5 these filters are added in oik.php
+  //add_filter( "attachment_fields_to_edit", "oik_attachment_fields_to_edit", null, 2 ); 
+  //add_filter( "attachment_fields_to_save", "oik_attachment_fields_to_save", null, 2 );
   
   // Add support for plugin relocation during "pre_current_active_plugins" 
   add_action( "pre_current_active_plugins", "bw_relocate_pre_current_active_plugins", 10, 1 );
   
 }
 
-/**
- * Add the custom image link using the same method as the Portfolio slideshow plugin which used the method documented here:
- * @link http://wpengineer.com/2076/add-custom-field-attachment-in-wordpress/
- *
- * This is the method that adds fields to the form. Paired with 'attachment_fields_to_save'
- */
-function oik_attachment_fields_to_edit( $form_fields, $post) { 
-  //bw_trace2( $form_fields ); 
-  $form_fields['bw_image_link'] = array(  
-			"label" => __( "oik custom image link URL" ),  
-			"input" => "text",
-			"value" => get_post_meta( $post->ID, "_bw_image_link", true )  
-		); 
-  // This doesn't work since the url uses the [html] field instead of [value]
-  // $form_fields['url']['value'] = get_post_meta( $post->ID, "_oik_nivo_image_link", true );   
-  return $form_fields;  
-}
-
-/**
- * Save the "oik custom image link URL"
- * We save the value even if it's blanked out.
- * Note: The custom meta field is prefixed with an underscore but the field name is not.
- * Paired with 'attachment_fields_to_edit'
- */ 
-function oik_attachment_fields_to_save( $post, $attachment) {    
-  $link = bw_array_get( $attachment, "bw_image_link", null ) ;
-  //$link = bw_array_get( $attachment, "url", null ) ;
-
-  update_post_meta( $post['ID'], '_bw_image_link', $link );  
-  return $post;  
-}
 
 /**
  * Load the oik-quicktags jQuery/JavaScript for when TinyMCE or the advanced HTML editor is being used
@@ -141,35 +111,31 @@ function scolumn( $class=NULL, $id=null ) {
 }
   
 function ecolumn( ) {
+  c( "start ecolumn" );
   ediv( "meta-box-sortables" );
   ediv( "postbox-container" );
   ediv( "metabox-holder" );
+  c( "end ecolumn" );
 } 
 
-
 function oik_menu_header( $title="Overview", $class="w70pc" ) {
-
   oik_require( "bobbforms.inc" );
   oik_require( "shortcodes/oik-bob-bing-wide.php" );
   oik_enqueue_stylesheets();
   oik_enqueue_scripts();
   sdiv( "wrap" ); 
-  //bw_flush();
   $loik = bw_loik();
   h2( "$loik $title" ); 
   scolumn( $class );
-  
 }
   
 function oik_menu_footer() {
   ecolumn();
+  sediv( "clear" );
   ediv( "wrap");
 } 
 
 function oik_shortcode_options( ) {
-
-  //p( "Here we list the things that oik can do" );
-  //p( "here we list the shortcode sets" );
   p( "oik provides sets of lazy smart shortcodes that you can use just about anywhere in your WordPress site." );
  
   p( "You enter your common information, such as contact details, slogans, location information, PayPal payment information and your social networking and bookmarking information using oik Options" );
@@ -185,7 +151,6 @@ function oik_shortcode_options( ) {
   
   p( "Choose the helper buttons that help you to insert shortcodes when editing your content" );
   alink( "button-secondary", admin_url( "admin.php?page=oik_buttons"), "Buttons", "Select TinyMCE and HTML edit helper buttons" );
-
   
 }
 
@@ -333,7 +298,6 @@ function oik_menu() {
   bw_flush();
 }
 
-
 /** 
   * Draw the oik buttons page
   *
@@ -351,7 +315,6 @@ function oik_buttons_do_page() {
 */ 
 function oik_plugins_do_page() {
   oik_plugins_server_settings();
-  oik_menu_footer();
   bw_flush();
 }
 
@@ -481,7 +444,7 @@ function oik_main_shortcode_options() {
   bw_textfield_arr( $option, "Logo image [bw_logo] in uploads:<br />" . $baseurl, $options, 'logo-image', 50 );
   bw_textfield_arr( $option, "QR code image [bw_qrcode] in uploads", $options, 'qrcode-image', 50 );
   
-  $artisteer_versions = array( "na", "31", "30" ,"25" );
+  $artisteer_versions = array( "na", "40", "31", "30" ,"25" );
   $artisteer_assoc = bw_assoc( $artisteer_versions );
   bw_select_arr( $option, "Artisteer version [bw_art_version]", $options, 'art-version', array( "#options" => $artisteer_assoc ) );
 

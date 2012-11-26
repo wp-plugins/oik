@@ -1,4 +1,4 @@
-<?php
+<?php // (C) Copyright Bobbing Wide 2012
 
 
 /**
@@ -98,7 +98,6 @@ function _oik_plugins_settings_row( $plugin, $version, $server, $apikey, $expira
 /**
  * This should also list the plugins that have registered themselves using oik_register_plugin_server **?**
  */
-
 function _oik_plugins_settings_table() {
   $bw_plugins = get_option( "bw_plugins" );
   if ( is_array( $bw_plugins) && count( $bw_plugins )) {
@@ -114,27 +113,14 @@ function _oik_plugins_settings_table() {
 }
 
 /**
- * Check if it already exists as a settings
- * If not then add to the options using bw_update_option() 
- * then empty out the plugin field for the next one
- *
+ * Add the settings for the plugin
  */
 function _oik_plugins_add_settings( $plugin ) {
   $field = bw_array_get( $plugin, "plugin", null );
-  
-  //global $settings_tags;
-  //$plugin_exists = bw_array_get( $settings_tags, $plugin, false );
-  //if ( $plugin_exists ) {
-  //  p( "settings $plugin already defined, try another plugin" );   
-  //  $ok = false;
-  //
-  //} else {
-    unset( $plugin['plugin'] );
-    bw_update_option( $field, $plugin, "bw_plugins" );
-    // We don't need to add the settings now! 
-    $plugin['plugin'] = "";
-    $ok = true;
-  //}
+  unset( $plugin['plugin'] );
+  bw_update_option( $field, $plugin, "bw_plugins" );
+  $plugin['plugin'] = "";
+  $ok = true;
   return( $ok ); 
 }
 
@@ -146,7 +132,6 @@ function _oik_plugins_update_settings( $plugin ) {
   } else {
     //gobang();
   }  
-    
 }
 
 function _oik_plugins_delete_settings( $plugin ) {
@@ -173,7 +158,6 @@ function oik_plugins_validate_plugin( $plugin ) {
  
  */
 function _oik_plugins_settings_validate( $add_plugin=true ) {
-
   global $bw_plugin;
   $bw_plugin['plugin'] = trim( bw_array_get( $_REQUEST, "plugin", null ) );
   $bw_plugin['server'] = trim( bw_array_get( $_REQUEST, "server", null ) );
@@ -199,27 +183,25 @@ function oik_plugins_settings() {
   $link = retlink( null, $default_plugin_server, $default_plugin_server , "default oik plugins server" );
   p( "The default oik plugins server is currently set to: " . $link );
   bw_form();
-  stag( "table", "widefat" );
+  stag( "table", "widefat " );
   stag( "thead");
   bw_tablerow( array( "plugin", "version", "server", "apikey", "expiration", "actions" ));
   etag( "thead");
   _oik_plugins_settings_table();
-  bw_tablerow( array( "", "<input type=\"submit\" name=\"_oik_plugins_add_plugin\" value=\"Add plugin\" class=\"button-primary\"/>") ); 
   etag( "table" );
+  p( isubmit( "_oik_plugins_add_plugin", "Add plugin", null, "button-primary" ) );
   etag( "form" );
-  // bw_flush();
 } 
 
 function oik_plugins_add_settings( ) {
   global $bw_plugin;
   bw_form();
-  stag( "table", "wide-fat" );
+  stag( "table", "widefat" );
   bw_textfield( "plugin", 20, "plugin", $bw_plugin['plugin'] );
   bw_textfield( "server", 100, "server", stripslashes( $bw_plugin['server'] ) );
   bw_textfield( "apikey", 26, "apikey", $bw_plugin["apikey"] );
-  //bw_textfield( "expiration", "expiration date", $bw_plugin["expiration"] );
-  bw_tablerow( array( "", "<input type=\"submit\" name=\"_oik_plugins_add_settings\" value=\"Add new plugin\" class=\"button-primary\"/>") ); 
   etag( "table" );
+  p( isubmit( "_oik_plugins_add_settings", "Add new plugin", null, "button-primary" ) );
   etag( "form" );
 }
 
@@ -230,12 +212,10 @@ function oik_plugins_edit_settings( ) {
   bw_tablerow( array( "plugin", $bw_plugin['plugin'] . ihidden( 'plugin', $bw_plugin['plugin']) ) );
   bw_textfield( "server", 100, "server", stripslashes( $bw_plugin['server'] ), 10 );
   bw_textfield( "apikey", 26, "apikey?", $bw_plugin["apikey"] );
-  //bw_checkbox( "expiration", "expiration", $bw_plugin["expiration"] );
-  bw_tablerow( array( "", "<input type=\"submit\" name=\"_oik_plugins_edit_settings\" value=\"Change plugin\" class=\"button-primary\"/>") ); 
   etag( "table" );
+  p( isubmit( "_oik_plugins_edit_settinfs", "Change plugin", null, "button-primary" ));
   etag( "form" );
 }
-
 
 /**
  *
@@ -247,7 +227,6 @@ function oik_plugins_edit_settings( ) {
 )
 
  */
-
 function oik_plugins_check() {
   $check_plugin = bw_array_get( $_REQUEST, "check_plugin", null );
   $check_version = bw_array_get( $_REQUEST, "check_version", null );
@@ -274,7 +253,6 @@ function oik_plugins_check() {
         p( "Plugin: $check_plugin" );
         p( "Current version: $check_version " );
       }  
-      
     }
   }
 }
@@ -319,7 +297,6 @@ function bw_update_option( $field, $value=NULL, $options="bw_options" ) {
 }
 }
 
-
 /** Remove an option field from a set
  *
  * @param string $field the option field to be removed
@@ -336,7 +313,6 @@ function bw_delete_option( $field, $options="bw_options" ) {
   return( $options );
 }
 }
-
 
 function bw_get_plugin_slugs() {
   $plugin_slugs = get_transient( 'plugin_slugs' );

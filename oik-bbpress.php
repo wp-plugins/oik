@@ -6,7 +6,7 @@ define( 'OIK_BBPRESS_INCLUDED', true );
 Plugin Name: oik bbpress
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-bbpress-plugin/
 Description: strip tags from bbPress forum title tooltips  
-Version: 1.17
+Version: 1.18
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2

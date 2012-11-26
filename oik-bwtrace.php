@@ -6,7 +6,7 @@ define( 'OIK_BWTRACE_INCLUDED', true );
 Plugin Name: oik bwtrace 
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik-bwtrace
 Description: Debug trace for WordPress, including action and filter tracing
-Version: 1.17
+Version: 1.18
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -151,7 +151,7 @@ function bw_trace_actions() {
   $bw_action_options = get_option( 'bw_action_options' );
   $trace_actions = bw_array_get( $bw_action_options, "actions", "off" );
   bw_trace2( $bw_action_options, "bw_action_options" );
-    oik_require2( "includes/oik-bwtrace.inc", "oik-bwtrace" );
+  oik_require2( "includes/oik-bwtrace.inc", "oik-bwtrace" );
   if ( $trace_actions ) {
     bw_trace_actions_on();
     bw_lazy_trace_actions();

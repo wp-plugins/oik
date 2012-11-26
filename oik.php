@@ -70,6 +70,10 @@ function oik_version() {
   add_action( 'wp_ajax_oik_ajax_load_shortcode_help', 'oik_ajax_load_shortcode_help' );
   //add_action( 'admin_enqueue_scripts', 'bw_button_options' );
   
+
+  add_filter( "attachment_fields_to_edit", "oik_attachment_fields_to_edit", null, 2 ); 
+  add_filter( "attachment_fields_to_save", "oik_attachment_fields_to_save", null, 2 );
+  
   
 
 /** 
@@ -180,6 +184,42 @@ function oik_ajax_load_shortcode_help() {
   echo $sc_help;
   bw_flush();
   die();
+}
+
+
+/**
+ * Add the custom image link using the same method as the Portfolio slideshow plugin which used the method documented here:
+ * @link http://wpengineer.com/2076/add-custom-field-attachment-in-wordpress/
+ *
+ * This is the method that adds fields to the form. Paired with 'attachment_fields_to_save'
+ */
+function oik_attachment_fields_to_edit( $form_fields, $post) { 
+  bw_trace2( $form_fields ); 
+//  gobang();
+  $form_fields['bw_image_link'] = array(  
+			"label" => __( "oik custom image link URL" ),  
+			"input" => "text",
+			"value" => get_post_meta( $post->ID, "_bw_image_link", true )  
+		); 
+  // This doesn't work since the url uses the [html] field instead of [value]
+  // $form_fields['url']['value'] = get_post_meta( $post->ID, "_oik_nivo_image_link", true );   
+  return $form_fields;  
+}
+
+/**
+ * Save the "oik custom image link URL"
+ * We save the value even if it's blanked out.
+ * Note: The custom meta field is prefixed with an underscore but the field name is not.
+ * Paired with 'attachment_fields_to_edit'
+ */ 
+function oik_attachment_fields_to_save( $post, $attachment) { 
+  bw_trace2();
+  //gobang();   
+  $link = bw_array_get( $attachment, "bw_image_link", null ) ;
+  //$link = bw_array_get( $attachment, "url", null ) ;
+
+  update_post_meta( $post['ID'], '_bw_image_link', $link );  
+  return $post;  
 }
         
 
