@@ -4,13 +4,23 @@ Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, key information, trace, blocks, buddypress, pages, bookmarks, images, attachments, smart, lazy
 Requires at least: 3.0.4
 Tested up to: 3.4.2
-Stable tag: 1.16
+Stable tag: 1.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Lazy smart shortcodes for displaying often included key-information and other WordPress content. Over 70 shortcodes to use anywhere on your website.
 == Description ==
-oik is a set of plugins delivering over 70 lazy smart shortcodes for use just about anywhere on your website.
+The *oik base* plugin provides a series of advanced WordPress shortcodes that help you display dynamic content from your website's pages, posts, attachments, links and custom post types.
+There are 70 shortcodes including:
+
+* [bw_pages], [bw_posts], [bw_thumbs], [bw_attachments], [bw_images], [bw_pdf] shortcodes to list subpages, posts, attachments or custom post types 
+* [bw_list], [bw_tree] to display lists of links to pages, posts, attachments or custom post types 
+* [bw_table] to tabulate pages, posts or custom post types
+* [bw_bookmarks] to list links
+* [paypal] shortcodes for PayPal buttons: Pay Now, Buy Now, Donate, Add to Cart, View Cart/Checkout
+* [bw_block] & [bw_eblock], [div] & [ediv], [clear] - to create block structures within your pages, posts and even widgets
+* [bw_button], [bw_contact_button] - to provide call-to-action button style links for Artisteer themes
+* helper shortcodes for web designers and developers: [bw_editcss], [bwtrace], [bw_page], [bw_post], [bw_wpadmin], [bw_wtf], [stag] & [etag]
 
 oik helps you to display information about you, your company, your social networking ids and your website using standard formats that search engines such as Google recognise.
 
@@ -19,26 +29,16 @@ oik helps you to display information about you, your company, your social networ
 * Shortcodes to display often included key information include: [bw_contact], [bw_telephone], [bw_mobile], [bw_mailto], [bw_company], [bw_address], [bw_show_googlemap], [bw_directions], [bw_logo], [bw_qrcode], [bw_copyright]
 * For your social networking "follow me" sites use the [bw_follow_me] shortcode to display your links to Twitter, Facebook, LinkedIn, Google+, etcetera
 
-The oik *base* plugin also provides a series of advanced WordPress shortcodes that help you display dynamic content from your website's pages, posts, attachments, links and custom post types.
-
-* [bw_pages], [bw_posts], [bw_thumbs], [bw_attachments], [bw_images], [bw_pdf], shortcodes to list subpages, posts, attachments or custom post types 
-* [bw_list], [bw_tree] to display lists of links to pages, posts, attachments or custom post types 
-* [bw_bookmarks] to list links
-* [paypal] shortcodes for PayPal buttons: Pay Now, Buy Now, Donate, Add to Cart, View Cart/Checkout
-* [bw_block] & [bw_eblock], [div] & [ediv], [clear] - to create block structures within your pages, posts and even widgets
-* [bw_button], [bw_contact_button] - to provide call-to-action button style links for Artisteer themes
-* helper shortcodes for web designers and developers: [bw_editcss], [bwtrace], [bw_page], [bw_post], [bw_wpadmin], [bw_wtf], [stag] & [etag]
-
 Features: 
 
-* oik is theme independent; meaning that you can change your theme without having to worry about whether or not the shortcodes will still work.
-* oik uses microformats so that Google and other search engines can understand your content.
 * oik provides buttons to help you write the shortcodes, showing you the parameters you can choose and default values 
 * oik provides a shortcode discovery page where you can find out about every shortcode which is active in your site
 * lazy programming means that code is only loaded when it's actually needed
 * smart means that the shortcodes can recognise the content in which they're used and adjust their behaviour accordingly
 * oik is extendable - plugin developers can build on the oik base functionality 
 * using the oik API: help, syntax information, examples AND HTML snippets can be produced for any plugin or theme that provides shortcodes
+* oik is theme independent; meaning that you can change your theme without having to worry about whether or not the shortcodes will still work.
+* oik uses microformats so that Google and other search engines can understand your content.
 
 == Installation ==
 1. Upload the contents of the oik plugin to the `/wp-content/plugins/oik' directory
