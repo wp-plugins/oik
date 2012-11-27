@@ -53,22 +53,21 @@ Features:
 [oik FAQ](http://www.oik-plugins.com/oik/oik-faq)
 
 = Is there a support forum? =
-Yes - please use the standard WordPress forum - http://wordpress.org/tags/oik?forum_id=10
+Yes - please use the [oik plugin forum](http://wordpress.org/support/plugin/oik)
 
 = Can I get support? = 
 Yes - see above 
 
 = Where are the shortcodes documented? =
 
-* [oik shortcodes](http://www.oik-plugins.com/shortcodes)
+[oik shortcodes](http://www.oik-plugins.com/shortcodes)
 
-The shortcode reference also includes the standard WordPress shortcodes and help for other shortcodes provided by other plugins (e.g. Easy-Digital-Downloads)
+The shortcode reference also includes the standard WordPress shortcodes and help for other shortcodes provided WordPress and other selected plugins (e.g. Easy-Digital-Downloads)
 
 = Where are the APIs documented? =
-* [oik APIs](http://www.oik-plugins.com/apis) 
+[oik APIs](http://www.oik-plugins.com/apis) 
 
 The Application Programming Interface (API) reference is constantly being updated
-
 
 == Screenshots ==
 1. oik overview - main settings page
@@ -92,7 +91,7 @@ The Application Programming Interface (API) reference is constantly being update
 = 1.17 =
 This new version includes support for FREE and Premium oik plugins which are hosted on www.oik-plugins.com (or www.oik-plugins.co.uk) rather than WordPress.org
 Child plugins relocate themselves when activated. Child plugins have a version number of 1.18 
-WordPress Multi Site users should read the guidance at http://www.oik-plugins.com/2012/11/oik-base-plugin-v1-17-and-wordpress-multi-site/
+WordPress Multi Site users should read the guidance at [oik base plugin v1.17 and WordPress Multi Site](http://www.oik-plugins.com/2012/11/oik-base-plugin-v1-17-and-wordpress-multi-site/) 
 
 = 1.16 = 
 Contains a fix for Fatal error: Call to undefined function oik_require() in oik\admin\oik-header.inc on line 2
