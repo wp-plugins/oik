@@ -864,13 +864,15 @@ function bw_jq( $text ) {
  * If it's not an array we treat it as an already formatted string
  * OR a single parameter and value
  *
+ * @uses json_encode() which by default encloses numeric values as string, which can cause problems for some jQuery code
+ * (e.g. jQuery Nivo slider) * SO we pass the JSON_NUMERIC_CHECK option to prevent this.
 */
 if ( !function_exists( "bw_jkv" ) ) {
 
 function bw_jkv( $parms, $value=null ) {
   if ( is_array( $parms ) ) {
     bw_jtorf( $parms );
-    $jqoption = json_encode( $parms );
+    $jqoption = json_encode( $parms, JSON_NUMERIC_CHECK );
   } else {
     $jqoption = "{";
     if ( $value ) { 
@@ -880,6 +882,7 @@ function bw_jkv( $parms, $value=null ) {
     }  
     $jqoption .= "}";
   }
+  //bw_trace2( $jqoption, "jqoption" );
   return( $jqoption );
 }
 }
