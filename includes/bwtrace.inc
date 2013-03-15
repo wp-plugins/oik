@@ -269,7 +269,7 @@ function bw_trace_batch() {
   $bw_trace_options = array( 'file' => "bwtrace.loh",  ); 
   // $bw_trace_options['file'] = "bwtrace.log";
   //bw_trace_on();
-  bw_trace_errors( 3 );
+  //bw_trace_errors( E_ALL );
   bw_trace( $_GET, __FUNCTION__, __LINE__, __FILE__, "_GET" );
 }  
 
@@ -348,8 +348,10 @@ function bw_trace_reset() {
 } 
 
 
-
-function bw_trace_errors( $level ) {
+/**
+ *  Make sure we see all the errors
+ */
+function bw_trace_errors( $level=E_ALL ) {
   error_reporting( $level );
   
   @ini_set('display_errors', 1);

@@ -1,9 +1,7 @@
-<?php // (C) Copyright Bobbing Wide 2012
-if ( defined( 'OIK_POSTS_SHORTCODES_INCLUDED' ) ) return;
-define( 'OIK_POSTS_SHORTCODES_INCLUDED', true );
+<?php 
 /*
 
-    Copyright 2012 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012,2013 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -23,7 +21,6 @@ define( 'OIK_POSTS_SHORTCODES_INCLUDED', true );
 
 oik_require( "includes/bw_posts.inc" );
 oik_require( "shortcodes/oik-list.php" );
-
 
 /**
  * Create a simple list of posts, defaulting to recent posts if no parms specified
@@ -47,7 +44,6 @@ function bw_posts( $atts = NULL ) {
       break; 
   }  
   $atts['post_parent'] = bw_array_get( $atts, "post_parent", $default_parent );
-        
   return( bw_list( $atts )) ;
 }
 

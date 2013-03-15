@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012
+<?php // (C) Copyright Bobbing Wide 2012,2013
 if ( defined( 'OIK_BOOT_INCLUDED' ) ) return;
 define( 'OIK_BOOT_INCLUDED', true );
 /**
@@ -75,15 +75,25 @@ function oik_require2( $include_file="bobbfunc.inc", $to_plugin, $from_plugin="o
 function oik_init( ) {
   oik_require( 'bwtrace.inc' );
 } 
-
  
 /** 
  * Return the array[index] or a default value if not set
  * 
- * 
+ * @param mixed $array - an array or object or scalar item from which to find $index
+ * @param scalar $index - the array index or object property to obtain
+ * @param string $default - the default value to return 
+ * @return mixed - the value found at the given index
+ *
+ * Notes: This routine may produce a Warning message if the $index is not scalar
+ * I can't change it yet since there are other bits of code that may go wrong if I attempt 
+ * to deal with an invalid  $index parameter. 
  */
 if ( !function_exists( 'bw_array_get' ) ) {
-  function bw_array_get( $array = NULL, $index, $default=NULL ) {   
+  function bw_array_get( $array = NULL, $index, $default=NULL ) { 
+    //if ( is_array( $index ) ) {
+    //  bw_backtrace();
+    //  gobang();
+    //}  
     if ( isset( $array ) ) {
       if ( is_array( $array ) ) {
         if ( isset( $array[$index] ) || array_key_exists( $index, $array ) ) {
@@ -105,9 +115,7 @@ if ( !function_exists( 'bw_array_get' ) ) {
     }  
     return( $value );
   }
- 
 }
-
 
 /**
  * Simple implementation of plugin dependency logic

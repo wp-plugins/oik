@@ -1,15 +1,14 @@
 <?php
-
 /*
 Plugin Name: oik base plugin 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Lazy smart shortcodes for displaying often included key-information and other WordPress content
-Version: 1.17
+Version: 2.0-alpha.0307
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
 
-    Copyright 2010-2012 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2010-2013 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -26,7 +25,6 @@ License: GPL2
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
-global $bw_options;
 require_once( "oik_boot.inc" );
 
 /* All of the oik plugins and many of the common functions include calls to bw_trace(), bw_trace2() or bw_backtrace() so we need to include bwtrace.inc
@@ -37,7 +35,8 @@ require_once( "oik_boot.inc" );
 
 /**
  * Return the oik_version
- * @returns string oik version number e.g. 1.17
+ * 
+ * @returns string oik base plugin version number - from the WordPress plugin template
  */  
 function oik_version() {
   return bw_oik_version();
@@ -59,7 +58,7 @@ function oik_version() {
   // add_filter('the_content', 'do_shortcode', 11 );
   //add_filter('get_pages', 'do_shortcode' );
 
-  $bw_options = get_option( 'bw_options' );
+  //$bw_options = get_option( 'bw_options' );
 
   //add_action('wp_print_styles', 'oik_enqueue_stylesheets');
   add_action('wp_enqueue_scripts', 'oik_enqueue_stylesheets');
@@ -77,11 +76,11 @@ function oik_version() {
   
 
 /** 
- * enqueue the oik.css and $customCSS stylesheets as required
+ * Implement 'wp_enqueue_scripts' action enqueue the oik.css and $customCSS stylesheets as required
  *
  * oik.css contains styles for oik shortcodes. It is embedded if not specifically excluded.
  * $customCSS is embedded only if selected on oik options
- * If you want some of oik.css then copy the contents into custom.css and excluded oik.css
+ * If you want some of oik.css then copy the contents into custom.css and exclude oik.css
  *
  * Note: bwlink.css contains styles for the bobbingwide and oik branding colours
  * It is now only enqueued by the oik-bob-bing-wide plugin
@@ -130,7 +129,7 @@ function oik_admin_menu() {
 }
 
 /** 
- * Implement the 'network_admin_menu' or 'network_admin_notices' for multisite
+ * Implement the 'network_admin_menu'/'network_admin_notices' action for multisite
  * 
  * network_admin_menu is used to determine if plugins need updating
  * network_admin_notices is used in plugin dependency checking

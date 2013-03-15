@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2011,2012
+<?php // (C) Copyright Bobbing Wide 2011,2013
 /*
 
 Notes & Limitations
@@ -53,7 +53,7 @@ add_filter( 'mce_buttons', 'bw_paypal_filter_mce_button' );
 add_filter( 'mce_external_plugins', 'bw_paypal_filter_mce_plugin' );
 
 /**
- * Add the bwpaypal_button to the array of Tiny MCE buttons
+ * Implement 'mce_buttons' filter to add the bwpaypal_button to the array of Tiny MCE buttons
  */       
 function bw_paypal_filter_mce_button( $buttons ) {
   array_push( $buttons, 'bwpaypal_button' );
@@ -61,7 +61,8 @@ function bw_paypal_filter_mce_button( $buttons ) {
 }
  
 /**
- * Add the jQuery code to be executed when then bwpaypalbutton_button is clicked
+ * Implement 'mce_external_plugins' filter to add the jQuery code to be executed when then bwpaypalbutton_button is clicked
+ * 
  * Note: The _button suffix is not used... not quite sure where the linkage is
  * @see http://codex.wordpress.org/TinyMCE_Custom_Buttons
  *

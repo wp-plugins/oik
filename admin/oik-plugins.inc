@@ -210,10 +210,10 @@ function oik_plugins_edit_settings( ) {
   bw_form();
   stag( "table", "wide-fat" );
   bw_tablerow( array( "plugin", $bw_plugin['plugin'] . ihidden( 'plugin', $bw_plugin['plugin']) ) );
-  bw_textfield( "server", 100, "server", stripslashes( $bw_plugin['server'] ), 10 );
+  bw_textfield( "server", 100, "server", stripslashes( $bw_plugin['server'] ) );
   bw_textfield( "apikey", 26, "apikey?", $bw_plugin["apikey"] );
   etag( "table" );
-  p( isubmit( "_oik_plugins_edit_settinfs", "Change plugin", null, "button-primary" ));
+  p( isubmit( "_oik_plugins_edit_settings", "Change plugin", null, "button-primary" ));
   etag( "form" );
 }
 

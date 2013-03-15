@@ -1,9 +1,7 @@
-<?php // (C) Copyright Bobbing Wide 2012
-if ( defined( 'OIK_LIST_SHORTCODES_INCLUDED' ) ) return;
-define( 'OIK_LIST_SHORTCODES_INCLUDED', true );
+<?php 
 /*
 
-    Copyright 2012 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012,2013 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -24,12 +22,12 @@ define( 'OIK_LIST_SHORTCODES_INCLUDED', true );
 /**
  * List sub-pages of the current or selected page - in a simple list 
  *
- * Same as bw_pages but producing a simple list of links to the content type
+ * This is similar to [bw_pages] but it produces a simple list of links to the content type
  *
  *
  * [bw_list class="classes for the list" 
  *   post_type='page'
- *   post_parent 
+ *   post_parent=0 
  *   orderby='title'
  *   order='ASC'
  *   posts_per_page=-1
@@ -37,7 +35,7 @@ define( 'OIK_LIST_SHORTCODES_INCLUDED', true );
  *   thumbnail=specification - see bw_thumbnail()
  *   customcategoryname=custom category value  
  */
-function bw_list( $atts = NULL ) {
+function bw_list( $atts=null, $content=null, $tag=null ) {
   oik_require( "includes/bw_posts.inc" );
   $posts = bw_get_posts( $atts );
   $atts['thumbnail'] = bw_array_get( $atts, "thumbnail", "none" );

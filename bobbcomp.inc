@@ -1,36 +1,44 @@
-<?php // (C) Copyright Bobbing Wide 2010-2012
+<?php // (C) Copyright Bobbing Wide 2010-2013
+//namespace bw_oik; 
+
 // bobbcomp.inc - Company Information
 
+/**
+ * Determine the CMS type
+ *
+ * Sets the global $bw_cms_version for Drupal
+ *
+ * @return string global $bw_cms_type: "WordPress", "Drupal" or "unknown" 
+ */
 function bw_get_cms_type() {
   global $bw_cms_type, $bw_cms_version;
-  $bw_cms_type = "unknown";
   if ( function_exists( 'is_blog_installed' )) {
     $bw_cms_type = 'WordPress';
-     return( $bw_cms_type );       
-    
-  }   
-  if ( function_exists( 'drupal_bootstrap' )) {
+    return( $bw_cms_type );       
+  } elseif ( function_exists( 'drupal_bootstrap' )) {
     $bw_cms_type = "Drupal"; 
     if (defined( 'VERSION' ) ) {
       $bw_cms_version = VERSION;
-      
-    return( $bw_cms_type );       
-    }  
+    } 
+  } else {
+    $bw_cms_type = "unknown";
   }
-  //exit( "Unknown CMS");
-  
   return( $bw_cms_type );       
 }
 
+/** 
+ * Return true if the CMS is WordPress
+ */
 function bw_is_wordpress() {
   return( bw_get_cms_type() == "WordPress" );
 }
-  
+ 
+/**
+ * Return true if the CMS is Drupal
+ */ 
 function bw_is_drupal() {
   return( bw_get_cms_type() == "Drupal" );
 } 
-
-
 
 if ( bw_is_wordpress() ) {
   /**
@@ -53,303 +61,147 @@ if ( bw_is_wordpress() ) {
     // Note: A value that appears to be blank ( == '') may actually be FALSE ( == FALSE )
     // bw_trace( '!' .$option.'!', __FUNCTION__,  __LINE__, __FILE__, "option" );  
     return( $option ); 
-  }
-  
-  /** 
-   * Set the value of an oik option field in the "bw_options" field
-   *
-   * @param string $field the option field to be set
-   * @param mixed $value the value of the option
-   * @return mixed $value
-   *
-   * Parms are basically the same as for update_option
-   */
-  function bw_set_company( $field, $value=NULL ) {
-    //global $bw_options;
-    $bw_options = get_option( "bw_options" );
-    $bw_options[ $field ] = $value;
-    bw_trace2( $bw_options );
-    update_option( "bw_options", $bw_options );
-    return( $value );
-  }  
-  
+  } 
 }
 else {
-  oik_require( "bobbnotwp.inc" );
-}
-
-
-function bw_get_geo( $separator, $alt=null ) {
-  $geo = bw_get_option( "lat", "bw_options$alt" );
-  $geo.= $separator;
-  $geo.= bw_get_option( "long", "bw_options$alt" );
-  return( $geo );
-}  
-
-function bw_geo( $atts=null ) {
-  $alt = bw_array_get( $atts, "alt", null );
-  sp("geo");
-  span( "geo");
-    e( "Lat." ); 
-    span( "latitude" );
-    e( bw_get_option( "lat", "bw_options$alt" ) );
-    epan();
-    // I think we should have a space between the lat. and long. values
-    e( "&nbsp;");
-    e( "Long." );
-    span( "longitude" );
-    e( bw_get_option( "long", "bw_options$alt" ) );
-    epan();
-  epan();
- ep(); 
- return( bw_ret());
-
+  /* 
+   * Notice the trailing underscore - used to prevent these alternative APIs from being automatically documented
+   */
+  oik_require( "bobbnotwp.inc_" ); 
 }
 
 /**
- * return the telephone number in desired HTML markup, if set or passed as number=
- 
- * @param array atts
- *   prefix = type of number: free form e.g. Tel, Home, Work, Mob, Cell
- *   sep = separator default ': '
- *   number = telephone number override
- *   tag = 'div' or 'span' or other HTML wrapping tag - with start and end
- *   index = field to obtain ( telephone, fax, mobile, emergency )
- *   alt = 1 if alternative number are required
- *
- * Example:
- * [bw_telephone]
- * [bw_telephone number="023 92 410090" prefix="Portsmouth"]
+ * **?** Should we allow the $atts array to be pre-mangled. Can we add useful objects? 
+ */
+function bw_prepare_shortcode_atts( $atts ) {
+  $atts = apply_filters( "bw_prepare_shortcode_atts", $atts );
+  return( $atts ); 
+} 
+
+/**
+ * Given a valid user ID return the required field, which may be from a set such as bw_options
+ * 
+ * Q. Which do we use: get_the_author_meta() or get_user_meta() **?** 
+ * A. get_user_meta() is simpler but it won't return the fields from the wp_user table
+ * If we're obtaining a field from a set then we must use get_user_meta()
+ * otherwise we'll use get_the_author_meta()
  *
  */
-function _bw_telephone( $atts = null ) {
-  $prefix = bw_array_get_dcb( $atts, "prefix", "Tel" );
-  $sep = bw_array_get( $atts, "sep", ": " );
-  $number = bw_array_get( $atts, "number", null );
-  $alt = bw_array_get( $atts, "alt", null );
-  $index = bw_array_get( $atts, "index", "telephone" );
-  $tag = bw_array_get( $atts, "tag", "div" );
-  $class = bw_array_get( $atts, "class", null );
-  
-  if ( !$number ) {
-    $number = bw_get_option( $index, "bw_options$alt" );
-  } 
-   
-  if ( $number <> "" ) {
-    stag( $tag,  "tel $class" );
-    span( "type");
-    e( $prefix );
-    epan();
-    span( "sep" );
-    e( $sep );
-    epan();
-    span( "value" );
-    e( $number );
-    epan();
-    etag( $tag );
+function bw_get_user_field( $ID, $field, $set=null ) {
+  if ( $set ) { 
+    $option = get_user_meta( $ID, $set, true );
+    bw_trace2( $option, "option" );
+    $option = bw_array_get( $option, $field, null );
+  } else {
+    $option = get_the_author_meta( $field, $ID );
   }
-  return( bw_ret());
+  bw_trace2( $option, "option" );
+  return( $option );
 }
 
 
 /**
- * Display the telephone number using microformats
- * See ISBN: 978-1-59059-814-6 p. 140
- */
-function bw_telephone( $atts = null ) { 
-  $atts['index'] = bw_array_get( $atts, "index", "telephone" );
-  return( _bw_telephone( $atts ) );
-}  
-
-/**
- * Display the fax number, if set
- */
-function bw_fax( $atts = null ) {
-  $atts['index'] = bw_array_get( $atts, "index", "fax" );
-  $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Fax" );
-  return( _bw_telephone( $atts ) );
-}  
-
-function bw_mobile( $atts = null ) {
-  $atts['index'] = bw_array_get( $atts, "index", "mobile" );
-  $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Mobile" );
-  return( _bw_telephone( $atts ) );
-}
-
-function bw_emergency( $atts = null ) {
-  $atts['index'] = bw_array_get( $atts, "index", "emergency" );
-  $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Emergency" );
-  $atts['class'] = bw_array_get( $atts, "class", "bw_emergency" );
-  return( _bw_telephone( $atts ) );
-}  
-
-/**
- * Internal function for bw_email and bw_mailto
+ * Return user information 
  *
- *  use [bw_email] - for an inline mailto link 
- *  or [bw_mailto] for a more formal mailto link
+ * @param string $id - a value that can be used to access the user
+ * @param string $hint - get_user_by( $hint, $id ) if we can't guess
+ * @return WP_user object from get_user_by()
  * 
- * Note: I'm sure I used antispambot() once upon a time. Reintroduced but it needs more work
- * Notes: Using class=email for Microformat
- */   
-function _bw_email( $atts = null ) {
-  $prefix = bw_array_get_dcb( $atts, "prefix", "Email" );
-  $sep = bw_array_get( $atts, "sep", ": " );
-  $index = bw_array_get( $atts, "index", 'email' );
-  $alt = bw_array_get( $atts, "alt", null );
-  $title = bw_array_get_dcb( $atts, "title", "Send email to: " );
-  $tag = bw_array_get( $atts, "tag", "span" );
-  stag( $tag, "email");
-  e( $prefix );
-  e( $sep );
-  $email = bw_get_option( $index, "bw_options$alt" ); 
-  $emailasb = antispambot( $email, 1 ); 
-  alink( NULL, "mailto:". $emailasb, $email, $title . $email );
-  etag( $tag );
-  return( bw_ret() );
-}
-
-/**
- * [bw_email] shortcode for an inline mailto: link
- * @param array $atts - shortcode parameters
- * @return string expanded shortcode
+ * Values for $field are: 
+ *  id: numeric
+ *  email: contains @
+ *  slug: contains "-" indicating it's a user_nicename
+ *  login: anything else 
+ *
+ * Perhaps we should MAP username to login or viceversa anyway! **?**
+ * 
+ * @uses is_email()
+ *
  */
-function bw_email( $atts = null ) {
-  $atts['tag'] = bw_array_get( $atts, "tag", "span" );
-  return( _bw_email( $atts) ); 
-}  
+function bw_get_user( $id, $hint="login" ) {
+  if ( is_numeric( $id ) ) {
+    $field = "id";
+  } elseif ( is_email( $id ) ) {
+    $field = "email";
+  } elseif ( strpos( $id, "-" ) !== false ) {
+    $field = "slug"; // user_nicename; 
+  } else {
+    $field = $hint;
+  }   
+  $user = get_user_by( $field, $id );
+  bw_trace2( $user );
+  return( $user );
+}
 
 /**
- * [bw_mailto] shortcode for a mailto: link
- * @param array $atts - shortcode parameters
- * @return string expanded shortcode
- * 
- * Use the tag parameter to control the formatting. e.g. div
-*/
-function bw_mailto( $atts=null ) {
-  $atts['tag'] = bw_array_get( $atts, "tag", "p" );
-  return( _bw_email( $atts ) );
-}  
-
-/**
- * [bw_address] shortcode - address using Microformats
+ * Return a user option field - which may come from a composite field
  */
-function bw_address( $atts = NULL ) {
-  $type = bw_array_get( $atts, "type", "Work" );
-  $alt = bw_array_get( $atts, "alt", null );
-  
-  sdiv("adr bw_address" );
-  
-    sdiv("type");
-    e( $type );
-    ediv();
-    
-    sdiv("extended-address");
-    e( bw_get_option( "extended-address", "bw_options$alt" ) );
-    ediv();
-    
-    sdiv("street-address");
-    e( bw_get_option( "street-address", "bw_options$alt"  ) );
-    ediv();  
-    
-    sdiv("locality");
-    e( bw_get_option( "locality", "bw_options$alt" ) );
-    ediv();      
-    
-    sdiv("region");
-    e( bw_get_option( "region", "bw_options$alt" ) );
-    ediv();      
-    
-    sdiv("postal-code");
-    e( bw_get_option( "postal-code", "bw_options$alt" ) );
-    ediv();
-       
-    span("country-name");
-    e( bw_get_option( "country-name", "bw_options$alt" ) );
-    epan();
-  
-  ediv();
-  return( bw_ret() );
-  
-  
-}
-/* Return a link to the site's wp-admin 
-*/
-function bw_wpadmin() {
-  $site = bw_get_option( "domain" );
-  
-  e( "Site:&nbsp; ");
-  alink( NULL, "http://". $site . "/wp-admin", $site, "Website: " . $site );
-  return( bw_ret() );
-  
+function bw_get_user_option( $user, $field, $set=null ) {
+  //oik_require( "shortcodes/oik-user.php" );
+  $user = bw_get_user( $user );
+  if ( $user ) {
+    $ID = $user->ID; 
+    $option = bw_get_user_field( $ID, $field, $set );
+  } else {
+    bw_trace2( "Invalid user" );
+    gobvang();
+    $option = null;
+  } 
+  bw_trace2( $option, "option" );
+  return( $option ); 
 }
 
 /**
- * Format the contact name using hCard Microformat
-*/ 
-function bw_contact( $atts=null ) {
-  $alt = bw_array_get( $atts, "alt", null );
-  $contact = bw_get_option( "contact", "bw_options$alt" );
-  span( "vcard" );
-  span( "fn" );
-  e( $contact );
-  epan();
-  epan();
-  return( bw_ret() );
-} 
-
-/**
- * create a styled follow me button
+ * Retrieve the requested option value depending on the $atts array
+ *
+ * @param string $field - the name of the field to obtain
+ * @param string $set - the name of the set from which to obtain the field 
+ * @param array $atts - the set of parameters which may include user= or alt= values
+ * @return string - the value of the required option or null
  * 
- * @param array atts - array of shortcode attributes
+ * The user= keyword overrides the alt= keyword. We're trying to eliminate alt=1 or alt=2 in favour of user fields. Does that make sense **?**
  * 
- * network= the name of the social network - this gets lowercased to choose the button class and the oik option field
- * url = override of who to follow. value defaults to the oik option for the network
- * me = who to follow - defaults to "me"
- * text = currently ignored 
  */
-function bw_follow( $atts = NULL ) {
-  $social_network = bw_array_get( $atts, 'network', 'Facebook' );
-  // $text = bw_array_get( $atts, 'text', null );
-  $lc_social = strtolower( $social_network );
-  $social = bw_array_get_dcb( $atts, 'url', $lc_social, "bw_get_option" );
-  $me = bw_array_get( $atts, "me", "me" );
-  $imagefile = plugins_url( 'images/'. $lc_social . '_48.png', __FILE__ );
-  $image = retimage( NULL, $imagefile, "Follow $me on ".$social_network );
-  alink( NULL, $social, $image, "Follow $me on ".$social_network );
-  return( bw_ret());
-}  
-
-function bw_twitter( $atts ) {
-  $atts['network'] = "Twitter" ;
-  return( bw_follow( $atts ));  
+function bw_get_option_arr( $field, $set="bw_options", $atts=null ) {
+  $user = bw_array_get( $atts, "user", null );
+  bw_trace2();
+  if ( $user && is_callable( "bw_get_user_option" ) ) {
+    $option = bw_get_user_option( $user, $field, $set );
+  } else {
+    $alt = bw_array_get( $atts, "alt", null );
+    if ( !$set ) {
+      $set="bw_options";
+    }
+    $option = bw_get_option( $field, "$set$alt" );
+  }
+  return( $option );  
 }
 
-function bw_facebook( $atts ) {
-  $atts['network'] = "Facebook" ;
-  return( bw_follow( $atts ));
+/**
+ * Return the tooltip value for "me" 
+ * 
+ * The name displayed in the tooltips comes from "me=" parameter, oik (user) options contact or user display_name field
+ */
+function bw_get_me( $atts=null ) {
+  $me = bw_array_get( $atts, "me", null );
+  if ( !$me ) {
+    $me = bw_get_option_arr( "contact", "bw_options", $atts );
+    if ( !$me ) {
+      $me = bw_get_option_arr( "display_name", null, $atts );
+      if ( !$me ) {
+        $me = __( "me" );
+      }
+    }
+  }
+  return( $me ); 
 }
 
-function bw_linkedin( $atts ) { 
-  $atts['network'] = "LinkedIn";  
-  return( bw_follow( $atts ));
-} 
-   
-function bw_youtube( $atts ) { 
-  $atts['network'] = "YouTube";  
-  return( bw_follow( $atts ));
-}
-
-function bw_picasa( $atts ) { 
-  $atts['network'] = "Picasa";  
-  return( bw_follow( $atts ));
-}
-    
-function bw_flickr( $atts) {
-  $atts['network'] = "Flickr";  
-  return( bw_follow( $atts ));
-}  
-  
+/**
+ * Display the value of a 'field' in a span with a class of the field name
+ *
+ * @param string $field - the name of the option field to display
+ * @return string - the formatted field
+ */
 function bw_output( $field ) {
   $fieldvalue = bw_get_option( $field );
   span( $field );
@@ -358,134 +210,19 @@ function bw_output( $field ) {
   return( bw_ret() );
 }
 
-function bw_company() {
-  return( bw_output( "company" ));
-} 
-
-function bw_business() {
-  return( bw_output( "business" ));
-} 
-
-function bw_formal() {
-  return( bw_output( "formal" ));
-} 
-
-function bw_slogan() {
-  return( bw_output( "main-slogan" ));
-}
- 
-function bw_alt_slogan() {
-  return( bw_output( "alt-slogan" ));
-}
- 
-function bw_admin() {
-  return( bw_output( "admin" ));
-}
- 
-function bw_domain() {
-  return( bw_output( "domain" ));
-} 
-
-
 /**
- * Create a div to clear the floats
+ * Implement the [clear] shortcode to create a div to clear the floats
+ * 
  * class cleared is used for Artisteer themes
  * class clear is the simpler version in oik
  */
-function bw_clear() {
+function bw_clear( $atts=null ) {
   sediv( "cleared clear" );
   return( bw_ret());
-}  
-
-
-/**
- * Skype Online Material: the Skype buttons and widgets available for download on the 
- * Skype Website at http://www.skype.com/share/buttons/ 
- * as such may be changed from time to time by Skype in its sole discretion.  
-*/
-function bw_skype( $atts ) {
-  $atts['index'] = bw_array_get( $atts, "index", "skype" );
-  $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Skype name" );
-  $atts['class'] = bw_array_get( $atts, "class", "bw_skype" );
-  return( _bw_telephone( $atts ) );
-}  
-
-/**
- * Inline telephone number, using span
-*/ 
-function bw_tel( $atts=null ) {
-  $atts['tag'] = bw_array_get( $atts, "tag", "span" );
-  return _bw_telephone( $atts );
-}
-
-/**
- * Inline mobile number, using span
-*/ 
-function bw_mob( $atts=null ) {
-  $atts['tag'] = bw_array_get( $atts, "tag", "span" );
-  $atts['index'] = bw_array_get( $atts, "index", "mobile" );
-  $atts['prefix'] = bw_array_get_dcb( $atts, "prefix", "Mobile" );
-  return _bw_telephone( $atts );
-}
-
-/**
- * Generate a button to get directions from Google Maps e.g.
- * http://maps.google.co.uk/maps?f=d&hl=en&daddr=50.887856,-0.965113
- *
- */
-function bw_directions( $atts=null ) {
-  $alt = bw_array_get( $atts, "alt", null );
-  $lat = bw_get_option( "lat", "bw_options$alt" );
-  $long = bw_get_option( "long", "bw_options$alt" );
-  $company = bw_get_option( "company" );
-  $extended = bw_get_option( "extended-address", "bw_options$alt" );
-  $postcode = bw_get_option( "postal-code", "bw_options$alt" );
-  $link = "http://maps.google.co.uk/maps?f=d&hl=en&daddr=" . $lat . "," . $long;  
-  $text = "Google directions";
-  $title = "Get directions to " . $company;
-  if ( $extended && ($company <> $extended) )
-    $title .= " - " . $extended;
-  if ( $postcode )
-    $title .= " - " . $postcode;
-  $class = NULL;
-  art_button( $link, $text, $title, $class ); 
-  return( bw_ret());
-}
-
-function bw_google_plus( $atts ) { 
-  $atts['network'] = "GooglePlus";  
-  return( bw_follow( $atts ));
-}
-
-/**
- * Only produce a follow me button if there is a value for the selected social network
-*/ 
-function bw_follow_e( $atts ) {
-  $social_network = $atts['network'];
-  // $text = bw_array_get( $atts, 'text', NULL );
-  $lc_social = strtolower( $social_network );
-  $social = bw_get_option( $lc_social );
-  if ( $social ) {
-    $me = bw_array_get( $atts, "me", "me" );
-    $imagefile = plugins_url( 'images/'. $lc_social . '_48.png', __FILE__ );
-    $image = retimage( NULL, $imagefile, "Follow $me on ".$social_network );
-    alink( NULL, $social, $image, "Follow $me on ".$social_network );
-  }     
-}
+} 
  
-/**
- * Produce a Follow me button for each of these social networks:  Twitter, Facebook, LinkedIn, GooglePlus, YouTube, Flickr
-*/
-function bw_follow_me( $atts = NULL ) {
-  $networks = array( 'Twitter', 'Facebook', 'LinkedIn', 'GooglePlus', 'YouTube', 'Flickr' );
-  foreach ( $networks as $network ) {
-    $atts['network'] = $network;
-    bw_follow_e( $atts );
-  }
-  return( bw_ret());
-}
-
 /** 
+ * 
  * bw_oik() is needed here since it's used in the oik admin pages
  *   
  */
@@ -502,44 +239,12 @@ function bw_oik( $atts=null ) {
  * bw_oik_long - spells out Often Included Key-information
  *   
  */
- 
 function bw_oik_long( $atts=null ) {
   $class = bw_array_get( $atts, "class", "bw_oik" );
   $bw = nullretstag( "span", $class ); 
   $bw .= "Often Included Key-information"; 
   $bw .= nullretetag( "span", $class ); 
   return( $bw );
-}
-
-
-
-/**
- * Display the QR code file with a link if required
- * Notes: the attribute defaulting needs to be improved 
-*/ 
-function bw_qrcode( $atts ) {
-  $link = bw_array_get( $atts, 'link', null );
-  $text = bw_array_get_dcb( $atts, 'text', 'company', 'bw_get_option' );
-  $width = bw_array_get( $atts, 'width', null );
-  $height = bw_array_get( $atts, 'height', null );
-
-
-  $upload_dir = wp_upload_dir();
-  $baseurl = $upload_dir['baseurl'];
-  
-  $logo_image = bw_get_option( "qrcode-image" );
-  $company = bw_get_option( "company" );
-  $image_url = $baseurl . $logo_image;
-  
-  $image = retimage( NULL, $image_url, "QR code for " . $text , $width, $height );
-  if ( $link ) {
-    alink( NULL, $link, $image, $company );
-  }  
-  else {
-    e( $image );  
-  }  
-  return( bw_ret());
-    
 }
 
 /**
@@ -637,10 +342,12 @@ function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL,
  * In this case, if the parameter that is passed turns out to be the default value then this will also be translated.
  * Note: It could could still match a default null value
  * Also: We don't expect a null value for the default callback function __()
+ * 2012/12/04 - we have to allow for the value being set as 0 which differs from a default value of NULL
+ * so the comparison needs to be identical ( === ) rather than equal ( == ) 
  */
 function bw_array_get_dcb( $array = array(), $index, $default = NULL, $callback='__' ) {
   $value = bw_array_get( $array, $index, $default );
-  if ( $value == $default ) {
+  if ( $value === $default ) {
     $value = $callback( $default ); 
   }  
   return( $value );  
@@ -841,4 +548,90 @@ function bw_etag( $atts = NULL ) {
   etag( $tag );
   return( bw_ret());
 }
+
+/**
+ * Return the value from a list of possible parameters
+ *
+ * @param array $atts - an array of key value pairs
+ * @param mixed $from - a list e.g. ( "api,func" ) or array of key names  
+ * @param string $default - the default value if not set 
+ * @return string - the first value found or the default
+ */
+function bw_array_get_from( $atts, $from, $default ) {
+  $from = bw_as_array( $from );
+  $fc = count( $from );
+  $f = 0;
+  $result = null;
+  while ( ( $f < $fc ) && $result === null ) {
+    $result = bw_array_get( $atts, $from[$f], null );  
+    $f++;
+  }
+  if ( !$result ) {
+    $result = $default;
+  }
+  return( $result );      
+}
+
+/** 
+ * Split a string into an array if necessary
+ *
+ * @param mixed $mixed - either an array already or a string of comma or blank separated values
+ * @return array - an unkeyed array 
+ */
+function bw_as_array( $mixed ) {
+  if ( $mixed ) {
+    if ( is_array( $mixed ) ) {
+      $mixed_array = $mixed;
+    } else { 
+      $mixed = str_replace( ",", " ", $mixed );
+      $mixed_array = explode( " ", $mixed );
+    } 
+    bw_trace2( $mixed_array, "mixed_array" ); 
+  } else {
+    $mixed_array = array();
+  }      
+  return( $mixed_array );
+}
+
+/**
+ * Return all the unkeyed items as an unkeyed array
+ * 
+ * @param mixed $array - array from which to extract the unkeyed values
+ * @param bool $split - whether or not to break down the values further
+ * @return mixed array of results
+ *
+ * e.g. 
+   $atts = array( "san ta"
+                , "claus"
+                , "zip" => "a"
+                , "diddy" => "do"
+                , "dah" => "day"
+                , "the"
+                , "mo,vie"
+                );
+   $unkeyed = array( "san", "ta", "claus", "the", "mo", "vie" );
+                
+ */
+function bw_array_get_unkeyed( $array=null, $split=true ) {
+  $unkeyed = array();
+  if ( is_array( $array) && count( $array ) ) {
+    foreach ( $array as $key => $value ) {
+      if ( is_numeric( $key ) ) {
+        if ( $split ) {
+          $value = str_replace( "," , " ", $value );  
+          $values = explode( " ", $value );
+          foreach ( $values as $valu ) {
+            $unkeyed[] = $valu;
+          }  
+        } else {
+          $unkeyed[] = $value ;
+        }  
+      }
+    }
+  }
+  return( $unkeyed );
+}
+
+
+
 

@@ -31,7 +31,7 @@ function bw_wtf( $atts=null ) {
   global $post;
   bw_trace2( $post, "post" ); 
   $escaped_content = esc_html( $post->post_content );
-  stag( 'p', null, null, 'lang=HTML" escaped="true"' );
+  stag( 'p', "bw_wtf", null, 'lang=HTML" escaped="true"' );
   e( $escaped_content );
   etag( "p" );
   return( bw_ret() );

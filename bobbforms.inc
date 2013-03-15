@@ -1,7 +1,12 @@
-<?php // (C) Copyright Bobbing Wide 2009-2012
-
+<?php // (C) Copyright Bobbing Wide 2009-2013
 // Note: This file uses functions from bobbfunc.inc. You must ensure this is already loaded
 
+/**
+ * Create a form tag
+ * @param string $action - action to perform
+ * @param string $method - post/get
+ * @return string - HTML form tag
+ */
 function form( $action="", $method="post" ) {
   $form = "<form";
   $form .= kv( "method", $method );
@@ -19,6 +24,12 @@ function bw_form( $action="", $method="post" ) {
   e( form( $action, $method ) );
 }  
 
+/**
+ * Create a field label
+ * @param string $name - field name
+ * @param string $text - label to display
+ * @return string - the HTML label tag
+ */
 function label( $name, $text ) {
    $lab = "<label for=\"";
    $lab.= $name;
@@ -28,19 +39,31 @@ function label( $name, $text ) {
    return( $lab );
 }
 
+/**
+ * Return a hidden input field for a form
+ * @param string $name - the field name e.g. my_field or my_field[1]
+ * @param string $value - the value of the field
+ * @return string an <input type=hidden> tag - returned regardless of the value of the field
+ */
 function ihidden( $name, $value ) {
-  $it = "";
-  //if ( $value != "" ) {
-    $it = "<input type=\"hidden\" ";
-    $it.= "name=\"";
-    $it.= $name;
-    $it.= "\" value=\"";
-    $it.= $value;
-    $it.= "\" />"; 
-  //}  
+  $it = "<input type=\"hidden\" ";
+  $it.= "name=\"";
+  $it.= $name;
+  $it.= "\" value=\"";
+  $it.= $value;
+  $it.= "\" />"; 
   return $it;
 }  
 
+/**
+ * Create an input field of type text
+ * 
+ * @param string $name - the field name 
+ * @param integer $len - the field length
+ * @param string $class - any class name to apply
+ * @param string $extras - additional values for the HTML input tag
+ * @return string the HTML input tag
+ */
 function itext( $name, $len, $value, $class=null, $extras=null ) {
   $width = ($len * 20) ;
   $it = "<input type=\"text\" size=\"";
@@ -62,6 +85,14 @@ function itext( $name, $len, $value, $class=null, $extras=null ) {
   return $it;
 }
 
+/**
+ * Create an HTML textarea field 
+ * @param string $name - the field name
+ * @param integer $len - the length of each row
+ * @param string $value - the textarea content
+ * @param integer $rows - the number of rows
+ * @return string - the HTML textarea tag
+ */
 function iarea( $name, $len, $value, $rows=10 ) {
   $it = "<textarea";
   $it .= kv( "rows", $rows);
@@ -161,6 +192,9 @@ function textarea( $name, $len, $text, $value, $rows=10 ) {
   
 function bw_textfield( $name, $len, $text, $value, $class=null, $extras=null ) {
   $lab = label( $name, $text );
+  if ( $value === null ) {
+    $value = bw_array_get( $_REQUEST, $name, null );
+  }
   $itext = itext( $name, $len, $value, $class, $extras ); 
   bw_tablerow( array( $lab, $itext ) );
   return;
@@ -168,6 +202,9 @@ function bw_textfield( $name, $len, $text, $value, $class=null, $extras=null ) {
 
 function bw_emailfield( $name, $len, $text, $value, $class=null, $extras=null ) {
   $lab = label( $name, $text );
+  if ( $value === null ) {
+    $value = bw_array_get( $_REQUEST, $name, null );
+  }
   $itext = iemail( $name, $len, $value, $class, $extras ); 
   bw_tablerow( array( $lab, $itext ) );
   return;
@@ -203,11 +240,72 @@ function bw_radio( $name, $text, $values, $labels, $class=null, $extras=null ) {
   bw_tablerow( array( $lab, $iradios ) );
 }
 
+/** 
+ * Return the selected value if the $option_key or $option_value == $value or the $option_key is IN the $value array
+ *
+ <pre>
+ 
+    [0] => _oik_api_calls
+    [1] => Array
+        (
+            [0] => 6410
+            [1] => 6251
+            [2] => 6409
+        )
+
+    [2] => Array
+        (
+            [#type] => oik_api
+            [#multiple] => 1
+            [#options] => Array
+                (
+                    [6410] => aalt() - aalt
+                    [6251] => abbr() - Create an &lt;abbr&gt; tag
+                    [6409] => aclass() - aclass
+                    
+ </pre>
+ */ 
+function is_selected( $option_key, $option_value, $value ) {
+  if ( is_array( $value ) ) {
+    $vals = bw_assoc( $value );
+    $val = bw_array_get( $vals, $option_key, null );
+  } else {
+    $val = $value;
+  }
+  $selected = selected( $option_key, $val, false );
+  if  ( !$selected ) {
+    $selected = selected( $option_value, $val, false );
+  }
+  return( $selected );
+}
+
+/**
+ * Return a select list with the current selection
+ *
+ * The current value may either be a numeric index OR the actual string 
+ * It's slightly more efficient when it's the index
+ *
+ * @param string $name - the name for the field
+ * @param string/mixed $value - the key value for the current selection or an array for #multiple selection
+ * @param array $args - containing "#options" which must point to a non empty array
+ * @return $iselect HTML for the select list
+ */
 function iselect( $name, $value, $args ) {
-  $iselect = "<select name=\"$name\">" ;
+  //bw_trace2();
+  $multiple = bw_array_get( $args, "#multiple", false );
+  if ( $multiple ) {
+    $iselect = "<select name=\"${name}[]\" multiple size=10>" ;
+  } else {
+    $iselect = "<select name=\"$name\">" ;
+  }
   $options = $args['#options'];
+  $optional = bw_array_get( $args, "#optional", false );
+  if ( $optional ) {
+    $options = array( __( "None" ) ) + $options;
+  }
+  //bw_trace2( $options, "options" );
   foreach ( $options as $option_key => $option_value ) {
-    $selected = selected( $option_key, $value, false );
+    $selected = is_selected( $option_key, $option_value, $value );
     $option = "<option value=\"$option_key\" $selected>$option_value</option>";
     $iselect .= $option; 
   }

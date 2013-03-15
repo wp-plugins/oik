@@ -559,6 +559,7 @@ function oik_options_validate( $input ) {
 
 /**
  * Set the lat and lng fields for the given address
+ * 
  * if the address is set but either the lat/lng is not.
  *
  */

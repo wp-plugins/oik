@@ -1,11 +1,11 @@
-<?php // (C) Copyright Bobbing Wide 2012
+<?php // (C) Copyright Bobbing Wide 2012, 2013
 
 /**
  * Register functions for custom post types, taxonomies and fields
  */
  
 /**
- * singularize a plural string 
+ * Singularize a plural string 
  * 
  * @param string $plural - a plural string - or anything with a 'stem'
  * @returns string $singular - the singularized version of the string
@@ -26,6 +26,7 @@ function bw_singularize( $plural ) {
  *
  * Refer to the WordPress codex or [bw_plug name='custom UI,types']
  *
+ <pre>
   'capability_type' => $cpt_post_type["capability_type"],
   'description' => esc_html($cpt_post_type["description"]),
   'has_archive' => $cpt_has_archive,
@@ -41,6 +42,7 @@ function bw_singularize( $plural ) {
   'singular_label' => $cpt_post_type["singular_label"],
   'supports' => $cpt_supports,
   'taxonomies' => $cpt_taxonomies,
+  </pre>
  * @arguments                         
  * label - optional - default $post_type
  * labels - optional 

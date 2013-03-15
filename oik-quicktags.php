@@ -1,10 +1,10 @@
-<?php // (C) Copyright Bobbing Wide 2012
-
+<?php // (C) Copyright Bobbing Wide 2012, 2013
 /**
+ * 
  * Lazy code for implementing the [] quicktag
  * The JavaScript code is pre-requisite to the TinyMCE [] button
  *
- * From http://wordpress.org/support/topic/edit_page_form-versus-edit_form_advanced?replies=4
+ * @link http://wordpress.org/support/topic/edit_page_form-versus-edit_form_advanced?replies=4
  * - edit_page_form is for PAGES
  * - edit_form_advanced is for POSTS
 */

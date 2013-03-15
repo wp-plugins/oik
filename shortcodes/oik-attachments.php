@@ -25,7 +25,8 @@ oik_require( "includes/bw_images.inc" );
 
 /**
  * 
-  find the correct file name for this image
+ * find the correct file name for this image
+ * 
   C:\apache\htdocs\wordpress\wp-content\plugins\oik\shortcodes\oik-attachments.php(26:0) 2012-07-16T10:14:35+00:00 397 cf=the_content bw_thumbnail_full(2) attachment_meta Array
 (
     [0] => Array
@@ -218,6 +219,10 @@ function bw_pdf( $atts = NULL ) {
 
 /**
  * Display the images attached to a post or page 
+ *
+ * Note: Since this uses bw_attachments() this does not behave in the same manner as [[bw_posts]], [[bw_thumbs]] or [[bw_pages]]
+ * If they want the images attached to a different post from the current one then we'll need to override the 
+ * post_parent parent parameter with the id parameter.
  */ 
 function bw_images( $atts = NULL ) {
   $atts['post_mime_type'] = bw_array_get( $atts, 'post_mime_type', 'image' );

@@ -1,8 +1,15 @@
-<?php // Copyright Bobbing Wide 2009-2012
+<?php // Copyright Bobbing Wide 2009-2013
 // bobbfunc.inc
 
-function bw_oik_version() {  
-  return( '1.17' );
+/** 
+ * Return the plugin version of the oik base plugin
+ * @return string $version e.g. 2.0-alpha, 2.0-RC1, 2.0, 2.0.mmdd 
+ */
+function bw_oik_version() { 
+  oik_require( "admin/oik-plugins.inc" );
+  $version = bw_get_plugin_version();
+  return( $version );
+  // return( '2.0-RC1' );
 }
 
 require_once( "oik_boot.inc" );   /* Don't use oik_require here */
@@ -152,12 +159,10 @@ function aname( $name ) {
  * @uses retlink()
  * 
 */   
-
 function alink( $class=NULL, $url, $linktori=NULL, $alt=NULL, $id=NULL, $extra=NULL ) {
   $link = retlink( $class, $url, $linktori, $alt, $id, $extra );
   e( $link ); 
 }
-
 
 /**
  * Return a well formed link
@@ -185,8 +190,15 @@ function retlink( $class=NULL, $url, $linktori=NULL, $alt=NULL, $id=NULL, $extra
   return( $link );
 }  
  
-
-
+/**
+ * Return an HTML opening tag
+ * 
+ * @param string $tag - the HTML tag. e.g. span
+ * @param string $class - CSS classes
+ * @param string $id - unique ID
+ * @param string $extra - additional fields formatted using kv()
+ * @return string an HTML opening tag
+ */
 function retstag( $tag, $class=NULL, $id=NULL, $extra=NULL ) {   
   $stag = '<' . $tag ;
   if ( $class <> NULL )
@@ -200,6 +212,9 @@ function retstag( $tag, $class=NULL, $id=NULL, $extra=NULL ) {
 }
 
 
+/**
+ * Return a start tag if the class is not null 
+ */
 function nullretstag( $tag, $class=NULL ) {
    $ret = '';
    if ( $class <> NULL )
@@ -208,48 +223,83 @@ function nullretstag( $tag, $class=NULL ) {
 } 
 
 
+/**
+ * Output an HTML opening tag
+ *
+ * The tag is written to the internal buffer
+ * 
+ * @param string $tag - the HTML tag. e.g. span
+ * @param string $class - CSS classes
+ * @param string $id - unique ID
+ * @param string $extra - additional fields formatted using kv()
+ * 
+ */
 function stag( $tag, $class=NULL, $id=NULL, $extra=NULL ) {
   bw_echo( retstag( $tag, $class, $id, $extra ));
 }
 
+/**
+ * Start an ordered list
+ */
 function sol( $class=NULL, $id=NULL ) {
    stag( "ol", $class, $id );
 }        
 
-
-/* renamed uls to sul to be consistent with stag */ 
-   
+/** 
+ * Start an unordered list
+ */ 
 function sul( $class=NULL, $id=NULL, $extra=null ) {
    stag( "ul", $class, $id, $extra );
-}        
+} 
 
+/**
+ * Start a div
+ */       
 function sdiv( $class=NULL, $id=NULL, $extra=NULL ) {
    stag( "div", $class, $id, $extra );
 }
 
+/** 
+ * End an ordered list
+ */
 function eol() {
    bw_echo( '</ol>' );
 }
-   
-
+ 
+/**
+ * End an unordered list
+ */  
 function eul() {
    bw_echo( '</ul>' );
 }
 
+/** 
+ * End a div
+ */
 function ediv() {
    bw_echo( '</div>' );
 }
 
-/* sediv creates a dummy div which is used for placing graphics using backhground images in CSS */
+/**
+ * Create a dummy div which may be used for placing graphics using background images in CSS 
+ */
 function sediv( $class=NULL, $id=NULL, $extra=NULL ) {
-   sdiv( $class, $id, $extra );
-   ediv();
+ sdiv( $class, $id, $extra );
+ ediv();
 }   
 
+/**
+ * End a paragraph (p) tag
+ */
 function ep() {
   bw_echo( '</p>' );
 }
 
+/** 
+ * Return an end tag if the class is not null 
+ * 
+ * @see nullretstag()
+ */
 function nullretetag( $tag, $class=NULL ) {
   $ret = '';
   if ( $class <> NULL )
@@ -257,24 +307,38 @@ function nullretetag( $tag, $class=NULL ) {
   return( $ret );   
 }
 
+/**
+ * Return an end tag 
+ */
 function retetag( $tag ) {
    return( '</'.$tag.'>');
 }  
 
+/** 
+ * Output an end tag
+ */
 function etag( $tag ) {
   //  bw_echo( '</'.$tag.'>'."\n";
   bw_echo( '</'.$tag.'>' );
 }    
 
+/**
+ * Start a paragraph
+ * 
+ * @see sp()
+ */
 function sp( $class=NULL, $id=NULL ) {
    stag( "p", $class, $id );
 } 
 
+/**
+ * Output a paragraph of text 
+ */
 function p( $text=NULL, $class=NULL, $id=NULL ) {
-   sp( $class, $id );
-   if ( !is_null( $text ))
-     bwt( $text );
-   etag( "p" );
+  sp( $class, $id );
+  if ( !is_null( $text ))
+    bwt( $text );
+  etag( "p" );
 }
 
 function hn( $text, $level, $class, $id ) {
@@ -370,26 +434,23 @@ function sepan( $class=NULL, $text=NULL ) {
    epan();
 }
 
-
-/* table data */
-
+/**
+ * Output a table data field
+ */
 function td( $data, $class=NULL, $id=NULL ) {
   stag( "td", $class, $id );
   e( $data );
   etag( "td" );
 } 
 
-/* table heading */
+/**
+ * Output a table heading
+ */
 function th( $data, $class=NULL, $id=NULL ) {
   stag( "th", $class, $id );
   e( $data );
   etag( "th" );
 }         
-        
-  
-
-
-
 
 // This routine finds the subdirectory under which this local version of the website is installed
 // we need to remove this from index lookups but add it to links! 
@@ -428,14 +489,6 @@ function bw_expand_link( $linkurl ) {
       $linkurl = bw_get_docroot_suffix() . $linkurl;
    return( $linkurl) ;   
 }
-
-
-function bw_prefix_require( $file ) {
-  global $bobb_prefix;
-  $file = $bobb_prefix . $file ;
-  require( $file );
-}
-
 
 function strong( $text, $class=NULL, $id=NULL ) {
    stag( "strong", $class, $id ) ;
@@ -771,9 +824,13 @@ function bw_funcname( $prefix, $key, $value=NULL ) {
 /**
  * Return the URL for a resource file
  * 
+ * @param string $file - the name of the file within the plugin - leading '/' omitted
+ * @param string $plugin - the plugin's stub
+ * @return string fully qualified URL to the resource file
+ * 
  * @uses plugin_dir_url() to find the plugin base directory then appends the plugin folder and file name
-*/
-function oik_url( $file = null, $plugin='oik' ) {
+ */
+function oik_url( $file=null, $plugin='oik' ) {
   $url = plugin_dir_url( null );
   $url .= "$plugin/$file" ;
   return( $url ); 
@@ -856,7 +913,24 @@ function bw_jq( $text ) {
   if ( is_admin() ) {
     bw_jq_flush();
   }  
-}  
+}
+
+/**
+ * json_encode without Warnings
+ *
+ * JSON_NUMERIC_CHECK was added in PHP version 5.3.3
+ * Here we may need to perform our own numeric conversion to strip out the damage done by json_encode 
+ * if the PHP version is earlier than this. **?** Not implemented yet! 
+ *
+ */
+function bw_json_encode( $parms, $option=null ) { 
+  if ( version_compare( PHP_VERSION, "5.3.3", "<" ) ) {
+    $json = json_encode( $parms );
+  } else {
+    $json = json_encode( $parms, $option );
+  }
+  return( $json ); 
+} 
 
 /**
  * Format an array of parms for jQuery 
@@ -872,7 +946,7 @@ if ( !function_exists( "bw_jkv" ) ) {
 function bw_jkv( $parms, $value=null ) {
   if ( is_array( $parms ) ) {
     bw_jtorf( $parms );
-    $jqoption = json_encode( $parms, JSON_NUMERIC_CHECK );
+    $jqoption = bw_json_encode( $parms, JSON_NUMERIC_CHECK | JSON_FORCE_OBJECT );
   } else {
     $jqoption = "{";
     if ( $value ) { 

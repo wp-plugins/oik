@@ -53,6 +53,8 @@ function bw_tree_func( $atts ) {
 }
 
 /**
+ * Implements [bw_tree] shortcode
+ *
  * Create a simple tree of the 'pages' under the selected id
  * We default the ordering to match the menu order of the pages
  * The default tree starts from the current 'post'

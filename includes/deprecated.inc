@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012
+<?php // (C) Copyright Bobbing Wide 2012, 2013
 
 /**
  * Deprecated variables
@@ -388,3 +388,23 @@ function oik_optional_plugins() {
   li( "oik BuddyPress signup email - Send sign up verification emails via site admin for verification before accepting a user" );
   eul();
 }
+
+/**
+ * @since 1.18
+ * @deprecated 1.18 
+ * @deprecated Use bw_geo() 
+ * @see bw_geo()
+ */
+function bw_get_geo( $separator, $alt=null ) {
+  $geo = bw_get_option( "lat", "bw_options$alt" );
+  $geo.= $separator;
+  $geo.= bw_get_option( "long", "bw_options$alt" );
+  return( $geo );
+}  
+
+/**
+ * @since 1.18
+ * @deprecated 1.18
+ * @deprecated use bw_get_option() e.g. $bw_options = get_option( 'bw_options' );
+ */
+global $bw_options;

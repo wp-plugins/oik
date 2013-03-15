@@ -1,4 +1,4 @@
-<?php // (C) Copyright 2011,2012 Bobbing Wide
+<?php // (C) Copyright 2011,2013 Bobbing Wide
 /**
  * Functions for a system which is NOT WordPress
  * It could be Drupal or some other PHP based CMS, perhaps not even a CMS
@@ -9,8 +9,10 @@
  * I need to decide if I should prefix each field with bw_
  * Decision: I didn't prefix the fields in Drupal settings
  */
+ if ( !function_exists( "bw_get_option" ) ) {
 function bw_get_option( $field ) {
   return( variable_get( $field, "" ) );
+}
 }
  
 /** 
@@ -42,7 +44,9 @@ function site_url( $path=NULL, $scheme='http:' ) {
   $url .= bw_get_option( 'domain' );
   $url .= $path;
   return( $url );
-}  
+} 
+
+echo "here" . PHP_EOL; 
 
 if ( bw_is_drupal() ) {    
   require_once( "shortcodes.php" );  // This is a copy of the WordPress include specifically for the Drupal version of oik.

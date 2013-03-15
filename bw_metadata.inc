@@ -1,7 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012
-if ( defined( 'BW_METADATA_INCLUDED' ) ) return;
-define( 'BW_METADATA_INCLUDED', true );
-
+<?php // (C) Copyright Bobbing Wide 2012,2013
 /**
  * Logic to create metaboxes for each of the custom fields defined for a particular post type
  */
@@ -14,7 +11,7 @@ add_action( 'save_post', 'bw_effort_save_postdata', 10, 2 );
 
 
 /**
- * Create  "Fields" meta box for each field associated with each object type in the mapping
+ * Create "Fields" meta box for each field associated with each object type in the mapping
  */
 function bw_effort_meta_boxes() {
   oik_require( 'bobbforms.inc' );
@@ -25,11 +22,10 @@ function bw_effort_meta_boxes() {
     foreach ( $bw_mapping['field'] as $object_type => $fields ) {
       bw_trace( "object_type", __FUNCTION__, __LINE__, __FILE__, $object_type );
       bw_trace2( $fields );
-      add_meta_box( 'bw_effort', 'Fields', 'bw_effort_box', $object_type, 'normal' , 'high' , $fields );
+      add_meta_box( 'bw_effort', __("Fields"), 'bw_effort_box', $object_type, 'normal' , 'high' , $fields );
     }
   }  
 }
-
 
 /*
  * Return a default value from $args if $value is not set
@@ -44,7 +40,6 @@ function bw_default_value( $value, $args ) {
   }
   return( $value );
 }
-
 
 /**
  * bw_form_field_ - default formatting for a field - as a textfield
@@ -120,6 +115,7 @@ function bw_load_noderef( $args ) {
   }   
     
   $options = array();
+  $args['post_parent'] = 0; 
   foreach ( $post_types as $post_type ) {
     $args['post_type'] = $post_type;
     $posts = bw_get_posts( $args );
@@ -134,11 +130,17 @@ function bw_load_noderef( $args ) {
  */
 function bw_form_field_noderef( $name, $type, $title, $value, $args ) {
   $options = bw_load_noderef( $args );
-  $optional = bw_array_get( $args, "#optional", false );
-  if ( $optional ) {
-    $options = array( "None" ) + $options;
-  }  
-  bw_select( $name, $title, $value, array( '#options' => $options ));
+  //$optional = bw_array_get( $args, "#optional", false );
+  //if ( $optional ) {
+  //  $options = array( "None" ) + $options;
+  //}
+  $args['#options'] =  $options;
+  //$multiple = bw_array_get( $args, "#multiple", false );
+  //if ( $multiple ) { 
+  //  bw_multiple_select( $name, $title, $value, array( '#options' => $options ));
+  //} else {
+    bw_select( $name, $title, $value, $args );
+  //}
 }
    
 /**
@@ -163,7 +165,10 @@ function bw_form_field_date( $name, $type, $title, $value, $args ) {
    
   bw_datepicker_enqueue_script();
   bw_jquery( "#${name}", "datepicker", bw_jkv( "dateFormat : 'yy-mm-dd', changeMonth: true, changeYear: true" ) );
-  bw_form_field_( $name, $type, $title, bw_format_date( $value ), $args ); 
+  if ( $value ) {
+    $value = bw_format_date( $value );
+  }
+  bw_form_field_( $name, $type, $title, $value, $args ); 
 }
 
 /** 
@@ -239,8 +244,9 @@ function bw_effort_box( $post, $args ) {
   foreach ( $fields as $field ) {
     $data = $bw_fields[$field];
     //bw_trace2( $field );
-    //bw_trace2( $data );
-    $value = get_post_meta( $post->ID, $field, TRUE );
+    bw_trace2( $data );
+    $multiple = bw_array_get( $data['#args'], "#multiple", false );
+    $value = get_post_meta( $post->ID, $field, !$multiple );
     bw_form_field( $field, $data['#field_type'], $data['#title'], $value, $data['#args'] );
   }
   etag( "table" );
@@ -283,21 +289,64 @@ function bw_effort_save_postdata( $post_id, $post ) {
     bw_trace( $bw_mapping, __FUNCTION__, __LINE__, __FILE__, "bw_mapping" );
     if ( isset(  $bw_mapping['field'][$post_type] )) {
       foreach ( $bw_mapping['field'][$post_type] as $field ) {
-      
-        bw_trace( $field, __FUNCTION__, __LINE__, __FILE__, "field" );
-        $mydata = bw_array_get( $_POST, $field, NULL ) ;
-        
-        /* What happens if the field is blank **?** */
-        bw_trace( $mydata, __FUNCTION__, __LINE__, __FILE__, "mydata" );
-        if ( $mydata != null )
-          update_post_meta( $post_id, $field, $mydata );
-          
+        bw_effort_update_field( $post_id, $field );
       }
     }
   } else {
   }   
 }
 
+/**
+ * Update post_meta for fields with multiple values
+ *  
+ */
+function bw_update_post_meta( $post_id, $field, $mydata ) {
+  delete_post_meta( $post_id, $field ); 
+  foreach ( $mydata as $key => $value ) {
+    add_post_meta( $post_id, $field, $value, false ); 
+  }
+}
+
+
+/**
+ * Update the value/values for a field 
+ * 
+ * What happens if the field is blank **?** 
+ * 
+ * 
+ * 
+ */
+function bw_effort_update_field( $post_id, $field ) {
+  global $bw_mapping;
+  global $bw_fields;
+  bw_trace2( $bw_fields, "bw_fields" ); 
+  $mydata = bw_array_get( $_POST, $field, NULL ) ;
+  bw_trace( $mydata, __FUNCTION__, __LINE__, __FILE__, "mydata" );
+  if ( $mydata != null ) {
+    if ( is_array( $mydata ) ) {
+      bw_update_post_meta( $post_id, $field, $mydata );
+    } else {
+      update_post_meta( $post_id, $field, $mydata );
+    }
+  } else {
+    //
+  } 
+}
+
+/* 
+
+    [_oik_api_calls] => Array
+        (
+            [#field_type] => noderef
+            [#title] => Uses APIs
+            [#args] => Array
+                (
+                    [#type] => oik_api
+                    [#multiple] => 1
+                )
+
+        )
+*/        
 
 
 

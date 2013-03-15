@@ -1,7 +1,6 @@
 <?php
-
 /*
-    Copyright 2011,2012 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2011-2013 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -19,12 +18,12 @@
 
 */
 
-
 oik_require( "includes/bw_images.inc" );
 
 
 /** 
- *
+ * Return the global post ID
+ * @return ID - the global post ID or 0
  */
 function bw_global_post_id() {
   if ( isset( $GLOBALS['post'] )) {
@@ -36,7 +35,8 @@ function bw_global_post_id() {
 }  
 
 /** 
- *
+ * Return the global post's post_type
+ * @return string/NULL - the global post's post_type or NULL
  */
 function bw_global_post_type() {
   if ( isset( $GLOBALS['post'] )) {
@@ -98,7 +98,7 @@ function bw_get_the_excerpt( $excerpt ) {
   if ( $doit !== false ) { 
     $saved_excerpt = bw_global_excerpt( null ); 
     $excerpt = apply_filters( "get_the_excerpt", $excerpt );
-    bw_trace2( $excerpt, "excerpt after", false );
+    // bw_trace2( $excerpt, "excerpt after", false );
     bw_global_excerpt( $saved_excerpt );
   }  
   return( $excerpt );
@@ -228,20 +228,30 @@ function bw_format_list( $post, $atts ) {
 }
 
 /**
- * Get the list of categories for this "post" as a string of slugs separated by commas 
+ * Get the list of categories for this "post" as a string of slugs separated by commas
+ * 
+ * @return string comma separated list of categories for the global post 
  */
 function bw_get_categories() {
   global $post;
-  $categories = get_the_category( $post->ID );
-  $cats = '';
-  foreach ( $categories as $category ) {
-    $cats .= $category->slug;
-    $cats .= ' ';
-  }  
-  $cats = trim( $cats );
-  $cats = str_replace( ' ',',', $cats );
+  if ( $post ) {
+    $categories = get_the_category( $post->ID );
+    $cats = '';
+    foreach ( $categories as $category ) {
+      $cats .= $category->slug;
+      $cats .= ' ';
+    }  
+    $cats = trim( $cats );
+    $cats = str_replace( ' ',',', $cats );
+  } else {
+    //bw_trace2( $post, "missing post" );
+    //bw_backtrace();
+    $cats = null;
+  }    
   return bw_trace2( $cats );
 }
+
+
 
 /**
  * Wrapper to get_posts() 
@@ -277,30 +287,48 @@ function bw_get_posts( $atts = NULL ) {
   
   /* Set default values if not already set */
   $attr['post_type'] = bw_array_get_dcb( $attr, 'post_type', NULL, "bw_global_post_type"  );
+  $id = bw_array_get( $attr, "id",  null );
   
-  // Only default post_parent for post_type of 'page' 
-  // This allows [bw_pages] to be used without parameters on a page
-  // and to be used to list 'page's from other post types.
-  // 
-  if ( $attr['post_type'] == 'page' || $attr['post_type'] == 'attachment' ) {
-    $attr['post_parent'] = bw_array_get_dcb( $attr, "post_parent", NULL, "bw_global_post_id" );
+  if ( !$id ) {
+    
+    // Only default post_parent for post_type of 'page' 
+    // This allows [bw_pages] to be used without parameters on a page
+    // and to be used to list 'page's from other post types.
+    // 
+    if ( $attr['post_type'] == 'page' || $attr['post_type'] == 'attachment' ) {
+      $attr['post_parent'] = bw_array_get_dcb( $attr, "post_parent", NULL, "bw_global_post_id" );
+    }
+    
+    if ( $attr['post_type'] == 'post' ) {
+      $attr['category_name'] = bw_array_get( $attr, "category_name", NULL );
+      $attr['category'] = bw_array_get( $attr, "category", null );
+      if ( NULL == $attr['category_name'] && null == $attr['category'] ) {
+        $categories = bw_get_categories();
+        if ( $categories ) {
+          $attr['category_name'] = $categories;
+        } else {
+          // What do we do now? 
+        }    
+      }  
+    }
+          
+    $attr['numberposts'] = bw_array_get( $attr, "numberposts", -1 );
+    $attr['orderby'] = bw_array_get( $attr, "orderby", "title" );
+    $attr['order'] = bw_array_get( $attr, "order", "ASC" );
+  } else {
+    $attr['p'] = $id; 
+    $attr['page_id'] = $id; 
+    $attr['post__in'] = array( $id ); 
   }
-  
-  if ( $attr['post_type'] == 'post' ) {
-    $attr['category_name'] = bw_array_get( $attr, "category_name", NULL );
-    if ( NULL == $attr['category_name'] ) {
-      $categories = bw_get_categories();
-      $attr['category_name'] = $categories;
-    }  
-  }
-        
-  $attr['numberposts'] = bw_array_get( $attr, "numberposts", -1 );
-  $attr['orderby'] = bw_array_get( $attr, "orderby", "title" );
-  $attr['order'] = bw_array_get( $attr, "order", "ASC" );
-  
   // Regardless of the post type, exclude the current post, 
   // Note: This could also be improved **?**
   $attr['exclude'] = bw_array_get_dcb( $attr, "exclude", NULL, "bw_global_post_id" );
+  
+  // set suppress_filters to false when global bw_filters is set
+  global $bw_filter;
+  if ( isset( $bw_filter ) ) {
+    $attr['suppress_filters'] = false;
+  }
   
   bw_trace( $attr, __FUNCTION__, __LINE__, __FILE__, "attr" );
   
@@ -318,13 +346,14 @@ function bw_get_posts( $atts = NULL ) {
  * Get the post / custom post type identified by the ID and post type
  * 
  * Note: If we know the ID then why not just call get_post()? **?**  2012/11/03
+ * Changed from is_int() to is_numeric() but not yet done above 2012/12/03
  */
 function bw_get_post( $post_id, $post_type, $atts=null ) {
   if ( null == $atts ) {
     $atts = array();
   }  
-  if ( is_int( $post_id ) ) { 
-    $atts['include']= $post_id;
+  if ( is_numeric( $post_id ) ) { 
+    $atts['include'] = $post_id;
   } else {
     $atts['name'] = $post_id;  
   }    
@@ -335,9 +364,33 @@ function bw_get_post( $post_id, $post_type, $atts=null ) {
     $post = bw_array_get( $posts, 0, null );
   } else {
     // gobang() or doingitwrong or something
+    $post = null;
   }  
   bw_trace2( $post );
   return( $post );
 }
 
+/**
+ * Load posts by meta_key array 
+ *
+ * @param string $post_type - the post type required
+ * @param string $meta_key - the name of the meta value to match
+ * @param array $value_array - the set of values to load 
+ * @return array $posts - the array of posts returned
+ * 
+ */
+function bw_get_by_metakey_array( $post_type, $meta_key, $value_array ) { 
+  $atts = array();
+  $atts['post_type'] = $post_type;
+  $atts['numberposts'] = -1; 
+  $meta_query = array();
+  $meta_query[] = array( "key" => $meta_key
+                       , "value" => $value_array 
+                       , "compare" => "IN"  
+                       );
+  $atts['meta_query'] = $meta_query;
+  $atts['exclude'] = -1;
+  $posts = bw_get_posts( $atts ); 
+  return( $posts );
+} 
 

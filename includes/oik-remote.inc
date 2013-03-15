@@ -38,6 +38,7 @@ function bw_retrieve_result( $request ) {
     } else {
       $result = maybe_unserialize( $response ); //json_decode( $json );
     }
+    //bw_trace2( "can we see cookies?", "can we?" );
   } else {
     bw_trace2( $response_code, "unexpected response_code" );
     $response_message = wp_remote_retrieve_response_message( $request );
@@ -161,7 +162,7 @@ function oik_check_for_update( $plugin, $version ) {
         //bw_trace2( $result->new_version, "new version", false );
         //bw_trace2( $version, "old version", false );
         //bw_trace2( $vc, "vc result", false );
-        if( version_compare( $result->new_version, $version, '>' ) ) {
+        if( isset( $result->new_version ) && version_compare( $result->new_version, $version, '>' ) ) {
           $response = $result;  
           bw_trace2();
         }  

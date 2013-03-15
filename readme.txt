@@ -1,9 +1,9 @@
 === oik ===
 Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
-Tags: shortcodes, PayPal, buttons, Artisteer, widget, key information, trace, blocks, buddypress, pages, bookmarks, images, attachments, smart, lazy
+Tags: shortcodes, PayPal, buttons, Artisteer, widget, key information, trace, blocks, pages, bookmarks, images, attachments, smart, lazy
 Requires at least: 3.0.4
-Tested up to: 3.4.2
+Tested up to: 3.5.1
 Stable tag: 1.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -88,6 +88,27 @@ The Application Programming Interface (API) reference is constantly being update
 9. oik header image plugin - custom header image for a page 
 
 == Upgrade Notice ==
+= 2.0-alpha.0315 =
+Another alpha test version
+
+= 2.0-alpha.0307 =
+Alpha test version.
+
+= 2.0-alpha.0304 =
+Required for oik-tunes and oik-squeeze v0.2
+
+= 2.0-alpha.0302 =
+Required for oik-tunes. 
+
+= 2.0-alpha.0222 =
+Preparing for oik v2.0. Child plugins no longer delivered. See oik-plugins.com
+
+= 1.17.1212 =
+Version required for oik-squeeze v0.1.1212
+
+= 1.17.1204 =
+Specially for users with PHP 5.3.2 or less. 
+
 = 1.17 =
 This new version includes support for FREE and Premium oik plugins which are hosted on www.oik-plugins.com (or www.oik-plugins.co.uk) rather than WordPress.org
 Child plugins relocate themselves when activated. Child plugins have a version number of 1.18 
@@ -116,6 +137,57 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.0-alpha.0315 =
+* Added: jquery.cycle.all.min.js - Minified jQuery cycle
+* Added: support for multiple selection noderef fields - required by oik-shortcodes
+* Added: atdot= parameter for [bw_email] and [bw_mailto] - converts "name@example.com" to "name at example dot com", or provide your own value
+* Changed: Improved some comments for automatic documentation
+
+= 2.0-alpha.0307 =
+* Changed: bw_get_metakey_array() uses exclude=-1 to allow the current post to be included in the results
+* Changed: Example for the [bw_accordion] shortcode
+* Changed: Example for the [bw_tabs] shortcode
+* Changed: bw_jkw() now uses the JSON_FORCE_OBJECT option in addition to JSON_NUMERIC_CHECK
+* Added: jQuery fancybox-1.3.4 (incl. easing-1.3 and mousewheel-3.0.4), plus images and CSS
+
+= 2.0-alpha.0304 =
+* Added: jquery.cycle.all.js (latest version, but not a packed one).
+* Changed: code for [bw_jq] shortcode will now attempt to find the jQuery script file in plugins it's aware of (prototype version)
+
+= 2.0-alpha.0302 =
+* Added: [bw_link] shortcode
+
+= 2.0-alpha.0222 =
+* Added: Support for the id=nn, parameter for ALL shortcodes listing posts, pages or custom post types
+* Changed: oik version now determined from Template
+* Changed: Allow for blank "date" fields. Needed for oik-batchmove plugin
+* Changed: _bw_missing_shortcodefunc() now returns the message to the page
+
+= 1.18.0219 = 
+* Removed: The oik base plugin no longer delivers child plugins. These are now standalone.
+* Added: oik user options - fields can now be set per user
+* Added: Support for user=id|login|email|nicename parameter on: [bw_address], [bw_geo], [bw_telephone] and related shortcodes 
+* Added: [bw_accordion] shortcode - display posts as an accordion
+* Added: [bw_tabs] shortcode - display posts in tab blocks
+* Added: [bw_jq] shortcode - perform a jQuery method. 
+* Added: jQuery Flexslider v2.1 ( from Woo Themes )
+* Added: [bw_login], [bw_logout] and [bw_register] shortcodes
+* Changed: Restructured include files - some shortcode functions moved to shortcodes folder
+
+= 1.17.1212
+* Added: [bw_iframe] shortcode
+* Added: [bw_parent] shortcode
+* Changed: bw_textfield() and bw_emailfield() use current $_REQUEST value if null passed
+* Changed: iselect() identifies the selected item from the key or value
+
+= 1.17.1204
+* Fixed: replaced calls to is_int() with is_numeric() when checking for post_id rather than names
+* Fixed: bw_array_get_dcb() checks the obtained value to be identical to the default before calling the deferred call back function
+* Fixed: bw_load_noderef() sets the post_parent to 0 before calling bw_get_posts() 
+* Added: phpdoc comments for some functions
+* Added: bw_json_encode() to support users of oik-nivo-slider with PHP 5.3.2 or less
+* Fixed: bw_jkv() uses bw_json_encode() - to avoid getting Warnings when using PHP 5.3.2 or less
+
 = 1.17 =
 * Added: bw_wp_error() and includes\bw_error.inc - wrapper to WP_error
 * Added: support for plugin relocation during "pre_current_active_plugins"

@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012 
+<?php // (C) Copyright Bobbing Wide 2012, 2013
 
 
 /**
@@ -68,7 +68,6 @@ function _bw_lazy_sc_syntax( $shortcode ) {
   $syntax = $funcname( $shortcode );
   return( $syntax );
 }  
-  
 
 function bw_lazy_sc_syntax( $shortcode ) {
   stag("code");
@@ -89,22 +88,20 @@ function bw_report_scripts() {
   global $wp_scripts, $bw_scripts;
   if ( $wp_scripts != $bw_scripts ) {
     p( "Some scripts were changed!" );
-    
   }
 }
 
 /** 
  * Produce the HTML snippet of the shortcode output
-*/
+ *
+ * @param string $shortcode - name of the shortcode
+ * @param string $atts - shortcode parameters e.g class="bw_code"
+ */
 function _sc__snippet( $shortcode="bw_code", $atts=null ) {
   $example = "[$shortcode";
-  if ($atts ) 
+  if ( $atts ) 
     $example .= " $atts";
   $example .= ']';
-
-  if ( $example == null ) {    
-    $example = "[$shortcode]"; 
-  } 
   bw_save_scripts(); 
   bw_push();
   $formatted_example = apply_filters( 'the_content', $example ); 
@@ -116,6 +113,7 @@ function _sc__snippet( $shortcode="bw_code", $atts=null ) {
   e( $escaped_example );
   etag( "p" );
 }
+
 
 function bw_lazy_sc_snippet( $shortcode=null, $example=null ) {
   $funcname = bw_load_shortcode_suffix( $shortcode, "__snippet" ); 
@@ -152,6 +150,7 @@ function _sc__help( $shortcode="bw_code" ) {
 "bw" => "Expand to the logo for Bobbing Wide",
 "bw_abbr" => "Format an abbreviation",
 "bw_acronym" => "Format an acronym",
+"bw_accordion" => "Display posts in an accordion",
 "bw_address" => "Display the address",
 "bw_admin" => "Display the Admin contact name",
 "bw_alt_slogan" => "Alternative slogan",
@@ -206,6 +205,7 @@ function _sc__help( $shortcode="bw_code" ) {
 "bw_show_googlemap" => "Show Google map [bw_show_googlemap]",
 "bw_skype" => "Skype name",
 "bw_slogan" => "Primary slogan",
+"bw_tabs" => "Display posts in tabbed blocks",
 "bw_tel" => "Telephone number (inline)",
 "bw_telephone" => "Telephone number (block)",
 "bw_thumbs" => "List pages as fluid thumbnail links",
@@ -315,6 +315,7 @@ function _sc_posts() {
                , 'post_mime_type'  => bw_skv( null, "image|application|text|video|mime type", "Attached media MIME type" )
                , 'post_parent'     => bw_skv( null, "ID", "Parent ID to use if not current post" )
                , 'post_status'     => bw_skv( 'publish', "pending|draft|auto-draft|future|private|trash|any", "Post status" )
+               , 'id'              => bw_skv( null, "ID", "ID of post to display"  )
                ));
 } 
 
@@ -341,14 +342,17 @@ function sdiv__syntax() {
   return( $syntax );
 }
 
-/** We don't provide an example for the [div] shortcode as we want to deliver it using the shortcode server
-  where it can be created in the __oik_sc_example field
+// We don't provide an example for the [div] shortcode as we want to deliver it using the shortcode server
+// where it can be created in the __oik_sc_example field
+/*
 function div__example() {
 
   return( $example );
 }
 */
  
+/**
+ */
 function ediv__help() { 
   return( esc_html( "end a <div> with </div>") );
 }
@@ -549,8 +553,9 @@ function bw_address__syntax( $shortcode="bw_address" ) {
 }
 
 function bw_address__example( $shortcode="bw_address" ) {
- p( "Display the address defined in oik options" );
- e( bw_address() );
+  $text = "Display the address defined in oik options" ;
+  $example = '';
+  bw_invoke_shortcode( $shortcode, $example, $text );
 }
 
 /**
