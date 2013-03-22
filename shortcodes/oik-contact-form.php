@@ -1,5 +1,19 @@
 <?php // (C) Copyright Bobbing Wide 2013
 
+/** 
+ * Return a unique contact form ID 
+ *
+ * @param bool $set - increment the ID if true
+ * @return string - the contact form ID  - format oiku_contact-$bw_contact_form_id
+ */
+function bw_contact_form_id( $set=false ) {
+  static $bw_contact_form_id = 0;
+  if ( $set ) {
+    $bw_contact_form_id++;
+  }
+  return( "oiku_contact-$bw_contact_form_id" );
+}
+
 /**
  * Implements the [bw_contact_form] shortcode
  * 
@@ -7,15 +21,9 @@
  * 
  */
 function bw_contact_form( $atts=null, $content=null, $tag=null ) {
-  //oik_require( "shortcodes/oik-user.php", "oik-user" );
-  //$id = bw_array_get_dcb( $atts, "user", false, "bw_default_user" );
   $email_to = bw_get_option_arr( "email", null, $atts );
-  //$user = bw_get_user( $id );
   if ( $email_to ) { 
-    // e( "Send email to " . $user->user_email );
     $atts['email'] = $email_to; 
-    //$atts['form'] = bw_array_get( $atts, "form", "oik" );
-    // $atts['text'] = bw_array_get_dcb( $atts, "text", "text", "oikifs_default" );
     bw_display_contact_form( $atts );
   } else { 
     e( "Cannot produce contact form for unknown user." );
@@ -44,19 +52,38 @@ function _bw_show_contact_form_oik( $atts ) {
   bw_textfield( "oiku_subject", 30, "Subject", null, "textBox" );
   bw_textarea( "oiku_text", 40, "Message", null, 10 );
   etag( "table" );
+  e( wp_nonce_field( "_oik_contact_form", "_oik_contact_nonce", false ) );
   e( ihidden( "oiku_email_to", $email_to ) );
-  e( isubmit( "oiku_contact", $text, null ) );
+  e( isubmit( bw_contact_form_id(), $text, null ) );
   etag( "form" );
   ediv();
+}
+
+/**
+ * Verify the nonce field
+ * @param string $action - the action passed on the call to wp_nonce_field()
+ * @param string $name - the name passed on the call to wp_nonce_field() 
+ * @return bool - 1 or 2 if verified, false if not
+ * 
+ */
+function bw_verify_nonce( $action, $name ) {
+  $nonce_field = bw_array_get( $_REQUEST, $name, null );
+  $verified = wp_verify_nonce( $nonce_field, $action );
+  bw_trace2( $verified, "wp_verify_nonce?" );
+  return( $verified );
 }  
 
 /**
  * Show/process a contact form using oik
  */
 function bw_display_contact_form( $atts, $user=null ) {
-  $contact = bw_array_get( $_REQUEST, "oiku_contact", null );
+  $contact_form_id = bw_contact_form_id( true );
+  $contact = bw_array_get( $_REQUEST, $contact_form_id, null );
   if ( $contact ) {
-     $contact = _bw_process_contact_form_oik();
+     $contact = bw_verify_nonce( "_oik_contact_form", "_oik_contact_nonce" );
+     if ( $contact ) {
+       $contact = _bw_process_contact_form_oik();
+     }
   }
   if ( !$contact ) { 
     _bw_show_contact_form_oik( $atts, $user );
