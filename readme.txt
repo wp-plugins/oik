@@ -88,6 +88,9 @@ The Application Programming Interface (API) reference is constantly being update
 9. oik header image plugin - custom header image for a page 
 
 == Upgrade Notice ==
+= 2.0-alpha.0322 = 
+Required for oik-user 
+
 = 2.0-alpha.0315 =
 Another alpha test version
 
@@ -137,6 +140,12 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.0-alpha.0322 =
+* Added: [bw_contact_form] with Akismet checking and copy email sent to visitor
+* Added: atdot=, at= and dot= parameters for email display obfuscation on [bw_mailto] and [bw_email]
+* Added: bw_default_user() and bw_get_current_user_id() APIs for use by oik-user
+* Changed: bw_get_option_arr() to determine how to support user= and alt= parameters if oik-user is active
+
 = 2.0-alpha.0315 =
 * Added: jquery.cycle.all.min.js - Minified jQuery cycle
 * Added: support for multiple selection noderef fields - required by oik-shortcodes

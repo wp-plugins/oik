@@ -99,7 +99,6 @@ function bw_get_user_field( $ID, $field, $set=null ) {
   return( $option );
 }
 
-
 /**
  * Return user information 
  *
@@ -144,12 +143,51 @@ function bw_get_user_option( $user, $field, $set=null ) {
     $option = bw_get_user_field( $ID, $field, $set );
   } else {
     bw_trace2( "Invalid user" );
-    gobvang();
     $option = null;
   } 
   bw_trace2( $option, "option" );
   return( $option ); 
 }
+
+/**
+ * Return the default user ID
+ *
+ * Try the current post and if that's no good the current user (if $parm is true )
+ * @param bool/string $parm - whether or not to attempt to retrieve the current user ID. In most cases this will be false.
+ * @return integer - the default user ID to use or null
+ *
+ */
+function bw_default_user( $parm=false ) {
+  $post = bw_global_post();
+  // bw_trace2( $post );
+  if ( $post ) {
+    $id = $post->post_author;
+  } else {
+    if ( $parm ) {
+      $id = bw_get_current_user_id();
+    } else {
+      $id = null;
+    }
+  }
+  return( $id );
+}
+
+/**
+ * Return the current user ID if there is one
+ * 
+ * @return ID|null - the current user ID or null
+ */
+function bw_get_current_user_id() {
+  $user = wp_get_current_user();
+  if ( $user ) {
+    $id = $user->ID;
+  }
+  else {
+    $id = null;
+  }
+  return( $id );
+}  
+
 
 /**
  * Retrieve the requested option value depending on the $atts array
@@ -159,15 +197,28 @@ function bw_get_user_option( $user, $field, $set=null ) {
  * @param array $atts - the set of parameters which may include user= or alt= values
  * @return string - the value of the required option or null
  * 
- * The user= keyword overrides the alt= keyword. We're trying to eliminate alt=1 or alt=2 in favour of user fields. Does that make sense **?**
+ * The user= keyword overrides the alt= keyword. We're trying to eliminate alt=1 or alt=2 in favour of user fields. 
+ * Note: The author is null when there is no current post being processed.
+ * <pre>
+ * oik-user  user=  author  processing
+ * --------- -----  ------  ----------
+ * active    set    n/a     use the value specified for the user options
+ * active    null   null    use oik options
+ * active    null   set     use the user options
  * 
+ * inactive  n/a    n/a     always use oik-options or the alt= value
+ * </pre>
  */
 function bw_get_option_arr( $field, $set="bw_options", $atts=null ) {
-  $user = bw_array_get( $atts, "user", null );
-  bw_trace2();
-  if ( $user && is_callable( "bw_get_user_option" ) ) {
-    $option = bw_get_user_option( $user, $field, $set );
+  if ( is_callable( "oiku_loaded" ) ) {
+    $user = bw_array_get_dcb( $atts, "user", false, "bw_default_user" );
+    if ( $user ) {
+      $option = bw_get_user_option( $user, $field, $set );
+    }  
   } else {
+    $user = null; 
+  }
+  if ( !$user ) { 
     $alt = bw_array_get( $atts, "alt", null );
     if ( !$set ) {
       $set="bw_options";
@@ -348,7 +399,11 @@ function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL,
 function bw_array_get_dcb( $array = array(), $index, $default = NULL, $callback='__' ) {
   $value = bw_array_get( $array, $index, $default );
   if ( $value === $default ) {
-    $value = $callback( $default ); 
+    if ( is_callable( $callback ) ) {
+      $value = call_user_func( $callback, $default ); 
+    } else {
+      bw_backtrace();
+    }
   }  
   return( $value );  
 }
