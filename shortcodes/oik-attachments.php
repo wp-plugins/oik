@@ -122,12 +122,8 @@ function bw_link_attachment( $post, $atts ) {
  *
  */
 function bw_format_attachment( $post, $atts ) {
-  //  setup_postdata( $post );
   bw_trace2();
   $atts['title'] = get_the_title( $post->ID );
-  //$read_more = bw_array_get( $atts, "read_more", "read more" );
-  //$thumbnail = bw_thumbnail( $post->ID, $atts );
-  
   $in_block = bw_validate_torf( bw_array_get( $atts, "block", 'n'));
   if ( $in_block ) { 
     oik_require( "shortcodes/oik-blocks.php" );

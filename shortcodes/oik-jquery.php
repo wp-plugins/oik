@@ -95,7 +95,7 @@ function _bw_jquery_known_sources( $script ) {
  */
 function bw_jquery_filename( $script, $debug ) {
   if ( !$debug ) { 
-    $packormins = array( "cycle.all" => ".min" );
+    $packormins = array( "cycle.all" => ".min", "countdown" => ".min" );
     $extra = bw_array_get( $packormins, $script, ".pack" );
   } else {
     $devs = array( "form" => "dev" );
@@ -122,6 +122,8 @@ function bw_jquery_script_plugin_file( $script, $debug ) {
   $plugin = bw_array_get( $plugins, $script, null );
   if ( $plugin ) {
     $script_file = bw_jquery_locate_script_file( $plugin, $script, $debug );
+  } else {
+    $script_file = null;
   }
   return( $script_file );
 }   
@@ -203,6 +205,7 @@ function bw_jquery_enqueue_script( $script, $debug=false ) {
 function bw_jquery_enqueue_style_url( $script ) {
   $styles = array( "flexslider" => "flexslider.css" 
                  , "fancybox-1.3.4" => "jquery.fancybox-1.3.4.css" 
+                 , "countdown" => "jquery.countdown.css"
                  );
   $style = bw_array_get( $styles, $script, null );
   if ( $style ) {
@@ -264,8 +267,16 @@ function bwsc_jquery( $atts=null, $content=null, $tag=null ) {
   } else {
     if ( "?" == $method ) {
       bw_list_wp_scripts();
-    } else {    
-      p( "Invalid parameters for [bw_jq] shortcode" );
+    } else { 
+      $src = bw_array_get( $atts, "src", null );
+      if ( $src ) {
+        $parms = kv( "src", $src );
+        $parms .= kv( "type", "text/javascript");
+        stag( "script", null, null, $parms ); 
+        etag( "script" ); 
+      } else {
+        p( "Invalid parameters for [bw_jq] shortcode" );
+      }
     }
   }    
   return( bw_ret() );
@@ -404,6 +415,7 @@ function bw_jq__syntax( $shortcode = "bw_jq" ) {
                  , "debug" => bw_skv( false, "<i>bool</i>", "Use true when you want to debug the jQuery" )
                  , "windowload" => bw_skv( false, "<i>bool</i>", "Use true when the jQuery is to run when the window has loaded" )
                  , "parms" => bw_skv( null, "<i>parm=value1,parm2=value2</i>", "Variable list of parameters" )
+                 , "src" => bw_skv( null, "<i>URL</i>", "Full URL of JavaScript" )
                  );
   return( $syntax );
 }                  

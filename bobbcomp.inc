@@ -188,7 +188,6 @@ function bw_get_current_user_id() {
   return( $id );
 }  
 
-
 /**
  * Retrieve the requested option value depending on the $atts array
  *
@@ -197,32 +196,44 @@ function bw_get_current_user_id() {
  * @param array $atts - the set of parameters which may include user= or alt= values
  * @return string - the value of the required option or null
  * 
- * The user= keyword overrides the alt= keyword. We're trying to eliminate alt=1 or alt=2 in favour of user fields. 
+ * We're trying to eliminate alt=1 or alt=2 in favour of user fields but only if oik-user is active.
+ * The alt= keyword overrides the user= keyword, for backward compatibility
+ * Use user=0 or alt=0 to force the use of "oik options"
+ * Use alt=1 or alt=2 to use "more options" or "more options 2" 
+ *
  * Note: The author is null when there is no current post being processed.
  * <pre>
- * oik-user  user=  author  processing
- * --------- -----  ------  ----------
- * active    set    n/a     use the value specified for the user options
- * active    null   null    use oik options
- * active    null   set     use the user options
- * 
- * inactive  n/a    n/a     always use oik-options or the alt= value
+ * oik-user  alt=  user=  author  processing
+ * --------  ----  -----  ------  --------------------------------------------
+ * active    set   n/a    n/a     use the alt= value ( 0 is treated as '' )
+ * active    null  set    n/a     use the value specified for the user options
+ * active    null  null   null    use oik options
+ * active    null  null   set     use the user options
+ *                 
+ * inactive  set   n/a    n/a     use the alt= value
+ * inactive  null  n/a    n/a     use the oik options 
  * </pre>
  */
 function bw_get_option_arr( $field, $set="bw_options", $atts=null ) {
+  $alt = bw_array_get( $atts, "alt", null );
   if ( is_callable( "oiku_loaded" ) ) {
-    $user = bw_array_get_dcb( $atts, "user", false, "bw_default_user" );
-    if ( $user ) {
-      $option = bw_get_user_option( $user, $field, $set );
+    if ( $alt === null ) {
+      $user = bw_array_get_dcb( $atts, "user", false, "bw_default_user" );
+      if ( $user ) {
+        $option = bw_get_user_option( $user, $field, $set );
+      }
+    } else { 
+      $user = null;
     }  
   } else {
     $user = null; 
   }
   if ( !$user ) { 
-    $alt = bw_array_get( $atts, "alt", null );
     if ( !$set ) {
       $set="bw_options";
     }
+    if ( $alt == "0" )  
+      $alt = "";
     $option = bw_get_option( $field, "$set$alt" );
   }
   return( $option );  
@@ -534,6 +545,10 @@ function bw_get_yearfrom() {
 
 /** 
  * Simple wrapper to get_users
+ *
+ * @param array $atts - array of key value pairs 
+ * Default parameters to get_users() are:
+ * <pre>
  
 				'blog_id' => $GLOBALS['blog_id'],
 				'role' => '',
@@ -550,16 +565,40 @@ function bw_get_yearfrom() {
 				'count_total' => true,
 				'fields' => 'all',
 				'who' => ''
-    
+  </pre>                                
+ * @return array - array of user objects  
  *
  */
 function bw_get_users( $atts = NULL ) {
   $atts['orderby'] = bw_array_get( $atts, "orderby", "registered" );
   $atts['number'] = bw_array_get( $atts, "number", 1 );
-
   $users = get_users( $atts );
   return( $users );
+}
 
+/** 
+ * Build a simple ID, title array from an array of $user objects
+ * @param array $user - array of user objects
+ * @return array - associative array of user ID to user_title
+ */
+if ( !function_exists( "bw_user_array" ) ) { 
+function bw_user_array( $users ) {
+  $options = array();
+  foreach ($users as $user ) {
+    $options[$user->ID] = $user->display_name; 
+  }
+  return bw_trace2( $options );
+}
+
+/**
+ * Return an associative array of all users
+ * @return array - associative array of user ID to user_title
+ */
+function bw_user_list() {
+  $users = bw_get_users( array( "number" => "" )) ;
+  $userlist = bw_user_array( $users );
+  return( $userlist );
+}
 }
 
 /** 

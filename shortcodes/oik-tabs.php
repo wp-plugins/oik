@@ -83,15 +83,10 @@ function bw_format_tabs( $post, $atts, $selector ) {
   $id = $selector . '-' . $post->ID; 
   sdiv( "group", $id );
     if ( $thumbnail ) {
-      sdiv( "avatar alignleft" );
-      bw_link_thumbnail( $thumbnail, $post->ID, $atts );
-      ediv();
+      bw_format_thumbnail( $thumbnail, $post, $atts );
     }   
     e( bw_excerpt( $post ) );
-    sp();
-    $read_more = bw_more_text( null, $atts );
-    art_button( get_permalink( $post->ID ), $read_more, $read_more ); 
-    ep(); 
+    bw_format_read_more( $post, $atts );
     sediv( "cleared" );
   ediv();
 }

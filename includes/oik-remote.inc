@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012
+<?php // (C) Copyright Bobbing Wide 2012, 2013
 
 /**
  * Wrapper to wp_remote_get
@@ -129,6 +129,76 @@ function oik_lazy_altapi_check( $transient ) {
 
 
 /**
+ * 
+ 
+  
+
+
+option__site_transient_update_themes stdClass Object
+(
+    [last_checked] => 1367174636
+    [checked] => Array
+        (
+            ...
+            [designfolio] => 1.22
+            ...
+            [oik120206] => 1.0
+            [oik120206c] => 
+            [oik2012] => 0.2
+            [oik20120] => 0.1
+            ...
+            [thematic] => 1.0.3.2
+            ...
+        )
+
+    [response] => Array
+        (
+            [designfolio] => Array
+                (
+                    [new_version] => 1.23
+                    [url] => http://wordpress.org/extend/themes/designfolio
+                    [package] => http://wordpress.org/extend/themes/download/designfolio.1.23.zip
+                )
+
+            [thematic] => Array
+                (
+                    [new_version] => 1.0.4
+                    [url] => http://wordpress.org/extend/themes/thematic
+                    [package] => http://wordpress.org/extend/themes/download/thematic.1.0.4.zip
+                )
+
+        )
+
+*/
+
+function oik_lazy_alttheme_check( $transient ) {
+  static $checks = 0;
+  static $responses = array();
+  static $responses_built = false;
+  $checks++;
+  bw_trace2( $checks, "checks" );
+  if ( !$responses_built ) {
+    $checked = bw_array_get( $transient, "checked", null );
+    if ( $checked ) {
+      foreach ( $checked as $theme => $version ) {
+        $response = oik_check_for_theme_update( $theme, $version );
+        if ( $response && !is_wp_error( $response ) ) {
+          $responses[$theme] = $response;
+        }  
+      } 
+      $responses_built = true;
+    }
+  }
+  if ( $responses_built ) {
+    foreach ( $responses as $theme => $response ) {      
+      $transient->response[$theme] = $response;
+    }
+    bw_trace2( $responses, "transient updated" );
+  } 
+  return( $transient );  
+}
+
+/**
  * Check an oik-plugins server for an updated plugin 
  * @param string $plugin plugin name e.g. oik-edd/oik-edd.php
  * @param string $version currently installed version e.g 1.03
@@ -172,6 +242,55 @@ function oik_check_for_update( $plugin, $version ) {
   return( $response );    
 }
 
+
+/**
+ * Check an oik-themes server for an updated theme
+ * @param string $theme theme name e.g. oik-edd/oik-edd.php
+ * @param string $version currently installed version e.g 1.03
+ * @return $response if there is a new version else null
+ *
+ * Note: We pass the API key even if it doesn't get used in the server
+ *
+ */
+function oik_check_for_theme_update( $theme, $version ) {
+  bw_trace2();
+  $response = null;
+  $theme_settings = oik_query_themes_server( $theme );
+  if ( $theme_settings ) {
+    $url = bw_array_get( $theme_settings, 'server', null );
+    $url .= '/themes/update-check/';
+    $apikey = bw_array_get( $theme_settings, 'apikey', null );
+    $body = array( "action" => "update-check" 
+                 , "theme_name" => $theme 
+                 , "version" => $version
+                 , "apikey" => $apikey
+                 );
+    $args = array( "body" => $body );
+    $result = bw_remote_post( $url, $args ); 
+    if ( $result ) {
+      bw_trace2( $result, "result-ocftu" );
+      if ( is_wp_error( $result ) ) {
+        $response = $result;
+      } else { 
+        if( isset( $result->new_version ) && version_compare( $result->new_version, $version, '>' ) ) {
+          // WordPress will issue a Fatal if this is an object.
+          $response = (array) $result;  
+          bw_trace2( $response, "response=returned-result");
+        } else {
+          // These can produce info messages if $result->new_version is not set  
+          // bw_trace2( $result->new_version, "$version!", false ); 
+          // $vc = version_compare( $result->new_version, $version, ">" );
+          // bw_trace2( $result->new_version, "new version", false );
+          bw_trace2( $version, "old version", false );
+          bw_trace2( $vc, "vc result", false );
+        }
+      }  
+    } else {
+      //gobang();
+    } 
+  }
+  return( $response );    
+}
 
 /**
  * Determine if this is one of "our" plugins

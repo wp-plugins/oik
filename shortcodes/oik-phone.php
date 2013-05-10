@@ -25,7 +25,6 @@ function _bw_telephone( $atts=null ) {
   $prefix = bw_array_get_dcb( $atts, "prefix", "Tel" );
   $sep = bw_array_get( $atts, "sep", ": " );
   $number = bw_array_get( $atts, "number", null );
-  // $alt = bw_array_get( $atts, "alt", null );
   $index = bw_array_get( $atts, "index", "telephone" );
   $tag = bw_array_get( $atts, "tag", "div" );
   $class = bw_array_get( $atts, "class", null );

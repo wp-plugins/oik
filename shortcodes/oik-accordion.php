@@ -63,20 +63,11 @@ function bw_format_accordion( $post, $atts ) {
   h3( $atts['title'] );
   sdiv();
     if ( $thumbnail ) {
-      sdiv( "avatar alignleft" );
-      bw_link_thumbnail( $thumbnail, $post->ID, $atts );
-      ediv();
+      bw_format_thumbnail( $thumbnail, $post, $atts );
     }   
     e( bw_excerpt( $post ) );
-
-    sp();
-    $read_more = bw_more_text( null, $atts );
-    art_button( get_permalink( $post->ID ), $read_more, $read_more ); 
-    ep(); 
-    
-  
+    bw_format_read_more( $post, $atts ); 
   ediv();
-
 }
 
 function bw_accordion__syntax( $shortcode="bw_accordion" ) {

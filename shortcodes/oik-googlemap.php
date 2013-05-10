@@ -1,8 +1,6 @@
-<?php // (C) Copyright Bobbing Wide 2010-2012
-if ( defined( 'OIK_GOOGLEMAP_SHORTCODES_INCLUDED' ) ) return;
-define( 'OIK_GOOGLEMAP_SHORTCODES_INCLUDED', true );
+<?php 
 /*
-    Copyright 2011,2012 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2011-2013 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -116,10 +114,13 @@ function bw_show_googlemap( $atts=null ) {
   $lat = bw_array_get( $atts, "lat", null );
   $long = bw_array_get( $atts, "long", null );
   $alt = bw_array_get( $atts, "alt", null );
+  $alt = str_replace( "0", "", $alt );
   $postcode = bw_array_get( $atts, "postcode", null );
       
   // $company = bw_get_option( "company" );
   $gmap_intro = bw_get_option( "gmap_intro", "bw_options$alt" );
+  
+  //$gmap_intro = bw_get_option_arr( "gmap_intro", "bw_options", $atts );
   if ( $gmap_intro ) {
     p( bw_do_shortcode( $gmap_intro ) );
     bw_backtrace();

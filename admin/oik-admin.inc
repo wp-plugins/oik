@@ -74,6 +74,7 @@ function oik_options_add_page() {
   add_submenu_page( 'oik_menu', 'oik options', 'Options', 'manage_options', 'oik_options', 'oik_options_do_page');
   add_submenu_page( 'oik_menu', 'oik options-1', 'More Options', 'manage_options', 'oik_options-1', 'oik_options_do_page_1');
   add_submenu_page( 'oik_menu', 'oik plugins', 'Plugins', 'manage_options', 'oik_plugins', 'oik_plugins_do_page' );
+  add_submenu_page( 'oik_menu', 'oik themes', 'Themes', 'manage_options', 'oik_themes', 'oik_themes_do_page' );
   add_submenu_page( 'oik_menu', 'oik buttons', 'Buttons', 'manage_options', 'oik_buttons', 'oik_buttons_do_page' );
   add_submenu_page( 'oik_menu', 'oik shortcode help', "Shortcode help", 'manage_options', 'oik_sc_help', "oik_help_do_page" );
   //add_submenu_page( 'oik_menu', 'Trace options', 
@@ -289,6 +290,7 @@ function oik_menu() {
   oik_menu_header( "overview", "w70pc" );
   oik_box( NULL, NULL, "Shortcode options", "oik_shortcode_options" );
   oik_box( NULL, NULL, "Custom CSS", "oik_custom_css_box" );
+  do_action( "oik_menu_box" );
   oik_box( NULL, NULL, "Servers and keys", "oik_plugins_servers" );
   ecolumn();
   scolumn( "w30pc" );
@@ -318,12 +320,29 @@ function oik_plugins_do_page() {
   bw_flush();
 }
 
+/** 
+ * Draw the oik themes page
+ *
+*/ 
+function oik_themes_do_page() {
+  oik_themes_server_settings();
+  bw_flush();
+}
+
 /**
  * Process the oik plugins server settings page
  */
 function oik_plugins_server_settings() { 
   oik_require( "admin/oik-plugins.inc" ); 
   oik_lazy_plugins_server_settings();
+}  
+
+/**
+ * Process the oik themes server settings page
+ */
+function oik_themes_server_settings() { 
+  oik_require( "admin/oik-themes.inc" ); 
+  oik_lazy_themes_server_settings();
 }  
 
 /** 
@@ -339,11 +358,11 @@ function oik_options_do_page() {
   bw_flush();
 } 
 
-function oik_contact_numbers( $option, $options ) {
-  bw_textfield_arr( $option, "Telephone [bw_telephone] / [bw_tel]", $options, 'telephone', 50 );
-  bw_textfield_arr( $option, "Mobile [bw_mobile] / [bw_mob]", $options, 'mobile', 50 );
-  bw_textfield_arr( $option, "Fax [bw_fax]", $options, 'fax', 50 );
-  bw_textfield_arr( $option, "Emergency [bw_emergency]", $options, 'emergency', 50 );    
+function oik_contact_numbers( $option, $options, $alt0_suffix ) {
+  bw_textfield_arr( $option, "Telephone [bw_telephone$alt0_suffix] / [bw_tel$alt0_suffix]", $options, 'telephone', 50 );
+  bw_textfield_arr( $option, "Mobile [bw_mobile$alt0_suffix] / [bw_mob$alt0_suffix]", $options, 'mobile', 50 );
+  bw_textfield_arr( $option, "Fax [bw_fax$alt0_suffix]", $options, 'fax', 50 );
+  bw_textfield_arr( $option, "Emergency [bw_emergency$alt0_suffix]", $options, 'emergency', 50 );    
 } 
 
 function oik_company_info( $option, $options ) {  
@@ -355,9 +374,9 @@ function oik_company_info( $option, $options ) {
   bw_textfield_arr( $option, "Alt. slogan [bw_alt_slogan]", $options, 'alt-slogan', 50 );    
 }
 
-function oik_contact_info( $option, $options ) {  
-  bw_textfield_arr( $option, "Contact [bw_contact]", $options, 'contact', 50 );    
-  bw_textfield_arr( $option, "Email [bw_mailto]/[bw_email]", $options, 'email', 50 );    
+function oik_contact_info( $option, $options, $alt0_suffix ) {  
+  bw_textfield_arr( $option, "Contact [bw_contact$alt0_suffix]", $options, 'contact', 50 );    
+  bw_textfield_arr( $option, "Email [bw_mailto$alt0_suffix]/[bw_email$alt0_suffix]", $options, 'email', 50 );    
   bw_textfield_arr( $option, "Admin [bw_admin]", $options, 'admin', 50 );    
   bw_textfield_arr( $option, "Contact button page permalink [bw_contact_button]", $options, 'contact-link', 50 );    
   bw_textfield_arr( $option, "Contact button text", $options, 'contact-text', 50 );    
@@ -374,37 +393,50 @@ function oik_contact_info( $option, $options ) {
  *  postal-code      e.g.  PO9 6DE                        
  *  country-name     e.g.  UK 
  */
-function oik_address_info( $option, $options ) {    
-  bw_textfield_arr( $option, "Extended-address [bw_address]", $options, 'extended-address', 50 );
+function oik_address_info( $option, $options, $alt0_suffix ) {    
+  bw_textfield_arr( $option, "Extended-address [bw_address$alt0_suffix]", $options, 'extended-address', 50 );
   bw_textfield_arr( $option, "Street-address", $options, 'street-address', 50 );
   bw_textfield_arr( $option, "Locality", $options, 'locality', 50 );
   bw_textfield_arr( $option, "Region", $options, 'region', 50 );
   bw_textfield_arr( $option, "Post Code", $options, 'postal-code', 50 );
   bw_textfield_arr( $option, "Country name", $options, 'country-name', 50 );
   
-  bw_textarea_arr( $option, "Google Maps introductory text for [bw_show_googlemap]", $options, 'gmap_intro', 50 );
-  bw_textfield_arr( $option, "Latitude [bw_geo] [bw_directions]", $options, 'lat', 50 );
-  bw_textfield_arr( $option, "Longitude [bw_show_googlemap]", $options, 'long', 50 );
+  bw_textarea_arr( $option, "Google Maps introductory text for [bw_show_googlemap$alt0_suffix]", $options, 'gmap_intro', 50 );
+  bw_textfield_arr( $option, "Latitude [bw_geo$alt0_suffix] [bw_directions$alt0_suffix]", $options, 'lat', 50 );
+  bw_textfield_arr( $option, "Longitude [bw_show_googlemap$alt0_suffix]", $options, 'long', 50 );
 }
 
-function oik_follow_me( $option, $options ) {
-  bw_textfield_arr( $option, "Twitter URL [bw_twitter]", $options, 'twitter', 50 );
-  bw_textfield_arr( $option, "Facebook URL [bw_facebook]", $options, 'facebook', 50 );
-  bw_textfield_arr( $option, "LinkedIn URL [bw_linkedin]", $options, 'linkedin', 50 );
-  bw_textfield_arr( $option, "Google Plus URL [bw_googleplus]", $options, 'googleplus', 50 );
-  bw_textfield_arr( $option, "YouTube URL [bw_youtube]", $options, 'youtube', 50 );
-  bw_textfield_arr( $option, "Flickr URL [bw_flickr]", $options, 'flickr', 50 );
-  bw_textfield_arr( $option, "Picasa URL [bw_picasa]", $options, 'picasa', 50 );
-  bw_textfield_arr( $option, "Skype Name [bw_skype]", $options, 'skype', 50 );
+function oik_follow_me( $option, $options, $alt0_suffix ) {
+  bw_textfield_arr( $option, "Twitter URL [bw_twitter$alt0_suffix]", $options, 'twitter', 50 );
+  bw_textfield_arr( $option, "Facebook URL [bw_facebook$alt0_suffix]", $options, 'facebook', 50 );
+  bw_textfield_arr( $option, "LinkedIn URL [bw_linkedin$alt0_suffix]", $options, 'linkedin', 50 );
+  bw_textfield_arr( $option, "Google Plus URL [bw_googleplus$alt0_suffix]", $options, 'googleplus', 50 );
+  bw_textfield_arr( $option, "YouTube URL [bw_youtube$alt0_suffix]", $options, 'youtube', 50 );
+  bw_textfield_arr( $option, "Flickr URL [bw_flickr$alt0_suffix]", $options, 'flickr', 50 );
+  bw_textfield_arr( $option, "Picasa URL [bw_picasa$alt0_suffix]", $options, 'picasa', 50 );
+  bw_textfield_arr( $option, "Skype Name [bw_skype$alt0_suffix]", $options, 'skype', 50 );
 } 
+
+/**
+ * Return the alt=0 suffix if required when oik-user is loaded
+ */ 
+function _oik_alt0_suffix() {
+  if ( function_exists( "oiku_loaded" ) ) {
+    $alt0_suffix = " alt=0";
+  } else {
+    $alt0_suffix = "";
+  }
+  return( $alt0_suffix ); 
+}
 
 function oik_main_shortcode_options() {
   $option = 'bw_options'; 
   $options = bw_form_start( $option, 'oik_options_options' );
-  oik_contact_numbers( $option, $options );
+  $alt0_suffix = _oik_alt0_suffix();
+  oik_contact_numbers( $option, $options, $alt0_suffix );
   oik_company_info( $option, $options );
-  oik_contact_info( $option, $options );
-  oik_address_info( $option, $options );
+  oik_contact_info( $option, $options, $alt0_suffix );
+  oik_address_info( $option, $options, $alt0_suffix );
 
   bw_textfield_arr( $option, "Google Map width", $options, 'width', 10 );
   bw_textfield_arr( $option, "Google Map height", $options, 'height', 10 );
@@ -414,7 +446,7 @@ function oik_main_shortcode_options() {
   bw_checkbox_arr( $option, "Do NOT use the oik.css styling. <br />Check this is you don't want to use the oik provide CSS styling", $options, "oikCSS" ); 
   bw_textfield_arr( $option, "Custom CSS in theme directory:<br />" . get_stylesheet_directory_uri(), $options, 'customCSS', 50 );
   
-  oik_follow_me( $option, $options );
+  oik_follow_me( $option, $options, $alt0_suffix );
   
   bw_textfield_arr( $option, "PayPal email [bw_paypal]", $options, 'paypal-email', 50 );
   bw_textfield_arr( $option, "PayPal country", $options, 'paypal-country', 50 );
@@ -460,23 +492,22 @@ function oik_main_shortcode_options() {
   bw_flush();
 }
 
+/**
+ * Display usage notes for some oik shortcodes
+ */
 function oik_usage_notes() {
+  $alt0_suffix = str_replace( " ", "", _oik_alt0_suffix() );
   oik_require( "includes/oik-sc-help.inc" );
   p( "Use the shortcodes in your pages, widgets and titles. e.g." );
-  bw_invoke_shortcode( "bw_contact", null, "Display your contact name" );
-  bw_invoke_shortcode( "bw_telephone", null, "Display your telephone number." );     
-  bw_invoke_shortcode( "bw_address", null, "Display your address." );
-  bw_invoke_shortcode( "bw_email", null, "Display your email address." );
-
-  bw_invoke_shortcode( "bw_show_googlemap", null, "Display a Googlemap for your primary address." );
-  bw_invoke_shortcode( "bw_directions", null, "Display a button for obtaining directions to your address." );
-  bw_invoke_shortcode( "bw_follow_me", null, "Show all your <b>Follow me</b> buttons" );
-  
+  bw_invoke_shortcode( "bw_contact", $alt0_suffix, "Display your contact name" );
+  bw_invoke_shortcode( "bw_telephone", $alt0_suffix, "Display your telephone number." );     
+  bw_invoke_shortcode( "bw_address", $alt0_suffix, "Display your address." );
+  bw_invoke_shortcode( "bw_email", $alt0_suffix, "Display your email address." );
+  bw_invoke_shortcode( "bw_show_googlemap", $alt0_suffix, "Display a Googlemap for your primary address." );
+  bw_invoke_shortcode( "bw_directions", $alt0_suffix, "Display a button for obtaining directions to your address." );
+  bw_invoke_shortcode( "bw_follow_me", $alt0_suffix, "Show all your <b>Follow me</b> buttons" );
   p( "For more information about the shortcodes you can use select <b>Shortcode help</b>" );
-  
   alink( "button-secondary", admin_url( "admin.php?page=oik_sc_help"), "Shortcode help", "Discover shortcodes you can use" );
-  
-
   bw_flush();
 }
 
@@ -778,6 +809,16 @@ function oik_register_plugin_server( $file, $server=null, $apikey=null ) {
   bw_trace2( $bw_registered_plugins );
 }
 
+function oik_register_theme_server( $file, $server=null, $apikey=null ) {
+  global $bw_registered_themes;
+  if ( !isset( $bw_registered_themes ) ) {
+    oik_lazy_alttheme_init();
+  }
+  $bw_registered_themes[] = array( "file" => $file, "server" => $server, "apikey" => $apikey );
+  bw_trace2( $bw_registered_themes );
+}
+
+
 /**
  * Return the slug part of a plugin name
  *
@@ -847,6 +888,61 @@ function oik_query_plugins_server( $slug ) {
 }
 
 
+
+/**
+ * Return the themes server if the requested theme is one of ours
+ * Note: $bw_registered_themes is an array of filenames
+ * we create $bw_slugs as an array of "slug" => array( 'basename' => "slug/theme_name.php", 'file'=> 'server'=>, 'apikey'=> )
+ * $bw_themes (stored in WordPress options) also contains 'server' and 'apikey'
+ * 
+ */
+function oik_query_themes_server( $slug ) {
+  global $bw_registered_themes, $bw_slugs;
+  if ( !isset( $bw_slugs ) ) {
+    $bw_slugs = array();
+    if ( count( $bw_registered_themes) ) {
+      foreach ( $bw_registered_themes as $key => $value ) {
+        $file = bw_array_get( $value, "file", null );
+        $theme_basename = basename( $file, ".php" );
+        $bw_slug = pathinfo( $theme_basename, PATHINFO_DIRNAME );
+        $value['basename'] = $theme_basename;
+        $bw_slugs[ $bw_slug ] = $value;
+      }
+    }
+    bw_trace2( $bw_slugs );
+  }
+  $theme_settings = bw_get_option( $slug, "bw_themes" ); 
+  bw_trace2( $theme_settings );
+  /* return the saved settings, with any registered defaults, otherwise just get the registered settings */
+  if ( $theme_settings ) {
+    $server = bw_array_get( $theme_settings, "server", null );
+    $apikey = bw_array_get( $theme_settings, "apikey", null ); 
+    if ( !$server || !$apikey ) { 
+       $value = bw_array_get( $bw_slugs, $slug, null );
+    }   
+    if ( !$server ) {   
+      $server = bw_array_get_dcb( $value, "server", null, "oik_get_themes_server" );
+    }
+    if ( !$apikey ) {
+      $theme_settings['apikey'] = bw_array_get( $value, "apikey", null );
+    } 
+  } else {
+    $theme_settings = bw_array_get( $bw_slugs, $slug, null );
+    if ( $theme_settings ) {
+        $server = bw_array_get_dcb( $theme_settings, "server", null, "oik_get_themes_server" );
+    }
+    // apikey doesn't default here 
+  }  
+
+  if ( $theme_settings ) {
+    $theme_settings['server'] = $server;
+    bw_trace2( $server, "server" );  
+  }
+  
+  return( $theme_settings ); 
+}
+
+
 /** 
  * Only register our plugin server when needed
  */
@@ -856,13 +952,46 @@ function oik_lazy_altapi_init() {
   add_action( "plugins_api", "oik_pluginsapi", 10, 3 );
 }
 
+
+/** 
+ * Only register our theme server when needed
+ */
+function oik_lazy_alttheme_init() {
+//  gobang();     
+  add_action( "pre_set_site_transient_update_themes", "oik_alttheme_check" );
+  add_action( "site_transient_update_themes", "oik_site_transient_update_themes", 10, 1 );
+  add_action( "themes_api", "oik_themesapi", 10, 3 );
+}
+
+
 /**
- * If required, unset last_checked to force another "check for updates"
+ * If required, unset last_checked to force another "check for updates" for plugins
  * 
  * Note: Only use this when testing the oik plugin update logic
  */
 function oik_site_transient_update_plugins( $transient ) {
-  if ( defined( "OIK_FORCE_CHECK" ) && OIK_FORCE_CHECK ) {
+  if ( defined( "OIK_FORCE_CHECK" ) ) {
+    if ( OIK_FORCE_CHECK ) {
+      static $last_checked = null; 
+      if ( !$last_checked ) {
+        $last_checked = $transient->last_checked;
+        unset( $transient->last_checked ); 
+        bw_trace2( $last_checked, "transient" );
+      }  
+    } else {     
+      bw_backtrace();
+    }
+  }    
+  return( $transient );
+} 
+ 
+/**
+ * If required, unset last_checked to force another "check for updates" for themes
+ * 
+ * Note: Only use this when testing the oik theme update logic
+ */
+function oik_site_transient_update_themes( $transient ) {
+  if ( defined( "OIK_FORCE_CHECK_THEMES" ) && OIK_FORCE_CHECK_THEMES ) {
     static $last_checked = null; 
     if ( !$last_checked ) {
       $last_checked = $transient->last_checked;
@@ -871,6 +1000,7 @@ function oik_site_transient_update_plugins( $transient ) {
     }  
   }     
   bw_backtrace();
+  //gobang();
   return( $transient );
 }  
 
@@ -879,6 +1009,13 @@ function oik_altapi_check( $transient ) {
   oik_require( "includes/oik-remote.inc" );
   return( oik_lazy_altapi_check( $transient ) );
 }
+
+function oik_alttheme_check( $transient ) {
+  bw_backtrace();
+  oik_require( "includes/oik-remote.inc" );
+  return( oik_lazy_alttheme_check( $transient ) );
+}
+
 
 function oik_pluginsapi( $false, $action, $args ) {
   oik_require( "includes/oik-remote.inc" );

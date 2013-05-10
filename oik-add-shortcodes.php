@@ -388,3 +388,6 @@ bw_add_shortcode( "bw_register", "bw_register_shortcode", oik_path( "shortcodes/
 bw_add_shortcode( "bw_link", "bw_link", oik_path( "shortcodes/oik-link.php" ), false );
 bw_add_shortcode( "bw_contact_form", "bw_contact_form", oik_path( "shortcodes/oik-contact-form.php" ), false );
  
+
+bw_add_shortcode( "bw_countdown", "bw_countdown", oik_path( "shortcodes/oik-countdown.php" ), false );
+

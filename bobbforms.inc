@@ -31,12 +31,12 @@ function bw_form( $action="", $method="post" ) {
  * @return string - the HTML label tag
  */
 function label( $name, $text ) {
-   $lab = "<label for=\"";
-   $lab.= $name;
-   $lab.= "\">";
-   $lab.= $text;
-   $lab.= "</label>";
-   return( $lab );
+  $lab = "<label for=\"";
+  $lab.= $name;
+  $lab.= "\">";
+  $lab.= $text;
+  $lab.= "</label>";
+  return( $lab );
 }
 
 /**

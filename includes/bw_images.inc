@@ -1,7 +1,6 @@
 <?php
-
 /*
-    Copyright 2011,2012 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2011,2013 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -54,16 +53,57 @@ function bw_get_image_size( $size=100 ) {
  * It's up to the web designer to set the sizes for thumbnail, small, medium and large
  * and/or upload images that will scale nicely for the chosen figures. 
  *
- * **?** Perhaps we could try to do this in some wrapping div rather than against the img tag.
+ * 2013/05/08 When either the required width or height is set to 0 then the size of the image is set by scaling, maintaining the aspect ratio
+ * In the shortcode this can be specified using thumb=0xnn to set the height or thumb=nnx0 to set the width.
+ * Set the height when you want the images laid out in a row, and the width when you want them in a column.
+ * When the $size is NOT an array then we do not attempt to force the size, allowing the images to display responsively.
  *
  */
 function bw_force_size( $thumbnail, $size ) {
   if ( is_array( $size ) ) {
-  
-    $thumbnail[1] = $size[0];
-    $thumbnail[2] = $size[1];
+    $aw = $thumbnail[1];
+    $ah = $thumbnail[2];
+    $thumbnail[1] = _bw_new_width( $aw, $ah, $size[0], $size[1] );
+    $thumbnail[2] = _bw_new_height( $aw, $ah, $size[0], $size[1] );
+  } else {
+    $thumbnail[1] = null;
+    $thumbnail[2] = null;
   }  
   return( $thumbnail );
+}
+
+/**
+ * Return the new width - maintaining aspect ratio
+ * @param integer $aw - actual width
+ * @param integer $ah - actual height
+ * @param integer $rw - required width
+ * @param integer $rh - required height
+ * @return integer - the new width
+ */
+function _bw_new_width( $aw, $ah, $rw, $rh ) {
+  if ( $rw ) {
+    $nw = $rw; 
+  } else {
+    $nw = ( $aw * $rh ) / $ah;
+  }
+  return( (int) $nw );  
+}
+
+/**
+ * Return the new height - maintaining aspect ratio
+ * @param integer $aw - actual width
+ * @param integer $ah - actual height
+ * @param integer $rw - required width
+ * @param integer $rh - required height
+ * @return integer - the new height
+ */
+function _bw_new_height( $aw, $ah, $rw, $rh ) {
+  if ( $rh ) {
+    $nh = $rh; 
+  } else {
+    $nh = ( $ah * $rw ) / $aw;
+  }                   
+  return( (int) $nh );  
 }
 
 /**
@@ -74,8 +114,7 @@ function bw_force_size( $thumbnail, $size ) {
  * false      for thumbnail="none" 
  * string     for thumbnail="thumbnail|medium|large|full"
  * thumbnail  for "Y" or "T" ( from torf = True or False )
- * array      for anything else e.g. 150 or 250x150
- *
+ * array      for anything else e.g. 150 or 250x150 or 250x0
  * 
  */
 function bw_get_thumbnail_size( $atts ) {
@@ -117,10 +156,15 @@ function bw_thumbnail( $post_id, $atts=NULL, $attachment=false ) {
   $atts['post_id'] = $post_id; 
   $thumbnail = bw_get_thumbnail_size( $atts );
   if ( $thumbnail ) {
+    
     switch ( $thumbnail ) {
       case 'full';
-        // From oik v1.17 onwards we do get here. 
-        $thumbnail = bw_get_fullimage( $post_id, $thumbnail, $atts );
+        // From oik v1.17 onwards we do get here.
+        if ( $attachment ) {
+          $thumbnail = bw_get_attachment_thumbnail( $post_id, $thumbnail, $atts );
+        } else {
+          $thumbnail = bw_get_fullimage( $post_id, $thumbnail, $atts );
+        }  
       break;     
       case 'thumbnail':
       case 'medium':
@@ -137,11 +181,9 @@ function bw_thumbnail( $post_id, $atts=NULL, $attachment=false ) {
   return( $thumbnail ); 
 }
 
-
 /**
  *
  */
-
 function bw_get_fullimage( $post_id, $size='full', $atts=null ) {
   $return_value = FALSE;
   $arr_thumb = bw_get_attached_image( $post_id, 1, 'rand', $size );
@@ -260,6 +302,8 @@ function bw_get_attached_image( $post_id = null, $number = 1, $orderby = 'rand',
 /**
  * Get the "thumbnail" image for an attachment
  * 
+ * This no longer sets the width and height of the image. Does this work when we want a really small image?
+ * 
  * @param int $post_id - ID of the attachment
  * @param mixed $size - size of the required image
  * @param array $atts - contains the title for the attachment
@@ -272,9 +316,7 @@ function bw_get_attachment_thumbnail( $post_id, $size, $atts ) {
   $thumbnail = bw_array_get( $thumbnail_arr, 0, null);
   $text = bw_array_get( $atts, "title", NULL );
   if ( $thumbnail ) {
-  
     $thumbnail_arr = bw_force_size( $thumbnail_arr, $size );
-    
     $thumbnail = retimage( "bw_thumbnail", $thumbnail, $text, $thumbnail_arr[1], $thumbnail_arr[2] ); 
   } else {
     $thumbnail = wp_get_attachment_link( $post_id, $size, false, false ); 

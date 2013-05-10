@@ -2,7 +2,7 @@
 Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, PayPal, buttons, Artisteer, widget, key information, trace, blocks, pages, bookmarks, images, attachments, smart, lazy
-Requires at least: 3.0.4
+Requires at least: 3.5
 Tested up to: 3.5.1
 Stable tag: 1.17
 License: GPLv2 or later
@@ -16,6 +16,7 @@ There are 70 shortcodes including:
 * [bw_pages], [bw_posts], [bw_thumbs], [bw_attachments], [bw_images], [bw_pdf] shortcodes to list subpages, posts, attachments or custom post types 
 * [bw_list], [bw_tree] to display lists of links to pages, posts, attachments or custom post types 
 * [bw_table] to tabulate pages, posts or custom post types
+* [bw_contact_form] for a contact form 
 * [bw_bookmarks] to list links
 * [paypal] shortcodes for PayPal buttons: Pay Now, Buy Now, Donate, Add to Cart, View Cart/Checkout
 * [bw_block] & [bw_eblock], [div] & [ediv], [clear] - to create block structures within your pages, posts and even widgets
@@ -88,6 +89,24 @@ The Application Programming Interface (API) reference is constantly being update
 9. oik header image plugin - custom header image for a page 
 
 == Upgrade Notice ==
+= 2.0-beta.0509 =
+Only required for use with oik-testimonials v0.2
+
+= 2.0-beta.0508 =
+Only required if you need to use [bw_list] with thumbnail images
+
+= 2.0-beta.0502 =
+Only required if you need [bw_jq src="http://example.com/some-javascript-or-something"]
+
+= 2.0-beta.0421 =
+Only required if you need [bw_countdown] or the improved [bw_wtf]
+
+= 2.0-alpha.0329 =
+Changes to allow oik-user to function without oik-plugins
+
+= 2.0-alpha.0326 = 
+Required for oik-user
+
 = 2.0-alpha.0322 = 
 Required for oik-user 
 
@@ -140,8 +159,40 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
-= 2.0-alpha.0322 =
-* Added: [bw_contact_form] with Akismet checking and copy email sent to visitor
+= 2.0-beta.0509 =
+* Changed: Remove the 'read more' link from [bw_pages] using the read_more='' parameter 
+* Changed: read_more="" also applies to [bw_tabs] and [bw_accordion]
+* Changed: Added some basic responsive CSS for [bw_testimonials] ( oik-testimonials plugin )
+
+= 2.0-beta.0508 =
+* Added: [bw_list] can be used to list attachments with thumbnail images
+* Fixed: Fixed notify message from oik theme server improvements
+
+= 2.0-beta.0502 =
+* Added: [bw_jq] src parameter to allow <script type="text/javascript" src="http://example.com/some-javascript-or-something"></script> ini posts/pages
+* Added: First version of oik themes automatic update logic
+* Added: oik_register_theme_server()
+* Added: bw_jquery_af() - for jQuery anonymous functions
+* Fixed: bw_countdown() requires bw_jquery.inc at start of function
+* Added: CSS to support responsive [bw_video] shortcode.
+
+= 2.0-beta.0421 =
+* Added [bw_countdown] shortcode using jQuery countdown
+* Added jQuery countdown version 1.6.1
+* [bw_wtf] shortcode now supports slider effects on hover/click
+* Added $json_options parameter to bw_jkv() 
+
+= 2.0-alpha.0329 = 
+* Added: oik-user requires bw_user_array() and bw_user_list() - originally in oik-plugins
+
+= 2.0-alpha.0326 = 
+* Added: oik options page now calls 'oik_menu_box' filter ( used by oik-user )
+* Changed: When oik-user is activated display of oik-options requires alt=0 parameter
+* Changed: [bw_show_googlemap] supports oik-user
+* Changed: bw_get_option_arr() for backward compatibility alt= parameter overrides user= parameter
+
+= 2.0-alpha.0322.1549 =
+* Added: [bw_contact_form] with Akismet checking and copy email sent to visitor. Also includes nonce checking and unique form IDs
 * Added: atdot=, at= and dot= parameters for email display obfuscation on [bw_mailto] and [bw_email]
 * Added: bw_default_user() and bw_get_current_user_id() APIs for use by oik-user
 * Changed: bw_get_option_arr() to determine how to support user= and alt= parameters if oik-user is active

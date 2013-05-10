@@ -165,40 +165,29 @@ function bw_excerpt( $post ) {
  *
  */
 function bw_format_post( $post, $atts ) {
-  //  setup_postdata( $post );
-  
   bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
-  
   $atts['title'] = get_the_title( $post->ID );
   $thumbnail = bw_thumbnail( $post->ID, $atts );
-  
   $in_block = bw_validate_torf( bw_array_get( $atts, "block", TRUE ));
   if ( $in_block ) {
     oik_require( "shortcodes/oik-blocks.php" );
     e( bw_block( $atts ));
     if ( $thumbnail ) {
-      sdiv( "avatar alignleft" );
-      bw_link_thumbnail( $thumbnail, $post->ID, $atts );
-      ediv();
+      bw_format_thumbnail( $thumbnail, $post, $atts );
     }  
   } else {
     $class = bw_array_get( $atts, "class", "" );
     sdiv( $class );
     if ( $thumbnail ) {
-      sdiv( "avatar alignleft" );
-      bw_link_thumbnail( $thumbnail, $post->ID, $atts );
-      ediv();
+      bw_format_thumbnail( $thumbnail, $post, $atts );
     }
     span( "title" );
     strong( $atts['title'] );
     epan();
     br();
-  }  
+  }
   e( bw_excerpt( $post ) );
-  sp();
-  $read_more = bw_more_text( null, $atts );
-  art_button( get_permalink( $post->ID ), $read_more, $read_more ); 
-  ep(); 
+  bw_format_read_more( $post, $atts );  
   if ( $in_block )
     e( bw_eblock() ); 
   else {  
@@ -207,16 +196,55 @@ function bw_format_post( $post, $atts ) {
   }    
 }
 
+/** 
+ * Produce a read_more link as required
+ *
+ * If the read_more parameter is blank then we don't include the read more link
+ * otherwise, we do using the value given, 
+ * allowing each post's excerpt to have overridden the value through the <!--more custom_read_more --> tag
+ * 
+ * @param post $post - the actual post from which we extract the ID 
+ * @param array $atts - shortcode parameters - which may contain read_more=
+ */
+function bw_format_read_more( $post, $atts ) {
+  $read_more = bw_array_get( $atts, "read_more", true );
+  if ( trim( $read_more ) !== '') {
+    sp();
+    $read_more = bw_more_text( null, $atts );
+    art_button( get_permalink( $post->ID ), $read_more, $read_more ); 
+    ep(); 
+  }  
+}
+
+/**
+ * Format the thumbnail when displayed in a block
+ *
+ * This code was originally written to display the thumbnail image left aligned in the block
+ * so that the text would go to the right
+ * There are problems with IE and certain themes where the alignleft styling 
+ * seems to override attempts to make the image scalable.
+ * So, from 2013/05/13, I'm removing the "alignleft" class, but leaving "avatar"
+ * This fixed it for TwentyTwelve but not for my Artisteer theme! 
+ * So I removed avatar as well.
+ * This has resolved some problems with oik-plugins but it may have adverse effects on other sites.
+ * 
+ */
+function bw_format_thumbnail( $thumbnail, $post, $atts ) {
+  sdiv( );
+  bw_link_thumbnail( $thumbnail, $post->ID, $atts );
+  ediv();
+}
+
 /**
  * Format the "post" - in a simple list item list
  * If there is a thumbnail parameter we include the image as well! 
  * We expect the thumbnail parameter to be a small number e.g. thumbnail=80
  */
 function bw_format_list( $post, $atts ) {
-  //setup_postdata( $post );
   // bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
   $atts['title'] = get_the_title( $post->ID );
-  $thumbnail = bw_thumbnail( $post->ID, $atts );
+  $attachment = ( $post->post_type == "attachment" ) ;
+  $thumbnail = bw_thumbnail( $post->ID, $atts, $attachment );
   if ( $thumbnail ) {
     $title = $thumbnail . $atts['title'];
   } else {
@@ -250,8 +278,6 @@ function bw_get_categories() {
   }    
   return bw_trace2( $cats );
 }
-
-
 
 /**
  * Wrapper to get_posts() 

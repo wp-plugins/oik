@@ -915,6 +915,8 @@ function bw_jq( $text ) {
   }  
 }
 
+
+
 /**
  * json_encode without Warnings
  *
@@ -929,6 +931,7 @@ function bw_json_encode( $parms, $option=null ) {
   } else {
     $json = json_encode( $parms, $option );
   }
+  
   return( $json ); 
 } 
 
@@ -939,14 +942,17 @@ function bw_json_encode( $parms, $option=null ) {
  * OR a single parameter and value
  *
  * @uses json_encode() which by default encloses numeric values as string, which can cause problems for some jQuery code
- * (e.g. jQuery Nivo slider) * SO we pass the JSON_NUMERIC_CHECK option to prevent this.
+ * (e.g. jQuery Nivo slider) SO we pass the JSON_NUMERIC_CHECK option to prevent this.
 */
 if ( !function_exists( "bw_jkv" ) ) {
 
-function bw_jkv( $parms, $value=null ) {
+function bw_jkv( $parms, $value=null, $json_options=null ) {
   if ( is_array( $parms ) ) {
     bw_jtorf( $parms );
-    $jqoption = bw_json_encode( $parms, JSON_NUMERIC_CHECK | JSON_FORCE_OBJECT );
+    if ( $json_options == null && defined( JSON_NUMERIC_CHECK )) {
+      $json_options = (JSON_NUMERIC_CHECK | JSON_FORCE_OBJECT);
+    }
+    $jqoption = bw_json_encode( $parms, $json_options );
   } else {
     $jqoption = "{";
     if ( $value ) { 

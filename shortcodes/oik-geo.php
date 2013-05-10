@@ -5,7 +5,6 @@
  *
  */
 function bw_geo( $atts=null, $content=null, $tag=null ) {
-  //$alt = bw_array_get( $atts, "alt", null );
   sp("geo");
   span( "geo");
     e( "Lat." ); 

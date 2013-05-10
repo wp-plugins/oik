@@ -66,7 +66,7 @@ function bw_social_url( $lc_social, $social ) {
   $social_url .= "://";
   $social_url .= bw_array_get_dcb( $url, "host", $lc_social, "_bw_social_host" );
   $path = "/"; 
-  $path .= bw_array_get( $url, "path", "$social" );
+  $path .= bw_array_get( $url, "path", $social );
   $path = str_replace( "//", "/", $path );
   $social_url .= $path;
   return( $social_url );
