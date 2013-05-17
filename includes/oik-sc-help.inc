@@ -506,16 +506,6 @@ function bw_codes__example() {
   // See wp-1, wp-2, wp and wp-3 ");
 }
 
-function bw_directions__help() {
-  return( "Display a 'Google directions' button.");
-}
-
-function bw_directions__example() {
-  br( "e.g." );
-  e( "The Google directions button will enable the user to get directions to you." );
-  e( bw_directions() );
-}
-
 function bw__help( $shortcode=NULL ) {
   if ( $shortcode == "bw" ) 
      return( "Expand to the logo for Bobbing Wide" );

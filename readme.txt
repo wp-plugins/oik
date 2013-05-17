@@ -89,6 +89,9 @@ The Application Programming Interface (API) reference is constantly being update
 9. oik header image plugin - custom header image for a page 
 
 == Upgrade Notice ==
+= 2.0-beta.0510 =
+Fix for displaying responsive images in IE9
+
 = 2.0-beta.0509 =
 Only required for use with oik-testimonials v0.2
 
@@ -159,6 +162,9 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.0-beta.0510 =
+* Changed: Removed the "avatar" and "alignleft" classes in [bw_pages], [bw_accordion] and [bw_tabs] to improve responsive image sizing in IE9
+
 = 2.0-beta.0509 =
 * Changed: Remove the 'read more' link from [bw_pages] using the read_more='' parameter 
 * Changed: read_more="" also applies to [bw_tabs] and [bw_accordion]

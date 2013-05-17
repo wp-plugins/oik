@@ -46,3 +46,15 @@ function bw_directions( $atts=null ) {
   return( bw_ret());
 }
 
+
+function bw_directions__help() {
+  return( "Display a 'Google directions' button.");
+}
+
+function bw_directions__example() {
+  br( "e.g." );
+  e( "The Google directions button will enable the user to get directions to you." );
+  e( bw_directions() );
+}
+
+

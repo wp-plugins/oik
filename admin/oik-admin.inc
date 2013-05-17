@@ -183,12 +183,17 @@ function oik_custom_css( $theme=null ) {
   }    
 } 
 
+/**
+ * Display the Plugins and Themes servers box
+ */ 
 function oik_plugins_servers() {
   $options = get_option( 'bw_plugins' );
-  p( "Some oik plugins are supported from servers other than WordPress.org" );
-  p( "Premium plugin versions require API keys." );
+  p( "Some oik plugins and themes are supported from servers other than WordPress.org" );
+  p( "Premium plugin and theme versions require API keys." );
   p( "Use the Plugins page to manage oik plugins servers and API keys" );
-  alink( "button-primary", admin_url("admin.php?page=oik_plugins"), "Plugins", "Manage plugin servers and API keys" );
+  alink( "button-secondary", admin_url("admin.php?page=oik_plugins"), "Plugins", "Manage plugin servers and API keys" );
+  p( "Use the Themes page to manage oik themes servers and API keys" );
+  alink( "button-secondary", admin_url("admin.php?page=oik_themes"), "Themes", "Manage theme servers and API keys" );
 }
 
 
