@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012
+<?php // (C) Copyright Bobbing Wide 2012, 2013
 if ( defined( 'OIK_PAGES_SHORTCODES_INCLUDED' ) ) return;
 define( 'OIK_PAGES_SHORTCODES_INCLUDED', true );
 /*
@@ -20,18 +20,34 @@ define( 'OIK_PAGES_SHORTCODES_INCLUDED', true );
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
-
-
 oik_require( "includes/bw_posts.inc" );
 oik_require( "includes/bw_images.inc" );
 
-
+/** 
+ * Return the function to be used to format posts 
+ *
+ * If the format parameter is specified it uses the dynamically loaded bw_format_as_required() function
+ * else it uses the original function bw_format_post()
+ * 
+ * @param array $atts - shortcode parameters which may include format=specification
+ * @return string - function name to be used to format posts
+ */
+function bw_query_post_formatter( $atts ) {
+  $format = bw_array_get( $atts, "format", null );
+  if ( $format ) {
+    oik_require( "includes/bw_formatter.inc" );
+    $bw_post_formatter = "bw_format_as_required";
+  } else {
+    $bw_post_formatter = "bw_format_post";
+  }
+  return( $bw_post_formatter );
+}
+ 
 /**
  * List sub-pages of the current or selected page 
  *
- * This function is designed to replace the functionality of the [bw_plug name='extended-page-lists'] plugin and other plugins that list pages.
+ * This function replaces and surpasses the functionality of the [bw_plug name='extended-page-lists'] plugin and other plugins that list pages.
  * It works in conjunction with Artisteer blocks - to enable the page list to be styled as a series of blocks
- * Well, that's the plan
  *
  * [bw_pages class="classes for bw_block" 
  *   post_type='page'
@@ -41,47 +57,60 @@ oik_require( "includes/bw_images.inc" );
  *   posts_per_page=-1
  *   block=true or false
  *   thumbnail=specification - see bw_thumbnail
- *   customcategoryname=custom category value  
+ *   customcategoryname=custom category value 
+ *   format=formatting string 
+ * @param array $atts - shortcode parameters
+ * @return string - the generated HTML output 
  */
 function bw_pages( $atts = NULL ) {
   $posts = bw_get_posts( $atts );
   bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
-  
-  foreach ( $posts as $post ) {
-    bw_format_post( $post, $atts );
+  if ( $posts ) {
+    $bw_post_formatter = bw_query_post_formatter( $atts );
+    foreach ( $posts as $post ) {
+      $bw_post_formatter( $post, $atts );
+    }
+    bw_clear_processed_posts();
   }
-  
-  bw_clear_processed_posts();
-  
   return( bw_ret() );
 }
 
-
 /** 
+ * Syntax hook for [bw_pages]
+ * 
  * @see http://codex.wordpress.org/Template_Tags/get_posts
  * Default usage copied on 2012/02/27
 */    
-    
-
 function bw_pages__syntax( $shortcode="bw_pages" ) {
   $syntax = _sc_posts(); 
   $syntax = array_merge( $syntax, _sc_classes() );
+  $syntax["format"] = bw_skv( null, "<i>format</i>", "field format string" ); 
   return( $syntax );   
 }
 
+/** 
+ * Help hook for [bw_pages] shortcode
+ */
 function bw_pages__help( $shortcode="bw_pages" ) {
   return( "Display page thumbnails and excerpts as links" );
-  
 }
 
+/**
+ * Example hook for [bw_pages] shortcode
+ */
 function bw_pages__example( $shortcode="bw_pages" ) {
+  e( "Display sub-pages of the current or selected item. " );
+  e( "The item may be a page, post or custom post type. " );
+  e( "The default display is formatted with a featured image, excerpt and a read more link. " );
+  e( "For examples visit ");  
+  $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode/$shortcode";
+  alink( NULL, $link, "$shortcode help" );   
+}
 
- e( "Display sub-pages of the current or selected item" );
- e( "The item may be a page, post or custom post type" );
- e( "The default display is formatted with a featured image, excerpt and a read more link." );
- e( "For examples visit ");  
- $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode/$shortcode";
- alink( NULL, $link, "$shortcode help" );   
-
+/**
+ * Snippet hook for [bw_pages] shortcode
+ */
+function bw_pages__snippet( $shortcode="bw_pages" ) {
+ e( "No snippet available" );
 } 
 

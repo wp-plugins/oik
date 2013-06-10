@@ -1,5 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012
-
+<?php // (C) Copyright Bobbing Wide 2012, 2013
 
 /**
  * oik plugins settings page 
@@ -50,6 +49,10 @@ function oik_lazy_plugins_server_settings() {
     global $bw_plugin;
     $bw_plugins = get_option( "bw_plugins" );
     $bw_plugin = bw_array_get( $bw_plugins, $edit_plugin, null );
+    if ( $bw_plugin == null ) {
+      $bw_plugin['server'] = null;
+      $bw_plugin['apikey'] = null;
+    }
     $bw_plugin['plugin'] = $edit_plugin; 
     bw_trace2( $bw_plugin );
   }
@@ -75,6 +78,8 @@ function oik_lazy_plugins_server_settings() {
 
 /** 
  * Display current settings for a plugin
+ *
+ * Note: The Delete function doesn't delete the plugin, just the profile information that overrides the values set by oik_register_plugin_server()
  */
 function _oik_plugins_settings_row( $plugin, $version, $server, $apikey, $expiration ) {
   $row = array();
@@ -85,7 +90,7 @@ function _oik_plugins_settings_row( $plugin, $version, $server, $apikey, $expira
   $row[] = $expiration . "&nbsp;";
   // $row[] = itext( "expand[$plugin]", $expand, true );
   $links = null;
-  $links .= retlink( null, admin_url("admin.php?page=oik_plugins&amp;delete_plugin=$plugin"), "Delete" ); 
+  $links .= retlink( null, admin_url("admin.php?page=oik_plugins&amp;delete_plugin=$plugin"), "Delete", "Delete plugin's profile entry" ); 
   $links .= "&nbsp;";
   $links .= retlink( null, admin_url("admin.php?page=oik_plugins&amp;edit_plugin=$plugin"), "Edit" ); 
   $links .= "&nbsp;"; 
@@ -96,10 +101,41 @@ function _oik_plugins_settings_row( $plugin, $version, $server, $apikey, $expira
 }
 
 /**
- * This should also list the plugins that have registered themselves using oik_register_plugin_server **?**
+ * Load registered plugins
+ * 
+ * We don't override the values that the user has defined with the hardcoded values.
+ * We only apply the hardcoded values when the profile entry does not exist.
+ * 
+ * @return array of registered plugins and their overrides
+ */
+function _oik_plugins_load_registered_plugins() {
+  $bw_plugins = get_option( "bw_plugins" );
+  global $bw_registered_plugins;
+  //bw_trace2( $bw_registered_plugins );
+  
+  if ( is_array( $bw_registered_plugins) && count( $bw_registered_plugins )) {
+    foreach ( $bw_registered_plugins as $plugin => $plugin_data ) {
+      $plugin = bw_last_path( $plugin_data['file'] );
+      //bw_trace2( $plugin );
+      //bw_trace2( $plugin_data );
+      if ( !isset( $bw_plugins[$plugin] ) ) {
+        $bw_plugins[$plugin] = $plugin_data;
+      }  
+    }
+  }
+  //bw_trace2( $bw_plugins );
+  return( $bw_plugins );
+}
+
+/**
+ * Display the oik plugins profile values and other information
+ * 
+ * This should also list the plugins that have registered themselves using oik_register_plugin_server()
  */
 function _oik_plugins_settings_table() {
-  $bw_plugins = get_option( "bw_plugins" );
+  //$bw_plugins = get_option( "bw_plugins" );
+  $bw_plugins = _oik_plugins_load_registered_plugins();
+  
   if ( is_array( $bw_plugins) && count( $bw_plugins )) {
     foreach ( $bw_plugins as $plugin => $plugin_data ) {
       //$plugin = bw_array_get( $plugin, "plugin", null );
@@ -124,6 +160,9 @@ function _oik_plugins_add_settings( $plugin ) {
   return( $ok ); 
 }
 
+/** 
+ * Update the settings for a plugin
+ */
 function _oik_plugins_update_settings( $plugin ) {
   $field = bw_array_get( $plugin, "plugin", null );
   if ( $plugin ) { 
@@ -134,13 +173,15 @@ function _oik_plugins_update_settings( $plugin ) {
   }  
 }
 
+/**
+ * Delete the settings for a plugin
+ */
 function _oik_plugins_delete_settings( $plugin ) {
   bw_delete_option( $plugin, "bw_plugins" );
 }  
 
-
 /**
- * plugin must not be blank
+ * Validate the plugin name: plugin must not be blank
  */
 function oik_plugins_validate_plugin( $plugin ) {
   $valid = isset( $plugin );
@@ -155,7 +196,9 @@ function oik_plugins_validate_plugin( $plugin ) {
 }
     
 /**
- 
+ * Validate the plugin's settings and add/update if required
+ * @param bool $add_plugin 
+ * @return bool - validation result
  */
 function _oik_plugins_settings_validate( $add_plugin=true ) {
   global $bw_plugin;

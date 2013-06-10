@@ -49,6 +49,10 @@ function oik_lazy_themes_server_settings() {
     global $bw_theme;
     $bw_themes = get_option( "bw_themes" );
     $bw_theme = bw_array_get( $bw_themes, $edit_theme, null );
+    if  ( null == $bw_theme ) {
+      $bw_theme['server'] = null;
+      $bw_theme['apikey'] = null;
+    }
     $bw_theme['theme'] = $edit_theme; 
     bw_trace2( $bw_theme );
   }
@@ -74,6 +78,9 @@ function oik_lazy_themes_server_settings() {
 
 /** 
  * Display current settings for a theme
+ *
+ * Note: Delete may not appear to work as the entry is created automatically by the theme when it registers itself.
+ * The Delete action will delete the theme's profile entry.
  */
 function _oik_themes_settings_row( $theme, $version, $server, $apikey, $expiration ) {
   $row = array();
@@ -84,7 +91,7 @@ function _oik_themes_settings_row( $theme, $version, $server, $apikey, $expirati
   $row[] = $expiration . "&nbsp;";
   // $row[] = itext( "expand[$theme]", $expand, true );
   $links = null;
-  $links .= retlink( null, admin_url("admin.php?page=oik_themes&amp;delete_theme=$theme"), "Delete" ); 
+  $links .= retlink( null, admin_url("admin.php?page=oik_themes&amp;delete_theme=$theme"), "Delete", "Delete theme's profile entry" ); 
   $links .= "&nbsp;";
   $links .= retlink( null, admin_url("admin.php?page=oik_themes&amp;edit_theme=$theme"), "Edit" ); 
   $links .= "&nbsp;"; 
@@ -95,10 +102,31 @@ function _oik_themes_settings_row( $theme, $version, $server, $apikey, $expirati
 }
 
 /**
+ * Load registered themes
+ * 
+ * We don't override the values that the user has defined with the hardcoded values
+ * Only apply the hardcoded values when the profile entry does not exist.
+ */
+function _oik_themes_load_registered_themes() {
+  $bw_themes = get_option( "bw_themes" );
+  global $bw_registered_themes;
+  if ( is_array( $bw_registered_themes) && count( $bw_registered_themes )) {
+    foreach ( $bw_registered_themes as $theme => $theme_data ) {
+      $theme = bw_last_path( $theme_data['file'] );
+      bw_trace2( $theme );
+      if ( !isset( $bw_themes[$theme] ) ) {
+        $bw_themes[$theme] = $theme_data;
+      }  
+    }
+  }
+  return( $bw_themes );
+}
+
+/**
  * This should also list the themes that have registered themselves using oik_register_theme_server()
  */
 function _oik_themes_settings_table() {
-  $bw_themes = get_option( "bw_themes" );
+  $bw_themes = _oik_themes_load_registered_themes();
   if ( is_array( $bw_themes) && count( $bw_themes )) {
     foreach ( $bw_themes as $theme => $theme_data ) {
       $theme_object = bw_get_theme_name( $theme );

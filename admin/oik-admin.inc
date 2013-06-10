@@ -1,7 +1,6 @@
-<?php // (C) Copyright Bobbing Wide 2011,2012 
+<?php // (C) Copyright Bobbing Wide 2011-2013 
 if ( defined( 'OIK_ADMIN_ADMIN_INCLUDED' ) ) return;
 define( 'OIK_ADMIN_ADMIN_INCLUDED', true );
-
 
 /**
  * Load 'plugin' file if the options checkbox is set on
@@ -792,6 +791,13 @@ function oik_get_plugins_server() {
 }
 
 /**
+ * Return the URL for the oik theme's server
+ */
+function oik_get_themes_server() {
+  return( oik_get_plugins_server() );
+}
+
+/**
  * Register this plugin as one that is served from a different server to WordPress.org
  *
  * @param string $file - fully qualified plugin file name
@@ -811,7 +817,7 @@ function oik_register_plugin_server( $file, $server=null, $apikey=null ) {
     oik_lazy_altapi_init();
   }
   $bw_registered_plugins[] = array( "file" => $file, "server" => $server, "apikey" => $apikey );
-  bw_trace2( $bw_registered_plugins );
+  //bw_trace2( $bw_registered_plugins );
 }
 
 function oik_register_theme_server( $file, $server=null, $apikey=null ) {
@@ -823,6 +829,22 @@ function oik_register_theme_server( $file, $server=null, $apikey=null ) {
   bw_trace2( $bw_registered_themes );
 }
 
+/**
+ * Return the last path for the given file
+ * 
+ * @param string $file - a fully specified file name ( e.g. __FILE__ )
+ * @return string the last part of the file's path
+ * e.g. 
+ *
+ * @link http://www.php.net/manual/en/function.basename.php#72254
+ * When using basename() on a path to a directory ('/bar/foo/'), the last path component ('foo') is returned
+ */
+function bw_last_path( $file ) {
+  bw_trace2();
+  $pathinfo = pathinfo( $file, PATHINFO_DIRNAME );
+  $last_path = basename( $pathinfo );
+  return( $last_path );
+}
 
 /**
  * Return the slug part of a plugin name
@@ -897,24 +919,25 @@ function oik_query_plugins_server( $slug ) {
 /**
  * Return the themes server if the requested theme is one of ours
  * Note: $bw_registered_themes is an array of filenames
- * we create $bw_slugs as an array of "slug" => array( 'basename' => "slug/theme_name.php", 'file'=> 'server'=>, 'apikey'=> )
+ * we create $bw_theme_slugs as an array of "slug" => array( 'basename' => "theme name", 'file'=> 'server'=>, 'apikey'=> )
  * $bw_themes (stored in WordPress options) also contains 'server' and 'apikey'
  * 
  */
 function oik_query_themes_server( $slug ) {
-  global $bw_registered_themes, $bw_slugs;
-  if ( !isset( $bw_slugs ) ) {
-    $bw_slugs = array();
+  global $bw_registered_themes, $bw_theme_slugs;
+  if ( !isset( $bw_theme_slugs ) ) {
+    $bw_theme_slugs = array();
     if ( count( $bw_registered_themes) ) {
       foreach ( $bw_registered_themes as $key => $value ) {
         $file = bw_array_get( $value, "file", null );
-        $theme_basename = basename( $file, ".php" );
-        $bw_slug = pathinfo( $theme_basename, PATHINFO_DIRNAME );
-        $value['basename'] = $theme_basename;
-        $bw_slugs[ $bw_slug ] = $value;
+        // The next 2 lines are equivalent to $bw_slug = bw_last_path( $file );
+        $pathinfo = pathinfo( $file, PATHINFO_DIRNAME );
+        $bw_slug = basename( $pathinfo );
+        $value['basename'] = $bw_slug;
+        $bw_theme_slugs[ $bw_slug ] = $value;
       }
     }
-    bw_trace2( $bw_slugs );
+    bw_trace2( $bw_theme_slugs );
   }
   $theme_settings = bw_get_option( $slug, "bw_themes" ); 
   bw_trace2( $theme_settings );
@@ -923,18 +946,19 @@ function oik_query_themes_server( $slug ) {
     $server = bw_array_get( $theme_settings, "server", null );
     $apikey = bw_array_get( $theme_settings, "apikey", null ); 
     if ( !$server || !$apikey ) { 
-       $value = bw_array_get( $bw_slugs, $slug, null );
+       $value = bw_array_get( $bw_theme_slugs, $slug, null );
     }   
     if ( !$server ) {   
       $server = bw_array_get_dcb( $value, "server", null, "oik_get_themes_server" );
+      bw_trace2( $server, $slug, false );
     }
     if ( !$apikey ) {
       $theme_settings['apikey'] = bw_array_get( $value, "apikey", null );
     } 
   } else {
-    $theme_settings = bw_array_get( $bw_slugs, $slug, null );
+    $theme_settings = bw_array_get( $bw_theme_slugs, $slug, null );
     if ( $theme_settings ) {
-        $server = bw_array_get_dcb( $theme_settings, "server", null, "oik_get_themes_server" );
+      $server = bw_array_get_dcb( $theme_settings, "server", null, "oik_get_themes_server" );
     }
     // apikey doesn't default here 
   }  
@@ -943,10 +967,8 @@ function oik_query_themes_server( $slug ) {
     $theme_settings['server'] = $server;
     bw_trace2( $server, "server" );  
   }
-  
   return( $theme_settings ); 
 }
-
 
 /** 
  * Only register our plugin server when needed
@@ -957,17 +979,15 @@ function oik_lazy_altapi_init() {
   add_action( "plugins_api", "oik_pluginsapi", 10, 3 );
 }
 
-
 /** 
  * Only register our theme server when needed
  */
 function oik_lazy_alttheme_init() {
-//  gobang();     
   add_action( "pre_set_site_transient_update_themes", "oik_alttheme_check" );
   add_action( "site_transient_update_themes", "oik_site_transient_update_themes", 10, 1 );
-  add_action( "themes_api", "oik_themesapi", 10, 3 );
+  add_filter( "themes_api", "oik_themes_api", 10, 3 );
+  add_filter( "themes_api_result", "oik_themes_api_result", 10, 3  );
 }
-
 
 /**
  * If required, unset last_checked to force another "check for updates" for plugins
@@ -1005,7 +1025,6 @@ function oik_site_transient_update_themes( $transient ) {
     }  
   }     
   bw_backtrace();
-  //gobang();
   return( $transient );
 }  
 
@@ -1021,10 +1040,19 @@ function oik_alttheme_check( $transient ) {
   return( oik_lazy_alttheme_check( $transient ) );
 }
 
-
 function oik_pluginsapi( $false, $action, $args ) {
   oik_require( "includes/oik-remote.inc" );
   return( oik_lazy_pluginsapi( $false, $action, $args ) );
+}
+
+function oik_themes_api( $false, $action, $args ) {
+  oik_require( "includes/oik-remote.inc" );
+  return( oik_lazy_themes_api( $false, $action, $args ) );
+}
+
+function oik_themes_api_result( $result, $action, $args ) {
+  oik_require( "includes/oik-remote.inc" );
+  return( oik_lazy_themes_api_result( $result, $action, $args ) );
 }
 
 /**

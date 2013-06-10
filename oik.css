@@ -338,3 +338,6 @@ p.bw_wtf { font-family: Courier, Monospace; }
 /* CSS for responsive [bw_testimonial] shortcode */
 .bw_testimonial { width: 100% !important; background-color: #eeeeee; }
 .bw_testimonial img { max-width: 100% !important; }
+
+/* CSS for bw_jquery fancybox - setting the inline content to display none initially */
+.bw_display_none { display: none; }

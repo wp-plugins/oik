@@ -3,7 +3,7 @@ if ( defined( 'OIK_CODES_SHORTCODES_INCLUDED' ) ) return;
 define( 'OIK_CODES_SHORTCODES_INCLUDED', true );
 /*
 
-    Copyright 2012 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012, 2013 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -190,44 +190,81 @@ function bw_codes( $atts = NULL ) {
  * @param array $atts - shortcode parameters
  * @return results of the shortcode
  */
-function bw_code( $atts = NULL ) {
-  $shortcode = bw_array_get( $atts, "shortcode", 'bw_code' );
-  $help = bw_array_get( $atts, "help", "Y" );
-  $syntax = bw_array_get(  $atts,  "syntax", "Y" );
-  $example = bw_array_get( $atts, "example", "Y" );
-  $live = bw_array_get( $atts, "live", "N" );
-  $snippet = bw_array_get( $atts, "snippet", "N" );
-  
-  $help = bw_validate_torf( $help );
-  if ( $help ) {
-    p( "Help for shortcode: [${shortcode}]", "bw_code_help" );
-    //bw_trace2( $shortcode, "before do_action" );
-    do_action( "bw_sc_help", $shortcode );
-  }  
-  $syntax = bw_validate_torf( $syntax );
-  if ( $syntax ) {
-    p( "Syntax", "bw_code_syntax" ); 
-    do_action( "bw_sc_syntax", $shortcode );
-  }  
-  $example = bw_validate_torf( $example );
-  if ( $example ) {
-    p( "Example", "bw_code_example");
-    do_action( "bw_sc_example", $shortcode );
-  }
+function bw_code( $atts=null, $content=null, $tag=null ) {
+  $shortcode = bw_array_get( $atts, "shortcode", null );
+  if ( $shortcode ) {
+    $help = bw_array_get( $atts, "help", "Y" );
+    $syntax = bw_array_get(  $atts,  "syntax", "Y" );
+    $example = bw_array_get( $atts, "example", "Y" );
+    $live = bw_array_get( $atts, "live", "N" );
+    $snippet = bw_array_get( $atts, "snippet", "N" );
+    
+    $help = bw_validate_torf( $help );
+    if ( $help ) {
+      p( "Help for shortcode: [${shortcode}]", "bw_code_help" );
+      //bw_trace2( $shortcode, "before do_action" );
+      do_action( "bw_sc_help", $shortcode );
+    }  
+    $syntax = bw_validate_torf( $syntax );
+    if ( $syntax ) {
+      p( "Syntax", "bw_code_syntax" ); 
+      do_action( "bw_sc_syntax", $shortcode );
+    }  
+    $example = bw_validate_torf( $example );
+    if ( $example ) {
+      p( "Example", "bw_code_example");
+      do_action( "bw_sc_example", $shortcode );
+    }
 
-  $live = bw_validate_torf( $live ) ;
-  if ( $live ) {
-    p("Live example", "bw_code_live_example" );
-    $live_example = bw_do_shortcode( '['.$shortcode.']' );
-    e( $live_example );
-  }
+    $live = bw_validate_torf( $live ) ;
+    if ( $live ) {
+      p("Live example", "bw_code_live_example" );
+      $live_example = bw_do_shortcode( '['.$shortcode.']' );
+      e( $live_example );
+    }
+    
+    $snippet = bw_validate_torf( $snippet );
+    if ( $snippet ) {
+      p( "Snippet", "bw_code_snippet" );
+      do_action( "bw_sc_snippet", $shortcode );
+    }
+  } else {
+    $link_text = bw_array_get( $atts, 0, null );
+    if ( $link_text ) {
+      bw_code_example_link( $atts );
+      
+    } else {
+      return( bw_code( array( "shortcode" => "bw_code" ) ) );
+    }
+    
+  } 
   
-  $snippet = bw_validate_torf( $snippet );
-  if ( $snippet ) {
-    p( "Snippet", "bw_code_snippet" );
-    do_action( "bw_sc_snippet", $shortcode );
-  }
   return( bw_trace2( bw_ret(), "bw_code_return"));
-} 
+}
+
+
+/**
+ * Create a nicely formatted link to the definition of the shortcode
+ *
+ * When the shortcode= parameter is not specified then we assume that this is an example
+ * that we want to both show AND make a link to the help in oik-plugins.
+ * The first word is expected to be the shortcode and the rest are parameters
+ * e.g. [bw_code bw_code shortcode=bw_code] 
+ * 
+ * @param $atts -  shortcode parameters
+ * 
+ */ 
+function bw_code_example_link( $atts ) {
+  $shortcode_string = bw_array_get( $atts, 0, null );
+  $link_text = "&#91;";
+  $link_text .= $shortcode_string; 
+  $link_text .= "]";
+  $shortcodes = explode( " ", $shortcode_string );
+  $shortcode = $shortcodes[0];
+  $callback =  bw_get_shortcode_callback( $shortcode );
+  $function = bw_get_shortcode_function( $shortcode, $callback );
+  $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode/$function"; 
+  alink( "bw_code $shortcode", $link, $link_text, "Link to help for shortcode: $shortcode" );   
+}
    
 

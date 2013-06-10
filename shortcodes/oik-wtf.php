@@ -21,9 +21,13 @@
 /** 
  * Implement the [bw_wtf] shortcode 
  * 
- * return the raw content fully escaped but with unexpanded shortcodes of the current post 
+ * Return the raw content fully escaped but with unexpanded shortcodes of the current post 
+ * The shortcode now supports different events to trigger the display of the "wtf" content
+ * with different effects to display it: slideToggle or Toggle
  *
  * @param mixed $atts - parameters to the shortcode 
+ * @param string $content - alternative way of getting content 
+ * @param string $tag 
  * @return string the "raw" content - that could be put through WP-syntax
  */
 function bw_wtf( $atts=null, $content=null, $tag=null ) { 
@@ -45,7 +49,10 @@ function bw_wtf( $atts=null, $content=null, $tag=null ) {
   bw_jquery_af( "div.bw_wtf", $event , "p.bw_wtf", $effect );
   sdiv( "bw_wtf" );
   p( $text );
-  stag( 'p', "bw_wtf", null, 'lang=HTML" escaped="true" style="display:none;"' );
+  stag( 'p', "bw_wtf", null, 'lang="HTML" escaped="true" style="display:none;"' );
+  $escaped_content = str_replace(array( "[", "]" ), array( "&#091;", "&#093" ), $escaped_content ); 
+  $escaped_content = str_replace( "\n", "", $escaped_content );
+  $escaped_content = str_replace( "\r", "", $escaped_content );
   e( $escaped_content );
   etag( "p" );
   ediv();

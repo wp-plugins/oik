@@ -396,27 +396,36 @@ function e( $text = NULL ) {
     bw_echo( $text );
 }
 
+/** 
+ * Produce a break tag with optional text to follow
+ */
 function br( $text=NULL ) {
    bw_echo( '<br />' );
    bwt( $text ); 
 }   
 
+/**
+ * Produce a horizontal rule tag
+ */
 function hr() {
   bw_echo( '<hr />' );
 }  
   
 
-// Instead of function li( use function lit( - List Item Text
-
+/**
+ * Create a list item with a specific CSS class and/or ID
+ */
 function lit( $text, $class=NULL, $id=NULL ) {
   stag( "li", $class, $id );
   bwt( $text );
   etag( "li" );
 }
 
-/* decided to write a helper function */
+/** 
+ * Helper function for list item 
+ */
 function li( $text ) {
-   lit( $text );   
+  lit( $text );   
 } 
 
 // Note: here we omit the 's' of span to make it easier to type
@@ -429,9 +438,9 @@ function epan() {
 }  
 
 function sepan( $class=NULL, $text=NULL ) {
-   span( $class );
-   e( $text );
-   epan();
+  span( $class );
+  e( $text );
+  epan();
 }
 
 /**

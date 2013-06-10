@@ -89,6 +89,18 @@ The Application Programming Interface (API) reference is constantly being update
 9. oik header image plugin - custom header image for a page 
 
 == Upgrade Notice ==
+= 2.0 =
+Version 2.0 contains significant enhancements to version 1.17. There have been many improvements but you should not have to make any changes to your current content.
+
+= 2.0-beta.0610 = 
+Changes to [bw_code] needed for documentation on oik-plugins.com
+
+= 2.0-beta.0608 =
+Required for theme replacement on yellowbrand.co.uk
+
+= 2.0-beta.0604 =
+Required for automatic updates of oik themes: oik2012, oik20120 and nivo2011 
+
 = 2.0-beta.0510 =
 Fix for displaying responsive images in IE9
 
@@ -162,6 +174,22 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.0 =
+* Changed: readme.txt file for official version 
+
+= 2.0-beta.0610 = 
+* Added: packed versions of jquery files: pullquote, target-blank
+* Changed: [bw_jq] now supports src=ID parameter, script= parameter alone AND no parameters
+* Changed: [bw_wtf] improved - better defense against wpautop()
+* Changed: [bw_code] can now be used as a link to the shortcode e.g. [bw_code bw_pages] will produce a "[bw_pages]" link
+
+= 2.0-beta.0608 =
+* Added: Flexible formatting for the [bw_pages] shortcode using the format= parameter with multiple field choices
+
+= 2.0-beta.0604 =
+* Changed: Improved logic for oik options > plugins and oik-options > themes to list the programmatically registered plugins and themes
+* Added: Early code to implement "themes_api" and "themes_api_result" filters.
+
 = 2.0-beta.0510 =
 * Changed: Removed the "avatar" and "alignleft" classes in [bw_pages], [bw_accordion] and [bw_tabs] to improve responsive image sizing in IE9
 
@@ -213,7 +241,7 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Changed: bw_get_metakey_array() uses exclude=-1 to allow the current post to be included in the results
 * Changed: Example for the [bw_accordion] shortcode
 * Changed: Example for the [bw_tabs] shortcode
-* Changed: bw_jkw() now uses the JSON_FORCE_OBJECT option in addition to JSON_NUMERIC_CHECK
+* Changed: bw_jkv() now uses the JSON_FORCE_OBJECT option in addition to JSON_NUMERIC_CHECK
 * Added: jQuery fancybox-1.3.4 (incl. easing-1.3 and mousewheel-3.0.4), plus images and CSS
 
 = 2.0-alpha.0304 =
@@ -237,7 +265,7 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Added: [bw_tabs] shortcode - display posts in tab blocks
 * Added: [bw_jq] shortcode - perform a jQuery method. 
 * Added: jQuery Flexslider v2.1 ( from Woo Themes )
-* Added: [bw_login], [bw_logout] and [bw_register] shortcodes
+* Added: [bw_login], [bw_loginout] and [bw_register] shortcodes
 * Changed: Restructured include files - some shortcode functions moved to shortcodes folder
 
 = 1.17.1212

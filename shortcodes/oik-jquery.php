@@ -4,8 +4,8 @@
  * Determine the jQuery script file URL
  * 
  * @param string $script - the jquery script root
- * @param bool $debug - use debug or minified (packed ) version
- * @return string - fully qualified script file URL
+ * @param bool $debug - use debug or minified (packed) version
+ * @return string - fully qualified script file URL or null
  * 
  * @link
  */
@@ -22,7 +22,10 @@ function bw_jquery_script( $script, $debug=false ) {
  * Default jQuery script file filter
  *
  * If no other plugin responds then we assume it's our script file
- * but if we don't find it then we have a look around
+ * but if we don't find it then we have a look around.
+ *
+ * We currently assume that both the debug and minimised versions of the script file are going to be available.
+ * ... sometimes we just copy whatever we have to the other version **?** 2013/06/09
  *
  */
 function bw_jquery_script_url( $script_url, $script, $debug ) {
@@ -234,13 +237,18 @@ function bw_jquery_enqueue_style( $script ) {
 /**
  * Implement the [bw_jq] shortcode
  * 
- * @param array $atts - key value pairs for 'selector', 'method' and parms
+ * Notes: This is an "advanced shortcode" that will accept the selector and method as unnamed parameters.
+ * If the selector and method are specified then we enqueue the script and associated style file and invoke the method on the selector
+ * with any additional shortcode parameters converted into jQuery parameters
+ * ELSE, if (only) the script= parameter is specified we just enqueue the script
+ * ELSE, if the method is "?" then we produce a table of the registered jQuery scripts
+ * ELSE we use the src= parameter or load attached scripts.
+ * 
+ * @param array $atts - key value pairs for 'selector', 'method', 'script', 'src' and parms
  * @param string $content - should be null - if not treat as parameters?
  * @param string $tag 
  * @return string expanded shortcode
  *
- * Notes: this is a prototype of an "advanced shortcode" that will accept the selector and method as unnamed parameters
- * If the method is "?" then we produce a table of the registered jQuery scripts
  */
 function bwsc_jquery( $atts=null, $content=null, $tag=null ) {
   $selector = bw_array_get_from( $atts, "selector,0", null );
@@ -248,10 +256,9 @@ function bwsc_jquery( $atts=null, $content=null, $tag=null ) {
   if ( !$method ) {
     $method = str_replace( ".", "", $selector );
   }
-
+  $script = bw_array_get( $atts, "script", $method );
   if ( $selector && $method ) { 
     $windowload = bw_array_get( $atts, "windowload", false );
-    $script = bw_array_get( $atts, "script", $method );
     $debug = bw_array_get( $atts, "debug", false );   
     unset( $atts['selector'] );
     unset( $atts['method'] );
@@ -264,24 +271,73 @@ function bwsc_jquery( $atts=null, $content=null, $tag=null ) {
     bw_jquery_enqueue_script( $script, $debug );
     bw_jquery_enqueue_style( $script );
     bw_jquery( $selector, $method, $parms, $windowload );
+  } elseif ( $script ) {
+    $debug = bw_array_get( $atts, "debug", false ); 
+    bw_jquery_enqueue_script( $script, $debug );
+  } elseif ( "?" == $method ) {
+    bw_list_wp_scripts();
   } else {
-    if ( "?" == $method ) {
-      bw_list_wp_scripts();
-    } else { 
-      $src = bw_array_get( $atts, "src", null );
-      if ( $src ) {
-        $parms = kv( "src", $src );
-        $parms .= kv( "type", "text/javascript");
-        stag( "script", null, null, $parms ); 
-        etag( "script" ); 
-      } else {
-        p( "Invalid parameters for [bw_jq] shortcode" );
-      }
-    }
+    bw_jquery_src( $atts ); 
   }    
   return( bw_ret() );
 }
 
+/**
+ * Directly add the jQuery/JavaScript file to the generated HTML 
+ * We can't do this since it could come out before jQuery is defined!
+ * Note: This is OK for external JavaScript files but not for jQuery code.
+ */
+function bw_jquery_javascript( $src ) {
+  $parms = kv( "src", $src );
+  $parms .= kv( "type", "text/javascript");
+  stag( "script", null, null, $parms ); 
+  etag( "script" );
+}     
+
+/**
+ * Enqueue the defined jQuery source file(s)
+ *
+ * If the src= parameter is set
+ * and it's a numeric value then treat this as an attachment ID  else treat it as the URL
+ * otherwise load the attached jQuery files and enqueue those.
+ * 
+ * @param mixed $atts - array that may contain src=ID or src=URL
+ *  
+ */
+function bw_jquery_src( $atts ) {
+  //bw_trace2();
+  $src = bw_array_get( $atts, "src", null );
+  if ( $src ) {
+    if ( is_numeric( $src ) ) {
+      $src = wp_get_attachment_url( $src );
+    }  
+    $enqueued = wp_enqueue_script( $src, $src, array( "jquery") ); 
+  } else {
+    bw_jquery_enqueue_attached_scripts();
+  }
+}
+
+/**
+ * Enqueue any attached scripts 
+ *
+ * Using the [bw_jq] shortcode without any parameters will load any application/javascript files which have been attached to the current post
+ * This is useful when someone provides you with some JavaScript to run on a page and you don't know how to do it.
+ * 
+ */
+function bw_jquery_enqueue_attached_scripts() {
+  oik_require( "includes/bw_posts.inc" );
+  $atts = array( "post_type" => "attachment" 
+               , "post_mime_type" => "application/javascript"
+               ); 
+  $posts = bw_get_posts( $atts );
+  if ( $posts ) {
+    foreach ( $posts as $post ) {
+      $src = wp_get_attachment_url( $post->ID );
+      $enqueued = wp_enqueue_script( $src, $src, array( "jquery") ); 
+    }
+  }
+}  
+ 
 /**
  * Return a list of jQuery scripts 
  * 
@@ -415,7 +471,7 @@ function bw_jq__syntax( $shortcode = "bw_jq" ) {
                  , "debug" => bw_skv( false, "<i>bool</i>", "Use true when you want to debug the jQuery" )
                  , "windowload" => bw_skv( false, "<i>bool</i>", "Use true when the jQuery is to run when the window has loaded" )
                  , "parms" => bw_skv( null, "<i>parm=value1,parm2=value2</i>", "Variable list of parameters" )
-                 , "src" => bw_skv( null, "<i>URL</i>", "Full URL of JavaScript" )
+                 , "src" => bw_skv( null, "<i>ID</i>|<i>URL</i>", "ID or full URL of JavaScript" )
                  );
   return( $syntax );
 }                  

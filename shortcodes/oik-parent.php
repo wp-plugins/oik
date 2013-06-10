@@ -3,7 +3,7 @@ if ( defined( 'OIK_PARENT_SHORTCODES_INCLUDED' ) ) return;
 define( 'OIK_PARENT_SHORTCODES_INCLUDED', true );
 
 /*
-    Copyright 2012 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012, 2013 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -52,7 +52,9 @@ function bw_parent( $atts=null, $content=null, $tag=null ) {
   } else {
     $post = get_post( $id ); 
   }
-  bw_post_link( $post->post_parent, "bw_parent" );   
+  if ( $post ) {
+    bw_post_link( $post->post_parent, "bw_parent" );   
+  }  
   return( bw_ret());
 }
 
@@ -61,10 +63,9 @@ function bw_parent__help() {
 }
 
 function bw_parent__syntax( $shortcode="bw_parent" ) {
-  $syntax = array( "id", bw_skv( null, "<i>ID</id>", "ID from which to find the parent" ) );
+  $syntax = array( "id" => bw_skv( null, "<i>ID</id>", "ID from which to find the parent" ) );
   return( $syntax );
 }
-
 
 /** 
  * Returns the correct inner tag given the outer
@@ -105,7 +106,6 @@ function bw_links( $atts=null, $content=null, $tag=null ) {
   } else {
     //bw_parent();
   }  
-
 }                 
 
 
