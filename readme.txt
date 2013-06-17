@@ -8,10 +8,10 @@ Stable tag: 1.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Lazy smart shortcodes for displaying often included key-information and other WordPress content. Over 70 shortcodes to use anywhere on your website.
+Lazy smart shortcodes for displaying often included key-information and other WordPress content. Over 80 shortcodes to use anywhere on your website.
 == Description ==
 The *oik base* plugin provides a series of advanced WordPress shortcodes that help you display dynamic content from your website's pages, posts, attachments, links and custom post types.
-There are 70 shortcodes including:
+There are 80 shortcodes including:
 
 * [bw_pages], [bw_posts], [bw_thumbs], [bw_attachments], [bw_images], [bw_pdf] shortcodes to list subpages, posts, attachments or custom post types 
 * [bw_list], [bw_tree] to display lists of links to pages, posts, attachments or custom post types 
@@ -28,7 +28,7 @@ oik helps you to display information about you, your company, your social networ
 * You enter your information once, then use oik shortcodes to display it wherever you want; in titles, post and page content, header, sidebar and footer widgets.
 * Whenever you need to change a value you only need to update it in one place; and your website is updated instantly.
 * Shortcodes to display often included key information include: [bw_contact], [bw_telephone], [bw_mobile], [bw_mailto], [bw_company], [bw_address], [bw_show_googlemap], [bw_directions], [bw_logo], [bw_qrcode], [bw_copyright]
-* For your social networking "follow me" sites use the [bw_follow_me] shortcode to display your links to Twitter, Facebook, LinkedIn, Google+, etcetera
+* For your social networking use the [bw_follow_me] shortcode to display your links to Twitter, Facebook, LinkedIn, Google+, etcetera
 
 Features: 
 
@@ -66,27 +66,23 @@ Yes - see above
 The shortcode reference also includes the standard WordPress shortcodes and help for other shortcodes provided WordPress and other selected plugins (e.g. Easy-Digital-Downloads)
 
 = Where are the APIs documented? =
-[oik APIs](http://www.oik-plugins.com/apis) 
+[oik APIs](http://www.oik-plugins.com/apis/oik-apis)
 
-The Application Programming Interface (API) reference is constantly being updated
+The Application Programming Interface (API) reference documents over 900 APIs 
 
 == Screenshots ==
-1. oik overview - main settings page
-1a. Custom CSS and the [bw_editcss] shortcode
-1b. Often included key information settings
-1c. Alternative values for oik settings, using the alt=1 shortcode parameter
-1d. Button selection - choose the buttons to add to the TinyMCE and HTML editor toolbars
-1e. Shortcode help page - Discover all the currently active shortcodes
-1f. Shortcode example on the help page - showing [bw_show_googlemap] output
-2. Demonstrating [bw_pages] and [bw_thumbs] (and [bw_wtf)
-3. Shortcode help, syntax and examples - [bw_contact_button]
-4. Shortcode snippets - [bw_address] 
-5. email signature file generation using [bw_email_signature]
+1. oik options - Options
+2. Demonstrating [bw_pages] and [bw_thumbs] 
+3. [bw_contact_form] - Contact form
+4. [bw_countdown] - Countdown timers
+5. [bw_address] and shortcode snippets
 6. oik button dialog - to create the [bw_button] shortcode
 7. oik PayPal dialog - create PayPal buttons: Pay Now, Buy Now, Donate, Add to Cart and View Cart/Checkout
-7a. PayPal buttons using the [paypal] shortcode
 8. oik shortcodes dialog - showing syntax for [bw_block]
-9. oik header image plugin - custom header image for a page 
+9. oik options - Shortcode help - lists ALL active shortcodes
+10. oik options - Buttons
+11. oik options - More options
+12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
 = 2.0 =
@@ -175,7 +171,7 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 
 == Changelog ==
 = 2.0 =
-* Changed: readme.txt file for official version 
+* Changed: readme.txt file for official version - updated screenshots
 
 = 2.0-beta.0610 = 
 * Added: packed versions of jquery files: pullquote, target-blank

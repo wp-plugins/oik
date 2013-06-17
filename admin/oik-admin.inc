@@ -480,9 +480,9 @@ function oik_main_shortcode_options() {
   bw_textfield_arr( $option, "Logo image [bw_logo] in uploads:<br />" . $baseurl, $options, 'logo-image', 50 );
   bw_textfield_arr( $option, "QR code image [bw_qrcode] in uploads", $options, 'qrcode-image', 50 );
   
-  $artisteer_versions = array( "na", "40", "31", "30" ,"25" );
+  $artisteer_versions = array( "na", "41", "40", "31", "30" ,"25" );
   $artisteer_assoc = bw_assoc( $artisteer_versions );
-  bw_select_arr( $option, "Artisteer version [bw_art_version]", $options, 'art-version', array( "#options" => $artisteer_assoc ) );
+  bw_select_arr( $option, "Artisteer version", $options, 'art-version', array( "#options" => $artisteer_assoc ) );
 
   $options['yearfrom'] = bw_array_get_dcb( $options, "yearfrom", NULL, "bw_get_yearfrom" );
   bw_textfield_arr( $option, "Copyright from year (used in [bw_copyright])", $options, 'yearfrom', 4 );

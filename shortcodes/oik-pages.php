@@ -44,11 +44,13 @@ function bw_query_post_formatter( $atts ) {
 }
  
 /**
- * List sub-pages of the current or selected page 
- *
- * This function replaces and surpasses the functionality of the [bw_plug name='extended-page-lists'] plugin and other plugins that list pages.
- * It works in conjunction with Artisteer blocks - to enable the page list to be styled as a series of blocks
- *
+ * Implement [bw_pages] shortcode 
+ * 
+ * Possibly the most advanced of the shortcodes in the oik base plugin.
+ * This shortcode will list items of your choosing with powerful selection and formatting criteria.
+ * 
+ * This documentation doesn't do the shortcode justice! **?** 2013/06/17 
+ 
  * [bw_pages class="classes for bw_block" 
  *   post_type='page'
  *   post_parent 

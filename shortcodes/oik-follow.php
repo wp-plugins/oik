@@ -89,7 +89,7 @@ function bw_facebook( $atts=null ) {
 }
 
 /**
- * Implement [bw_linkein] shortcode 
+ * Implement [bw_linkedin] shortcode 
  */
 function bw_linkedin( $atts=null ) { 
   $atts['network'] = "LinkedIn";  

@@ -213,8 +213,16 @@ function bw_drupal() {
   return( $bw );
 } 
  
-function bw_art() {
+function bw_art( $atts=null, $content=null, $tag=null ) {
   $bw = '<span class="bw_artisteer">Artisteer</span>';
+  $version = bw_array_get( $atts, 0, null );
+  if ( $version ) {
+    oik_require( "shortcodes/oik-blocks.php" );
+    $current_setting = bw_artisteer_version( false );
+    $actual_setting = bw_artisteer_version( true );
+    $bw .= " current=$current_setting";
+    $bw .= " actual=$actual_setting";
+  }
   return( $bw );
 }  
 
