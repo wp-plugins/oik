@@ -1,27 +1,36 @@
 === oik ===
 Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
-Tags: shortcodes, PayPal, buttons, Artisteer, widget, key information, trace, blocks, pages, bookmarks, images, attachments, smart, lazy
+Tags: shortcodes, oik, pages, posts, jQuery, contact form, PayPal, buttons, Artisteer, text widget, key information, trace, blocks, bookmarks, images, attachments, smart, lazy, pagelist, sitemap, tree, accordion, tabs, cycle
 Requires at least: 3.5
-Tested up to: 3.5.1
-Stable tag: 1.17
+Tested up to: 3.6
+Stable tag: 2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Lazy smart shortcodes for displaying often included key-information and other WordPress content. Over 80 shortcodes to use anywhere on your website.
 == Description ==
 The *oik base* plugin provides a series of advanced WordPress shortcodes that help you display dynamic content from your website's pages, posts, attachments, links and custom post types.
-There are 80 shortcodes including:
+
+At a glance changes in version 2.0
+
+* Eleven (11) new shortcodes
+* Improvements to many shortcodes - new parameter options
+* Delivery of some common jQuery plugins
+* Changes to support other oik plugins
+* New and updated APIs, actions and filters
+* Fully documented using oik's dynamic API documentation
+
+oik now provides 80 shortcodes including:
 
 * [bw_pages], [bw_posts], [bw_thumbs], [bw_attachments], [bw_images], [bw_pdf] shortcodes to list subpages, posts, attachments or custom post types 
 * [bw_list], [bw_tree] to display lists of links to pages, posts, attachments or custom post types 
 * [bw_table] to tabulate pages, posts or custom post types
-* [bw_contact_form] for a contact form 
 * [bw_bookmarks] to list links
 * [paypal] shortcodes for PayPal buttons: Pay Now, Buy Now, Donate, Add to Cart, View Cart/Checkout
 * [bw_block] & [bw_eblock], [div] & [ediv], [clear] - to create block structures within your pages, posts and even widgets
 * [bw_button], [bw_contact_button] - to provide call-to-action button style links for Artisteer themes
-* helper shortcodes for web designers and developers: [bw_editcss], [bwtrace], [bw_page], [bw_post], [bw_wpadmin], [bw_wtf], [stag] & [etag]
+* helper shortcodes for web designers and developers: [bw_editcss], [bwtrace], [bw_wpadmin], [bw_wtf], [stag] & [etag]
 
 oik helps you to display information about you, your company, your social networking ids and your website using standard formats that search engines such as Google recognise.
 
@@ -171,7 +180,30 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 
 == Changelog ==
 = 2.0 =
-* Changed: readme.txt file for official version - updated screenshots
+
+oik version 2.0 adds 11 shortcodes:
+
+* [bw_accordion] - Display content using jquery-ui-accordion jQuery 
+* [bw_contact_form] - Display a contact form 
+* [bw_countdown] - Countdown timer
+* [bw_iframe] - Embed a page in an iframe 
+* [bw_jq] - Perform a jQuery method
+* [bw_link] - Display a link to a post
+* [bw_login] - Display the login form
+* [bw_loginout] - Display the Login or Logout link
+* [bw_parent] - Display a link back to the parent page
+* [bw_register] - Display a link to the Registration form
+* [bw_tabs] - Display content in tabbed blocks, using jquery-ui-tabs jQuery
+
+Other changes in version 2.0
+
+* Many shortcodes have been improved: with new capability supported through new or changed parameter values. 
+* Improved support for other plugins
+* Inclusion of common jQuery plugins: used by [bw_jq]
+* Many other technical improvements
+* Improved documentation
+
+For details see below or visit [oik plugin](http://www.oik-plugins.com/oik) 
 
 = 2.0-beta.0610 = 
 * Added: packed versions of jquery files: pullquote, target-blank
@@ -264,13 +296,13 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 * Added: [bw_login], [bw_loginout] and [bw_register] shortcodes
 * Changed: Restructured include files - some shortcode functions moved to shortcodes folder
 
-= 1.17.1212
+= 1.17.1212 =
 * Added: [bw_iframe] shortcode
 * Added: [bw_parent] shortcode
 * Changed: bw_textfield() and bw_emailfield() use current $_REQUEST value if null passed
 * Changed: iselect() identifies the selected item from the key or value
 
-= 1.17.1204
+= 1.17.1204 =
 * Fixed: replaced calls to is_int() with is_numeric() when checking for post_id rather than names
 * Fixed: bw_array_get_dcb() checks the obtained value to be identical to the default before calling the deferred call back function
 * Fixed: bw_load_noderef() sets the post_parent to 0 before calling bw_get_posts() 
@@ -584,14 +616,17 @@ If you want to read more about the oik plugins then please visit the
 [oik plugin](http://www.oik-plugins.com/oik) 
 **"the oik plugin - for often included key-information"**
 
-Up to and including version 1.17 the oik plugin includes a number of optional modules which can be activated as and when you need them.
+= Removal of child plugins (version 2.0) =
 
-In oik version 1.17, any activated module will automatically relocate itself to become a separately maintainable plugin.
-Each individual plugin will be supported from an oik-plugins server. 
-In a future version of oik, the child plugins will be deprecated and/or removed from the oik base package.
-The version number of child plugins delivered with oik v1.17 is v1.18.
+Up to and including version 1.17 the oik plugin included a number of optional modules which could be activated as and when you needed them.
 
-Plugins that will relocate and be served from the oik-plugins servers are:
+In oik version 1.17, any activated module automatically relocated itself to become a separately maintainable plugin.
+Each individual plugin is supported from an oik-plugins server. 
+The version number of child plugins delivered with oik v1.17 was v1.18.
+
+In version 2.0 the child plugins have been removed from the oik base package.
+
+Plugins that were relocated and served from the oik-plugins servers were:
 
 * [oik-bbpress](http://www.oik-plugins.com/oik-plugins/oik-bbpress-strip-tags-from-bbpress-forum-title-tooltips/) - to strip tags from bbPress forum title tooltips  
 * [oik-bob-bing-wide](http://www.oik-plugins.com/oik-plugins/oik-bob-bing-wide-more-lazy-smart-shortcodes/) - to provide more lazy smart shortcodes: [bw_plug], bob/fob bing/bong wide/hide wow, oik and loik, wp, wpms, bp, artisteer, drupal
@@ -603,6 +638,10 @@ Plugins that will relocate and be served from the oik-plugins servers are:
 * [oik-sc-help](http://www.oik-plugins.com/oik-plugins/oik-sc-help-shortcode-help-shortcodes/) - shortcode help shortcodes: provides [bw_code] and [bw_codes] shortcodes
 * [oik-sidebar](http://www.oik-plugins.com/oik-plugins/oik-sidebar-widget-wrangler-for-artisteer-themes/) - gives you the ability to use Widget Wrangler with Artisteer v3 themes
 
+Note: For some of these plugins the oik base plugin still provides a certain amount of code.
+
+= Other plugins =
+
 Other plugins which use the oik API are also available on WordPress.org: 
 
 * [oik-nivo-slider](http://wordpress.org/extend/plugins/oik-nivo-slider/) - [nivo] shortcode for the jQuery "Nivo slider" for posts, pages, attachments and custom post types
@@ -611,22 +650,20 @@ Other plugins which use the oik API are also available on WordPress.org:
 * [uk-tides](http://wordpress.org/extend/plugins/uk-tides/) - [bw_tides] shortcode for tide times and heights in the UK  (replaces oik-tides)
 * [bbboing](http://www.wordpress.org/extend/plugins/bbboing) - obfuscate text but leave it readable
 
-More FREE and Premium plugins are available from [oik-plugins.com](http://www.oik-plugins.com)
+More FREE and Premium plugins are available from [oik-plugins.com](http://www.oik-plugins.com/wordpress-plugins-from-oik-plugins/)
+
 
 oik plugins are suitable for:
-* site owners
-* site administrators
+
+* WordPress site owners
+* WordPress site administrators
 * WordPress designers
-* web site developers 
-* plugin developers
+* WordPress web site developers 
+* WordPress plugin developers
 
 oik plugins are tested with: WordPress Multi Site, BuddyPress and bbPress.
 
-
 ALL of the plugins are developed using a set of functions that can make PHP and HTML coding a bit easier. 
-These are known as the OIK Application Programming Interface (OIK API).
+These are known as the [OIK Application Programming Interface (OIK API)](http://www.oik-plugins.com/apis/oik-apis)
 
-
-If you're interested in a Drupal version then please visit the 
-[oik module](http://www.bobbingwidewebdevelopment.com/content/often-included-key-information-oik-drupal-module)
 
