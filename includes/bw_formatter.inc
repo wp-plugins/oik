@@ -13,7 +13,7 @@
 function bw_format_as_required( $post, $atts ) {
   $format = $atts['format'];
   $fs = str_split( $format );
-  $in_block = bw_format_block_start( $post, $atts );
+  $in_block = bw_format_block_start( $post, $atts, false );
   foreach ( $fs as $f ) {
     $function = bw_field_function( $f );
     $function( $post, $atts, $f );
@@ -287,8 +287,6 @@ function bw_field_function_edit( $post, &$atts, $f ) {
    alink( "bw_edit", $link, "[Edit]" ); 
  }
 }
- 
- 
 
 /**
  * Format the starting HTML for the object
@@ -296,8 +294,8 @@ function bw_field_function_edit( $post, &$atts, $f ) {
  * Note: When "block" is true (default) then the title is automatically included in the header so may not be NOT needed in the content
  *
  */
-function bw_format_block_start( $post, $atts ) {
-  $in_block = bw_validate_torf( bw_array_get( $atts, "block", TRUE ));
+function bw_format_block_start( $post, $atts, $default_block=true ) {
+  $in_block = bw_validate_torf( bw_array_get( $atts, "block", $default_block ));
   if ( $in_block ) {
     $atts['title'] = get_the_title( $post->ID );
     oik_require( "shortcodes/oik-blocks.php" );
