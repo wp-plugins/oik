@@ -128,7 +128,7 @@ function bw_get_user( $id, $hint="login" ) {
     $field = $hint;
   }   
   $user = get_user_by( $field, $id );
-  bw_trace2( $user );
+  // bw_trace2( $user );
   return( $user );
 }
 

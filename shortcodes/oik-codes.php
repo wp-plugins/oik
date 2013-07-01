@@ -38,8 +38,11 @@ function bw_get_shortcode_callback( $shortcode ) {
 }
 
 /**
+ * Return the function to invoke for the shortcode
+ * 
  * We need to cater for callbacks which are defined as object and function
-     Array
+ * <code>
+ *    Array
         (
             [0] => AudioShortcode Object
                 (
@@ -47,9 +50,14 @@ function bw_get_shortcode_callback( $shortcode ) {
 
             [1] => audio_shortcode
         )
-   Given that $callback is passed in and that is_callable should have already been called
-   then we should always expect $callable_name to be set!         
-
+ *  </code>     
+ *  Given that $callback is passed in and that is_callable should have already been called
+ *  then we should always expect $callable_name to be set! 
+ *  But this doesn't mean that the $function should be callable.        
+ *
+ * @param string $shortcode - the shortcode to invoke
+ * @param mixed $callback - default callback for the shortcode, if the event is not defined for the shortcode.
+ * @return string callable name for the shortcode function
  */
 function bw_get_shortcode_function( $shortcode, $callback=null ) {
   global $bw_sc_ev;
@@ -58,7 +66,9 @@ function bw_get_shortcode_function( $shortcode, $callback=null ) {
   $callable_name = null;
   if ( !is_callable( $function, false, $callable_name ) ) {
     $callable_name = bw_array_get( $function, 1, $shortcode );
-    bw_trace2( $bw_sc_ev, "unexpected result!" ); 
+    bw_trace2( $callable_name, "callable_name", false ); 
+    //bw_trace2( $bw_sc_ev, "unexpected result!" );
+    //bw_backtrace(); 
   } 
   return( $callable_name );  
 }

@@ -157,11 +157,14 @@ function bw_datepicker_enqueue_script( ) {
 /** 
  * bw_form_field_date - format a date field
  *
+ * **?** oik v2.0 was delivered with jquery-ui-1.9.2.custom.css but originally expected jquery.ui.theme.css. How do we manage this in the future? 2013/06/26
+ *
  */
 function bw_form_field_date( $name, $type, $title, $value, $args ) {
   $args['#length'] = bw_array_get( $args, '#length', 10 );
   wp_enqueue_style( "jquery-ui-datepicker-css", plugin_dir_url( __FILE__). "css/jquery.ui.datepicker.css" ); 
-  wp_enqueue_style( "jquery-ui-theme-css", plugin_dir_url( __FILE__). "css/jquery.ui.theme.css" );
+  //wp_enqueue_style( "jquery-ui-theme-css", plugin_dir_url( __FILE__). "css/jquery.ui.theme.css" );
+  wp_enqueue_style( "jquery-ui-theme-css", oik_url( "css/jquery-ui-1.9.2.custom.css" ) );
    
   bw_datepicker_enqueue_script();
   bw_jquery( "#${name}", "datepicker", bw_jkv( "dateFormat : 'yy-mm-dd', changeMonth: true, changeYear: true" ) );

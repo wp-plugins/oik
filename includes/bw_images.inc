@@ -119,7 +119,7 @@ function _bw_new_height( $aw, $ah, $rw, $rh ) {
  */
 function bw_get_thumbnail_size( $atts ) {
   $thumbnail = bw_array_get( $atts, 'thumbnail', 'thumbnail' );
-  $post_id = bw_array_get( $atts, "post_id", null );
+  // post_id = bw_array_get( $atts, "post_id", null ); **?** unused 2013/06/21
   switch ( $thumbnail ) {
     case 'none':
       $thumbnail = false;
@@ -152,10 +152,10 @@ function bw_get_thumbnail_size( $atts ) {
  * @return $thumbnail - formatted <img> tag
  */
 function bw_thumbnail( $post_id, $atts=NULL, $attachment=false ) {
-  bw_trace( $post_id, __FUNCTION__, __LINE__, __FILE__, "post_id" );
   $atts['post_id'] = $post_id; 
   $thumbnail = bw_get_thumbnail_size( $atts );
   if ( $thumbnail ) {
+    bw_trace( $post_id, __FUNCTION__, __LINE__, __FILE__, "post_id" );
     
     switch ( $thumbnail ) {
       case 'full';
@@ -182,10 +182,42 @@ function bw_thumbnail( $post_id, $atts=NULL, $attachment=false ) {
 }
 
 /**
+ * Return a full sized image for the post
  *
+ *
+ * Prior to oik version 2.0 the logic was like this
+ * 
+ * First we look for an attached image to the post
+ * we choose one image randomly from those attached
+ * If found we use that.
+ *
+ * In oik v2.1 this has been switched
+ * First get the featured image ( using bw_get_thumbnail()  )
+ * If that's not set then access an image randomly.
+ *
+ * Should this be an option that we can set?
+ *
+ * 
+ * @param ID $post_id - post ID
+ * @param string $size - the image size required
+ * @param array $atts - array of key value pairs
  */
 function bw_get_fullimage( $post_id, $size='full', $atts=null ) {
-  $return_value = FALSE;
+  $return_value = bw_get_thumbnail( $post_id, $size, $atts );
+  if ( !$return_value ) {
+    $return_value = bw_get_random_image( $post_id, $size, $atts );
+  }     
+  bw_trace( $return_value, __FUNCTION__, __LINE__, __FILE__, "return_value" ); 
+  return( $return_value );
+}
+
+/**
+ * Return a random image from the images attached to the post
+ *
+ * @param ID $post_id - the ID of the post to which the images are expected to be attached
+ * @param string $size 
+ */
+function bw_get_random_image( $post_id, $size, $atts ) {
   $arr_thumb = bw_get_attached_image( $post_id, 1, 'rand', $size );
   bw_trace( $arr_thumb, __FUNCTION__, __LINE__, __FILE__, "arr_thumb" );
   $thumbnail = bw_array_get( $arr_thumb, 0, null );
@@ -193,10 +225,11 @@ function bw_get_fullimage( $post_id, $size='full', $atts=null ) {
   if ( $img ) {
     $text = bw_array_get( $atts, "title", NULL );
     $return_value = retimage( "bw_thumbnail", $img, $text, null, null, kv( "data-thumb", $img) );
-  }      
-  bw_trace( $return_value, __FUNCTION__, __LINE__, __FILE__, "return_value" ); 
-  return( $return_value );
-} 
+  } else { 
+    $return_value = null; 
+  }
+  return( $return_value );     
+}
 
 /** 
  * Create a thumbnail link
@@ -224,18 +257,15 @@ function bw_link_thumbnail( $thumbnail, $post_id=NULL, $atts=NULL )  {
 }
 
 /** 
- * get the post thumbnail 
+ * Get the post thumbnail 
+ * 
  * Returns the HTML for the thumbnail image which can then be wrapped in a link if required
+ * 
  * @param integer $post_id - the id of the content for which the thumbnail is required
  *                defaults to the current post id
  * @param mixed  $size - the required image size: either a preset or specified in an array
- * @atts  array  array of key value pairs that may be needed
- * 
- *  Return Value: An array containing:
- *    $image[0] => url
- *    $image[1] => width
- *    $image[2] => height
- *
+ * @param array $atts - array of key value pairs that may be needed
+ * @return string HTML image tag
  */
 function bw_get_thumbnail( $post_id = null, $size = 'thumbnail', $atts=NULL ) {
   $return_value = FALSE;
@@ -311,6 +341,7 @@ function bw_get_attached_image( $post_id = null, $number = 1, $orderby = 'rand',
  * 
  */ 
 function bw_get_attachment_thumbnail( $post_id, $size, $atts ) {
+  bw_backtrace();
   $thumbnail_arr = wp_get_attachment_image_src( $post_id, $size, false );
   bw_trace2( $thumbnail_arr, "thumbnail_arr" );
   $thumbnail = bw_array_get( $thumbnail_arr, 0, null);

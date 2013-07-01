@@ -17,7 +17,8 @@ function bw_countdown_date( $value ) {
 }
 
 /**
- * Implement the [bw_countdown] shortcode 
+ * Implement the [bw_countdown] shortcode
+ *  
  * @param array $atts - shortcode parameters
  * @param string $content - not expected
  * @param string $tag - shortcode tag - not expected

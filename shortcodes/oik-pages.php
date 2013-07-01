@@ -86,7 +86,8 @@ function bw_pages( $atts = NULL ) {
 function bw_pages__syntax( $shortcode="bw_pages" ) {
   $syntax = _sc_posts(); 
   $syntax = array_merge( $syntax, _sc_classes() );
-  $syntax["format"] = bw_skv( null, "<i>format</i>", "field format string" ); 
+  $syntax["format"] = bw_skv( null, "<i>format</i>", "field format string" );
+  $syntax["read_more"] = bw_skv( null, "''|<i>string</i>", "text for read more button" ); 
   return( $syntax );   
 }
 

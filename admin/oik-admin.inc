@@ -874,12 +874,15 @@ function bw_get_slug( $plugin ) {
 function oik_query_plugins_server( $slug ) {
   global $bw_registered_plugins, $bw_slugs;
   if ( !isset( $bw_slugs ) ) {
-    foreach ( $bw_registered_plugins as $key => $value ) {
-      $file = bw_array_get( $value, "file", null );
-      $plugin_basename = plugin_basename( $file );
-      $bw_slug = pathinfo( $plugin_basename, PATHINFO_DIRNAME );
-      $value['basename'] = $plugin_basename;
-      $bw_slugs[ $bw_slug ] = $value;
+    $bw_slugs = array();
+    if ( isset( $bw_registered_plugins ) ) {
+      foreach ( $bw_registered_plugins as $key => $value ) {
+        $file = bw_array_get( $value, "file", null );
+        $plugin_basename = plugin_basename( $file );
+        $bw_slug = pathinfo( $plugin_basename, PATHINFO_DIRNAME );
+        $value['basename'] = $plugin_basename;
+        $bw_slugs[ $bw_slug ] = $value;
+      }
     }
     bw_trace2( $bw_slugs );
   }

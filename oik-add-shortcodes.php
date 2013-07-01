@@ -54,7 +54,7 @@ function bw_load_shortcodefile( $shortcode ) {
 /** 
  * Invoke the shortcode
  *
- * @param string $shortcodegfunc function name to invoke
+ * @param string $shortcodefunc function name to invoke
  * @param string $shortcode name of the shortcode
  * @return string the result of the shortcode
  */ 

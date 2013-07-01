@@ -94,6 +94,10 @@ The Application Programming Interface (API) reference documents over 900 APIs
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
+= 2.1-alpha.0701 =
+Changes primarily for oik-nivo-slider. When finding full sized images to display with a post the Featured Image is now chosen in preference to a randomly selected attached image.
+This will make the nivo shortcode more useful but could alter the results in some cases.
+
 = 2.0 =
 Version 2.0 contains significant enhancements to version 1.17. There have been many improvements but you should not have to make any changes to your current content.
 
@@ -179,6 +183,15 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.1-alpha.0701 =
+* Changed: bw_get_fullimage() now attempts to load the featured image before choosing an attached image at random
+* Added: bw_get_posts() now supports identification of multiple posts using id= parameter ( or post__in= or p= )
+* Default orderby sort sequence when using "post__in" is "post__in"
+* Fixed: Notify message from oik options > plugins when no plugins are regisered
+* Fixed: Added syntax help for read_more= parameter to [bw_pages] shortcode
+* Fixed: Minor API documentation improvements
+* Fixed: Enqueues jquery-ui-1.9.2.custom.css for date form fields
+
 = 2.0 =
 
 oik version 2.0 adds 11 shortcodes:

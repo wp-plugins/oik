@@ -17,9 +17,7 @@
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
-
 oik_require( "includes/bw_images.inc" );
-
 
 /** 
  * Return the global post ID
@@ -66,6 +64,12 @@ function bw_global_excerpt( $excerpt=null ) {
   return( $excerpt_to_return );   
 }
 
+/**
+ * Determine whether or not to process this post
+ *
+ * @param integer $id - the post ID
+ * @return bool - true if the post has not been processed. false otherwise
+ */
 function bw_process_this_post( $id ) {
   global $processed_posts;
   $processed = bw_array_get( $processed_posts, $id, false );
@@ -76,9 +80,13 @@ function bw_process_this_post( $id ) {
   return( !$processed );
 }
 
+/**
+ * Clear the array of processed posts
+ */
 function bw_clear_processed_posts() {
   global $processed_posts;
   $processed_posts = array();
+  bw_trace2( $processed_posts, "cleared" );
 }
 
 /**
@@ -238,7 +246,9 @@ function bw_format_thumbnail( $thumbnail, $post, $atts ) {
 /**
  * Format the "post" - in a simple list item list
  * If there is a thumbnail parameter we include the image as well! 
- * We expect the thumbnail parameter to be a small number e.g. thumbnail=80
+ * We originally expected the thumbnail parameter to be a small number e.g. thumbnail=80
+ * but now we support any size since the list may be displayed with the Flexslider jQuery
+ * 
  */
 function bw_format_list( $post, $atts ) {
   // bw_trace( $post, __FUNCTION__, __LINE__, __FILE__, "post" );
@@ -262,6 +272,8 @@ function bw_format_list( $post, $atts ) {
  */
 function bw_get_categories() {
   global $post;
+  bw_trace2( $post, "global post" );
+    bw_backtrace();
   if ( $post ) {
     $categories = get_the_category( $post->ID );
     $cats = '';
@@ -272,8 +284,6 @@ function bw_get_categories() {
     $cats = trim( $cats );
     $cats = str_replace( ' ',',', $cats );
   } else {
-    //bw_trace2( $post, "missing post" );
-    //bw_backtrace();
     $cats = null;
   }    
   return bw_trace2( $cats );
@@ -305,7 +315,7 @@ function bw_get_categories() {
 function bw_get_posts( $atts = NULL ) {
   
   // Copy the atts from the shortcode to create the array for the query
-  // removing the class and title parameter that gets passed to bw_block()
+  // removing the class and title parameter that gets passed to bw_block()    **?** 2013/07/01 - is this still done?
  
   $attr = $atts;
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
@@ -313,7 +323,9 @@ function bw_get_posts( $atts = NULL ) {
   
   /* Set default values if not already set */
   $attr['post_type'] = bw_array_get_dcb( $attr, 'post_type', NULL, "bw_global_post_type"  );
-  $id = bw_array_get( $attr, "id",  null );
+  
+  /* Allow specific post IDs to be defined in a variety of ways. */
+  $id = bw_array_get_from( $attr, array( "id", "post__in", "p", "page_id" ),  null );
   
   if ( !$id ) {
     
@@ -325,6 +337,10 @@ function bw_get_posts( $atts = NULL ) {
       $attr['post_parent'] = bw_array_get_dcb( $attr, "post_parent", NULL, "bw_global_post_id" );
     }
     
+    /** If we're listing posts and the category is not specified then determine the category from the global post
+        This finds "related" posts. 
+        Not sure how to find ANY post if that's what we want **?** 2013/06/21
+    */ 
     if ( $attr['post_type'] == 'post' ) {
       $attr['category_name'] = bw_array_get( $attr, "category_name", NULL );
       $attr['category'] = bw_array_get( $attr, "category", null );
@@ -342,9 +358,20 @@ function bw_get_posts( $atts = NULL ) {
     $attr['orderby'] = bw_array_get( $attr, "orderby", "title" );
     $attr['order'] = bw_array_get( $attr, "order", "ASC" );
   } else {
-    $attr['p'] = $id; 
-    $attr['page_id'] = $id; 
-    $attr['post__in'] = array( $id ); 
+    /* Allow the shortcode to specify a set of post IDs to load. id=1,2,3,4 or id="1 2 3 4" should load posts IDs 1, 2, 3 and 4
+    * Note: This currently overrides the "post__in" parameter 
+    */
+    $ids = bw_as_array( $id );
+    if ( count( $ids ) > 1 ) {
+      $attr['post__in'] = $ids; 
+      $attr['orderby'] = bw_array_get( $attr, "orderby", "post__in" );
+      unset( $attr['p'] );
+    } else { 
+      $attr['p'] = $id; 
+      $attr['page_id'] = $id; 
+      // Normally we don't need to worry about orderby or numberposts when we're only getting one post
+      
+    }  
   }
   // Regardless of the post type, exclude the current post, 
   // Note: This could also be improved **?**
