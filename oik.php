@@ -3,7 +3,7 @@
 Plugin Name: oik base plugin 
 Plugin URI: http://www.oik-plugins.com/oik
 Description: Lazy smart shortcodes for displaying often included key-information and other WordPress content
-Version: 2.1-alpha.0701
+Version: 2.1-alpha.0802
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 License: GPL2
@@ -61,7 +61,7 @@ function oik_version() {
   //$bw_options = get_option( 'bw_options' );
 
   //add_action('wp_print_styles', 'oik_enqueue_stylesheets');
-  add_action('wp_enqueue_scripts', 'oik_enqueue_stylesheets');
+  add_action('wp_enqueue_scripts', 'oik_enqueue_stylesheets', 11);
   add_action('init', 'oik_main_init' );
   
   add_action( 'wp_ajax_oik_ajax_list_shortcodes', 'oik_ajax_list_shortcodes' );
@@ -196,7 +196,7 @@ function oik_attachment_fields_to_edit( $form_fields, $post) {
   bw_trace2( $form_fields ); 
 //  gobang();
   $form_fields['bw_image_link'] = array(  
-			"label" => __( "oik custom image link URL" ),  
+			"label" => __( "oik custom image link URL", "oik" ),  
 			"input" => "text",
 			"value" => get_post_meta( $post->ID, "_bw_image_link", true )  
 		); 

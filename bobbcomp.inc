@@ -251,7 +251,7 @@ function bw_get_me( $atts=null ) {
     if ( !$me ) {
       $me = bw_get_option_arr( "display_name", null, $atts );
       if ( !$me ) {
-        $me = __( "me" );
+        $me = __( "me", "oik" );
       }
     }
   }
@@ -304,7 +304,7 @@ function bw_oik( $atts=null ) {
 function bw_oik_long( $atts=null ) {
   $class = bw_array_get( $atts, "class", "bw_oik" );
   $bw = nullretstag( "span", $class ); 
-  $bw .= "Often Included Key-information"; 
+  $bw .= __( "Often Included Key-information", "oik" ); 
   $bw .= nullretetag( "span", $class ); 
   return( $bw );
 }
@@ -407,11 +407,11 @@ function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL,
  * 2012/12/04 - we have to allow for the value being set as 0 which differs from a default value of NULL
  * so the comparison needs to be identical ( === ) rather than equal ( == ) 
  */
-function bw_array_get_dcb( $array = array(), $index, $default = NULL, $callback='__' ) {
+function bw_array_get_dcb( $array = array(), $index, $default = NULL, $callback='__', $text_domain="oik" ) {
   $value = bw_array_get( $array, $index, $default );
   if ( $value === $default ) {
     if ( is_callable( $callback ) ) {
-      $value = call_user_func( $callback, $default ); 
+      $value = call_user_func( $callback, $default, $text_domain ); 
     } else {
       bw_backtrace();
     }
@@ -504,11 +504,11 @@ function bw_year_range( $yearfrom, $yearto, $atts=NULL ) {
       $years = $yearfrom;
       break;
     case 1:
-      $sep = bw_array_get( $atts, "sep", "," );
+      $sep = bw_array_get_dcb( $atts, "sep", "," );
       $years = "$yearfrom$sep$yearto";
       break;
     default: /* more than one OR negative - which is a bit of a boo boo */
-      $sep = bw_array_get( $atts, "sep", "-" );
+      $sep = bw_array_get_dcb( $atts, "sep", "-" );
       $years = "$yearfrom$sep$yearto";
   }
   return( $years );    
@@ -617,7 +617,7 @@ function bw_copyright( $atts = NULL ) {
   $suffix = bw_array_get_dcb( $atts, "suffix", ". All rights reserved." );
   $yearto = bw_format_date( null, 'Y');
   // bw_trace( $yearto, __FUNCTION__, __LINE__, __FILE__, "yearto!" );
-  $yearfrom = bw_array_get_dcb( $atts, "from", "yearfrom", "bw_get_option" );
+  $yearfrom = bw_array_get_dcb( $atts, "from", 'yearfrom', "bw_get_option" );
   
   $years = bw_year_range( $yearfrom, $yearto, $atts );
   span( "bw_copyright" );

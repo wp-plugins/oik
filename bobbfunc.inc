@@ -19,12 +19,14 @@ require_once( "oik_boot.inc" );   /* Don't use oik_require here */
  * 
  * Note: this isn't really an output buffer
  * Use bw_push() and bw_pop() if you need to stack buffers during nested processing.
- * $bwecho is used by the bw APIs to create the HTML output that is then returned from the shortcode functions  
+ * @global $bwecho is used by the bw APIs to create the HTML output that is then returned from the shortcode functions  
+ * @global $bwechos counts the number of times that bw_echo() has been called
  * 
 */
 function bw_echo( $string ) {
-  global $bwecho;
+  global $bwecho, $bwechos;
   $bwecho.=$string;
+  $bwechos++;
 }
 
 /**
@@ -51,12 +53,18 @@ function bw_ret() {
   $bwret = $bwecho;
   $bwecho = NULL;
   //bw_trace( __FUNCTION__ );
+  //bw_backtrace();
+  //bw_trace2( $bwret );
   return( $bwret );
 }
 
 /**
  * Push then empty the current $bwecho buffer
-*/ 
+ *
+ * We need to cater for when nested shortcodes are expanded, especially when processing 
+ * excerpts.
+ * 
+ */ 
 function bw_push() {
  global $bwecho, $bwecho_array;
  $bwecho_array[] = $bwecho;
@@ -65,7 +73,7 @@ function bw_push() {
 
 /** 
  * Restore the previous $bwecho buffer
-*/
+ */
 function bw_pop() {
   global $bwecho, $bwecho_array;
   $bwecho = array_pop( $bwecho_array ); 
@@ -437,6 +445,12 @@ function epan() {
   etag( "span" );
 }  
 
+/* 
+ * Create a span with a specific class and content
+ *
+ * Note: This has different parameters from sediv()
+ * If you need to set an id= parameter use span() and epan(); 
+ */
 function sepan( $class=NULL, $text=NULL ) {
   span( $class );
   e( $text );
@@ -1168,4 +1182,39 @@ function bw_get_theme() {
 function bw_wp_error( $code, $text=null, $data=null ) {
   oik_require( "includes/bw_error.inc" );
   return( bw_lazy_wp_error( $code, $text, $data ) );
-}  
+}
+
+/** 
+ * Return the global post ID
+ * @return ID - the global post ID or 0
+ */
+function bw_global_post_id() {
+  if ( isset( $GLOBALS['post'] )) {
+    $post_id = $GLOBALS['post']->ID;
+  } else {
+    $post_id = 0;
+  }  
+  return( $post_id ) ;
+}
+
+/**
+ * Set/return the current post ID
+ * 
+ * When processing nested posts we need to determine the current post_id rather than the global post id
+ * So we provide a routine to set/query the current post id
+ *
+ * @param ID/null $id - ID to set for the current post ID, if this is reset to 0 then we revert to using the bw_global_post_id()
+ * @return ID - the value of the current post, if set.
+ *
+ */
+function bw_current_post_id( $id=null ) {
+  static $current_post_id = null;
+  if ( $id !== null ) {
+    $current_post_id = $id;
+  }
+  if ( !$current_post_id ) { 
+    $current_post_id = bw_global_post_id();
+  }
+  bw_trace2( $current_post_id, "current_post_id" );
+  return( $current_post_id ); 
+} 

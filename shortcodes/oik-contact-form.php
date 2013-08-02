@@ -17,7 +17,7 @@ function bw_contact_form_id( $set=false ) {
 /**
  * Implements the [bw_contact_form] shortcode
  * 
- * Creates/process an inline contact form for the user
+ * Creates/processes an inline contact form for the user
  * 
  */
 function bw_contact_form( $atts=null, $content=null, $tag=null ) {
@@ -35,8 +35,8 @@ function bw_contact_form( $atts=null, $content=null, $tag=null ) {
  * Show the "oik" contact form
  * 
  * This is a simple contact form which contains: Name, Email, Subject, Message and a submit button
+ * Note: The * indicates Required field
  * 
- *  
  */
 function _bw_show_contact_form_oik( $atts ) {
   $me = bw_get_me( $atts );
@@ -117,7 +117,7 @@ function bw_get_message() {
 }
 
 /**
- * Perform an akismet check on the message, if it's activated
+ * Perform an Akismet check on the message, if it's activated
  * @param array - name value pairs of fields
  * @return bool - whether or not to send the email message
  */
@@ -126,19 +126,21 @@ function bw_akismet_check( $fields ) {
     $query_string = bw_build_akismet_query_string( $fields );
     $send = bw_call_akismet( $query_string );
   } else {
+    bw_trace2( "akismet_http_post not loaded" ); 
     $send = true;
   }
   return( $send );  
 }
 
 /**
- * Return true is the akismet call says the message is not spam
+ * Return true if the akismet call says the message is not spam
  * @param string $query_string - query string to pass to akismet
  * @return bool - true is the message is not spam 
  */
 function bw_call_akismet( $query_string ) {
   global $akismet_api_host, $akismet_api_port;
   $response = akismet_http_post( $query_string, $akismet_api_host, '/1.1/comment-check', $akismet_api_port );
+  bw_trace2( $response, "akismet response" );
   $result = false;
   $send = 'false' == trim( $response[1] ); // 'true' is spam, 'false' is not spam
   return( $send );
@@ -161,7 +163,7 @@ function bw_call_akismet( $query_string ) {
  * comment_author_email - Email address submitted with the comment
  * comment_author_url - URL submitted with comment
  * comment_content - The content that was submitted. 
- * Note: $fields['message'] is the sanitized version of the user's input
+ * Note: $fields['comment_content'] is the sanitized version of the user's input
  */
 function bw_build_akismet_query_string( $fields ) {
   $form = $_SERVER;
@@ -170,11 +172,11 @@ function bw_build_akismet_query_string( $fields ) {
   $form['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
   $form['referrer'] = $_SERVER['HTTP_REFERER'];
   $form['permalink'] =  get_permalink();
-  $form['comment_type'] = 'oik-contact-form';
-  $form['comment_author'] = $fields['contact'];
-  $form['comment_author_email'] = $fields['from'];
-  //$form['comment_author_url'] = $author_url;
-  $form['comment_content'] = $fields['message'];  
+  $form['comment_type'] = $fields['comment_type']; // 'oik-contact-form';
+  $form['comment_author'] = $fields['comment_author'];
+  $form['comment_author_email'] = $fields['comment_author_email'];
+  $form['comment_author_url'] = $fields['comment_author_url'];
+  $form['comment_content'] = $fields['comment_content'];  
   unset( $form['HTTP_COOKIE'] ); 
   $query_string = http_build_query( $form );
   return( $query_string );
@@ -184,8 +186,8 @@ function bw_build_akismet_query_string( $fields ) {
  * Display a "thank you" message
  * 
  * @param array $fields - in case we need them
- * @param bool $send - whether or not we were going to send the email
- * @param bool $sent - whether or not the email was sent
+ * @param bool $send - whether or not we were going to send the email / insert the post
+ * @param bool $sent - whether or not the email was sent / post inserted
  */
 function bw_thankyou_message( $fields, $send, $sent ) {
   if ( $send ) {
@@ -195,7 +197,7 @@ function bw_thankyou_message( $fields, $send, $sent ) {
       p( "Thank you for your submission. Something went wrong. Please try again." );
     }
   } else { 
-    p( "Thank you for your submission." ); // spammer
+    p( "We would like to thank you for your submission." ); // spammer
   }
 }
 
@@ -216,9 +218,11 @@ function _bw_process_contact_form_oik() {
     oik_require( "includes/oik-contact-form-email.inc" );
     $fields = array();
     $subject = bw_get_subject();
-    $fields['message'] = $message;
-    $fields['contact'] = bw_array_get( $_REQUEST, "oiku_name", null );
-    $fields['from'] = bw_array_get( $_REQUEST, "oiku_email", null );
+    $fields['comment_content'] = $message;
+    $fields['comment_author'] = bw_array_get( $_REQUEST, "oiku_name", null );
+    $fields['comment_author_email'] = bw_array_get( $_REQUEST, "oiku_email", null );
+    $fields['comment_author_url'] = null;
+    $fields['comment_type'] = 'oik-contact-form';
     $send = bw_akismet_check( $fields );
     if ( $send ) {
       $sent = bw_send_email( $email_to, $subject, $message, null, $fields );

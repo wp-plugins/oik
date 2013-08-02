@@ -35,7 +35,6 @@ function bw_format_as_required( $post, $atts ) {
  * E Excerpt
  * M Read more           readmore=
  * R Read more           readmore=             same as M-Read more
- * F Fields                                    only works when oik-fields enabled
  * L Link 
  * A Anchor                                    currently same as L - Link
  *
@@ -50,11 +49,13 @@ function bw_format_as_required( $post, $atts ) {
  * d  date
  * e  edit
  * 
+ * _ Fields              fields=               only works when oik-fields enabled
+ * 
  * Future use?
- * ! span                                      americans know this as bang, sounds like span
+ * ! span                                      Americans know this as bang, sounds like span
  * + span                                      Dummy <span></span>
  * - span
- * $ Price
+ * $ Price                                     
  * ? Caption                                   For attachments
  * S Status                                    Displays the post_status
  * Y tYpe                                      Displays the post_type
@@ -109,7 +110,7 @@ function _bw_field_functions() {
     $fields['a'] = "bw_field_function_author"; 
     $fields['d'] = "bw_field_function_date"; 
     $fields['e'] = "bw_field_function_edit"; 
-    // should we apply_filters to allow other formatting functions? 
+    // Apply_filters to allow other formatting functions provided by other plugins 
     $fields = apply_filters( "bw_field_functions", $fields );
   }
   return( $fields );
@@ -142,20 +143,25 @@ function bw_field_function_image( $post, &$atts, $f ) {
 }
 
 /**
- * Return the full content *
- * @todo - include shortcode expansion, processing like bw_excerpt AND compare with $post->post_content_filtered
+ * Format the full content of a post 
+ *
+ * @todo ensure that other "the_content" filters are NOT applied we only want to process shortcodes.
+ *
+ * @param object $post - a post object
+ * @return string - the full content of the post after shortcode expansion.
  * 
  */
 function bw_content( $post ) {
   $content = $post->post_content;
+  bw_trace2(); 
+  $content = bw_get_the_content( $content ); 
   return( $content );
 }  
 
 /**
  * Format the content (format=C)
  *
- *
- * Note that this displays the full content AFTER shortcode expansion
+ * Note that this is supposed to display the full content AFTER shortcode expansion
  * BUT excluding other filters that may be applied during "the_content" processing
  * 
  */

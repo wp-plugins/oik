@@ -20,8 +20,10 @@
 */
 
 /**
- * List sub-pages of the current or selected page - in a simple list 
  *
+ * Implement [bw_list] shortcode
+ * 
+ * List sub-pages of the current or selected page - in a simple list 
  * This is similar to [bw_pages] but it produces a simple list of links to the content type
  *
  *

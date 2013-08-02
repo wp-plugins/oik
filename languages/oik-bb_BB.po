@@ -1,0 +1,165 @@
+# Copyright (C) 2013 oik base plugin
+# This file is distributed under the same license as the oik base plugin package.
+msgid ""
+msgstr ""
+
+"Project-Id-Version: oik base plugin 2.1-alpha.0718\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/oik\n"
+"POT-Creation-Date: 2013-08-01 15:28:28+00:00\n"
+"MIME-Version: 1.0\n"
+"Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2013-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: bobbcomp.inc:254
+msgid "me"
+msgstr "mE"
+
+
+#: bobbcomp.inc:615
+msgid "&copy; Copyright"
+msgstr "&copy; Copyghirt"
+
+
+#: bobbcomp.inc:616 shortcodes/oik-googlemap.php:130
+#: shortcodes/oik-qrcode.php:10
+msgid "company"
+msgstr "cpnomay"
+
+
+#: bobbcomp.inc:617
+msgid ". All rights reserved."
+msgstr ". All rihtgs resrveed."
+
+
+#: bobbcomp.inc:620
+msgid "yearfrom"
+msgstr "yeorarfm"
+
+
+#: bobbforms.inc:307
+msgid "None"
+msgstr "Nnoe"
+
+
+#: bw_metadata.inc:28
+msgid "Fields"
+msgstr "Fdiels"
+
+
+#: includes/bw_fields.inc:275 includes/bw_formatter.inc:336
+msgid ": "
+msgstr ": "
+
+
+#: includes/bw_posts.inc:138
+msgid "read more"
+msgstr "raed more"
+
+
+#: includes/bw_register.inc:135
+msgid "Post"
+msgstr "Psot"
+
+
+#: includes/oik-contact-form-email.inc:36
+msgid "Contact form submission"
+msgstr "Ccontat from soiisusbmn"
+
+
+#: oik.php:199
+msgid "oik custom image link URL"
+msgstr "OIk cutosm iamge lnik URL"
+
+
+#: shortcodes/oik-bob-bing-wide.php:184
+msgid "Proudly powered by WordPress"
+msgstr "Pudolry pweerod by WroePrsds"
+
+
+#: shortcodes/oik-bob-bing-wide.php:184
+msgid "Semantic Personal Publishing Platform"
+msgstr "Sameitnc Pernoasl Pisbhnuilg Pfalortm"
+
+
+#: shortcodes/oik-contact-form.php:44
+msgid "Contact %s"
+msgstr "Cancott %s"
+
+
+#: shortcodes/oik-email.php:73
+msgid "Email"
+msgstr "Eaiml"
+
+
+#: shortcodes/oik-email.php:75
+msgid "Send email to: "
+msgstr "Sned eimal tO: "
+
+
+#: shortcodes/oik-paypal.php:86
+msgid "paypal-email"
+msgstr "papyal-eiaml"
+
+
+#: shortcodes/oik-paypal.php:87
+msgid "paypal-country"
+msgstr "ppaayl-crtunoy"
+
+
+#: shortcodes/oik-paypal.php:89
+msgid "paypal-currency"
+msgstr "ppaayl-cruercny"
+
+
+#: shortcodes/oik-phone.php:25
+msgid "Tel"
+msgstr "TEl"
+
+
+#: shortcodes/oik-phone.php:63
+msgid "Fax"
+msgstr "FAx"
+
+
+#: shortcodes/oik-phone.php:72 shortcodes/oik-phone.php:100
+msgid "Mobile"
+msgstr "Moblie"
+
+
+#: shortcodes/oik-phone.php:81
+msgid "Emergency"
+msgstr "Ecnegemry"
+
+
+#: shortcodes/oik-phone.php:113
+msgid "Skype name"
+msgstr "Sypke nmae"
+
+#. Plugin Name of the plugin/theme
+msgid "oik base plugin"
+msgstr "OIk bsae pulign"
+
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.oik-plugins.com/oik"
+msgstr "http://www.oik-plugins.com/oik"
+
+
+#. Description of the plugin/theme
+msgid "Lazy smart shortcodes for displaying often included key-information and other WordPress content"
+msgstr "Lzay sarmt shdceroots fOr dpiisylnag oetfn icuelndd kEy-ionmirafton And oethr WrseodrPs ceonntt"
+
+
+#. Author of the plugin/theme
+msgid "bobbingwide"
+msgstr "bnwigbiobde"
+
+
+#. Author URI of the plugin/theme
+msgid "http://www.bobbingwide.com"
+msgstr "http://www.bobbingwide.com"
+

@@ -1,6 +1,9 @@
 <?php // (C) Copyright Bobbing Wide 2012,2013
 /**
  * Logic to create metaboxes for each of the custom fields defined for a particular post type
+ *
+ * Note: These functions are prefixed bw_effort for historical reasons 
+ * 
  */
 
   
@@ -53,6 +56,17 @@ function bw_form_field_( $name, $type, $title, $value, $args ) {
   $extras = bw_array_get( $args, "#extras", null );
   bw_textfield( $name, $length, $title, $value, $class, $extras );
 } 
+
+/**
+ * bw_form_field_email - formatting for an email entry field
+ */
+function bw_form_field_email( $name, $type, $title, $value, $args ) {
+  $length = bw_array_get( $args, '#length', 40 );
+  $value = bw_default_value( $value, $args );
+  $class = bw_array_get( $args, "#class", null );
+  $extras = bw_array_get( $args, "#extras", null );
+  bw_emailfield( $name, $length, $title, $value, $class, $extras );
+}
 
 /**
  * bw_form_field_select - formatting for a field as a select list
@@ -145,7 +159,7 @@ function bw_form_field_noderef( $name, $type, $title, $value, $args ) {
    
 /**
  * Enqueue the debug script if needed otherwise enqueue the minified (packed) one
-*/
+ */
 function bw_datepicker_enqueue_script( ) {
   if ( defined('SCRIPT_DEBUG' ) && SCRIPT_DEBUG == true) {
     wp_enqueue_script( 'jquery-ui-datepicker' );
@@ -183,6 +197,9 @@ function bw_form_field_numeric( $name, $type, $title, $value, $args ) {
   bw_form_field_( $name, $type, $title, $value, $args ); 
 }
  
+/* 
+ * Format a checkbox metabox
+ */
 function bw_form_field_checkbox( $name, $type, $title, $value, $args ) {
   bw_checkbox( $name, $title, $value );
 }
@@ -195,6 +212,23 @@ function bw_form_field_textarea( $name, $type, $title, $value, $args ) {
   bw_textarea( $name, $len, $title, $value, 10 ); 
 }
 
+/**
+ * Request plugins to load their field forming functions
+ *
+ * @uses action "oik_pre_form_field" 
+ * Any plugin that provides a field forming function should respond to the "oik_pre_form_field" action to dynamically load the hook that 
+ * will be called to form the field. 
+ * @See bw_form_function() for hook name suggestions.
+ * 
+ */
+function bw_pre_form_field() {
+  static $bw_pre_form_field = 0;
+  if ( 0 === $bw_pre_form_field ) { 
+    do_action( "oik_pre_form_field" );
+  }
+  $bw_pre_form_field++;
+}
+
 /** 
  * Return the function name to be used to 'form' the field
  * 
@@ -205,14 +239,15 @@ function bw_form_field_textarea( $name, $type, $title, $value, $args ) {
  * $prefix$field_type - e.g. bw_form_field_text or bw_form_field_url
  * $prefix$field_name - e.g. bw_form_field__task_ref
  *
+ * @param string $prefix - the prefix for the function name
  * @param string $field_type - type of the field to form
  * @param string $field_name - name of the field to form
  
- * @param string $suffix - optional suffix for multiple theming functions 
  * @returns string $funcname - the name of the function to invoke
  * 
  */
 function bw_form_function( $prefix="bw_form_field_", $field_type= 'text', $field_name = NULL ) {
+  bw_pre_form_field();
   $funcname = $prefix;
   
   $testname = $funcname . $field_type;
@@ -224,13 +259,40 @@ function bw_form_function( $prefix="bw_form_field_", $field_type= 'text', $field
     $funcname = $testname;
     
   return bw_trace2( $funcname );
-}   
+} 
+
+/**
+ * Append any #hint to the field_title 
+ * 
+ * If there is a #hint in the $args then append it to the $field_title within a span with class "bw_hint" 
+ * 
+ * @param string $field_title - the title of the field
+ * @param array $args - array of args, possibly containing a key of '#hint' 
+ * @return string $field_title - the updated field title. Note: there is no added space character.
+ */
+function _bw_form_field_title( $field_title, $args ) {
+  $hint = bw_array_get( $args, "#hint", null ); 
+  if ( $hint ) {
+    $sphint = retstag( "span", "bw_hint" );
+    $sphint .= $hint;
+    $sphint .= retetag( "span" ); 
+    $field_title .= $sphint;
+  }  
+  return( $field_title );
+} 
 
 /** 
- *
+ * Display a field in a form for the user to enter/choose a value
+ * 
+ * @param string $field_name - eg. post_title or 
+ * @param string $field_type - eg. text, checkbox
+ * @param string $field_title - e.g. "Title" 
+ * @param string $field_value - current value to display
+ * @param array $args - any additional arguments for the field formatter
  */
 function bw_form_field( $field_name, $field_type, $field_title, $field_value, $args=NULL ) {
   bw_trace2();
+  $field_title = _bw_form_field_title( $field_title, $args ); 
   $funcname = bw_form_function( "bw_form_field_", $field_type, $field_name );
   $funcname( $field_name, $field_type, $field_title, $field_value, $args );
 }
@@ -309,7 +371,6 @@ function bw_update_post_meta( $post_id, $field, $mydata ) {
     add_post_meta( $post_id, $field, $value, false ); 
   }
 }
-
 
 /**
  * Update the value/values for a field 

@@ -41,27 +41,10 @@ function bw_table_header( $title_arr ) {
 }
 
 /**
- * Convert a field name to a title
- *
- * @param string $name - field name e.g. _cc_custom_category
- * @return string $title - title returned
- * 
- * Converts underscores to blanks, trims and uppercases first letter of each word
- * DOES NOT remove a prefix that may match the post_type's slug 
- * So the field title may be quite long. 
- */
-function bw_titleify( $name ) {
-  $title = str_replace( "_", " ", $name );
-  $title = trim( $title ); 
-  $title = ucwords( $title );  
-  return( $title ); 
-} 
-
-
-/**
  * Build a default title_arr from the field_arr
  */ 
 function bw_default_title_arr( $field_arr ) {
+  oik_require( "includes/bw_register.inc" );
   if ( count( $field_arr) ) {
     foreach ( $field_arr as $key => $name ) {
       $title_arr[$name] = bw_titleify( $name );
@@ -72,8 +55,16 @@ function bw_default_title_arr( $field_arr ) {
 
 /**
  * Determine the columns for the table
+ * 
+ * Finds the field names of the columns for the table, determines the table title for each field and creates a table heading
+ * @uses "oik_table_fields_${post_type} - filter to determine fields to display in the table
+ * @uses "oik_table_titles_${post_type} - filter to determine titles to display in the table
  *
- * Default are title and description (excerpt) 
+ * Default fields are title and description (excerpt) 
+ * 
+ * @param array $atts - shortcode parameters including "fields="
+ * @param string $post_type - the post type being displayed
+ * @return bool - true if one of the columns is "excerpt"
  *
  */
 function bw_query_table_columns( $atts=null, $post_type ) {
@@ -132,6 +123,7 @@ function bw_format_table_row( $post, $atts ) {
        // e( $post->$field );
     } else {
        // e( "key==value" . $key . $value . $key==$value );
+       bw_trace2( $value );
        bw_custom_column( $value, $post->ID );   
        //bw_flush();
     }   
@@ -154,6 +146,11 @@ function bw_format_table( $posts, $atts ) {
   
   $excerpts = bw_query_table_columns( $atts, $post_type );
   
+  // If oik-fields (v1.18 or higher) is not loaded then we need to load the functions to "theme" fields. See bw_format_table_row()
+  if ( !function_exists( "bw_theme_field" ) ) {
+    oik_require( "includes/bw_fields.inc" );
+  }
+  
   foreach ( $posts as $post ) {
     if ( $excerpts )
       $post->excerpt = bw_excerpt( $post );    
@@ -170,6 +167,7 @@ function bw_format_table( $posts, $atts ) {
  * @return string the "raw" content - that could be put through WP-syntax
  */
 function bw_table( $atts=null ) {
+  $atts['numberposts'] = bw_array_get( $atts, 'numberposts', 10 );
   $posts = bw_get_posts( $atts );
   if ( $posts ) { 
     bw_format_table( $posts, $atts );   
@@ -178,9 +176,13 @@ function bw_table( $atts=null ) {
   return( bw_ret() );
 }
 
+/**
+ * Syntax hook for [bw_table] shortcode
+ */
 function bw_table__syntax( $shortcode="bw_table" ) {
   $syntax = _sc_posts(); 
   $syntax = array_merge( $syntax, _sc_classes() );
+  $syntax['fields'] = bw_skv( "title,excerpt", "<i>fields</i>", "CSV of field names" );
   return( $syntax );   
 }
 
@@ -193,5 +195,10 @@ function bw_table__example( $shortcode="bw_table" ) {
  $example = 'post_type="post" orderby="post_date" order=DESC numberposts=4';
  // oops it went into a loop! 
  //bw_invoke_shortcode( $shortcode, $example, $text );
+ p( "No example for $shortcode" );
 } 
+
+function bw_table__snippet( $shortcode="bw_table" ) {
+ p( "No snippet for $shortcode" );
+}
 

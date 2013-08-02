@@ -94,6 +94,18 @@ The Application Programming Interface (API) reference documents over 900 APIs
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
+= 2.1-alpha.0802 =
+Includes changes required for th oik-plugins plugin and a fix for JavaScript that doesn't accept version information in the request
+
+= 2.1-alpha.0718 =
+Provides a fix to reclaim code that was inadvertently moved to the oik-fields plugin.
+You can update the oik base plugin and oik-fields in either order.
+You should not need to deactivate the oik-fields plugin before updating to this version.
+If you are not using plugins which are dependent upon oik-fields then you should be able to deactivate the oik-fields plugin.
+
+= 2.1-alpha.0705 =
+Implement this version if you have experienced problems with nested shortcode expansion.
+
 = 2.1-alpha.0701 =
 Changes primarily for oik-nivo-slider. When finding full sized images to display with a post the Featured Image is now chosen in preference to a randomly selected attached image.
 This will make the nivo shortcode more useful but could alter the results in some cases.
@@ -183,11 +195,35 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.1-alpha.0802 =
+* Changed: Added inline= parameter to [bw_jquery] shortcode
+* Changed: Added caveat documentation for bw_get_plugin_name()
+* Added: oik_boot.inc will now set ABSPATH if not defined
+* Changed: Started Internationalization (i18n) work
+* Added: first version of Localization l10n for the invented "bbboing" language ( locale "bb_BB" ) - now discovered to be called http://en.wikipedia.org/wiki/Typoglycemia
+* Added: bw_form_field_email() 
+* Added: Field title #hint: _bw_form_field_title() 
+
+= 2.1-alpha.0718 =
+* Fixed: [bw_table] shortcode no longer dependent upon the oik-fields plugin. Added includes/bw_fields.inc
+* Changed: [bw_pages] and [bw_table] shortcodes now default numberposts=10
+* Changed: Changed [bw_contact_form] logic to allow oik-fields to share the Akismet checking code
+* Changed: Minor documentation improvements, including dummy functions for [bw_table] Syntax, Example and Snippet
+* Changed: oik stylesheets are now enqueued after other stylesheets ( priority=11 )
+* Added: bw_pre_form_field() invokes "oik_pre_form_field" action to allow extender plugins to load their field "form" functions
+* Changed: Improved support for custom category and custom tags. See bw_register_custom_category(), bw_register_custom_tags()
+
+= 2.1-alpha.0705 =
+* Added: Support for "private" custom fields - not visible to end users when displayed in forms or theme ( used by oik-fields )
+* Added: Logic to expand shortcodes in content when used in format=C parameter of bw_pages and related shortcodes.   
+* Fixed: HTML was being output in the wrong order when nested shortcodes were being expanded
+* Fixed: Correct post ID used when processing nested posts in shortcode expansion for content and excerpt
+
 = 2.1-alpha.0701 =
 * Changed: bw_get_fullimage() now attempts to load the featured image before choosing an attached image at random
 * Added: bw_get_posts() now supports identification of multiple posts using id= parameter ( or post__in= or p= )
 * Default orderby sort sequence when using "post__in" is "post__in"
-* Fixed: Notify message from oik options > plugins when no plugins are regisered
+* Fixed: Notify message from oik options > plugins when no plugins are registered
 * Fixed: Added syntax help for read_more= parameter to [bw_pages] shortcode
 * Fixed: Minor API documentation improvements
 * Fixed: Enqueues jquery-ui-1.9.2.custom.css for date form fields

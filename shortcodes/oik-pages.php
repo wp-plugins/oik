@@ -3,7 +3,7 @@ if ( defined( 'OIK_PAGES_SHORTCODES_INCLUDED' ) ) return;
 define( 'OIK_PAGES_SHORTCODES_INCLUDED', true );
 /*
 
-    Copyright 2012 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012, 2013 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -65,13 +65,16 @@ function bw_query_post_formatter( $atts ) {
  * @return string - the generated HTML output 
  */
 function bw_pages( $atts = NULL ) {
+  $atts['numberposts'] = bw_array_get( $atts, 'numberposts', 10 );
   $posts = bw_get_posts( $atts );
   bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
   if ( $posts ) {
     $bw_post_formatter = bw_query_post_formatter( $atts );
     foreach ( $posts as $post ) {
+      bw_current_post_id( $post->ID );
       $bw_post_formatter( $post, $atts );
     }
+    bw_current_post_id();
     bw_clear_processed_posts();
   }
   return( bw_ret() );

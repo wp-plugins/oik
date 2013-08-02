@@ -22,6 +22,25 @@ function bw_singularize( $plural ) {
 }
 
 /**
+ * Convert a field name to a title
+ *
+ * @param string $name - field name e.g. _cc_custom_category
+ * @return string $title - title returned e.g. Cc Custom Category
+ * 
+ * Converts underscores to blanks, trims and uppercases first letter of each word
+ * DOES NOT remove a prefix that may match the post_type's slug 
+ * So the field title may be quite long. 
+ */
+if ( !function_exists( "bw_titleify" ) ) {
+function bw_titleify( $name ) {
+  $title = str_replace( "_", " ", $name );
+  $title = trim( $title ); 
+  $title = ucwords( $title );  
+  return( $title ); 
+} 
+}
+
+/**
  * Register a custom post type using as many defaults as we can
  *
  * Refer to the WordPress codex or [bw_plug name='custom UI,types']
@@ -135,18 +154,101 @@ function bw_default_labels( $labels= array() ) {
 
   // should each array element now be translated? 
   return( $labels );
+} 
+
+/**
+ * Set default custom taxonomy labels
+ * 
+ * It looks like these are the same as for post types - let's check
+ * OK there are a few more. We'll call default_labels first then
+ * 
+ labels
+(array) (optional) labels - An array of labels for this taxonomy. 
+By default tag labels are used for non-hierarchical types and category labels for hierarchical ones.
+
+Default: if empty, name is set to label value, and singular_name is set to name value
+
+x 'name' - general name for the taxonomy, usually plural. The same as and overridden by $tax->label. Default is _x( 'Post Tags', 'taxonomy general name' ) or _x( 'Categories', 'taxonomy general name' ). When internationalizing this string, please use a gettext context matching your post type. Example: _x('Writers', 'taxonomy general name');
+x 'singular_name' - name for one object of this taxonomy. Default is _x( 'Post Tag', 'taxonomy singular name' ) or _x( 'Category', 'taxonomy singular name' ). When internationalizing this string, please use a gettext context matching your post type. Example: _x('Writer', 'taxonomy singular name');
+x 'menu_name' - the menu name text. This string is the name to give menu items. Defaults to value of name
+x 'all_items' - the all items text. Default is __( 'All Tags' ) or __( 'All Categories' )
+x 'edit_item' - the edit item text. Default is __( 'Edit Tag' ) or __( 'Edit Category' )
+x 'view_item' - the view item text, Default is __( 'View Tag' ) or __( 'View Category' )
+
+  'update_item' - the update item text. Default is __( 'Update Tag' ) or __( 'Update Category' )
+x 'add_new_item' - the add new item text. Default is __( 'Add New Tag' ) or __( 'Add New Category' )
+  'new_item_name' - the new item name text. Default is __( 'New Tag Name' ) or __( 'New Category Name' )
+  'parent_item' - the parent item text. This string is not used on non-hierarchical taxonomies such as post tags. Default is null or __( 'Parent Category' )
+  'parent_item_colon' - The same as parent_item, but with colon : in the end null, __( 'Parent Category:' )
+x 'search_items' - the search items text. Default is __( 'Search Tags' ) or __( 'Search Categories' )
+  'popular_items' - the popular items text. Default is __( 'Popular Tags' ) or null
+  'separate_items_with_commas' - the separate item with commas text used in the taxonomy meta box. This string isn't used on hierarchical taxonomies. Default is __( 'Separate tags with commas' ), or null
+  'add_or_remove_items' - the add or remove items text and used in the meta box when JavaScript is disabled. This string isn't used on hierarchical taxonomies. Default is __( 'Add or remove tags' ) or null
+  'choose_from_most_used' - the choose from most used text used in the taxonomy meta box. This string isn't used on hierarchical taxonomies. Default is __( 'Choose from the most used tags' ) or null
+  'not_found' (3.6+) - the text displayed via clicking 'Choose from the most used tags' in the taxonomy meta box when no tags are available. This string isn't used on hierarchical taxonomies. Default is __( 'No tags found.' ) or null
+ */
+function bw_default_taxonomy_labels( $labels = array() ) {
+  $labels = bw_default_labels( $labels );
+  $ucplural = bw_array_get( $labels, "name", null );
+  $ucsingular =  bw_array_get( $labels, "singular_name", $ucplural );
+  $labels['update_item'] = bw_array_get( $labels, "update_item" , "Update $ucplural" ); 
+  $labels['new_item_name'] = bw_array_get( $labels, "new_item_name" , "New $ucsingular" ); 
+  $labels['parent_item'] = bw_array_get( $labels, "parent_item" , "Parent $ucsingular" ); 
+  $labels['parent_item_colon'] = bw_array_get( $labels, "parent_item_colon" , "Parent $ucsingular:"  ); 
+  $labels['popular_items'] = bw_array_get( $labels, "popular_items" , "Popular $ucplural" ); 
+  $labels['separate_items_with_commas'] = bw_array_get( $labels, "separate_items_with_commas", "Separate $ucplural with commas" ); 
+  $labels['add_or_remove_items'] = bw_array_get( $labels, "add_or_remove_items", "Add or remove $ucplural" ); 
+  $labels['choose_from_most_used'] = bw_array_get( $labels, "choose_from_most_used", "Choose from most used $ucplural" );
+  // $labels['not_found'] = bw_array_get( $labels, "not_found", "No $ucplural found" );
+  bw_trace2();
+  return( $labels );
 }  
+
+/**
+ * 
+ */
+function bw_default_taxonomy_args( $taxonomy, $arg ) {
+  bw_trace2();
+  if ( !is_array( $arg ) ) {
+    $labels = array( "name" => $arg );
+  } else { 
+    $labels = bw_array_get( $arg, "labels", null );
+    if ( null == $labels ) { 
+      $labels = array( "name" => bw_titleify( $taxonomy ) );
+    }  
+  }   
+  $args["labels"] = bw_default_taxonomy_labels( $labels );
+  return( $args ); 
+} 
 
 /**
  * Register a custom taxonomy 
  * 
- * Currently this is a simple wrapper to register_taxonomy
+ * This function registers a custom $taxonomy for an $object_type with $args as specified
+ * If the $args parameter is a simple string then it's used to auto generate the "label" and "labels" values for the custom taxonomy
+ * You can set $args yourself or let the system create sensible default values
+ *
+ * @param string $taxonomy - custom taxonomy name
+ * @param string $object_type - the post type for which this taxonomy applies
+ * @param mixed $args - array of arguments passed to register_taxonomy() 
  * 
  */
 function bw_register_taxonomy( $taxonomy, $object_type=NULL, $args=NULL ) {
+  bw_trace2( $args );  
   register_taxonomy( $taxonomy, $object_type, $args );
 }
 
+function bw_register_custom_tags( $taxonomy, $object_type=null, $arg=null ) {
+  $args = bw_default_taxonomy_args( $taxonomy, $arg );
+  $args['hierarchical'] = false;
+  bw_register_taxonomy( $taxonomy, $object_type, $args) ; 
+}
+
+function bw_register_custom_category( $taxonomy, $object_type=null, $arg=null ) {
+  $args = bw_default_taxonomy_args( $taxonomy, $arg );
+  $args['hierarchical'] = true;
+  bw_register_taxonomy( $taxonomy, $object_type, $args ); 
+}
 
 /** 
  * Register a field named $field_name for object type $object_type
@@ -156,13 +258,8 @@ function bw_register_taxonomy( $taxonomy, $object_type=NULL, $args=NULL ) {
  */
 function bw_register_field_for_object_type( $field_name, $object_type ) {
   global $bw_mapping;
-  //$bw_mapping = get_option( 'bw_mapping' );
-  
   $bw_mapping['field'][$object_type][$field_name] = $field_name;
   $bw_mapping['type'][$field_name][$object_type] = $object_type;
-
-  //update_option( 'bw_mapping', $bw_mapping );
-  //bw_trace2( $bw_mapping );
 }  
 
 /** 
@@ -171,25 +268,28 @@ function bw_register_field_for_object_type( $field_name, $object_type ) {
  * @param string $field_name - meta_key of the field - precede with an underscore so it's not in custom fields
  * @param string $field_type - type of field e.g. text, textarea, radio button
  * @param string $field_title - title of the field
- * @param string $args - $field_type specific values
- *   these could include:
+ * @param string $args - $field_type specific values including:
+ * <code>
  *   #length - for text fields
  *   #validate - for any field
  *   #type - for noderef 
  *   #options - for select 
+ *   #multiple - for multiple select fields
+ *   #form - bool - whether or not to display the field on an "Add New" form - defaults to true 
+ *   #theme - bool - whether or not to display the field during "theming" - defaults to true
+ * </code>   
  */
 function bw_register_field( $field_name, $field_type, $field_title, $args=NULL ) {
   global $bw_fields;
-  //$bw_fields = get_option( 'bw_fields' );
   $data = array( '#field_type' => $field_type,
                  '#title' => $field_title, 
                  '#args' => $args, 
                );
-               
   $bw_fields[$field_name] = $data;
-  //update_option( 'bw_fields', $bw_fields );
-  //bw_trace2( $bw_fields ); 
 }
+
+
+
 
  
   

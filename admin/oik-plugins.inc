@@ -388,6 +388,13 @@ function _bw_get_plugins() {
   return( $plugins );
 } 
 
+/**
+ * Get the full plugin name given the slug
+ * 
+ * Note: This may return the wrong name if there are two plugins with the same plugin slug! 
+ *
+ * @return string $plugin_name
+ */
 function bw_get_plugin_name( $plugin="oik" ) {
   $plugins = _bw_get_plugins();
   $plugin_name = bw_array_get( $plugins, $plugin, null );

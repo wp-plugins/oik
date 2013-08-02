@@ -65,7 +65,7 @@ function ihidden( $name, $value ) {
  * @return string the HTML input tag
  */
 function itext( $name, $len, $value, $class=null, $extras=null ) {
-  $width = ($len * 20) ;
+  //$width = ($len * 20) ;
   $it = "<input type=\"text\" size=\"";
   $it.= $len;
   $it.= "\" ";
@@ -190,6 +190,11 @@ function textarea( $name, $len, $text, $value, $rows=10 ) {
   return;
 }
   
+/**
+ * Form a text field
+ * 
+ * 
+ */
 function bw_textfield( $name, $len, $text, $value, $class=null, $extras=null ) {
   $lab = label( $name, $text );
   if ( $value === null ) {
@@ -200,6 +205,9 @@ function bw_textfield( $name, $len, $text, $value, $class=null, $extras=null ) {
   return;
 }
 
+/**
+ * Form an "email" field 
+ */
 function bw_emailfield( $name, $len, $text, $value, $class=null, $extras=null ) {
   $lab = label( $name, $text );
   if ( $value === null ) {

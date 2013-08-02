@@ -192,6 +192,7 @@ function bw_jquery_enqueue_script( $script, $debug=false ) {
     $script_url = bw_jquery_script( $script, $debug ); 
     // p( "$script_url:$script" );
     $dependence = bw_jquery_dependencies( $script );
+    bw_trace2( $dependence, "dependence" );
     $enqueued = wp_enqueue_script( $script, $script_url, $dependence ); 
   }
   return( $enqueued );  
@@ -305,13 +306,20 @@ function bw_jquery_javascript( $src ) {
  *  
  */
 function bw_jquery_src( $atts ) {
-  //bw_trace2();
   $src = bw_array_get( $atts, "src", null );
+  bw_trace2( $src );
   if ( $src ) {
     if ( is_numeric( $src ) ) {
       $src = wp_get_attachment_url( $src );
+    }
+    //wp_register_script( $src, $src, array( "jquery"), null ); 
+    $inline = bw_array_get( $atts, "inline", false );
+    $inline = bw_validate_torf( $inline ); 
+    if ( $inline ) {
+      bw_jquery_javascript( $src );
+    } else {   
+      wp_enqueue_script( $src, $src, array( "jquery"), null ); 
     }  
-    $enqueued = wp_enqueue_script( $src, $src, array( "jquery") ); 
   } else {
     bw_jquery_enqueue_attached_scripts();
   }
@@ -472,6 +480,7 @@ function bw_jq__syntax( $shortcode = "bw_jq" ) {
                  , "windowload" => bw_skv( false, "<i>bool</i>", "Use true when the jQuery is to run when the window has loaded" )
                  , "parms" => bw_skv( null, "<i>parm=value1,parm2=value2</i>", "Variable list of parameters" )
                  , "src" => bw_skv( null, "<i>ID</i>|<i>URL</i>", "ID or full URL of JavaScript" )
+                 , "inline" => bw_skv( null, "T|Y", "Set to T=True or Y=Yes when the script tag must be inline" )
                  );
   return( $syntax );
 }                  

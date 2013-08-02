@@ -1,0 +1,133 @@
+# Copyright (C) 2013 oik base plugin
+# This file is distributed under the same license as the oik base plugin package.
+msgid ""
+msgstr ""
+"Project-Id-Version: oik base plugin 2.1-alpha.0718\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/oik\n"
+"POT-Creation-Date: 2013-08-01 15:28:28+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2013-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: bobbcomp.inc:254
+msgid "me"
+msgstr ""
+
+#: bobbcomp.inc:615
+msgid "&copy; Copyright"
+msgstr ""
+
+#: bobbcomp.inc:616 shortcodes/oik-googlemap.php:130
+#: shortcodes/oik-qrcode.php:10
+msgid "company"
+msgstr ""
+
+#: bobbcomp.inc:617
+msgid ". All rights reserved."
+msgstr ""
+
+#: bobbcomp.inc:620
+msgid "yearfrom"
+msgstr ""
+
+#: bobbforms.inc:307
+msgid "None"
+msgstr ""
+
+#: bw_metadata.inc:28
+msgid "Fields"
+msgstr ""
+
+#: includes/bw_fields.inc:275 includes/bw_formatter.inc:336
+msgid ": "
+msgstr ""
+
+#: includes/bw_posts.inc:138
+msgid "read more"
+msgstr ""
+
+#: includes/bw_register.inc:135
+msgid "Post"
+msgstr ""
+
+#: includes/oik-contact-form-email.inc:36
+msgid "Contact form submission"
+msgstr ""
+
+#: oik.php:199
+msgid "oik custom image link URL"
+msgstr ""
+
+#: shortcodes/oik-bob-bing-wide.php:184
+msgid "Proudly powered by WordPress"
+msgstr ""
+
+#: shortcodes/oik-bob-bing-wide.php:184
+msgid "Semantic Personal Publishing Platform"
+msgstr ""
+
+#: shortcodes/oik-contact-form.php:44
+msgid "Contact %s"
+msgstr ""
+
+#: shortcodes/oik-email.php:73
+msgid "Email"
+msgstr ""
+
+#: shortcodes/oik-email.php:75
+msgid "Send email to: "
+msgstr ""
+
+#: shortcodes/oik-paypal.php:86
+msgid "paypal-email"
+msgstr ""
+
+#: shortcodes/oik-paypal.php:87
+msgid "paypal-country"
+msgstr ""
+
+#: shortcodes/oik-paypal.php:89
+msgid "paypal-currency"
+msgstr ""
+
+#: shortcodes/oik-phone.php:25
+msgid "Tel"
+msgstr ""
+
+#: shortcodes/oik-phone.php:63
+msgid "Fax"
+msgstr ""
+
+#: shortcodes/oik-phone.php:72 shortcodes/oik-phone.php:100
+msgid "Mobile"
+msgstr ""
+
+#: shortcodes/oik-phone.php:81
+msgid "Emergency"
+msgstr ""
+
+#: shortcodes/oik-phone.php:113
+msgid "Skype name"
+msgstr ""
+#. Plugin Name of the plugin/theme
+msgid "oik base plugin"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.oik-plugins.com/oik"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Lazy smart shortcodes for displaying often included key-information and other WordPress content"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "bobbingwide"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.bobbingwide.com"
+msgstr ""

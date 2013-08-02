@@ -19,18 +19,7 @@
 */
 oik_require( "includes/bw_images.inc" );
 
-/** 
- * Return the global post ID
- * @return ID - the global post ID or 0
- */
-function bw_global_post_id() {
-  if ( isset( $GLOBALS['post'] )) {
-    $post_id = $GLOBALS['post']->ID;
-  } else {
-    $post_id = 0;
-  }  
-  return( $post_id ) ;
-}  
+// bw_global_post_id moved to bobbfunc.inc 2013/07/05
 
 /** 
  * Return the global post's post_type
@@ -90,6 +79,24 @@ function bw_clear_processed_posts() {
 }
 
 /**
+ * Safely invoke the "the_content" filter
+ * We only really want shortcode expansion to take place against the content
+ * 
+ */
+function bw_get_the_content( $content ) { 
+  $doit = strpos( $content, "[" );
+  if ( $doit !== false ) {
+    bw_push(); 
+    // $saved_excerpt = bw_global_excerpt( null ); 
+    $content = apply_filters( "the_content", $content );
+    // bw_trace2( $excerpt, "excerpt after", false );
+    // bw_global_excerpt( $saved_excerpt );
+    bw_pop();
+  }  
+  return( $content );
+}
+
+/**
  * Safely invoke the "get_the_excerpt" filter
  * 
  * The reason we apply filters here is to expand shortcodes.
@@ -97,17 +104,19 @@ function bw_clear_processed_posts() {
  * 
  * There is no need to do this if there aren't any shortcodes. So we do a simple check for the starting character '['
  *
- * Note: We don't want other filters to try doing things based on the global post, so we use bw_global_excerpt() to make
- * it look as if there isn't an excerpt
+ * Note: We don't want other filters to try doing things based on the global post, so we use bw_global_excerpt() to make it look as if there isn't an excerpt.
+ * And because we're expanding shortcodes that may use bw_echo() we need to make use of bw_push() and bw_pop().
  *
  */
 function bw_get_the_excerpt( $excerpt ) { 
   $doit = strpos( $excerpt, "[" );
-  if ( $doit !== false ) { 
+  if ( $doit !== false ) {
+    bw_push(); 
     $saved_excerpt = bw_global_excerpt( null ); 
     $excerpt = apply_filters( "get_the_excerpt", $excerpt );
     // bw_trace2( $excerpt, "excerpt after", false );
     bw_global_excerpt( $saved_excerpt );
+    bw_pop();
   }  
   return( $excerpt );
 }
@@ -145,6 +154,7 @@ function bw_more_text( $more_text=null, $atts=null ) {
  * In order to achieve this we have to make sure that the global post's excerpt is not set
  */
 function bw_excerpt( $post ) {
+  //bw_current_post_id( $post->ID );
   if ( bw_process_this_post( $post->ID ) ) {
     if ( empty( $post->post_excerpt ) ) {
       $excerpt = $post->post_content;
@@ -158,7 +168,8 @@ function bw_excerpt( $post ) {
     $excerpt = bw_get_the_excerpt( $excerpt );
   } else {
     $excerpt = "post already processed: " . $post->ID;
-  }  
+  }
+  // bw_current_post_id();  
   return( $excerpt );
 }
 
@@ -373,8 +384,10 @@ function bw_get_posts( $atts = NULL ) {
       
     }  
   }
-  // Regardless of the post type, exclude the current post, 
-  // Note: This could also be improved **?**
+  // Regardless of the post type, exclude the current post, if exclude= parameter NOT specified
+  // If you want to retrieve the current post use exclude=-1
+  //
+  // Note: This supports multiple IDs, comma separated 
   $attr['exclude'] = bw_array_get_dcb( $attr, "exclude", NULL, "bw_global_post_id" );
   
   // set suppress_filters to false when global bw_filters is set

@@ -16,6 +16,8 @@ define( 'OIK_BOOT_INCLUDED', true );
  * Note: oik_boot may be loaded before WordPress has done its stuff, so we may need to define some constants ourselves
  */
 if (!function_exists( 'oik_path' )) {
+  if ( !defined('ABSPATH') )
+    define( 'ABSPATH', dirname( dirname( dirname ( dirname( __FILE__ )))) . '/' );
 
   if ( !defined('WP_CONTENT_DIR') )
     define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' ); // no trailing slash, full paths only - WP_CONTENT_URL is defined further down
