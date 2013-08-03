@@ -58,11 +58,30 @@ function bw_tree_func( $atts ) {
  * Create a simple tree of the 'pages' under the selected id
  * We default the ordering to match the menu order of the pages
  * The default tree starts from the current 'post'
+ * 
+ * If post_parent=" " or post_parent=. then we use the current post's parent
+ * If you want to include the current post in the tree then add exclude=-1
  */
 function bw_tree( $atts = NULL ) {
   $atts['orderby'] = bw_array_get($atts, "orderby", "menu_order" );
   $atts['order'] = bw_array_get( $atts, "order", "ASC" );
-  $atts['post_parent'] = bw_array_get_dcb( $atts, "post_parent", null, "bw_global_post_id" );
+  $atts['post_parent'] = bw_array_get( $atts, "post_parent", null );
+  //bw_trace2( "!{$atts['post_parent']}!", "derr" ); 
+  switch ( $atts['post_parent'] ) {
+    case null:
+      $atts['post_parent'] = bw_global_post_id();
+      break;
+    
+    case " ":
+    case ".":
+      $post = bw_global_post();
+      if ( $post ) {
+        $atts['post_parent'] = $post->post_parent;
+      }
+      break;
+    default:
+      // Assume it's an integer and carry on.
+  }     
   bw_tree_func( $atts );
   return( bw_ret() );
 }
