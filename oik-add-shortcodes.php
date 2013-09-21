@@ -293,7 +293,7 @@ bw_add_shortcode( 'bw_business', 'bw_business', oik_path( "shortcodes/oik-compan
 bw_add_shortcode( 'bw_formal', 'bw_formal', oik_path( "shortcodes/oik-company.php" ) );
 bw_add_shortcode( 'bw_slogan', 'bw_slogan', oik_path( "shortcodes/oik-company.php" ) );
 bw_add_shortcode( 'bw_alt_slogan', 'bw_alt_slogan', oik_path( "shortcodes/oik-company.php" ) );
-bw_add_shortcode( 'bw_admin', 'bw_admin', oik_path( "shortcodes/oik-company.php" ) );
+bw_add_shortcode( 'bw_admin', 'bw_admin_sc', oik_path( "shortcodes/oik-company.php" ) );
 
 bw_add_shortcode( 'bw_twitter', 'bw_twitter', oik_path( "shortcodes/oik-follow.php" ) );
 bw_add_shortcode( 'bw_facebook', 'bw_facebook', oik_path( "shortcodes/oik-follow.php" ) );

@@ -958,7 +958,7 @@ if ( !function_exists( "bw_jkv" ) ) {
 function bw_jkv( $parms, $value=null, $json_options=null ) {
   if ( is_array( $parms ) ) {
     bw_jtorf( $parms );
-    if ( $json_options == null && defined( JSON_NUMERIC_CHECK )) {
+    if ( $json_options == null && defined( 'JSON_NUMERIC_CHECK' )) {
       $json_options = (JSON_NUMERIC_CHECK | JSON_FORCE_OBJECT);
     }
     $jqoption = bw_json_encode( $parms, $json_options );

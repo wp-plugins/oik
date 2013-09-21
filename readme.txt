@@ -3,8 +3,8 @@ Contributors: bobbingwide
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, oik, pages, posts, jQuery, contact form, PayPal, buttons, Artisteer, text widget, key information, trace, blocks, bookmarks, images, attachments, smart, lazy, pagelist, sitemap, tree, accordion, tabs, cycle
 Requires at least: 3.5
-Tested up to: 3.6
-Stable tag: 2.0
+Tested up to: 3.6.1
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -94,6 +94,9 @@ The Application Programming Interface (API) reference documents over 900 APIs
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
+= 2.0.1 =
+Version 2.0.1 contains a fix for oik-nivo-slider box transition effects
+
 = 2.0 =
 Version 2.0 contains significant enhancements to version 1.17. There have been many improvements but you should not have to make any changes to your current content.
 
@@ -179,6 +182,10 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.0.1 =
+* Changed: Corrected test for defined constant in bw_jkv()
+* Changed: Renamed bw_admin() to bw_admin_sc() to resolve function naming conflict with BookingWizz 
+
 = 2.0 =
 
 oik version 2.0 adds 11 shortcodes:
