@@ -184,7 +184,7 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 == Changelog ==
 = 2.0.1 =
 * Changed: Corrected test for defined constant in bw_jkv()
-* Changed: Renamed bw_admin() to bw_admin_sc() to resolve function naming conflict with BookingWizz 
+* Changed: Renamed bw_admin() to bw_admin_sc() to resolve function naming conflict with the BookingWizz plugin
 
 = 2.0 =
 
