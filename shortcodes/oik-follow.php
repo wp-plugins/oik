@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2010-2013
+<?php // (C) Copyright Bobbing Wide 2010-2014
 
 /**
  * create a styled follow me button
@@ -129,6 +129,34 @@ function bw_google_plus( $atts=null ) {
 }
 
 /**
+ * Implement [bw_instagram] shortcode 
+ *
+ * Instagram provides the inline CSS and HTML below from @link http://instagram.com/accounts/badges/
+ * but [bw_instagram] just uses a simplified version of the image: instagram_48.png
+ *
+ 
+echo "<style>.ig-b- { display: inline-block; }";
+echo ".ig-b- img { visibility: hidden; }";
+echo ".ig-b-:hover { background-position: 0 -60px; } .ig-b-:active { background-position: 0 -120px; }";
+echo ".ig-b-48 { width: 48px; height: 48px; background: url(//badges.instagram.com/static/images/ig-badge-sprite-48.png) no-repeat 0 0; }";
+echo "@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2 / 1), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) { ";
+echo ".ig-b-48 { background-image: url(//badges.instagram.com/static/images/ig-badge-sprite-48@2x.png); background-size: 60px 178px; } }</style>";
+echo '<a href="http://instagram.com/bobbingwide?ref=badge" class="ig-b- ig-b-48"><img src="//badges.instagram.com/static/images/ig-badge-48.png" alt="Instagram" /></a>';
+ */
+function bw_instagram( $atts=null ) { 
+  $atts['network'] = "Instagram";  
+  return( bw_follow( $atts ));
+}
+
+/**
+ * Implement [bw_pinterest] shortcode 
+ */
+function bw_pinterest( $atts=null ) { 
+  $atts['network'] = "Pinterest";  
+  return( bw_follow( $atts ));
+}
+
+/**
  * Produce a 'follow me' button if there is a value for the selected social network
  * 
  * @param array $atts - parameters
@@ -150,13 +178,13 @@ function bw_follow_e( $atts=null ) {
 /**
  * Implement [bw_follow_me] shortcode
  *
- * Produce a Follow me button for each of these social networks:  Twitter, Facebook, LinkedIn, GooglePlus, YouTube, Flickr
+ * Produce a Follow me button for each of these social networks:  Twitter, Facebook, LinkedIn, GooglePlus, YouTube, Flickr, Pinterest and Instagram
  * 
  * @param array $atts - array of parameters
  * @return string - a set of "Follow me" links for the social networks.
  */
 function bw_follow_me( $atts=null ) {
-  $networks = array( 'Twitter', 'Facebook', 'LinkedIn', 'GooglePlus', 'YouTube', 'Flickr' );
+  $networks = array( 'Twitter', 'Facebook', 'LinkedIn', 'GooglePlus', 'YouTube', 'Flickr', 'Pinterest', 'Instagram' );
   $atts['me'] = bw_get_me( $atts ); 
   foreach ( $networks as $network ) {
     $atts['network'] = $network;

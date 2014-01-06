@@ -1,12 +1,7 @@
-<?php
+<?php // (C) Copyright Bobbing Wide 2010-2013
 /* bw_block_25.inc
    oik blocks functions for Artisteer level 2.5 themes
 */
-
-//bw_add_shortcode( 'bw_block', 'bw_block_25' );
-//bw_add_shortcode( 'bw_eblock', 'bw_eblock_25' );
-
-   
 
 /**
  * Syntax [bw_block class="classes" title="title text" framed="y/n,t/f,1/0"]

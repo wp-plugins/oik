@@ -8,14 +8,15 @@ if ( function_exists( "oik_plugin_lazy_activation" ) ) {
  * Produce an install plugin link
  */
 function oik_plugin_install_plugin( $plugin ) {
-    $path = "update.php?action=install-plugin&plugin=$plugin";
-    $url = admin_url( $path );
-    $url = wp_nonce_url( $url, "install-plugin_$plugin" ); 
-    $link = '<a href="';
-    $link .= $url;
-    $link .= '">Install';
-    $link .= " $plugin</a>";
-    return( $link );
+  $path = "update.php?action=install-plugin&plugin=$plugin";
+  $url = admin_url( $path );
+  $url = wp_nonce_url( $url, "install-plugin_$plugin" ); 
+  $link = '<a href="';
+  $link .= $url;
+  $link .= '">';
+  $link . __('Install') ;
+  $link .= " $plugin</a>";
+  return( $link );
 }
 
 /**
@@ -35,14 +36,15 @@ function oik_plugin_install_plugin( $plugin ) {
      &_wpnonce=a53a158be5
 */                              
 function oik_plugin_activate_plugin( $plugin, $plugin_name) {
-    $path = "plugins.php?action=activate&plugin_status=all&paged=1&s&plugin=$plugin";
-    $url = admin_url( $path );
-    $url = wp_nonce_url( $url, "activate-plugin_$plugin" ); 
-    $link = '<a href="';
-    $link .= $url;
-    $link .= '">Activate';
-    $link .= " ${plugin_name}</a>";
-    return( $link );
+  $path = "plugins.php?action=activate&plugin_status=all&paged=1&s&plugin=$plugin";
+  $url = admin_url( $path );
+  $url = wp_nonce_url( $url, "activate-plugin_$plugin" ); 
+  $link = '<a href="';
+  $link .= $url;
+  $link .= '">';
+  $link .= __( 'Activate' );
+  $link .= " ${plugin_name}</a>";
+  return( $link );
 } 
  
 /**    
@@ -56,14 +58,15 @@ function oik_plugin_activate_plugin( $plugin, $plugin_name) {
   $url = wp_nonce_url(self_admin_url('update.php?action=upgrade-plugin&plugin=' . $update_file), 'upgrade-plugin_' . $update_file);
  */
 function oik_plugin_update_plugin( $plugin ) {
-    $path = "update.php?action=upgrade-plugin&plugin=$plugin";
-    $url = admin_url( $path );
-    $url = wp_nonce_url( $url, "upgrade-plugin_$plugin" ); 
-    $link = '<a href="';
-    $link .= $url;
-    $link .= '">Upgrade';
-    $link .= " $plugin</a>";
-    return( $link );
+  $path = "update.php?action=upgrade-plugin&plugin=$plugin";
+  $url = admin_url( $path );
+  $url = wp_nonce_url( $url, "upgrade-plugin_$plugin" ); 
+  $link = '<a href="';
+  $link .= $url;
+  $link .= '">'; 
+  $link .= __(' Upgrade' );
+  $link .= " $plugin</a>";
+  return( $link );
 }
 
 /** 
@@ -173,8 +176,11 @@ if ( !function_exists( "oik_plugin_plugin_inactive" ) ) {
 function oik_plugin_plugin_inactive( $plugin=null, $dependencies=null, $problem=null ) {
   $plugin_name = basename( $plugin, ".php" );
   $dependencies = str_replace( ":", " version ", $dependencies );
-  $text = "<p><b>$plugin_name may not be fully functional</b>. ";
-  $text.= "Please install and activate the required version of this plugin: $dependencies</p>";
+  $text = "<p><b>";
+  $text .= sprintf( __( '%1$s may not be fully functional.','oik'), $plugin_name );
+  $text .= "</b> ";
+  $text .= __( 'Please install and activate the required minimum version of this plugin:', 'oik' );
+  $text .= "$dependencies</p>";
   
   if ( current_filter() == "admin_notices" ) {
     $message = '<div class=" updated fade">';

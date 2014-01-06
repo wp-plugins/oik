@@ -35,9 +35,16 @@ There is also lost password...
 function bw_login_shortcode( $atts=null, $content=null, $tag=null ) {
   
   if ( is_user_logged_in() ) {
-    $form = null;
+    if ( $content ) {
+      $form =  bw_do_shortcode( $content );
+    } else {
+      $form = null;
+    }
   } else {
-    $redirect = bw_array_get_dcb( $atts, "redirect", null, "get_permalink" );
+    $redirect = bw_array_get_dcb( $atts, "redirect", null );
+    if ( $redirect == null ) { 
+      $redirect = get_permalink(); 
+    } 
     $remember = bw_array_get( $atts, "remember", true );
     $args = array( "redirect" => $redirect
                  , "remember" => $remember
@@ -49,7 +56,7 @@ function bw_login_shortcode( $atts=null, $content=null, $tag=null ) {
 }
 
 function bw_login__help( $shortcode="bw_login" ) {
-  return( "Display the login form if the user is not logged in" );
+  return( "Display the login form if the user is not logged in or (optionally) the protected content" );
 }
 
 function bw_login__syntax( $shortcode="bw_login" ) {

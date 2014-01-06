@@ -1,16 +1,27 @@
 === oik ===
-Contributors: bobbingwide
+Contributors: bobbingwide, vsgloik
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, oik, pages, posts, jQuery, contact form, PayPal, buttons, Artisteer, text widget, key information, trace, blocks, bookmarks, images, attachments, smart, lazy, pagelist, sitemap, tree, accordion, tabs, cycle
 Requires at least: 3.5
-Tested up to: 3.6.1
+Tested up to: 3.8
 Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Lazy smart shortcodes for displaying often included key-information and other WordPress content. Over 80 shortcodes to use anywhere on your website.
-== Description ==
+Over 80 advanced, powerful shortcodes for displaying the content of your WordPress website.
+
+on== Description ==
 The *oik base* plugin provides a series of advanced WordPress shortcodes that help you display dynamic content from your website's pages, posts, attachments, links and custom post types.
+The OIK Information Kit uses lazy smart shortcode technology to display your WordPress website's content including your often included key-information. 
+The functionality in the oik base plugin is used by over 40 other WordPress plugins, providing powerful facilities for an efficient, performant website.
+
+At a glance changes in version 2.1
+* Added: [bw_cycle] shortcode to display attachments or other content using jQuery cycle
+* Added: Support for localization (l10n through internationalization (i18n) of literal text fields
+* Various CSS changes for improved coexistance with themes and theme frameworks
+* Many API and documentation improvements
+* Added: [bw_pinterest] - follow me on Pinterest 
+* Added: [bw_instagram] - follow me on Instagram 
 
 At a glance changes in version 2.0
 
@@ -22,8 +33,8 @@ At a glance changes in version 2.0
 * Fully documented using oik's dynamic API documentation
 
 oik now provides 80 shortcodes including:
-
 * [bw_pages], [bw_posts], [bw_thumbs], [bw_attachments], [bw_images], [bw_pdf] shortcodes to list subpages, posts, attachments or custom post types 
+* [bw_cycle] to display content using jQuery cycle.
 * [bw_list], [bw_tree] to display lists of links to pages, posts, attachments or custom post types 
 * [bw_table] to tabulate pages, posts or custom post types
 * [bw_bookmarks] to list links
@@ -94,8 +105,66 @@ The Application Programming Interface (API) reference documents over 900 APIs
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
-= 2.0.1 =
-Version 2.0.1 contains a fix for oik-nivo-slider box transition effects
+= 2.1-beta.0106 =
+Upgrade if you need improved i18n/l10n support, improved styling for WordPress 3.8 admin pages or [bw_pinterest] or [bw_instagram] 
+
+= 2.1-beta.0102 =
+First version for 2014 contains improvements to [bw_contact_form]. Upgrade oik-fields before applying this version.
+
+= 2.1-alpha.1231 =
+Upgrade if you are having problems with [bw_contact_form] or want to use [bw_cycle] to display cycling images.
+
+= 2.1-alpha.1204 =
+Upgrade if you need a version of oik that does not deliver blueprint CSS as standard.
+
+= 2.1-alpha.1107 = 
+Upgrade if you installed 2.1-alpha.1103
+
+= 2.1-alpha.1103 = 
+Required for oik-shortcodes v1.4
+
+= 2.1-alpha.1028 = 
+Updates for oik-fields v1.19.1027 and oik-types v1.2
+
+= 2.1-alpha.1003 =
+Updates only required for oik-plugins and bobbingwide websites
+
+= 2.1-alpha.0927 = 
+Required for oik-plugins v1.4
+
+= 2.1-alpha.0923 =
+Update if you installed oik 2.1-alpha.0921
+
+= 2.1-alpha.0921 =
+Only required for more testing of i18n.
+
+= 2.1-alpha.0917 =
+Apply this upgrade if you use [bw_copyright] or [bw_show_googlemap] and have previously applied 2.1-alpha.0822 or later.
+
+= 2.1-alpha.0905 =
+Contains changes used by oik-fields
+
+= 2.1-alpha.0822 = 
+Primarily contains a fix for [bw_contact_form] email
+
+= 2.1-alpha.0802 =
+Includes changes required for the oik-plugins plugin and a fix for JavaScript that doesn't accept version information in the request
+
+= 2.1-alpha.0718 =
+Provides a fix to reclaim code that was inadvertently moved to the oik-fields plugin.
+You can update the oik base plugin and oik-fields in either order.
+You should not need to deactivate the oik-fields plugin before updating to this version.
+If you are not using plugins which are dependent upon oik-fields then you should be able to deactivate the oik-fields plugin.
+
+= 2.1-alpha.0705 =
+Implement this version if you have experienced problems with nested shortcode expansion.
+
+= 2.1-alpha.0701 =
+Changes primarily for oik-nivo-slider. When finding full sized images to display with a post the Featured Image is now chosen in preference to a randomly selected attached image.
+This will make the nivo shortcode more useful but could alter the results in some cases.
+
+= 2.0.1 on 21 Sep 2013 =
+Fixes a problem with oik-nivo-slider and a function naming conflict with the BookingWizz plugin
 
 = 2.0 =
 Version 2.0 contains significant enhancements to version 1.17. There have been many improvements but you should not have to make any changes to your current content.
@@ -182,7 +251,146 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
-= 2.0.1 =
+= 2.1-beta.0106 = 
+* Added: [bw_pinterest] - follow me on Pinterest 
+* Added: [bw_instagram] - follow me on Instagram 
+* Changed: [bw_follow_me] will also list Pinterest and Instagram
+* Changed: Improved styling of form fields in WordPress 3.8 admin
+* Changed: bw_textarea_cb_arr() performs the translation of $text parameter using bw_translate()
+
+= 2.1-beta.0102 =
+* Changed: Messages from [bw_contact_form] can now be styled
+* Added: contact= parameter for [bw_contact_form]
+* Added: Incorporated message related functions from oik-fields [bw_new] shotcode in bw_messages.inc
+
+= 2.1-alpha.1231 =
+* Added: [bw_cycle] shortcode now displays attachments ( images ) by default
+* Added: _bw_tidy_response_xml() to cater for unrecognised HTML entities in XML data.
+* Added: Added default styling for oik-rating stars
+* Changed: bw_tablerow() can now display table head rows, using bw_th()
+* Changed: iselect() now supports string or array format for args['#options'] 
+* Changed: added bw_metadata_loaded() to assist with tracking action usage
+* Fixed: Fatal error from [bw_contact_form] - cannot find bw_verify_nonce(). Problem introduced in oik version 2.1-alpha.1103; function moved to bobbforms.inc
+* Fixed: Reduced notify messages from bw_build_akismet_query_string() 
+
+= 2.1-alpha.1204 =
+* Added: Styling for a field hint ( span.bw_hint )
+* Changed: oik backronym is now "OIK Information Kit"
+* Changed: reduced the amount of styling for oik-bob-bing-wide shortcodes
+* Changed: Extracted blueprint-grid.css from oik.css
+* Deleted: bwlink.css is no longer delivered
+* Fixed: reduced chance of Fatal with duplicated functions in bw_fields.inc, delivered in oik and oik-fields 
+
+= 2.1-alpha.1107 = 
+* Deleted: Removed prototype logic specifically targetting wp-login.php
+* Changed: Renamed blockquote() to _bw_blockquote()
+
+= 2.1-alpha.1103 =
+* Deprecated: image() and bw_image_link() APIs; use e(retimage()) or alink() 
+* Changed: commented out some bw_backtrace() calls
+* Changed: Altered if !defined testing in some (shared) trace files
+* Changed: admin/oik-bwtrace.inc and admin/oik-bwaction.inc no longer delivered ( renamed to .inc_ so they are excluded from API parsing)
+* Changed: Added some phpdoc block commments
+* Changed: oik.css defines the menu image for oik-types
+* Changed: multiple select fields define the number of rows to be displayed using the value of the "#multiple" option
+* Changed: bw_translate() no longer calls translate(), to avoid calls to "gettext" filter
+* Added: bw_is_loaded() - determine if a particular file is loaded. 
+* Changed: oik_main_init() now checks for wp-login processing. Invokes "oik_login_only" if so, else "oik_loaded"  - THIS IS JUST A PROTOTYPE! 
+
+= 2.1-alpha.1028 = 
+* Added: bw_get_post_class() for including standard post classes to enhance styling capabilities
+* Added: [bw_cycle] shortcode to simplify implementation of jQuery cycle logic
+* Changed: [bw_login] shortcode extended to allow for protected content only visible to logged-in users
+* Changed: [bw_contact_form] textarea width reduced to 30 characters.
+* Changed: bw_format_skv() - to improve shortcode help display when there is a long list of values
+* Changed: bw_format_meta() support theming of multiple select noderef fields
+* Changed: More i18n changes. e.g. th() invokes bwt() to translate table headings
+* Changed: More phpdoc blocks
+* Changed: bw_update_post_meta() allows for no values
+* Fixed: PayPal buttons not including currency - problem introduced in i18n work
+* Fixed: bw_context() allows context values to be set to false
+
+= 2.1-alpha.1003 =
+* Changed: bw_plug output now wrapped in a span
+* Fixed: Added bw_ucfirst() as part of i18n work 
+
+= 2.1-alpha.0927 = 
+* Changed: Changed "hint" appending logic in bw_form_field_title() to use deferred translatable text
+* Added: More functions for deferred translatable text: bw_dtt(), bw_get_dtt() and bw_tt()
+* Added: styling for span.bw_hint ( bwlink.css )
+
+= 2.1-alpha.0923 =
+* Fixed: Fatal error in oik options > options. Wrong function name used! 
+
+= 2.1-alpha.0921 =
+* Changed: Further work on Internationalization (i18n) 
+* Added: _alink() - for translatable links
+* Added: p_() - for non translatable paragraphs  
+* Fixed: oik menu icon display in dashboard
+* Added: bw_list_fields() to return a list of registered fields
+* Added: support for displaying plugin banners [bw_plug name=plugin banner=y/j/p]
+* Changed: [bw_code] handles unrecognised shortcodes - by not including the link
+
+= 2.1-alpha.0917 = 
+* Fixed: [bw_copyright] and [bw_show_googlemap] - incorrect due to i18n changes in bw_array_get_dcb(). 
+* Changed: _bw_theme_field_default() will only display non-empty values. Note: 0 is considered empty.
+* Added: bw_translate() function - similar to __() but for oik i18n/l10n 
+
+= 2.1-alpha.0905 =
+* Changed: bw_textarea() returns the current value when $value parameter is null
+* Changed: bw_get_email_message() only calls bw_get_email_default() when $message is null
+* Changed: bw_theme_field__title() will now output the title text if the post ID is not available
+
+= 2.1-alpha.0822 =
+* Fixed: [bw_contact_form] email fields were not being replaced correctly. Problem introduced in 2.1-alpha.0718
+* Added: bw_remote_get2() - similar to bw_remote_get() but it DOESN'T json_decode() the result
+* Changed: bw_jquery_src() sets the handle using sanitize_key() to avoid problems with query parms and version 
+* Changed: Some more work on i18n
+
+= 2.1-alpha.0802 =
+* Changed: Added inline= parameter to [bw_jquery] shortcode
+* Changed: Added caveat documentation for bw_get_plugin_name()
+* Added: oik_boot.inc will now set ABSPATH if not defined
+* Changed: Started Internationalization (i18n) work
+* Added: first version of Localization l10n for the invented "bbboing" language ( locale "bb_BB" ) - now discovered to be called http://en.wikipedia.org/wiki/Typoglycemia
+* Added: bw_form_field_email() 
+* Added: Field title #hint: _bw_form_field_title() 
+
+= 2.1-alpha.0718 =
+* Fixed: [bw_table] shortcode no longer dependent upon the oik-fields plugin. Added includes/bw_fields.inc
+* Changed: [bw_pages] and [bw_table] shortcodes now default numberposts=10
+* Changed: Changed [bw_contact_form] logic to allow oik-fields to share the Akismet checking code
+* Changed: Minor documentation improvements, including dummy functions for [bw_table] Syntax, Example and Snippet
+* Changed: oik stylesheets are now enqueued after other stylesheets ( priority=11 )
+* Added: bw_pre_form_field() invokes "oik_pre_form_field" action to allow extender plugins to load their field "form" functions
+* Changed: Improved support for custom category and custom tags. See bw_register_custom_category(), bw_register_custom_tags()
+
+= 2.1-alpha.0705 =
+* Added: Support for "private" custom fields - not visible to end users when displayed in forms or theme ( used by oik-fields )
+* Added: Logic to expand shortcodes in content when used in format=C parameter of bw_pages and related shortcodes.   
+* Fixed: HTML was being output in the wrong order when nested shortcodes were being expanded
+* Fixed: Correct post ID used when processing nested posts in shortcode expansion for content and excerpt
+
+= 2.1-alpha.0701 =
+* Changed: bw_get_fullimage() now attempts to load the featured image before choosing an attached image at random
+* Added: bw_get_posts() now supports identification of multiple posts using id= parameter ( or post__in= or p= )
+* Default orderby sort sequence when using "post__in" is "post__in"
+* Fixed: Notify message from oik options > plugins when no plugins are registered
+* Fixed: Added syntax help for read_more= parameter to [bw_pages] shortcode
+* Fixed: Minor API documentation improvements
+* Fixed: Enqueues jquery-ui-1.9.2.custom.css for date form fields
+
+= 2.0.2 on 27 Oct 2013 =
+* Added: [bw_cycle] shortcode
+* Added: bw_get_post_class() for including standard post classes to enhance styling capabilities
+* Changed: bw_format_skv() - to improve shortcode help display when there is a long list of values
+* Changed: Add support for displaying multiple select noderef fields
+* Changed: Improve bw_update_post_meta() to allow for no values
+* Changed: Extend [bw_login] shortcode to support protected content which is only visible to logged in users
+* Changed: Alter bw_login_shortcode() to cater for i18n changes
+* Changed: bw_pp_shortcodes() to cater for i18n changes
+
+= 2.0.1 on 21 Sep 2013 =
 * Changed: Corrected test for defined constant in bw_jkv()
 * Changed: Renamed bw_admin() to bw_admin_sc() to resolve function naming conflict with the BookingWizz plugin
 

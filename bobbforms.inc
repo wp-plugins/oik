@@ -1,40 +1,46 @@
-<?php // (C) Copyright Bobbing Wide 2009-2013
+<?php // (C) Copyright Bobbing Wide 2009-2014
 // Note: This file uses functions from bobbfunc.inc. You must ensure this is already loaded
 
 /**
  * Create a form tag
  * @param string $action - action to perform
  * @param string $method - post/get
+ * @param string $class - CSS class name
  * @return string - HTML form tag
  */
-function form( $action="", $method="post" ) {
+function form( $action="", $method="post", $class=null ) {
   $form = "<form";
   $form .= kv( "method", $method );
   $form .= kv( "action", $action );
+  $form .= kv( "class", $class );
   $form .= ">";
   return( $form ); 
 }
 
 /**
  * Start a form
+ * 
  * @param string $action - defaults to none - so this must be defined on the submit button
  * @param string $method - defaults to "post". other value is "get"
+ * @param string $class - CSS class name
 */
-function bw_form( $action="", $method="post" ) {
-  e( form( $action, $method ) );
-}  
+function bw_form( $action="", $method="post", $class=null ) {
+  e( form( $action, $method, $class ) );
+}
 
 /**
  * Create a field label
  * @param string $name - field name
  * @param string $text - label to display
  * @return string - the HTML label tag
+ * 
+ * @Uses bw_translate() from bobbfunc.inc
  */
 function label( $name, $text ) {
   $lab = "<label for=\"";
   $lab.= $name;
   $lab.= "\">";
-  $lab.= $text;
+  $lab.= bw_translate( $text );
   $lab.= "</label>";
   return( $lab );
 }
@@ -123,7 +129,7 @@ function iemail( $name, $len, $value, $class=null, $extras=null ) {
 /**
  * Create a submit button
  */
-function isubmit( $name, $value, $id=null, $class=null,  $extras=null ) {
+function isubmit( $name, $value, $id=null, $class=null, $extras=null ) {
   $it = "<input";
   $it .= kv( "type", "submit" );
   $it .= kv( "name", $name );
@@ -166,13 +172,36 @@ function bw_td( $text=NULL, $class=NULL, $id=NULL ) {
   }
 }
 
-function bw_tablerow( $td_array= array() ) {
+function bw_th( $text=NULL, $class=NULL, $id=NULL ) {
+  if ( $text ) {
+    stag( "th", $class, $id );
+    e( $text );
+    etag( "th");
+  }
+}
+
+/**
+ * Display a table row or table head row when $tdtag = "th"
+ *
+ * If we want it to do something other than create a table then we will need 
+ * to redefine bw_td() and bw_th() 
+ * 
+ * @param array $td_array 
+ * @param string $trtag "tr" or ?
+ * @param string $tdtag "td" or "th" or ? 
+ * 
+ */
+function bw_tablerow( $td_array= array(), $trtag="tr", $tdtag="td" ) {
   if ( count( $td_array ) ) {
-    stag( "tr" );
+    stag( $trtag );
     foreach ( $td_array as $td ) {
-      bw_td( $td );
+      if ( $tdtag == "th" ) {
+        bw_th( $td );
+      } else {
+        bw_td( $td );
+      }  
     }
-    etag( "tr"); 
+    etag( $trtag ); 
   }
 }
 
@@ -218,8 +247,22 @@ function bw_emailfield( $name, $len, $text, $value, $class=null, $extras=null ) 
   return;
 }
 
+/**
+ * Form a "textarea" field 
+ *
+ * @param string $name - the field name
+ * @param numeric $len - the length of the field ( e.g. 40 )
+ * @param string $text - the label of the field (e.g. "Content" )
+ * @param string $value - the value to display. If NULL then the current value is extracted from $_REQUEST[$name] 
+ * @param numeric $rows - the number of rows for the textarea field
+ */
 function bw_textarea( $name, $len, $text, $value, $rows=10 ) {
   $lab = label( $name, $text );
+  if ( $value === null ) {
+    $value = bw_array_get( $_REQUEST, $name, null );
+    bw_trace2( $value, "bw_textarea value" );
+    $value = wp_strip_all_tags( $value );
+  }
   $itext = iarea( $name, $len, $value, $rows ); 
   bw_tablerow( array( $lab, $itext) );
   return;
@@ -302,11 +345,11 @@ function iselect( $name, $value, $args ) {
   //bw_trace2();
   $multiple = bw_array_get( $args, "#multiple", false );
   if ( $multiple ) {
-    $iselect = "<select name=\"${name}[]\" multiple size=10>" ;
+    $iselect = "<select name=\"${name}[]\" multiple size=\"$multiple\">" ;
   } else {
     $iselect = "<select name=\"$name\">" ;
   }
-  $options = $args['#options'];
+  $options = bw_as_array( $args['#options'] );
   $optional = bw_array_get( $args, "#optional", false );
   if ( $optional ) {
     $options = array( __( "None" ) ) + $options;
@@ -430,12 +473,14 @@ function bw_select_arr( $name, $text, $array, $index, $args ) {
  *   bw_textarea_arr( $option, "Introduction", $text, 'intro', 60, 5 );
  *
  * TODO: In this version the checkbox appears next to the label. It might be nicer to have it next to the textarea. 
+ * Note: We need to call bw_translate() here since the modified text won't be recognised when it reaches the label() function
+ * as it will have had the nbsp and checkbox HTML added by then.
  * 
  */
 function bw_textarea_cb_arr( $name, $text, $array, $index, $len, $rows=5 ) {
   $name_index = $name.'['.$index.'_cb]';
   $cb_value = bw_array_get( $array, $index.'_cb', "on" );
-  $cb_text = $text; 
+  $cb_text = bw_translate( $text ); 
   $cb_text .= "&nbsp;";
   $cb_text .= icheckbox( $name_index, $cb_value );
   bw_textarea_arr( $name, $cb_text, $array, $index, $len, $rows );
@@ -502,4 +547,20 @@ function bw_current_url() {
   $pageURL .= $_SERVER["REQUEST_URI"];
   bw_trace2( $pageURL, "pageURL", false );
   return( $pageURL );
+}
+
+/**
+ * Verify the nonce field
+ * @param string $action - the action passed on the call to wp_nonce_field()
+ * @param string $name - the name passed on the call to wp_nonce_field() 
+ * @return bool - 1 or 2 if verified, false if not
+ * 
+ */
+if ( !function_exists( "bw_verify_nonce" ) ) {
+function bw_verify_nonce( $action, $name ) {
+  $nonce_field = bw_array_get( $_REQUEST, $name, null );
+  $verified = wp_verify_nonce( $nonce_field, $action );
+  bw_trace2( $verified, "wp_verify_nonce?" );
+  return( $verified );
+}  
 }

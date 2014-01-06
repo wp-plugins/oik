@@ -24,6 +24,23 @@ function bw_remote_get( $url ) {
 }
 
 /**
+ * Wrapper to wp_remote_get2
+ * @param string $url with parameters already added
+ * @return 
+ */ 
+function bw_remote_get2( $url ) {
+  $request = wp_remote_get( $url );
+  if ( is_wp_error ($request ) ) {
+    bw_trace2( $request, "request is_wp_error" );
+    $result = null;
+  } else {
+    $result = bw_retrieve_result( $request );
+  }
+  bw_trace2( $result, "result" );
+  return( $result );
+}
+
+/**
  * Return the result if the response code is 200 ( OK ) 
  * @param $result from wp_remote_post()
  * @return 

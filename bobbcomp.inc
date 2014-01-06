@@ -8,7 +8,7 @@
  *
  * Sets the global $bw_cms_version for Drupal
  *
- * @return string global $bw_cms_type: "WordPress", "Drupal" or "unknown" 
+ * @return string global $bw_cms_type: "WordPress", "Drupal" or "unknown"  NOT TRANSLATABLE
  */
 function bw_get_cms_type() {
   global $bw_cms_type, $bw_cms_version;
@@ -16,7 +16,7 @@ function bw_get_cms_type() {
     $bw_cms_type = 'WordPress';
     return( $bw_cms_type );       
   } elseif ( function_exists( 'drupal_bootstrap' )) {
-    $bw_cms_type = "Drupal"; 
+    $bw_cms_type = 'Drupal'; 
     if (defined( 'VERSION' ) ) {
       $bw_cms_version = VERSION;
     } 
@@ -74,6 +74,7 @@ else {
  * **?** Should we allow the $atts array to be pre-mangled. Can we add useful objects? 
  */
 function bw_prepare_shortcode_atts( $atts ) {
+  gobang();
   $atts = apply_filters( "bw_prepare_shortcode_atts", $atts );
   return( $atts ); 
 } 
@@ -298,13 +299,16 @@ function bw_oik( $atts=null ) {
 }
 
 /** 
- * bw_oik_long - spells out Often Included Key-information
+ * bw_oik_long - spells out the expanded backronym for OIK
+ *
+ * which used to be Often Included Key-information
+ * but is now "OIK Information Kit"
  *   
  */
 function bw_oik_long( $atts=null ) {
   $class = bw_array_get( $atts, "class", "bw_oik" );
   $bw = nullretstag( "span", $class ); 
-  $bw .= __( "Often Included Key-information", "oik" ); 
+  $bw .= __( "OIK Information Kit", "oik" ); 
   $bw .= nullretetag( "span", $class ); 
   return( $bw );
 }
@@ -467,7 +471,7 @@ if (!function_exists( 'bw_wp_title' )) {
 function bw_blockquote( $atts = NULL ) {
   $text = bw_array_get( $atts, "text", NULL ); 
   $class = bw_array_get( $atts, "class", NULL );
-  blockquote( $text, $class );
+  _bw_blockquote( $text, $class );
   return( bw_ret());
 }
 
@@ -613,11 +617,11 @@ function bw_user_list() {
  */ 
 function bw_copyright( $atts = NULL ) {
   $copyright = bw_array_get_dcb( $atts, "prefix", "&copy; Copyright" );
-  $company = bw_array_get_dcb( $atts, "company", "company", "bw_get_option" );
+  $company = bw_array_get_dcb( $atts, "company", "company", "bw_get_option", "bw_options" );
   $suffix = bw_array_get_dcb( $atts, "suffix", ". All rights reserved." );
   $yearto = bw_format_date( null, 'Y');
   // bw_trace( $yearto, __FUNCTION__, __LINE__, __FILE__, "yearto!" );
-  $yearfrom = bw_array_get_dcb( $atts, "from", 'yearfrom', "bw_get_option" );
+  $yearfrom = bw_array_get_dcb( $atts, "from", 'yearfrom', "bw_get_option", "bw_options" );
   
   $years = bw_year_range( $yearfrom, $yearto, $atts );
   span( "bw_copyright" );

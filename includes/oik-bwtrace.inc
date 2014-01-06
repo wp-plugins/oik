@@ -1,5 +1,5 @@
-<?php // (C) Copyright Bobbing Wide 2012
-if ( defined( 'OIK_OIK_BWTRACE_INCLUDES_INCLUDED' ) ) return;
+<?php // (C) Copyright Bobbing Wide 2012, 2013
+if ( !defined( 'OIK_OIK_BWTRACE_INCLUDES_INCLUDED' ) ) {
 define( 'OIK_OIK_BWTRACE_INCLUDES_INCLUDED', true );
 
 function bw_trace_actions_on() {
@@ -302,4 +302,4 @@ function bw_trace_action_immediate( $function, $storend="I!", $arg1=null, $arg2=
 }
 }    
 
-
+}

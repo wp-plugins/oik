@@ -9,7 +9,6 @@ function bw_oik_version() {
   oik_require( "admin/oik-plugins.inc" );
   $version = bw_get_plugin_version();
   return( $version );
-  // return( '2.0-RC1' );
 }
 
 require_once( "oik_boot.inc" );   /* Don't use oik_require here */
@@ -17,10 +16,12 @@ require_once( "oik_boot.inc" );   /* Don't use oik_require here */
 /**
  * bw API partial equivalent of PHP's output buffering
  * 
- * Note: this isn't really an output buffer
+ * Note: This isn't really an output buffer
  * Use bw_push() and bw_pop() if you need to stack buffers during nested processing.
  * @global $bwecho is used by the bw APIs to create the HTML output that is then returned from the shortcode functions  
  * @global $bwechos counts the number of times that bw_echo() has been called
+ * 
+ * @param $string - the string to be "echo'd"
  * 
 */
 function bw_echo( $string ) {
@@ -47,6 +48,8 @@ function bw_flush() {
 
 /**
  * Use bw_ret() to return the contents of $bwecho, leaving the global value as NULL
+ * 
+ * @return string - the contents of @global $bwecho prior to it being emptied
  */
 function bw_ret() {
   global $bwecho;
@@ -125,11 +128,16 @@ function retimage( $class, $jpg, $title=NULL, $width=NULL, $height=NULL, $extras
   return( $img );
 }
  
-function image( $class, $jpg, $title=NULL, $width=NULL, $height=NULL ) {
-  $img = retimage( $class, $jpg, $title, $width, $height ); 
-  bw_echo( $img );
-}
-
+/**
+ * Create a keyword value pair
+ *
+ * If the value is not null returns the keyword value pair in format ' $keyword="$value"'
+ *  
+ * 
+ * @param string $keyword - the keyword name e.g. class
+ * @param string $value - the value(s) e.g. "bw_class w50pc"
+ * @return string $kv
+ */   
 function kv( $keyword, $value=null ) {
   if ( $value != null ) {
     $kv = ' '.$keyword . '="' . $value .'"';
@@ -139,7 +147,12 @@ function kv( $keyword, $value=null ) {
   return( $kv );  
 } 
 
-function atitle( $title = NULL ) {
+/**
+ * Format a sanitized title= parameter 
+ * @param $string - the title
+ * @return $string
+ */  
+function atitle( $title=NULL ) {
   $title = wp_strip_all_tags( $title );
   return( kv( "title", $title ) );
 } 
@@ -153,6 +166,20 @@ function aname( $name ) {
   etag( 'a' );
   // return( bw_ret() );
 } 
+
+/**
+ * Create a translatable link
+ */
+function _alink( $class=NULL, $url, $linktori=NULL, $alt=NULL, $id=NULL, $extra=NULL ) {
+  $linktoril10n = bw_translate( $linktori );
+  if ( is_null( $alt ) || $linktori == $alt ) {
+    $altl10n = $linktoril10n;
+  } else {
+    $altl10n = bw_translate( $alt );
+  }     
+  $link = retlink( $class, $url, $linktoril10n, $altl10n, $id, $extra );
+  e( $link );
+}   
 
 /**
  * Create a link
@@ -219,7 +246,6 @@ function retstag( $tag, $class=NULL, $id=NULL, $extra=NULL ) {
   return( $stag );
 }
 
-
 /**
  * Return a start tag if the class is not null 
  */
@@ -229,7 +255,6 @@ function nullretstag( $tag, $class=NULL ) {
       $ret = retstag( $tag, $class );
    return( $ret );     
 } 
-
 
 /**
  * Output an HTML opening tag
@@ -340,59 +365,89 @@ function sp( $class=NULL, $id=NULL ) {
 } 
 
 /**
- * Output a paragraph of text 
+ * Output a paragraph of translatable text
+ *
+ * i18n note: If the text you are displaying contains variables to be inserted into the message then you should use p_() instead
+ * and perform the translation prior to calling that function.
+ *   
  */
 function p( $text=NULL, $class=NULL, $id=NULL ) {
   sp( $class, $id );
   if ( !is_null( $text ))
-    bwt( $text );
+    e( bw_translate( $text ) );
   etag( "p" );
 }
 
+/**
+ * Output a paragraph of translated text 
+ */
+function p_( $text=null, $class=null, $id=null ) {
+  sp( $class, $id );
+  if ( !is_null( $text ))
+    e( $text );
+  etag( "p" );
+}
+
+/**
+ * Output a heading of translated text
+ * 
+ * 
+ */
 function hn( $text, $level, $class, $id ) {
-   stag( "h".$level, $class, $id );
-   bwt( $text );
-   etag( "h".$level );
+  stag( "h".$level, $class, $id );
+  e( $text );
+  etag( "h".$level );
 }
 
 function h1( $text, $class=NULL, $id=NULL ) {
-   hn( $text, "1", $class, $id ); 
+  hn( $text, "1", $class, $id ); 
 }
 
 function h2( $text, $class=NULL, $id=NULL ) {
-   hn( $text, "2", $class, $id );  
+  hn( $text, "2", $class, $id );  
 }
 
 function h3( $text, $class=NULL, $id=NULL ) {
-   hn( $text, "3", $class, $id ); 
+  hn( $text, "3", $class, $id ); 
 }
 
 function h4( $text, $class=NULL, $id=NULL ) {
-   hn( $text, "4", $class, $id ); 
+  hn( $text, "4", $class, $id ); 
 }
 
 function h5( $text, $class=NULL, $id=NULL ) {
-   hn( $text, "5", $class, $id ); 
+  hn( $text, "5", $class, $id ); 
 }
 
 function h6( $text, $class=NULL, $id=NULL ) {
-   hn( $text, "6", $class, $id ); 
+  hn( $text, "6", $class, $id ); 
 }
 
-
-/** Function e() replaces the original t() function used in Bobbing Wide custom code
- *   since for Drupal t() is already defined for translatable text
- *  Function bwt() does a similar job but also performs some strange filtering if required.
+/** 
+ * Output some translated text
+ * 
+ * Function e() replaces the original t() function used in Bobbing Wide custom code
+ * since for Drupal t() is already defined for translatable text.
+ *
+ * Function bwt() does a similar job but also performs some strange filtering if required.
+ *
+ * When you want to output text that is translatable use: 
+ *   bwt( $text ); 
+ *
+ * When you want to output text that is NOT translatable use:
+ *   e( $text );
+ *
+ * Within functions where the $text parameter is translatable use:
+ *   e( bw_translate( $text ) )
+ * 
  */  
-function bwt( $text = NULL ) {
+function bwt( $text=NULL ) {
   global $bbboing;  
-
-  if ( !is_null( $text ))
-  {
+  if ( !is_null( $text )) {
     if ( $bbboing )
        bw_echo( $bbboing( $text ));
     else
-      bw_echo( $text ) ;
+      bw_echo( bw_translate( $text ) ) ;
   }    
 }
 
@@ -409,7 +464,7 @@ function e( $text = NULL ) {
  */
 function br( $text=NULL ) {
    bw_echo( '<br />' );
-   bwt( $text ); 
+   e( bw_translate( $text ) ); 
 }   
 
 /**
@@ -425,7 +480,7 @@ function hr() {
  */
 function lit( $text, $class=NULL, $id=NULL ) {
   stag( "li", $class, $id );
-  bwt( $text );
+  e( bw_translate( $text ) );
   etag( "li" );
 }
 
@@ -471,7 +526,7 @@ function td( $data, $class=NULL, $id=NULL ) {
  */
 function th( $data, $class=NULL, $id=NULL ) {
   stag( "th", $class, $id );
-  e( $data );
+  bwt( $data );
   etag( "th" );
 }         
 
@@ -525,7 +580,10 @@ function em( $text, $class=NULL, $id=NULL ) {
    etag( "em" );    
 }
 
-function blockquote( $text, $class=NULL, $id=NULL ) {
+/**
+ * 
+ */
+function _bw_blockquote( $text, $class=NULL, $id=NULL ) {
    stag( "blockquote", $class, $id ) ;
    e( $text );
    etag( "blockquote" );    
@@ -549,7 +607,7 @@ function cite( $text, $class=NULL, $id=NULL ) {
 /** 
  * Create an <abbr> tag 
  */
-function abbr( $title="Often Included Key-information wide", $abbrev="oik" ) {
+function abbr( $title="Often Included Key-information", $abbrev="oik" ) {
   if ( $abbrev ) {
     $abbr = '<abbr title="';
     $abbr .= $title;
@@ -564,7 +622,7 @@ function abbr( $title="Often Included Key-information wide", $abbrev="oik" ) {
  * Create an <acronym> tag 
  * Note: acronym becomes obsolete in HTML5
  */
-function acronym( $title="Often Included Key-information wide", $acronym="oik" ) {
+function acronym( $title="Often Included Key-information", $acronym="oik" ) {
   if ( $acronym ) {
     $acro = '<acronym title="';
     $acro .= $title;
@@ -603,62 +661,34 @@ function bw_debug( $text ) {
   }     
 }
 
-
-/* Function: bw_image_link
-   Purpose: To display an image as a link 
-*/   
-function bw_image_link( $link 
-                      , $image
-                      , $imagetext
-                      , $width=302
-                      , $height=227
-                      ) {
-  $linktext = bw_get_linktext( $link );
-  $a = '<a title="';
-  $a.= $linktext;
-  $a.= '" href="';
-  $a.= bw_expand_link( $link );
-  $a.= '">';
-  bw_echo( $a . "\n" );
-  
-  image( ""
-       , $image
-       , $imagetext
-       , $width
-       , $height
-       );
-  etag( "a" );
- 
-} 
-
-
-
+/**
+ * Return the styled "Bobbing Wide" string
+ * 
+ * Note: In this instance Bobbing Wide is not translatable
+ */
 function bw( $bw_class_prefix=NULL ) {  
   if ( is_array( $bw_class_prefix ) ) {
     $bwcp = bw_array_get( $bw_class_prefix, "cp", null);
     $cp = ' class="' . $bwcp;
   } else {   
-
-      if ( is_null( $bw_class_prefix )) 
-         $cp = ' class="';
-      else
-         $cp = ' class="' . $bw_class_prefix;
+    if ( is_null( $bw_class_prefix )) 
+       $cp = ' class="';
+    else
+       $cp = ' class="' . $bw_class_prefix;
   }         
-      $bw  = '<em' .$cp .'bw_b1">B</em>';
-      $bw .= '<em' .$cp .'bw_o">o</em>'; 
-      $bw .= '<em' .$cp .'bw_b2">b</em>';
-      $bw .= '<em' .$cp .'bw_b3">b</em>';
-      $bw .= '<em' .$cp .'bw_i1">i</em>';
-      $bw .= '<em' .$cp .'bw_n">n</em>';
-      $bw .= '<em' .$cp .'bw_g">g</em>';
-      $bw .= '<em' .$cp .'bw_space">&nbsp;</em>';
-      $bw .= '<em' .$cp .'bw_W">W</em>';
-      $bw .= '<em' .$cp .'bw_i2">i</em>';
-      $bw .= '<em' .$cp .'bw_d">d</em>';
-      $bw .= '<em' .$cp .'bw_e">e</em>';
-      
-         
-      return $bw;
+  $bw  = '<em' .$cp .'bw_b1">B</em>';
+  $bw .= '<em' .$cp .'bw_o">o</em>'; 
+  $bw .= '<em' .$cp .'bw_b2">b</em>';
+  $bw .= '<em' .$cp .'bw_b3">b</em>';
+  $bw .= '<em' .$cp .'bw_i1">i</em>';
+  $bw .= '<em' .$cp .'bw_n">n</em>';
+  $bw .= '<em' .$cp .'bw_g">g</em>';
+  $bw .= '<em' .$cp .'bw_space">&nbsp;</em>';
+  $bw .= '<em' .$cp .'bw_W">W</em>';
+  $bw .= '<em' .$cp .'bw_i2">i</em>';
+  $bw .= '<em' .$cp .'bw_d">d</em>';
+  $bw .= '<em' .$cp .'bw_e">e</em>';
+  return $bw;
 }
 
 
@@ -698,11 +728,13 @@ else {
   }
 }
 
-
-
-/*  default logic
-  set a default value if the value is not set
-*/
+/** 
+ * Return a $default value if the $value is not set
+ * 
+ * @param string $value - may be null or empty
+ * @param string $default - the default value to return
+ * @return string
+ */
 function bw_default( $value, $default=NULL ) {
   $val = $value; 
   bw_trace( $val, __FUNCTION__, __LINE__, __FILE__, "value before" );
@@ -909,7 +941,6 @@ function bw_jquery( $selector, $method, $parms=null, $windowload=false ) {
 } 
 }
 
-
 /**
  * Flush the inline jQuery code to the WordPress footer 
  * @globals bw_jq
@@ -920,7 +951,12 @@ function bw_jq_flush() {
   $bw_jq = null;
 }  
 
-
+/**
+ * Append some more jQuery code to be output later
+ * 
+ * @param $text - some well formed jQuery code
+ * @global $bw_jq
+ */
 function bw_jq( $text ) {
   global $bw_jq;
   if ( !isset( $bw_jq ) ) {
@@ -937,7 +973,6 @@ function bw_jq( $text ) {
     bw_jq_flush();
   }  
 }
-
 
 
 /**
@@ -972,9 +1007,11 @@ if ( !function_exists( "bw_jkv" ) ) {
 function bw_jkv( $parms, $value=null, $json_options=null ) {
   if ( is_array( $parms ) ) {
     bw_jtorf( $parms );
-    if ( $json_options == null && defined( JSON_NUMERIC_CHECK )) {
+    if ( $json_options == null && defined( 'JSON_NUMERIC_CHECK' )) {
       $json_options = (JSON_NUMERIC_CHECK | JSON_FORCE_OBJECT);
-    }
+    } else { 
+      // We can't use JSON_NUMERIC_CHECK if it's not defined
+    }  
     $jqoption = bw_json_encode( $parms, $json_options );
   } else {
     $jqoption = "{";
@@ -1126,6 +1163,7 @@ function bw_pick_one( $preferred, $alternate ) {
  * If the path is not given then it will be the root of the plugin directory.
  */
 function bw_load_plugin_textdomain( $domain="oik" ) {
+  //gobang();
   load_plugin_textdomain( $domain, false, dirname( plugin_basename(__FILE__)).'/languages/' );
 }  
 
@@ -1217,4 +1255,181 @@ function bw_current_post_id( $id=null ) {
   }
   bw_trace2( $current_post_id, "current_post_id" );
   return( $current_post_id ); 
+}
+
+/**
+ * Set/return some contextual information
+ *
+ * Contextual information such as the current post_type, shortcode being expanded, $atts for the shortcode being expanded
+ * can be made accessible using this API. It saves passing complex parameters. The data can be accessed within filter and action functions.
+ *
+ *
+ * @param string $field - the name of the field
+ * @param mixed/null $value - the value of the field. It could be anything. Don't pass a parameter when querying a value
+ * @return mixed - the $value of the contextual field
+ */
+function bw_context( $field, $value=null ) {
+  static $bw_context = null;
+  if ( empty( $bw_context ) ) {
+    $bw_context = array();
+  }
+  if ( $value !== null ) {
+    $bw_context[$field] = $value;
+  } else {
+    $value = bw_array_get( $bw_context, $field, null );
+  } 
+  // bw_trace2( $bw_context );
+  return( $value );
 } 
+
+/**
+ * Wrapper to translate - well it was! Herb 2013/10/31 
+ *
+ * Similar to __() but with overriding logic to disable translation
+ * 
+ * @param string $text - text to be translated
+ * @return string $text - the translated text
+ */
+function bw_translate( $text ) {
+  $translation = bw_context( "bw_translation" );
+  if ( $translation == "off" ) {
+    // Text has already been translated? 
+  } else {
+    $textdomain = bw_context( "textdomain" );
+    if ( !$textdomain ) {
+      $textdomain = "oik";
+    }  
+    // $text = translate( $text, $textdomain );
+    // get_translations_for_domain() comes from l10n.php
+    //if ( is_callable( "get_translations_for_domain" ) ) } 
+      $translations = get_translations_for_domain( $textdomain );
+      $text = $translations->translate( $text );
+    //}  
+  }  
+  return( $text );
+} 
+
+/**
+ * Turn off translation performed by bw_translate()
+ * 
+ * Helper function for bw_translate()
+ */
+function bw_translation_off() {
+  bw_context( "bw_translation", "off" );
+}
+
+/**
+ * Turn on translation performed by bw_translate()
+ */
+function bw_translation_on() {
+  bw_context( "bw_translation", "on" );
+} 
+
+/**
+ * Register some text for localization as deferred translatable text
+ *
+ * Part of the internationalization process is to ensure text is translatable.
+ * We use bw_dtt() to register strings of text destined for internationalization.
+ * This enables makepot/makeoik to extract the strings into the plugin's .pot file
+ * from which localized versions can be created.
+ * 
+ * Note: This does not support the context 
+ * 
+ * @param string $key - the lookup key for the text
+ * @param string $text - the text to be translated. If null then the $key is used
+ * @param string $context - the text domain
+ * @return string - the key - which may be assigned to a variable and used elsewhere
+ * 
+ */
+function bw_dtt( $key, $text=null, $context=null ) {
+  global $bw_dtt;
+  if ( $context == null ) {
+    $context = bw_context( "textdomain");
+  }
+  if ( $text == null ) {
+    $text = $key;
+  }  
+  $bw_dtt[ $key ] = $text;
+  if ( $context ) {  
+    $bw_dtt[ $key ][$context] = $text;
+  }
+  bw_trace2( $bw_dtt );
+  return( $key );
+}
+
+/**
+ * Retrieve the text for localization from the global $bw_dtt array
+ * 
+ * Note: This function is called if we haven't already got a translated version
+ * 
+ * @param string $key - the key of the text to be translated
+ * @return string - the text to be translated, for the currently selected textdomain
+ */ 
+function bw_get_dtt( $key ) {
+  global $bw_dtt;
+  $context = bw_context( "textdomain");
+  if ( $context ) {
+    $context_array = bw_array_get( $bw_dtt, $context, null );
+    if ( $context_array ) {
+      $i18n = bw_array_get( $context_array, $key, null );
+    } else {
+      $i18n = null;
+    }     
+  } else {
+    $i18n = null;
+  }
+  if ( !$i18n ) {
+    $i18n = bw_array_get( $bw_dtt, $key, $key );
+  }  
+  return( $i18n );   
+}
+
+/**
+ * Return the localized version of some deferred translatable text (dtt)
+ *
+ * @param string $key - the key to the translatable text - which may be the actual text
+ * @return string $l10n - the translated text - which may end up as the untranslated text or even the key.
+ * 
+ * **?** Does it matter what textdomain we use for subsequent translations?
+ * 
+ */
+function bw_tt( $key ) {
+  global $bw_l10n;
+  $l10n = bw_array_get( $bw_l10n, $key, null );
+  if ( $l10n ) {
+    // It's already been translated, return this
+  } else {
+    $i18n = bw_get_dtt( $key );
+    $l10n = bw_translate( $i18n ); 
+    // $textdomain = bw_context( "textdomain" );
+    $bw_l10n[ $key ] = $l10n;
+  }
+  bw_trace2( $bw_l10n );
+  return( $l10n );
+}
+
+/**
+ * Determine if a particular file is loaded
+ * 
+ *
+ */
+function bw_is_loaded( $file, $is_main=true ) { 
+  static $bw_included_files, $bw_main;
+  if ( !isset( $bw_included_files ) ) {
+    $bw_included_files = get_included_files();
+    $bw_main = $bw_included_files[0];
+  }
+  if ( $is_main ) {
+    $loaded = false !== strpos( $bw_main, $file );
+  } else {
+    $bw_included_files = get_included_files();
+    foreach ( $bw_included_files as $key => $included_file ) {
+      $loaded = false !== strpos( $included_file, $file );
+      if ( $loaded ) {
+        $loaded = $included_file;
+        break;
+      }
+    }   
+  }
+  return( $loaded );
+}

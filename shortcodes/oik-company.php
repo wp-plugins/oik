@@ -53,8 +53,9 @@ function bw_alt_slogan() {
  
 /**
  * Implement [bw_admin] shortcode to display the name of the "administrator" 
- * 
+ *
+ * Function renamed since there was a conflict with "BookingWizz" 
  */
-function bw_admin() {
+function bw_admin_sc() {
   return( bw_output( "admin" ));
 }

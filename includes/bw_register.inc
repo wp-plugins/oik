@@ -41,6 +41,18 @@ function bw_titleify( $name ) {
 }
 
 /**
+ * Return the Upper case first letter version of the string
+ *
+ * Required since ucfirst() only accepts on parameter but sometimes we pass more
+ * @param string $str - the string to pass to ucfirst()
+ * @return string - the result of ucfirst()
+ */
+function bw_ucfirst( $str ) {
+  $ucfirst = ucfirst( $str ); 
+  return( $ucfirst );
+}  
+
+/**
  * Register a custom post type using as many defaults as we can
  *
  * Refer to the WordPress codex or [bw_plug name='custom UI,types']
@@ -117,7 +129,7 @@ function bw_titleify( $name ) {
 function bw_register_post_type( $post_type, $post_type_args ) {
   $post_type_args['public'] = bw_array_get( $post_type_args, 'public', true );
   $post_type_args['query_var'] = bw_array_get( $post_type_args, 'query_var', $post_type );
-  $post_type_args['label'] = bw_array_get_dcb( $post_type_args, 'label', $post_type, "ucfirst"  );
+  $post_type_args['label'] = bw_array_get_dcb( $post_type_args, 'label', $post_type, "bw_ucfirst"  );
   $post_type_args['singular_label'] = bw_array_get_dcb( $post_type_args, 'singular_label', $post_type_args['label'] , "bw_singularize" );
   $post_type_args['labels'] = bw_array_get_dcb( $post_type_args, 'labels', array( 'singular_name' => $post_type_args['singular_label'], 'name' => $post_type_args['label'] ) , "bw_default_labels" );
   register_post_type( $post_type, $post_type_args );
@@ -132,7 +144,7 @@ function bw_register_post_type( $post_type, $post_type_args ) {
  * @uses bw_singularize
  */
 function bw_default_labels( $labels= array() ) {
-  $ucplural = bw_array_get_dcb( $labels, 'name', 'Post', "ucfirst" );
+  $ucplural = bw_array_get_dcb( $labels, 'name', 'Post', "bw_ucfirst" );
   $lcplural = strtolower( $ucplural );
   
   $labels['name'] = bw_array_get( $labels, 'name', $ucplural );
@@ -288,6 +300,11 @@ function bw_register_field( $field_name, $field_type, $field_title, $args=NULL )
   $bw_fields[$field_name] = $data;
 }
 
+function bw_list_fields() {
+  global $bw_fields;
+  $fields = bw_assoc( array_keys( $bw_fields ));
+  return( $fields ); 
+}
 
 
 

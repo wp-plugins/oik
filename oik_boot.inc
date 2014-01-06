@@ -92,10 +92,11 @@ function oik_init( ) {
  */
 if ( !function_exists( 'bw_array_get' ) ) {
   function bw_array_get( $array = NULL, $index, $default=NULL ) { 
-    //if ( is_array( $index ) ) {
-    //  bw_backtrace();
-    //  gobang();
-    //}  
+    if ( is_array( $index ) ) {
+      bw_backtrace();
+      //gobang();
+    //  sometimes we get passed an empty array as the index to the array - what should we do in this case **?** Herb 2013/10/24
+    }
     if ( isset( $array ) ) {
       if ( is_array( $array ) ) {
         if ( isset( $array[$index] ) || array_key_exists( $index, $array ) ) {

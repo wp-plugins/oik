@@ -37,7 +37,6 @@ function bw_custom_column( $column, $post_id ) {
     bw_format_custom_column( $column );
   }    
 }  
-} // end if ( !function_exists
 
 /** 
  * format a custom column on the admin page IF the column is defined in bw_fields
@@ -79,7 +78,9 @@ function bw_format_custom_column( $column=null, $data=null ) {
   if ( $field ) {
     bw_theme_field( $column, $data, $field );
   }  
-}     
+} 
+    
+} // end if ( !function_exists
 
 
 /**
@@ -123,11 +124,12 @@ function bw_theme_field( $key, $value, $field=null ) {
   if ( $funcname == "bw_theme_field_" && $type ) { 
     $funcname = bw_funcname( "bw_theme_field_", $key );
   }  
-  bw_trace2( $funcname, "funcname chosen", false );
   
   if ( is_callable( $funcname ) ) {
+    bw_trace2( $funcname, "funcname chosen", false );
     call_user_func( $funcname,  $key, $value, $field );
   } else {
+    bw_trace2( $funcname, "funcname chosen not callable, using default _bw_theme_field_default", false );
     _bw_theme_field_default( $key, $value, $field );
   }
 } 
@@ -150,11 +152,14 @@ function bw_theme_field__post_title( $key, $value, $field ) {
  *
  */
 function bw_theme_field__title( $key, $value, $field ) {
+  bw_trace2();
   $post = bw_array_get( $field, "post", null );
   if ( $post ) { 
     $link = get_permalink( $post->ID );
     alink( "title", $link, $value );
-  }
+  } else {
+    sepan( $key, $value );
+  }  
 }
  
 /**
@@ -190,8 +195,11 @@ function _bw_theme_field_default( $key, $value ) {
     //span( $key ); 
     //e( $key );
     //epan( $key );
-    span( "value" );
-    e( $value );
+    span( "value $key" );
+    // e( $value );
+    if ( !empty( $value ) ) {
+      e( bw_array_get( $value, 0, $value ) );
+    }  
     epan( "value" ); 
     //epan( "metadata $key" );
   }  
@@ -207,7 +215,7 @@ function _bw_theme_field_default( $key, $value ) {
  * It's not exactly related to "custom header image" but could be.
  */
 function _bw_theme_field_default_bw_header_image( $key, $value ) {
-  image( $key, $value );
+  e( retimage( $key, $value ) );
 } 
 
 /** 
@@ -297,14 +305,19 @@ function bw_format_sep( $type="field" ) {
  * Format the meta data for the 'post'
  * 
  * @param array $customfields - array of meta data for a post
+ * The $customfield data may itself be an array. e.g. For multiple select noderef's 
+ * Each field formatter should be able to cater for multiple values.
+ * Most of them simply extract array[0] 
  *
  * @uses bw_format_field
  */
+if ( !function_exists( "bw_format_meta" ) ) {
 function bw_format_meta( $customfields ) {
   bw_trace2();
-  bw_backtrace();
+  //bw_backtrace();
   foreach  ( $customfields as $key => $customfield ) {
-    $value = bw_array_get( $customfield, 0, $customfield );
+    $value = $customfield;
+    // $value = bw_array_get( $customfield, 0, $customfield ); **?** is it OK to pass an array everywhere?   Herb 2013/10/24
     $cf = array( $key => $value );
     sdiv( "bw_metadata $key" );
     bw_format_label( $cf );
@@ -312,6 +325,7 @@ function bw_format_meta( $customfields ) {
     bw_format_field( $cf );
     ediv( "metadata $key" );
   }  
+}
 }
 
 

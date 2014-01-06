@@ -3,7 +3,7 @@ if ( defined( 'OIK_BOB_BING_WIDE_SHORTCODES_INCLUDED' ) ) return;
 define( 'OIK_BOB_BING_WIDE_SHORTCODES_INCLUDED', true );
 
 /*
-    Copyright 2010-2012 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2010-2013 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -25,7 +25,7 @@ oik_require( "bobbcomp.inc" );
 
 function bw_bob( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="bw_b1 bold">B</span>';
+  $bw .= '<span class="bw_b1 bold">b</span>';
   $bw .= '<span class="bw_o bold">o</span>'; 
   $bw .= '<span class="bw_b2 bold">b</span>';
   $bw .= nullretetag( "span", $class );
@@ -55,7 +55,7 @@ function bw_bing( $class = NULL) {
 
 function bw_wide( $class=NULL ) {
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="bw_W">W</span>';
+  $bw .= '<span class="bw_w">w</span>';
   $bw .= '<span class="bw_i2">i</span>';
   $bw .= '<span class="bw_d">d</span>';
   $bw .= '<span class="bw_e">e</span>';
@@ -65,7 +65,7 @@ function bw_wide( $class=NULL ) {
 
 function bw_bong( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="bw_W">b</span>';
+  $bw .= '<span class="bw_w">b</span>';
   $bw .= '<span class="bw_i2">o</span>';
   $bw .= '<span class="bw_d">n</span>';
   $bw .= '<span class="bw_e">g</span>';
@@ -75,7 +75,7 @@ function bw_bong( $class = NULL) {
 
 function bw_hide( $class = NULL) {
   $bw = nullretstag( "span", $class ); 
-  $bw .= '<span class="bw_W">h</span>';
+  $bw .= '<span class="bw_w">h</span>';
   $bw .= '<span class="bw_i2">i</span>';
   $bw .= '<span class="bw_d">d</span>';
   $bw .= '<span class="bw_e">e</span>';
@@ -126,7 +126,7 @@ function bw_lbw( $atts=NULL ) {
   $tld = bw_array_get( $atts, 't', ".com" );
   $site = bw_array_get( $atts, 'site', "www.bobbingwide" );
   if ( $site == 'www.bobbingwide' ) {
-     $text = "www." . bw();
+     $text = $site;
      $title = 'Visit the Bobbing Wide website: ';
   } else {
     $text = $site; 
@@ -318,6 +318,7 @@ function bw_plug__syntax( $shortcode='bw_plug' ) {
                  , "table" => bw_skv( 'Y', 'N|t|f|1|0', "Show detailed information. Defaults to 'Y' if more than one plugin is listed" )
                  , "option" => bw_skv( '', "active_plugins", "Summarise the activated plugins" )
                  , "link" => bw_skv( 'n', "y|<i>URL</i>", "URL for where to find additional information" )
+                 , "banner" => bw_skv( null, "y|j|p", "Display the plugin banner image" )
                  );
   return( $syntax );
 }
@@ -361,11 +362,12 @@ function bw_get_notes_page_url( $link ) {
  * In fact - you can omit the table= parameter since it's forced when there's more than one name.
  * 
 */
-function bw_plug( $atts ) {
+function bw_plug( $atts=null, $content=null, $tag=null ) {
   $name = bw_array_get( $atts, 'name', 'oik' );
   $link = bw_array_get( $atts, 'link', 'n' );
   $table = bw_array_get( $atts, 'table', NULL ); 
   $option = bw_array_get( $atts, 'option', NULL );
+  $banner = bw_array_get( $atts, 'banner', null );
   bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
   
   $table = bw_validate_torf( $table );
@@ -390,8 +392,8 @@ function bw_plug( $atts ) {
   
     $name = bw_plugin_namify( $name );
   
-    $plugininfo = bw_get_plugin_info_cache( $name );
-    bw_trace( $plugininfo, __FUNCTION__, __LINE__, __FILE__, "plugininfo" );
+    $plugininfo = bw_get_plugin_info_cache2( $name );
+    // bw_trace( $plugininfo, __FUNCTION__, __LINE__, __FILE__, "plugininfo" );
     
     if ( is_wp_error( $plugininfo ) || !$plugininfo->name ) {
       if ( $table ) {
@@ -406,13 +408,15 @@ function bw_plug( $atts ) {
         bw_format_plug_table( $name, $link, $plugininfo );
       }  
       else {
-        bw_format_link( $name, $link, $plugininfo );
+        bw_format_link( $name, $link, $plugininfo, $banner );
       }  
     }  
   } 
   bw_plug_etable( $table ); 
   return( bw_ret());  
 }
+
+  
 
 /**
  * table header for bw_plug
@@ -421,7 +425,7 @@ function bw_plug( $atts ) {
  * <tbody>
  * <tr>
  * <th>Plugin name and description</th>
- * <th>Plugin links: WP,homepage,bw notes</th>
+ * <th>Plugin links: download,homepage</th>
  * <th>Version, total downloads, last update</th>
  * </tr>
 */
@@ -459,14 +463,86 @@ function bw_format_default( $name, $link ) {
 }
 
 /**
+ * Get the banner file URL 
+ *
+ * We have a couple of places where we can find the information about the banner image to display: homepage and oik_server
+ * If oik_server contains /oik-plugins/ then we should be able to replace it with /banner/
+ * otherwise we have to work from the homepage, stripping anything after /oik-plugins/
+ * and replacing it with /banner/$name
+ * This is because the oik-plugins server returns the full URL of the oik-plugins page
+ * 
+ *  
+ * Deliver an oik-plugins style image from the oik-plugins server
+        // $file = $plugininfo->oik_server ."/banner/" . $name; 
+ */
+function bw_get_banner_file_URL( $name, $plugininfo ) {
+  bw_trace2( );
+  $pos = strpos( $plugininfo->oik_server, "/oik-plugins/" );
+  if ( $pos === false ) {
+    $pos = strpos( $plugininfo->homepage, "/oik-plugins/" );
+    if  ( $pos === false ) {
+      $file = null;
+    } else {
+      $file = substr( $plugininfo->homepage, 0, $pos );
+      $file .= "/banner/$name";
+    }  
+  } else {    
+    $file = str_replace( "/oik-plugins/", "/banner/", $plugininfo->oik_server );
+  }
+  bw_trace2( $file, "file" );
+  return( $file );
+}  
+
+/**
+ * Create a plugin banner link 
+ */ 
+function bw_link_plugin_banner( $name, $plugininfo, $banner ) {
+  if ( $banner ) {    
+    switch ( strtolower( substr( $banner, 0, 1) ) ) {
+      case 'y':
+        $file = bw_get_banner_file_URL( $name, $plugininfo );
+        if ( $file ) {
+          $image = retimage( "bw_banner", $file, $name );
+          alink( "bw_banner", $plugininfo->oik_server, $image, $file );
+        } else {
+          bw_trace2( "Cannot determine banner file URL" );
+        }  
+        break;   
+      
+      case 'p':
+        // Deliver a .png style banner image from WordPress.org
+        $banner_type = ".png";
+        $file = "http://s-plugins.wordpress.org/$name/assets/banner-772x250$banner_type";
+        $image = retimage( "bw_banner", $file, $name );
+        alink( "bw_banner", "http://wordpress.org/extend/plugins/$name", $image, $file );   
+        break;
+    
+      case 'j':
+      default:
+        // Deliver a .jpg banner image from WordPress.org
+        
+        $banner_type = ".jpg"; 
+        $file = "http://s-plugins.wordpress.org/$name/assets/banner-772x250$banner_type";
+        $image = retimage( "bw_banner", $file, $name );
+        alink( "bw_banner", "http://wordpress.org/extend/plugins/$name", $image, $file );   
+        break;
+    
+    }
+  }
+}
+
+/**
  * Format a link or links to the plugin
  * 
  * When formatting two links they appear as: plugin(notes)
  * 
  */    
-function bw_format_link( $name, $link, $plugininfo ) { 
+function bw_format_link( $name, $link, $plugininfo, $banner=null ) {
+  span( "bw_plug" );
+  bw_link_plugin_banner( $name, $plugininfo, $banner ); 
   bw_link_plugin_download( $name, $plugininfo );          
   bw_link_notes_page( $name, $link, "(", ")" );
+  epan();
 }
 
 function tdlink( $class=NULL, $url, $text, $title=NULL, $id=NULL ) {
@@ -489,6 +565,7 @@ function tdlink( $class=NULL, $url, $text, $title=NULL, $id=NULL ) {
 */ 
 function bw_get_plugin_info_cache( $plugin_slug ) {
   bw_trace2();
+  gobang();
 
   $response_xml = wp_cache_get( "bw_plug", $plugin_slug );
   if ( empty( $response_xml )) {
@@ -508,6 +585,69 @@ function bw_get_plugin_info_cache( $plugin_slug ) {
 }
 
 /**
+ * 
+ * Some strings cause simplexml_load_string() to produce warning message
+ *
+ * Warning: simplexml_load_string(): Entity: line 2: parser error : Entity 'rarr' not defined 
+ *
+ * e.g. The &rarr; from Human Made's wordpressbackup plugin
+ *
+ *   [Description] => Simple automated backups of your WordPress powered website. 
+ *   Once activated you&#8217;ll find me under <strong>Tools &rarr; Backups</strong>. 
+ *   <cite>By <a href="http://hmn.md/" title="Visit author homepage">Human Made Limited</a>.</cite>
+ *
+ * This can be fixed by converting unrecognised entities to numeric entities.
+ * e.g   &rarr; becomes &#nnnn; 
+ *
+ * @link http://stackoverflow.com/questions/3805050/xml-parser-error-entity-not-defined    
+ * 
+ * @param string $response_xml - the raw XML which may contain HTML entities
+ * @return string XML with HTML entities converted to numeric entities 
+ */
+function _bw_tidy_response_xml( $response_xml ) {
+  $response_xml = ent2ncr( $response_xml );
+  return( $response_xml );
+}
+
+/**
+ * Cache load of plugin info - new version
+ * 
+ * - If no response then try our registered plugins
+ * - If we can find the server then we try talking to that
+ * - If no response then try WordPress 
+ * - 
+ * Rather than assume it's a WordPress plugin we can check if we know about it
+ * by looking in the plugin directory
+ * 
+ */ 
+function bw_get_plugin_info_cache2( $plugin_slug ) {
+  bw_trace2();
+  $response_xml = wp_cache_get( "bw_plug2", $plugin_slug );
+  if ( empty( $response_xml )) {
+    $response = bw_get_oik_plugins_info( $plugin_slug );
+    if ( $response ) {
+      $response_xml = null;
+    } else {
+      $response_xml = bw_get_plugin_info2( $plugin_slug );
+    }  
+    if ( !empty( $response_xml ) ) {
+      $response_xml = _bw_tidy_response_xml( $response_xml ); 
+      wp_cache_set( "bw_plug2", $response_xml, $plugin_slug, 43200 );
+    }  
+  } else {
+    bw_trace2( $response_xml, "response_xml from cache" );
+  }
+  bw_trace2( $response_xml, "response_xml" );
+  
+  if ( $response_xml ) {
+    $simple_xml = simplexml_load_string( $response_xml );   
+  } else {  
+    $simple_xml = $response;
+  }  
+  return ($simple_xml );
+}
+
+/**
  * Get defined plugin server
  */
 function bw_get_defined_plugin_server( $plugin_slug ) {
@@ -517,6 +657,7 @@ function bw_get_defined_plugin_server( $plugin_slug ) {
   } else {
     $server = null;
   }
+  bw_trace2( $server, "plugin server" );
   return( $server );
 }
 
@@ -558,6 +699,168 @@ function bw_get_plugin_info( $plugin_slug ) {
 }
 
 /**
+ *  bw_get_plugin_info2(4) plugin_data Array
+(
+    [Name] => oik-nivo-slider
+    [PluginURI] => http://www.oik-plugins.com/oik-plugins/oik-nivo-slider/
+    [Version] => 1.9
+    [Description] => [nivo] shortcode for the Nivo slider using oik <cite>By <a href="http://www.bobbingwide.com" title="Visit author homepage">bobbingwide</a>.</cite>
+    [Author] => <a href="http://www.bobbingwide.com" title="Visit author homepage">bobbingwide</a>
+    [AuthorURI] => http://www.bobbingwide.com
+    [TextDomain] => 
+    [DomainPath] => 
+    [Network] => 
+    [Title] => <a href="http://www.oik-plugins.com/oik-plugins/oik-nivo-slider/" title="Visit plugin homepage">oik-nivo-slider</a>
+    [AuthorName] => bobbingwide
+)
+
+These come from the readme.txt file
+
+Requires at least: 3.5
+Tested up to: 3.6
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<plugin>
+<name type="string">
+<![CDATA[ oik-nivo-slider ]]></name>
+<slug type="string"><![CDATA[ oik-nivo-slider ]]></slug>
+<version type="string"><![CDATA[ 1.8 ]]> </version>
+<author type="string">  <![CDATA[<a href="http://www.bobbingwide.com">bobbingwide</a> ]]> </author>
+<author_profile type="string"><![CDATA[ http://profiles.wordpress.org/bobbingwide ]]>    </author_profile>   <contributors type="array">  <bobbingwide type="string">  <![CDATA[ http://profiles.wordpress.org/bobbingwide ]]>
+</bobbingwide>
+</contributors>
+<requires type="string">
+<![CDATA[ 3.3 ]]>
+</requires>
+<tested type="string">
+<![CDATA[ 3.5.2 ]]>
+</tested>
+
+
+<rating type="double">73.4</rating>
+<num_ratings type="integer">12</num_ratings>
+<downloaded type="integer">56775</downloaded>
+
+<last_updated type="string">
+<![CDATA[ 2013-02-21 ]]>
+</last_updated>
+<added type="string">
+<![CDATA[ 2012-04-11 ]]>
+</added>
+<homepage type="string">
+<![CDATA[
+http://www.oik-plugins.com/oik-plugins/oik-nivo-slider/
+]]>
+</homepage>
+*/
+
+/**
+ *
+ */
+function bw_add_xml_child( &$xml, $plugin_data, $src, $target=null ) {
+  if ( !$target ) {
+    $target = strtolower( $src );
+  }  
+  $value = bw_array_get( $plugin_data, $src, null ); 
+  $xml->addChild( $target, $value ); 
+}  
+ 
+/**
+ * Get local plugin info XML
+ */
+function bw_get_local_plugin_xml( $plugin_slug ) {
+  $plugin_data = bw_get_plugin_data( $plugin_slug );
+  $xml_string = null;
+  if ( $plugin_data ) {
+    $pluginURI = bw_array_get( $plugin_data, "PluginURI", null );
+    $url = parse_url( $pluginURI );
+    if ( $url['host'] != "wordpress.org" ) { 
+    
+      $xml = new SimpleXmlElement( "<plugin></plugin>" );
+      //$plugin = $xml->plugin;
+      bw_trace2( $xml );
+      bw_add_xml_child( $xml, $plugin_data, "Name" ) ;
+      bw_add_xml_child( $xml, $plugin_data, "Name", "slug" );
+      bw_add_xml_child( $xml, $plugin_data, "Version" );
+      bw_add_xml_child( $xml, $plugin_data, "PluginURI", "homepage" );
+      bw_add_xml_child( $xml, $plugin_data, "Description", "short_description" );
+      $server = bw_get_defined_plugin_server( $plugin_slug ); 
+      if ( $server ) {
+        $plugin_data["PluginURI"] = "$server/oik-plugins/$plugin_slug/";
+      }  
+      bw_add_xml_child( $xml, $plugin_data, "PluginURI", "oik_server" );
+      $readme_data = bw_get_readme_data( $plugin_slug ); 
+      bw_add_xml_child( $xml, $readme_data, "Tested" );
+      bw_add_xml_child( $xml, $readme_data, "Last_updated" );
+      
+      $xml_string = $xml->asXML();
+    }  
+  }   
+  return( $xml_string );  
+} 
+
+/** 
+ * Obtain the "Tested up to" information and, if available "Last updated" from the readme.txt file
+ * e.g. 
+ *  Tested up to: 3.6
+ *  Last updated: some form of date string
+ * 
+ */
+function bw_get_readme_data( $plugin_slug ) {
+  require_once( ABSPATH . "wp-admin/includes/plugin.php" );
+  $file = oik_path( "readme.txt" , $plugin_slug ); 
+  if ( file_exists( $file ) ) {
+    $headers = array( "Tested" => "Tested up to" 
+                    , "Last_updated" => "Last updated" 
+                    );
+    $readme_data = get_file_data( $file, $headers, 'plugin' );
+    if ( !$readme_data['Last_updated'] ) {
+      $readme_data['Last_updated'] = bw_format_date( filemtime( $file ));
+    }
+  } else {
+    $readme_data = null;
+  }    
+  bw_trace2( $readme_data, "readme_data" );
+  return( $readme_data );
+}  
+
+/** 
+ *
+ */
+function bw_get_plugin_data( $plugin_slug ) {
+
+  require_once( ABSPATH . "wp-admin/includes/plugin.php" );
+  $file = oik_path( "$plugin_slug.php" , $plugin_slug ); 
+  if ( file_exists( $file ) ) {
+    $plugin_data = get_plugin_data( $file );
+  } else {
+    $plugin_data = null;
+  }    
+  bw_trace2( $plugin_data, "plugin_data" );
+  return( $plugin_data );
+}  
+
+/** 
+ * Get plugin information in XML format for cacheing
+ *
+ */
+function bw_get_plugin_info2( $plugin_slug ) {
+
+  $response_xml = bw_get_local_plugin_xml( $plugin_slug );
+  bw_trace( $response_xml, __FUNCTION__, __LINE__, __FILE__, "response_xml" );
+  if ( !$response_xml ) { 
+    $request_url = "http://api.wordpress.org/plugins/info/1.0/$plugin_slug.xml";
+    //$request_url = urlencode($request_url);
+    //$response_xml = simplexml_load_file($request_url);
+    $response_xml = bw_remote_get2( $request_url ); //, null );
+  }
+  bw_trace( $response_xml, __FUNCTION__, __LINE__, __FILE__, "response_xml" );
+  
+  return $response_xml;
+}
+
+/**
  * Create a link to the plugin's download page
  * 
  */
@@ -567,7 +870,7 @@ function bw_link_plugin_download( $name, $plugininfo ) {
   if ( !$download_page ) {
     $download_page =  "http://wordpress.org/extend/plugins/".$name;
   } else {
-    $download_page .= "/oik-plugins/$name"; 
+    //$download_page .= "/oik-plugins/$name"; 
   }
   alink( "plugin", $download_page , $plugininfo->slug, $title );  
 }

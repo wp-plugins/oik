@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2011-2012
+<?php // (C) Copyright Bobbing Wide 2011-2013
 if ( defined( "BWTRACE_INCLUDED" ) ) return;
 define( "BWTRACE_INCLUDED", true );
 
@@ -60,7 +60,6 @@ function bw_backtrace() {
  * Start up tracing from the wp-config file if required
  */
 if ( defined('BW_TRACE_CONFIG_STARTUP' ) && BW_TRACE_CONFIG_STARTUP == true ) {
-  //require_once( ABSPATH . '/wp-content/plugins/oik/bwtrace_boot.inc' );
   require_once( dirname( __FILE__ ) . '/bwtrace_boot.inc' );
 }  
 

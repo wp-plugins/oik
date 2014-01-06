@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012
+<?php // (C) Copyright Bobbing Wide 2012,2013
 if ( defined( 'OIK_BWTRACE_BOOT_INCLUDED' ) ) return;
 define( 'OIK_BWTRACE_BOOT_INCLUDED', true );
 

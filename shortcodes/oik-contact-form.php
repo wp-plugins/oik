@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2013
+<?php // (C) Copyright Bobbing Wide 2013, 2014
 
 /** 
  * Return a unique contact form ID 
@@ -32,16 +32,32 @@ function bw_contact_form( $atts=null, $content=null, $tag=null ) {
 }
 
 /**
+ * Create the submit button for the contact form 
+ *
+ * @param array $atts - containing "contact" or "me" or defaults
+ * 
+ */  
+function bw_contact_form_submit_button( $atts ) {
+  $text = bw_array_get( $atts, "contact", null );
+  if ( !$text ) {
+    $me = bw_get_me( $atts );
+    $text = sprintf( __( "Contact %s" ), $me ); 
+  }
+  e( isubmit( bw_contact_form_id(), $text, null ) );
+}
+
+/**
  * Show the "oik" contact form
  * 
  * This is a simple contact form which contains: Name, Email, Subject, Message and a submit button
  * Note: The * indicates Required field
+ *
+ * If you want to make the fields responsive then try some CSS such as:
+ *   textarea { max-width: 100%; }
  * 
  */
 function _bw_show_contact_form_oik( $atts ) {
-  $me = bw_get_me( $atts );
   $email_to = bw_get_option_arr( "email", null, $atts );
-  $text = sprintf( __( "Contact %s" ), $me ); 
   oik_require( "bobbforms.inc" );
   $class = bw_array_get( $atts, "class", "bw_contact_form" );
   sdiv( $class );
@@ -50,28 +66,14 @@ function _bw_show_contact_form_oik( $atts ) {
   bw_textfield( "oiku_name", 30, "Name *", null, "textBox", "required" );
   bw_emailfield( "oiku_email", 30, "Email *", null, "textBox", "required" );
   bw_textfield( "oiku_subject", 30, "Subject", null, "textBox" );
-  bw_textarea( "oiku_text", 40, "Message", null, 10 );
+  bw_textarea( "oiku_text", 30, "Message", null, 10 );
   etag( "table" );
   e( wp_nonce_field( "_oik_contact_form", "_oik_contact_nonce", false ) );
   e( ihidden( "oiku_email_to", $email_to ) );
-  e( isubmit( bw_contact_form_id(), $text, null ) );
+  bw_contact_form_submit_button( $atts );
   etag( "form" );
   ediv();
 }
-
-/**
- * Verify the nonce field
- * @param string $action - the action passed on the call to wp_nonce_field()
- * @param string $name - the name passed on the call to wp_nonce_field() 
- * @return bool - 1 or 2 if verified, false if not
- * 
- */
-function bw_verify_nonce( $action, $name ) {
-  $nonce_field = bw_array_get( $_REQUEST, $name, null );
-  $verified = wp_verify_nonce( $nonce_field, $action );
-  bw_trace2( $verified, "wp_verify_nonce?" );
-  return( $verified );
-}  
 
 /**
  * Show/process a contact form using oik
@@ -80,6 +82,8 @@ function bw_display_contact_form( $atts, $user=null ) {
   $contact_form_id = bw_contact_form_id( true );
   $contact = bw_array_get( $_REQUEST, $contact_form_id, null );
   if ( $contact ) {
+  
+     oik_require( "bobbforms.inc" );
      $contact = bw_verify_nonce( "_oik_contact_form", "_oik_contact_nonce" );
      if ( $contact ) {
        $contact = _bw_process_contact_form_oik();
@@ -166,6 +170,8 @@ function bw_call_akismet( $query_string ) {
  * Note: $fields['comment_content'] is the sanitized version of the user's input
  */
 function bw_build_akismet_query_string( $fields ) {
+  bw_trace2();
+  //bw_backtrace();
   $form = $_SERVER;
   $form['blog'] = get_option( 'home' );
   $form['user_ip'] = preg_replace( '/[^0-9., ]/', '', $_SERVER['REMOTE_ADDR'] );
@@ -173,9 +179,9 @@ function bw_build_akismet_query_string( $fields ) {
   $form['referrer'] = $_SERVER['HTTP_REFERER'];
   $form['permalink'] =  get_permalink();
   $form['comment_type'] = $fields['comment_type']; // 'oik-contact-form';
-  $form['comment_author'] = $fields['comment_author'];
-  $form['comment_author_email'] = $fields['comment_author_email'];
-  $form['comment_author_url'] = $fields['comment_author_url'];
+  $form['comment_author'] = bw_array_get( $fields, 'comment_author', null );
+  $form['comment_author_email'] = bw_array_get( $fields, 'comment_author_email', null );
+  $form['comment_author_url'] = bw_array_get( $fields, 'comment_author_url', null );
   $form['comment_content'] = $fields['comment_content'];  
   unset( $form['HTTP_COOKIE'] ); 
   $query_string = http_build_query( $form );
@@ -206,10 +212,11 @@ function bw_thankyou_message( $fields, $send, $sent ) {
  *
  * Handle the contact form submission
  * 1. Check fields
+ *   If message is blank then display an error message.
  * 2. Perform spam checking
  * 3. Send email, copying user if required
  * 4. Display "thank you" message
- *  
+ * 
  */
 function _bw_process_contact_form_oik() {
   $email_to = bw_array_get( $_REQUEST, "oiku_email_to", null );
@@ -225,14 +232,25 @@ function _bw_process_contact_form_oik() {
     $fields['comment_type'] = 'oik-contact-form';
     $send = bw_akismet_check( $fields );
     if ( $send ) {
+      $fields['message'] = $message;
+      $fields['contact'] =  $fields['comment_author'];
+      $fields['from'] = $fields['comment_author_email']; 
       $sent = bw_send_email( $email_to, $subject, $message, null, $fields );
     } else {
       $sent = true; // Pretend we sent it.
     }
     bw_thankyou_message( $fields, $send, $sent );
   } else {
-    $sent = false; 
-    p( "Invalid. Please corrrect and retry." );
+    $sent = false;
+    if ( !function_exists( "bw_issue_message" ) ) { 
+      oik_require( "includes/bw_messages.php" );
+    }  
+    $text = __( "Invalid. Please correct and retry.", "oik" );
+    bw_issue_message( null, "bw_field_required", $text );
+    $displayed = bw_display_messages();
+    if ( !$displayed ) {
+      p_( $text );
+    }  
   }
   return( $sent );
 }
@@ -251,14 +269,16 @@ function bw_contact_form__syntax( $shortcode="bw_contact_form" ) {
   //oik_require( "shortcodes/oik-user.php", "oik-user" );
   $syntax = array( "user" =>  bw_skv( bw_default_user(), "<i>id</i>|<i>email</i>|<i>slug</i>|<i>login</i>", "Value to identify the user" )  
                  //, "form" => bw_skv( "oik", "<i>plugin name</i>", "Name of the contact form plugin" )
-                 //, "text" => bw_skv( "Contact me",  
+                 //, "text" => bw_skv( "Contact me", 
+                 , "contact" => bw_skv( null, "<i>text</i>", "Text for submit button" )
+                 , "email" => bw_skv( null, "<i>email</i>", "Email address for submission" ) 
                  );
   $syntax += _sc_classes();
   return( $syntax );
 }
 
 /**
- * Implement example hook for [bw_user] 
+ * Implement example hook for [bw_contact_form] 
  *
  */
 function bw_contact_form__example( $shortcode="bw_contact_form" ) {
@@ -270,7 +290,7 @@ function bw_contact_form__example( $shortcode="bw_contact_form" ) {
 }
 
 /**
- * Implement snippet hook for [bw_user] 
+ * Implement snippet hook for [bw_contact_form]
  */
 function bw_contact_form__snippet( $shortcode="bw_contact_form" ) {
   

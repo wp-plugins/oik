@@ -1,5 +1,5 @@
-<?php // (C) Copyright Bobbing Wide 2011-2012
-if ( defined( 'OIK_BWTRACE_INCLUDES_INCLUDED' ) ) return;
+<?php // (C) Copyright Bobbing Wide 2011-2013
+if ( !defined( 'OIK_BWTRACE_INCLUDES_INCLUDED' ) ) {
 define( 'OIK_BWTRACE_INCLUDES_INCLUDED', true );
  
 /**
@@ -618,7 +618,7 @@ function bw_lazy_trace_config_startup() {
   }
 }
   
-    
+}     
    
    
 

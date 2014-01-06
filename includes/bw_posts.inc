@@ -284,7 +284,7 @@ function bw_format_list( $post, $atts ) {
 function bw_get_categories() {
   global $post;
   bw_trace2( $post, "global post" );
-    bw_backtrace();
+  //  bw_backtrace();
   if ( $post ) {
     $categories = get_the_category( $post->ID );
     $cats = '';

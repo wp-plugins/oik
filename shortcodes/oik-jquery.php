@@ -252,6 +252,8 @@ function bw_jquery_enqueue_style( $script ) {
  *
  */
 function bwsc_jquery( $atts=null, $content=null, $tag=null ) {
+  bw_trace2();
+  bw_backtrace();
   $selector = bw_array_get_from( $atts, "selector,0", null );
   $method = bw_array_get_from( $atts, "method,1", null );
   if ( !$method ) {
@@ -307,18 +309,17 @@ function bw_jquery_javascript( $src ) {
  */
 function bw_jquery_src( $atts ) {
   $src = bw_array_get( $atts, "src", null );
-  bw_trace2( $src );
+  // bw_trace2( $src );
   if ( $src ) {
     if ( is_numeric( $src ) ) {
       $src = wp_get_attachment_url( $src );
     }
-    //wp_register_script( $src, $src, array( "jquery"), null ); 
     $inline = bw_array_get( $atts, "inline", false );
     $inline = bw_validate_torf( $inline ); 
     if ( $inline ) {
       bw_jquery_javascript( $src );
     } else {   
-      wp_enqueue_script( $src, $src, array( "jquery"), null ); 
+      wp_enqueue_script( sanitize_key( $src ), $src, array( "jquery"), null ); 
     }  
   } else {
     bw_jquery_enqueue_attached_scripts();
@@ -341,7 +342,7 @@ function bw_jquery_enqueue_attached_scripts() {
   if ( $posts ) {
     foreach ( $posts as $post ) {
       $src = wp_get_attachment_url( $post->ID );
-      $enqueued = wp_enqueue_script( $src, $src, array( "jquery") ); 
+      $enqueued = wp_enqueue_script( sanitize_key( $src ), $src, array( "jquery") ); 
     }
   }
 }  

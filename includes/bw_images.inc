@@ -224,7 +224,8 @@ function bw_get_random_image( $post_id, $size, $atts ) {
   $img = bw_array_get( $thumbnail, 0, null );
   if ( $img ) {
     $text = bw_array_get( $atts, "title", NULL );
-    $return_value = retimage( "bw_thumbnail", $img, $text, null, null, kv( "data-thumb", $img) );
+    $classes = "bw_thumbnail " . bw_get_post_class( $post_id );
+    $return_value = retimage( $classes, $img, $text, null, null, kv( "data-thumb", $img) );
   } else { 
     $return_value = null; 
   }
@@ -293,7 +294,8 @@ function bw_get_thumbnail( $post_id = null, $size = 'thumbnail', $atts=NULL ) {
     $text = bw_array_get( $atts, "title", NULL );
     $thumbnail = bw_force_size( $thumbnail, $size );
     $data_thumb = kv( "data-thumb", $thumbnail[0] );
-    $return_value = retimage( "bw_thumbnail", $thumbnail[0], $text, $thumbnail[1], $thumbnail[2], $data_thumb ); 
+    $classes = "bw_thumbnail " . bw_get_post_class( $post_id );
+    $return_value = retimage( $classes, $thumbnail[0], $text, $thumbnail[1], $thumbnail[2], $data_thumb ); 
   }
   bw_trace( $return_value, __FUNCTION__, __LINE__, __FILE__, "return_value" ); 
   return( $return_value );
@@ -341,14 +343,15 @@ function bw_get_attached_image( $post_id = null, $number = 1, $orderby = 'rand',
  * 
  */ 
 function bw_get_attachment_thumbnail( $post_id, $size, $atts ) {
-  bw_backtrace();
+  //bw_backtrace();
   $thumbnail_arr = wp_get_attachment_image_src( $post_id, $size, false );
   bw_trace2( $thumbnail_arr, "thumbnail_arr" );
   $thumbnail = bw_array_get( $thumbnail_arr, 0, null);
   $text = bw_array_get( $atts, "title", NULL );
   if ( $thumbnail ) {
     $thumbnail_arr = bw_force_size( $thumbnail_arr, $size );
-    $thumbnail = retimage( "bw_thumbnail", $thumbnail, $text, $thumbnail_arr[1], $thumbnail_arr[2] ); 
+    $classes = "bw_thumbnail " . bw_get_post_class( $post_id );
+    $thumbnail = retimage( $classes, $thumbnail, $text, $thumbnail_arr[1], $thumbnail_arr[2] ); 
   } else {
     $thumbnail = wp_get_attachment_link( $post_id, $size, false, false ); 
   }  
@@ -356,6 +359,18 @@ function bw_get_attachment_thumbnail( $post_id, $size, $atts ) {
   // function wp_get_attachment_link( $id = 0, $size = 'thumbnail', $permalink = false, $icon = false, $text = false ) {
   return( bw_trace2( $thumbnail ));
 }
+
+/**
+ * Return the post classes given the post id
+ * @param ID $id 
+ * @return string of post classes
+ */
+function bw_get_post_class( $id ) {
+  $classes = get_post_class( null, $id ); 
+  $classlist = implode( " ", $classes );
+  return( $classlist );
+}  
+  
 
   
   

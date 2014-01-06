@@ -408,3 +408,37 @@ function bw_get_geo( $separator, $alt=null ) {
  * @deprecated use bw_get_option() e.g. $bw_options = get_option( 'bw_options' );
  */
 global $bw_options;
+
+/**
+ * Echo an image tag. Wrapper to retimage()
+ * @since 1.0
+ * @deprecated 2.1-alpha.1029
+ * @deprecated use e( retimage( $class, $jpg, $title, $width, $height, $extras ) );
+ */
+function image( $class, $jpg, $title=NULL, $width=NULL, $height=NULL, $extras=null ) {
+  $img = retimage( $class, $jpg, $title, $width, $height, $extras ); 
+  bw_echo( $img );
+}
+
+/**
+ * @since 1.0
+ * @deprecated 2.1-alpha.1029
+ * @deprecated use alink( null, retimage() );
+ */   
+function bw_image_link( $link 
+                      , $image
+                      , $imagetext
+                      , $width=302
+                      , $height=227
+                      ) {
+  $linktext = bw_get_linktext( $link );
+  $a = '<a title="';
+  $a.= $linktext;
+  $a.= '" href="';
+  $a.= bw_expand_link( $link );
+  $a.= '">';
+  bw_echo( $a . "\n" );
+  
+  e( retimage( "", $image, $imagetext, $width, $height ));
+  etag( "a" );
+} 

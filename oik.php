@@ -1,14 +1,18 @@
 <?php
 /*
 Plugin Name: oik base plugin 
-Plugin URI: http://www.oik-plugins.com/oik
-Description: Lazy smart shortcodes for displaying often included key-information and other WordPress content
-Version: 2.1-alpha.0802
+Plugin URI: http://www.oik-plugins.com/oik-plugins/oik
+Plugin URI: http://wordpress.org/extend/plugins/oik/
+Description: OIK Information Kit - Over 80 lazy smart shortcodes for displaying WordPress content
+Version: 2.1-beta.0106
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
-License: GPL2
+Text Domain: oik
+Domain Path: /languages/
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-    Copyright 2010-2013 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2010-2014 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -43,6 +47,12 @@ function oik_version() {
 }
 
 
+/**
+ * Function to invoke when the file has been loaded
+ *
+ */
+function oik_plugin_file_loaded() {
+
   require_once( "oik-add-shortcodes.php" );
 
   add_filter('widget_text', 'do_shortcode');
@@ -62,6 +72,7 @@ function oik_version() {
 
   //add_action('wp_print_styles', 'oik_enqueue_stylesheets');
   add_action('wp_enqueue_scripts', 'oik_enqueue_stylesheets', 11);
+  add_action('admin_enqueue_scripts', 'oik_enqueue_stylesheets', 11 );
   add_action('init', 'oik_main_init' );
   
   add_action( 'wp_ajax_oik_ajax_list_shortcodes', 'oik_ajax_list_shortcodes' );
@@ -72,7 +83,8 @@ function oik_version() {
 
   add_filter( "attachment_fields_to_edit", "oik_attachment_fields_to_edit", null, 2 ); 
   add_filter( "attachment_fields_to_save", "oik_attachment_fields_to_save", null, 2 );
-  
+
+}  
   
 
 /** 
@@ -90,7 +102,7 @@ function oik_enqueue_stylesheets() {
   $oikCSS = bw_get_option( 'oikCSS' );
   // bw_trace2( $oikCSS, "oikCSS" );
   if ( !$oikCSS ) {
-    wp_enqueue_style( 'oikCSS', WP_PLUGIN_URL . '/oik/oik.css' ); 
+    wp_enqueue_style( 'oikCSS', WP_PLUGIN_URL . '/oik/oik.css' );
   }
   $customCSS =  bw_get_option( 'customCSS' );
   if ( !empty( $customCSS) ) {
@@ -101,18 +113,29 @@ function oik_enqueue_stylesheets() {
   }
 } 
 
+
 /** 
  * Implement the 'init' action
  * 
  * start oik and let oik dependent plugins know it's OK to use the oik API
 */
 function oik_main_init() {
-  add_action( 'admin_menu', 'oik_admin_menu' );
-  add_action( "activate_plugin", "oik_load_plugins" );
-  add_action( 'network_admin_menu', "oik_network_admin_menu" );
-  add_action( "network_admin_notices", "oik_network_admin_menu" );
-  bw_load_plugin_textdomain();
-  do_action( 'oik_loaded' );
+  //if ( bw_is_loaded( "wp-login.php" ) ) {
+  //  bw_trace2( "wp-login is main" );
+  //  do_action( "oik_login_only" );
+  //  
+  //} else {
+    add_action( 'admin_menu', 'oik_admin_menu' );
+    add_action( "activate_plugin", "oik_load_plugins" );
+    add_action( 'network_admin_menu', "oik_network_admin_menu" );
+    add_action( "network_admin_notices", "oik_network_admin_menu" );
+    bw_load_plugin_textdomain();
+    /**
+      * Tell plugins that oik has been loaded.
+      *
+      */
+    do_action( 'oik_loaded' );
+  //}  
 }
 
 /**
@@ -147,14 +170,16 @@ function oik_network_admin_menu() {
   }   
 }
  
-
 /**
- * Implement 'admin_init'
-*/
+ * Implement 'admin_init' action
+ */
 function oik_admin_init() {
   oik_options_init();
 }
 
+/**
+ * Ajax shortcode list
+ */
 function oik_ajax_list_shortcodes() {
   oik_require( 'shortcodes/oik-codes.php' );
   $sc_list = bw_shortcode_list();
@@ -164,6 +189,9 @@ function oik_ajax_list_shortcodes() {
   die(); 
 }
 
+/**
+ * Ajax shortcode syntax
+ */
 function oik_ajax_load_shortcode_syntax() {
   oik_require( "includes/oik-sc-help.inc" );
   $shortcode = bw_array_get( $_REQUEST, 'shortcode', 'oik' );
@@ -174,6 +202,9 @@ function oik_ajax_load_shortcode_syntax() {
   die();
 }
 
+/**
+ * Ajax shortcode help information
+ */
 function oik_ajax_load_shortcode_help() {
   oik_require( "includes/oik-sc-help.inc" );
   $shortcode = bw_array_get( $_REQUEST, 'shortcode', 'oik' );
@@ -193,8 +224,7 @@ function oik_ajax_load_shortcode_help() {
  * This is the method that adds fields to the form. Paired with 'attachment_fields_to_save'
  */
 function oik_attachment_fields_to_edit( $form_fields, $post) { 
-  bw_trace2( $form_fields ); 
-//  gobang();
+  //bw_trace2( $form_fields ); 
   $form_fields['bw_image_link'] = array(  
 			"label" => __( "oik custom image link URL", "oik" ),  
 			"input" => "text",
@@ -220,6 +250,11 @@ function oik_attachment_fields_to_save( $post, $attachment) {
   update_post_meta( $post['ID'], '_bw_image_link', $link );  
   return $post;  
 }
+
+/**
+ * Initiate oik processing 
+ */
+oik_plugin_file_loaded();
         
 
 

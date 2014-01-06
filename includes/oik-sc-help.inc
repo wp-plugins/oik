@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012, 2013
+<?php // (C) Copyright Bobbing Wide 2012-2014
 
 
 /**
@@ -185,6 +185,7 @@ function _sc__help( $shortcode="bw_code" ) {
 "bw_google_plus" => "Google+ link",
 "bw_googleplus" => "Google+ link",
 "bw_images" => "Display attached images",
+"bw_instagram" => "Follow me on Instagram", 
 "bw_linkedin" => "Follow me on LinkedIn",
 "bw_list" => "Simple list of pages/posts or custom post types",
 "bw_logo" => "Display the company logo",
@@ -196,6 +197,7 @@ function _sc__help( $shortcode="bw_code" ) {
 "bw_pages" => "Display page thumbnails and excerpts as links",
 "bw_pdf" => "Display attached PDF files",
 "bw_picasa" => "Follow me on Picasa",
+"bw_pinterest" => "Follow me on Pinterest", 
 "bw_plug" => "Show plugin information",
 "bw_portfolio" => "Display matched portfolio files",
 "bw_post" => "Add Post button",
@@ -471,7 +473,7 @@ function bw_codes__syntax() {
 function bw_skv( $default, $values, $notes ) {
   return( array( "default" => $default
                , "values" => $values
-               , "notes" => $notes
+               , "notes" => __( $notes, "oik" )
                )  );
 }
 
@@ -485,6 +487,7 @@ function bw_format_skv( $value ) {
   if ( is_array( $value ) ) {    
     $default = bw_array_get( $value, "default", null );
     $values = bw_array_get( $value, "values", null );
+    $values = str_replace( "|", "| ", $values );
     $notes = bw_array_get( $value, "notes", null );
     return( "<b>$default</b>|$values - $notes" );
   } else {
@@ -735,5 +738,5 @@ function bw_invoke_shortcode( $shortcode, $atts=null, $text=null ) {
   $expanded = apply_filters( 'the_content', $example );
   e( $expanded );
   bw_trace2( $expanded );
-  bw_backtrace();
+  //bw_backtrace();
 }  

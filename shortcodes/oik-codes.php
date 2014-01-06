@@ -34,6 +34,7 @@ function bw_code_link( $shortcode ) {
 function bw_get_shortcode_callback( $shortcode ) {
   global $shortcode_tags; 
   $callback = bw_array_get( $shortcode_tags, $shortcode, null );
+  bw_trace2( $callback, "shortcode callback" );
   return( $callback ); 
 }
 
@@ -262,6 +263,18 @@ function bw_code( $atts=null, $content=null, $tag=null ) {
  * e.g. [bw_code bw_code shortcode=bw_code] 
  * 
  * @param $atts -  shortcode parameters
+ Array
+(
+    [0] => Array
+        (
+            [0] => bw_link
+            [1] => 1234
+        )
+
+    [1] => 
+    [2] => bw_code
+ *
+ * @see http://www.undermyhat.org/blog/2012/05/how-to-properly-escape-shortcodes-in-wordpress/
  * 
  */ 
 function bw_code_example_link( $atts ) {
@@ -272,9 +285,19 @@ function bw_code_example_link( $atts ) {
   $shortcodes = explode( " ", $shortcode_string );
   $shortcode = $shortcodes[0];
   $callback =  bw_get_shortcode_callback( $shortcode );
-  $function = bw_get_shortcode_function( $shortcode, $callback );
-  $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode/$function"; 
-  alink( "bw_code $shortcode", $link, $link_text, "Link to help for shortcode: $shortcode" );   
+  if ( $callback ) {
+    $function = bw_get_shortcode_function( $shortcode, $callback );
+  } else {
+    $function = null;
+  }
+  if ( $function ) {
+    $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode/$function";     
+    alink( "bw_code $shortcode", $link, $link_text, "Link to help for shortcode: $shortcode" );   
+  } else { 
+    span( "bw_code $shortcode" );
+    e( $link_text );
+    epan();
+  }   
 }
    
 

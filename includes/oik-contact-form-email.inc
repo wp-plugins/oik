@@ -71,10 +71,11 @@ function bw_get_email_default( $tag="p" ) {
  * Name: %name%
  * Message: %message%
  * </pre>
- *
- */
+*/
 function bw_get_email_message( $message=null, $fields=array() ) {
-  $message = bw_get_email_default();
+  if ( $message == null ) {
+    $message = bw_get_email_default();
+  }  
   add_filter( "bw_email_message", "bw_replace_fields", 1, 2 );
   $message = apply_filters( "bw_email_message", $message, $fields );
   return( $message );
@@ -104,7 +105,7 @@ function bw_get_email_headers( $headers=null, &$fields=array() ) {
 /**
  * Build and send an email with fields substituted by default
  *
- * @param string $email - email address of the recipient - overridden by the value in $fields['email']
+ * @param string $email - email address of the recipient - overridden by the value in $fields['email']      **?** not oiku_email_to then 2013/09/03
  * @param string $subject - the one line email subject, excluding Subject:
  * @param string $message - the body of the email
  * @param array/string $headers - the message header: From:, Bcc:, Content-type: etc

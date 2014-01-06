@@ -6,12 +6,14 @@
  * 
  */
 
-  
-add_action( 'add_meta_boxes', 'bw_effort_meta_boxes' );
-
-/* Do something with the data entered */
-add_action( 'save_post', 'bw_effort_save_postdata', 10, 2 );
-
+/** 
+ * Function to invoke when bw_metadata.inc is loaded
+ */
+function bw_metadata_loaded() {
+  add_action( 'add_meta_boxes', 'bw_effort_meta_boxes' );
+  /* Do something with the data entered */
+  add_action( 'save_post', 'bw_effort_save_postdata', 10, 2 );
+}
 
 /**
  * Create "Fields" meta box for each field associated with each object type in the mapping
@@ -23,9 +25,9 @@ function bw_effort_meta_boxes() {
   if ( is_array( $bw_mapping ) && count( $bw_mapping['field'] ) ) {
   
     foreach ( $bw_mapping['field'] as $object_type => $fields ) {
-      bw_trace( "object_type", __FUNCTION__, __LINE__, __FILE__, $object_type );
-      bw_trace2( $fields );
-      add_meta_box( 'bw_effort', __("Fields"), 'bw_effort_box', $object_type, 'normal' , 'high' , $fields );
+      // bw_trace( "object_type", __FUNCTION__, __LINE__, __FILE__, $object_type );
+      // bw_trace2( $fields );
+      add_meta_box( 'bw_effort', __( "Fields", "oik"), 'bw_effort_box', $object_type, 'normal' , 'high' , $fields );
     }
   }  
 }
@@ -129,8 +131,12 @@ function bw_load_noderef( $args ) {
   }   
     
   $options = array();
-  $args['post_parent'] = 0; 
-  foreach ( $post_types as $post_type ) {
+  foreach ( $post_types as $post_type ) {    
+    if ( $post_type !== "attachment" ) {
+      $args['post_parent'] = 0; 
+    } else {
+      unset( $args['post_parent'] );
+    }
     $args['post_type'] = $post_type;
     $posts = bw_get_posts( $args );
     $options += bw_post_array( $posts );
@@ -160,12 +166,14 @@ function bw_form_field_noderef( $name, $type, $title, $value, $args ) {
 /**
  * Enqueue the debug script if needed otherwise enqueue the minified (packed) one
  */
+if ( !function_exists( "bw_datepicker_enqueue_script" ) ) {
 function bw_datepicker_enqueue_script( ) {
   if ( defined('SCRIPT_DEBUG' ) && SCRIPT_DEBUG == true) {
     wp_enqueue_script( 'jquery-ui-datepicker' );
   } else {
     wp_enqueue_script( 'jquery-ui-datepicker' );
   } 
+}
 } 
 
 /** 
@@ -174,6 +182,7 @@ function bw_datepicker_enqueue_script( ) {
  * **?** oik v2.0 was delivered with jquery-ui-1.9.2.custom.css but originally expected jquery.ui.theme.css. How do we manage this in the future? 2013/06/26
  *
  */
+if ( !function_exists( "bw_form_field_date" ) ) { 
 function bw_form_field_date( $name, $type, $title, $value, $args ) {
   $args['#length'] = bw_array_get( $args, '#length', 10 );
   wp_enqueue_style( "jquery-ui-datepicker-css", plugin_dir_url( __FILE__). "css/jquery.ui.datepicker.css" ); 
@@ -186,6 +195,7 @@ function bw_form_field_date( $name, $type, $title, $value, $args ) {
     $value = bw_format_date( $value );
   }
   bw_form_field_( $name, $type, $title, $value, $args ); 
+}
 }
 
 /** 
@@ -268,18 +278,42 @@ function bw_form_function( $prefix="bw_form_field_", $field_type= 'text', $field
  * 
  * @param string $field_title - the title of the field
  * @param array $args - array of args, possibly containing a key of '#hint' 
- * @return string $field_title - the updated field title. Note: there is no added space character.
+ * @return string $field_title - the updated field title. Note: A single non-blank space character is prepended to the hint text.
  */
 function _bw_form_field_title( $field_title, $args ) {
   $hint = bw_array_get( $args, "#hint", null ); 
   if ( $hint ) {
-    $sphint = retstag( "span", "bw_hint" );
-    $sphint .= $hint;
+    $sphint = "&nbsp;";
+    $sphint .= retstag( "span", "bw_hint" );
+    $sphint .= bw_tt( $hint );
     $sphint .= retetag( "span" ); 
     $field_title .= $sphint;
   }  
   return( $field_title );
 } 
+
+/**
+ * Localize/customize the field title
+ * 
+ * Allow localization/customization of the field title.
+ * Applies the "oik_form_field_title_${field_name}" filter(s) 
+ * 
+ * If the result is unchanged then return the l10n version, with "oik" as the text-domain
+ * 
+ * @TODO Or use the value specified in the $args
+ * 
+ */
+function bw_l10n_field_title( $field_name, $field_title, $field_type, $field_value, $args=null ) {
+  bw_trace2();
+  $stitle = $field_title; 
+  $field_title = apply_filters( "oik_form_field_title_${field_name}", $field_title, $field_type );
+  if ( $field_title == $stitle ) {
+    $field_title = translate( $field_title, "oik" ); // Use translate so that makepot.php/makeoik.php doesn't find this call
+  }
+  //  $args = apply_filters( "
+  $field_title = _bw_form_field_title( $field_title, $args ); 
+  return( $field_title );
+}
 
 /** 
  * Display a field in a form for the user to enter/choose a value
@@ -291,8 +325,7 @@ function _bw_form_field_title( $field_title, $args ) {
  * @param array $args - any additional arguments for the field formatter
  */
 function bw_form_field( $field_name, $field_type, $field_title, $field_value, $args=NULL ) {
-  bw_trace2();
-  $field_title = _bw_form_field_title( $field_title, $args ); 
+  $field_title = bw_l10n_field_title( $field_name, $field_title, $field_type, $field_value, $args );
   $funcname = bw_form_function( "bw_form_field_", $field_type, $field_name );
   $funcname( $field_name, $field_type, $field_title, $field_value, $args );
 }
@@ -363,12 +396,19 @@ function bw_effort_save_postdata( $post_id, $post ) {
 
 /**
  * Update post_meta for fields with multiple values
+ * 
+ * Delete any existing meta data values then add the new ones, if any
  *  
+ * @param ID $post_id
+ * @param string $field - the field name - often preceded with an '_'
+ * @param array $mydata - the set of new values 
  */
 function bw_update_post_meta( $post_id, $field, $mydata ) {
-  delete_post_meta( $post_id, $field ); 
-  foreach ( $mydata as $key => $value ) {
-    add_post_meta( $post_id, $field, $value, false ); 
+  delete_post_meta( $post_id, $field );
+  if ( count( $mydata ) ) { 
+    foreach ( $mydata as $key => $value ) {
+      add_post_meta( $post_id, $field, $value, false ); 
+    }
   }
 }
 
@@ -412,5 +452,4 @@ function bw_effort_update_field( $post_id, $field ) {
         )
 */        
 
-
-
+bw_metadata_loaded();
