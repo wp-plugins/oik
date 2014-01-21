@@ -138,6 +138,9 @@ function bw_format_table_row( $post, $atts ) {
  * Format the data in a table 
  * The titles are returned by the post type... what if it's not a custom post type
  * The fields are returned by the post type... ditto
+ * 
+ * If oik-fields (v1.18 or higher) is not loaded then we need to load the functions to "theme" fields. See bw_format_table_row()
+ * If the version loaded still doesn't have bw_theme_field() then we can't continue.
  *
  */
 function bw_format_table( $posts, $atts ) {
@@ -146,9 +149,13 @@ function bw_format_table( $posts, $atts ) {
   
   $excerpts = bw_query_table_columns( $atts, $post_type );
   
-  // If oik-fields (v1.18 or higher) is not loaded then we need to load the functions to "theme" fields. See bw_format_table_row()
   if ( !function_exists( "bw_theme_field" ) ) {
-    oik_require( "includes/bw_fields.inc" );
+    oik_require2( "includes/bw_fields.inc", "oik-fields" );
+    if ( !function_exists( "bw_theme_field" ) ) {
+      bw_trace2( "Please upgrade oik-fields" );
+      p( "oik-fields plugin version must be version 1.31 or higher" );
+      return;
+    }
   }
   
   foreach ( $posts as $post ) {
@@ -186,10 +193,16 @@ function bw_table__syntax( $shortcode="bw_table" ) {
   return( $syntax );   
 }
 
+/**
+ * Help hook for [bw_table] shortcode
+ */
 function bw_table__help( $shortcode="bw_table" ) {
   return( "Display custom post data in a tabular form" );
 }
 
+/**
+ * Example hook for [bw_table] shortcode
+ */
 function bw_table__example( $shortcode="bw_table" ) {
  $text = "To display a table of the 4 most recent posts" ;
  $example = 'post_type="post" orderby="post_date" order=DESC numberposts=4';
@@ -198,6 +211,9 @@ function bw_table__example( $shortcode="bw_table" ) {
  p( "No example for $shortcode" );
 } 
 
+/**
+ * Snippet hook for [bw_table] shortcode
+ */
 function bw_table__snippet( $shortcode="bw_table" ) {
  p( "No snippet for $shortcode" );
 }

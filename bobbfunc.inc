@@ -707,7 +707,7 @@ function ebw( $bw_class_prefix=NULL )
    echo bw( $bw_class_prefix );
 }
 
-require_once( "bobbcomp.inc" );
+oik_require( "bobbcomp.inc" );
 
 if ( bw_is_wordpress() ) {
   /**

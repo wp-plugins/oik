@@ -105,6 +105,9 @@ The Application Programming Interface (API) reference documents over 900 APIs
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
+= 2.1-beta.0121 =
+Upgrade in line with oik-fields v1.31
+
 = 2.1-beta.0106 =
 Upgrade if you need improved i18n/l10n support, improved styling for WordPress 3.8 admin pages or [bw_pinterest] or [bw_instagram] 
 
@@ -251,6 +254,10 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.1-beta.0121 =
+* Changed: includes/bw_fields.inc now matches the same file in oik-fields
+* Changed: [bw_fields] now checks the version of oik-fields - for bw_theme_field()
+
 = 2.1-beta.0106 = 
 * Added: [bw_pinterest] - follow me on Pinterest 
 * Added: [bw_instagram] - follow me on Instagram 
