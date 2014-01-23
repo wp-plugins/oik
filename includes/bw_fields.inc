@@ -388,3 +388,20 @@ function bw_format_taxonomy( $field, $post_id ) {
 }  
 }
 
+/** 
+ * If the field type is not defined then it's probably a post object's property
+ */ 
+if ( !function_exists( "bw_theme_object_property" ) ) {  
+function bw_theme_object_property( $post_id, $value, $atts=null ) {
+  $post = get_post( $post_id );  
+  if ( property_exists( $post, $value ) ) {
+    $field_value = $post->$value ;
+    bw_theme_field( $value, $field_value, $atts ); 
+  } elseif ( property_exists( $post, "post_$value" ) ) {       
+    $field_name = "post_" . $value;  
+    $field_value = $post->$field_name;
+    bw_theme_field( $field_name, $field_value, $atts );
+  } 
+}
+}    
+ 

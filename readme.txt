@@ -10,18 +10,20 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Over 80 advanced, powerful shortcodes for displaying the content of your WordPress website.
 
-on== Description ==
+== Description ==
 The *oik base* plugin provides a series of advanced WordPress shortcodes that help you display dynamic content from your website's pages, posts, attachments, links and custom post types.
 The OIK Information Kit uses lazy smart shortcode technology to display your WordPress website's content including your often included key-information. 
 The functionality in the oik base plugin is used by over 40 other WordPress plugins, providing powerful facilities for an efficient, performant website.
 
 At a glance changes in version 2.1
 * Added: [bw_cycle] shortcode to display attachments or other content using jQuery cycle
-* Added: Support for localization (l10n through internationalization (i18n) of literal text fields
-* Various CSS changes for improved coexistance with themes and theme frameworks
-* Many API and documentation improvements
 * Added: [bw_pinterest] - follow me on Pinterest 
 * Added: [bw_instagram] - follow me on Instagram 
+* Added: Support for localization (l10n) through internationalization (i18n) of literal text fields
+* Changed: [bw_login] shortcode can be used to protect content only visible to logged in users
+* Various CSS changes for improved coexistance with themes and theme frameworks
+* Many improvements to support oik-fields
+* Many API and documentation improvements
 
 At a glance changes in version 2.0
 
@@ -105,6 +107,9 @@ The Application Programming Interface (API) reference documents over 900 APIs
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
+= 2.1-beta.0122 = 
+Required for officialcaravan.co.uk
+
 = 2.1-beta.0121 =
 Upgrade in line with oik-fields v1.31
 
@@ -254,6 +259,12 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.1-beta.0122 =
+* Added: Custom taxonomies are now registered as fields of type "taxonomy" 
+* Fixed: reinstated some logic in [bw_field] shortcode as of oik-fields v1.18.0315
+* Changed: [bw_field] can now be used to display post properties as well as registered fields
+* Fixed: aname() - create an anchor tag for linking within a page
+
 = 2.1-beta.0121 =
 * Changed: includes/bw_fields.inc now matches the same file in oik-fields
 * Changed: [bw_fields] now checks the version of oik-fields - for bw_theme_field()

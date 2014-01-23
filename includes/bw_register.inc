@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012, 2013
+<?php // (C) Copyright Bobbing Wide 2012-2014
 
 /**
  * Register functions for custom post types, taxonomies and fields
@@ -248,14 +248,22 @@ function bw_default_taxonomy_args( $taxonomy, $arg ) {
 function bw_register_taxonomy( $taxonomy, $object_type=NULL, $args=NULL ) {
   bw_trace2( $args );  
   register_taxonomy( $taxonomy, $object_type, $args );
+  $field_title = bw_array_get( $args['labels'], 'name', $taxonomy );
+  bw_register_field( $taxonomy, "taxonomy", $field_title, $args );
 }
 
+/** 
+ * Register a custom "tags" taxonomy
+ */
 function bw_register_custom_tags( $taxonomy, $object_type=null, $arg=null ) {
   $args = bw_default_taxonomy_args( $taxonomy, $arg );
   $args['hierarchical'] = false;
   bw_register_taxonomy( $taxonomy, $object_type, $args) ; 
 }
 
+/**
+ * Register a custom "category" taxonomy
+ */
 function bw_register_custom_category( $taxonomy, $object_type=null, $arg=null ) {
   $args = bw_default_taxonomy_args( $taxonomy, $arg );
   $args['hierarchical'] = true;
@@ -264,6 +272,8 @@ function bw_register_custom_category( $taxonomy, $object_type=null, $arg=null ) 
 
 /** 
  * Register a field named $field_name for object type $object_type
+ *
+ * @TODO - determine is this works for "taxonomy" field types as well
  * 
  * @param string $field_name - meta_key of the field - precede with an underscore so it's not in custom fields
  * @param string $object_type - object type
@@ -300,6 +310,9 @@ function bw_register_field( $field_name, $field_type, $field_title, $args=NULL )
   $bw_fields[$field_name] = $data;
 }
 
+/**
+ * Return a list of defined fields 
+ */
 function bw_list_fields() {
   global $bw_fields;
   $fields = bw_assoc( array_keys( $bw_fields ));
