@@ -161,9 +161,9 @@ function atitle( $title=NULL ) {
  * Create an anchor tag for linking within a page
  */ 
 function aname( $name ) { 
-  stag( 'a' );
-  e( ' name="'. $name . '"' );
-  etag( 'a' );
+  //stag( 'a' );
+  e( '<a name="'. $name . '"></a>' );
+  //etag( 'a' );
   // return( bw_ret() );
 } 
 
@@ -707,7 +707,7 @@ function ebw( $bw_class_prefix=NULL )
    echo bw( $bw_class_prefix );
 }
 
-require_once( "bobbcomp.inc" );
+oik_require( "bobbcomp.inc" );
 
 if ( bw_is_wordpress() ) {
   /**

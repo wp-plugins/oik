@@ -1,7 +1,7 @@
 <?php 
 /*
 
-    Copyright 2012,2013 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012-2014 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -35,7 +35,11 @@
  *   posts_per_page=-1
 
  *   thumbnail=specification - see bw_thumbnail()
- *   customcategoryname=custom category value  
+ *   customcategoryname=custom category value 
+ * 
+ * You can also use all of the other parameters to get_post
+ * such as meta_key= meta_value= post_type= etcetera
+ * If you want to list the current item then remember to exclude=-1 
  */
 function bw_list( $atts=null, $content=null, $tag=null ) {
   oik_require( "includes/bw_posts.inc" );
