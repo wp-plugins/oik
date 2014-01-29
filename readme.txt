@@ -3,8 +3,8 @@ Contributors: bobbingwide, vsgloik
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, oik, pages, posts, jQuery, contact form, PayPal, buttons, Artisteer, text widget, key information, trace, blocks, bookmarks, images, attachments, smart, lazy, pagelist, sitemap, tree, accordion, tabs, cycle
 Requires at least: 3.5
-Tested up to: 3.8
-Stable tag: 2.0.1
+Tested up to: 3.8.1
+Stable tag: 2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,6 +16,7 @@ The OIK Information Kit uses lazy smart shortcode technology to display your Wor
 The functionality in the oik base plugin is used by over 40 other WordPress plugins, providing powerful facilities for an efficient, performant website.
 
 At a glance changes in version 2.1
+
 * Added: [bw_cycle] shortcode to display attachments or other content using jQuery cycle
 * Added: [bw_pinterest] - follow me on Pinterest 
 * Added: [bw_instagram] - follow me on Instagram 
@@ -35,6 +36,7 @@ At a glance changes in version 2.0
 * Fully documented using oik's dynamic API documentation
 
 oik now provides 80 shortcodes including:
+
 * [bw_pages], [bw_posts], [bw_thumbs], [bw_attachments], [bw_images], [bw_pdf] shortcodes to list subpages, posts, attachments or custom post types 
 * [bw_cycle] to display content using jQuery cycle.
 * [bw_list], [bw_tree] to display lists of links to pages, posts, attachments or custom post types 
@@ -107,6 +109,9 @@ The Application Programming Interface (API) reference documents over 900 APIs
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
+= 2.1 =
+Tested with WordPress 3.8.1. Please see the Changelog for the full set of changes between 2.0.1 and 2.1.
+
 = 2.1-beta.0122 = 
 Required for officialcaravan.co.uk
 
@@ -259,6 +264,10 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.1 =
+* Tested: with WordPress 3.8.1.
+* See also: change log below.
+
 = 2.1-beta.0122 =
 * Added: Custom taxonomies are now registered as fields of type "taxonomy" 
 * Fixed: reinstated some logic in [bw_field] shortcode as of oik-fields v1.18.0315
@@ -882,8 +891,15 @@ Other plugins which use the oik API are also available on WordPress.org:
 * [cookie-cat](http://www.wordpress.org/extend/plugins/cookie-cat) - [cookies] shortcode to list the cookies your website may use
 * [uk-tides](http://wordpress.org/extend/plugins/uk-tides/) - [bw_tides] shortcode for tide times and heights in the UK  (replaces oik-tides)
 * [bbboing](http://www.wordpress.org/extend/plugins/bbboing) - obfuscate text but leave it readable
+* [oik-css](http://www.wordpress.org/extend/plugins/oik-css) - [bw_css] for CSS styling per page
+* [oik-batchmove](http://www.wordpress.org/extend/plugins/oik-batchmove) - batch change post categories or published date
 
-More FREE and Premium plugins are available from [oik-plugins.com](http://www.oik-plugins.com/wordpress-plugins-from-oik-plugins/)
+More FREE and Premium plugins are available from [oik-plugins.com](http://www.oik-plugins.com/wordpress-plugins-from-oik-plugins/) including:
+
+* [oik-user](http://www.oik-plugins.com/oik-plugins/oik-user/) - display oik information for each site user
+* [oik-ms](http://www.oik-plugins.com/oik-plugins/oik-ms-oik-multisite-shortcodes/) - oik MultiSite shortcodes
+* [oik-External link warning jQuery](http://www.oik-plugins.com/oik-plugins/external-link-warning-jquery/)
+* [us-tides](http://www.oik-plugins.com/oik-plugins/us-tides/) - US saltwater tide times and heights
 
 
 oik plugins are suitable for:
