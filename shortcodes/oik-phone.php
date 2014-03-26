@@ -1,4 +1,66 @@
-<?php // (C) Copyright Bobbing Wide 2011,2013
+<?php // (C) Copyright Bobbing Wide 2011-2014
+
+/**
+ * Return a tel: or sms: link
+ *
+ * @param string $link - may be null|n|y|tel|sms|other
+ * @param string $number - the telephone number - which may include SMS text; ?body="blah"
+ * @return string link value or null
+ */
+function _bw_tel_link( $link, $number ) {
+  if ( $link ) {
+    $link = strtolower( $link );
+    switch ( $link ) {
+      case "n":
+        $link = null;
+        break;
+        
+      case "y":
+      case "t":
+        $link = "tel:";
+        break;
+        
+      case "s":
+        $link = "sms:";
+        break;
+        
+      default:
+        // Pass the given value through         
+    }
+    if ( $link ) {
+      $link .= $number;
+    }
+  }
+  return( $link );
+}
+
+/**
+ * Create an enclosing link start or end tag
+ *
+ * If a link is being used then the "tag" defaults "span".
+ *
+ * @param array $atts - name value pairs
+ * @param string $number - the telephone number to append to the link
+ * @param book $start - true for start tag, false for end tag
+ *
+ */
+function _bw_telephone_link( &$atts, $number, $start=true ) {
+  static $link = null;
+  if ( $start ) {
+    $link = bw_array_get( $atts, "link", null );
+    $link = _bw_tel_link( $link, $number ); 
+    if ( $link ) { 
+      $class = bw_array_get( $atts, "class", null );
+      stag( "a", $class, null, kv( "href", $link ) );
+      $atts['tag'] = bw_array_get( $atts, "tag", "span" ); 
+    }
+  } else {
+    if ( $link ) {
+      etag( "a" );
+    }
+  }     
+} 
+ 
 
 /**
  * Return the telephone number in desired HTML markup, if set or passed as number=
@@ -11,6 +73,7 @@
  *   index = field to obtain ( telephone, fax, mobile, emergency )
  *   alt = 1 if alternative number are required
  *   user=id|email|login|nicename
+ *   link=null|n|y|tel|sms|other
  *
  * The telephone number is formatted using microformats
  * See ISBN: 978-1-59059-814-6 p. 140
@@ -26,12 +89,14 @@ function _bw_telephone( $atts=null ) {
   $sep = bw_array_get( $atts, "sep", ": " );
   $number = bw_array_get( $atts, "number", null );
   $index = bw_array_get( $atts, "index", "telephone" );
-  $tag = bw_array_get( $atts, "tag", "div" );
   $class = bw_array_get( $atts, "class", null );
+  $link = bw_array_get( $atts, "link", null );
   if ( !$number ) {
     $number = bw_get_option_arr( $index, "bw_options", $atts );
   } 
   if ( $number <> "" ) {
+    _bw_telephone_link( $atts, $number, true );
+    $tag = bw_array_get( $atts, "tag", "div" );
     stag( $tag,  "tel $class" );
     span( "type");
     e( $prefix );
@@ -43,6 +108,7 @@ function _bw_telephone( $atts=null ) {
     e( $number );
     epan();
     etag( $tag );
+    _bw_telephone_link( $atts, $number, false );
   }
   return( bw_ret());
 }
@@ -85,6 +151,10 @@ function bw_emergency( $atts = null ) {
 
 /**
  * Implement [bw_tel] shortcode to display an inline telephone number, using span
+ *
+ * Note: When using the link= parameter the versions of the shortcodes which use tag=span create better HTML than those which uses tag=div.
+ * This is because WordPress wpautop() logic can add unwanted (and unmatching) paragraph tags.
+ *
  */ 
 function bw_tel( $atts=null ) {
   $atts['tag'] = bw_array_get( $atts, "tag", "span" );

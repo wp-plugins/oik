@@ -157,12 +157,14 @@ function bw_format_table( $posts, $atts ) {
       return;
     }
   }
-  
+  $cp = bw_current_post_id();
   foreach ( $posts as $post ) {
+    bw_current_post_id( $post->ID );
     if ( $excerpts )
       $post->excerpt = bw_excerpt( $post );    
     bw_format_table_row( $post, $atts );
   }
+  bw_current_post_id( $cp );
   etag( "tbody" );
   etag( "table" );
 }

@@ -1,7 +1,12 @@
-<?php // (C) Copyright Bobbing Wide 2012, 2013
+<?php // (C) Copyright Bobbing Wide 2012-2014
 
 /**
  * Implement [bw_geo] shortcode
+ *
+ * @param array $atts 
+ * @param string $content
+ * @param string $tag
+ * @return string expanded shortcode
  *
  */
 function bw_geo( $atts=null, $content=null, $tag=null ) {
@@ -46,11 +51,17 @@ function bw_directions( $atts=null ) {
   return( bw_ret());
 }
 
-
+    
+/**
+ * Help hook for bw_directions
+ */    
 function bw_directions__help() {
   return( "Display a 'Google directions' button.");
 }
 
+/**
+ * Example hook for bw_directions
+ */
 function bw_directions__example() {
   br( "e.g." );
   e( "The Google directions button will enable the user to get directions to you." );

@@ -13,11 +13,13 @@
  *
  */
 function bw_singularize( $plural ) {
+  //bw_backtrace();
   if ( function_exists( "bw_porter_stemmer" ) ) {
     $singular = bw_porter_stemmer( $plural ) ;
   } else {
     $singular = rtrim( $plural, 's' );
   }
+  //bw_trace2( $singular, "Singular" );
   return( $singular );
 }
 
@@ -144,12 +146,20 @@ function bw_register_post_type( $post_type, $post_type_args ) {
  * @uses bw_singularize
  */
 function bw_default_labels( $labels= array() ) {
+  //bw_trace2();
+  //bw_backtrace();
   $ucplural = bw_array_get_dcb( $labels, 'name', 'Post', "bw_ucfirst" );
   $lcplural = strtolower( $ucplural );
   
   $labels['name'] = bw_array_get( $labels, 'name', $ucplural );
   $labels['menu_name'] = bw_array_get( $labels, 'menu_name', $ucplural );
-  $ucsingular = bw_array_get_dcb( $labels, 'singular_name', $ucplural, "bw_singularize" );
+  //bw_trace2( $labels, "labels-array" );
+  
+  $ucsingular = bw_array_get( $labels, 'singular_name', null );
+  if ( !$ucsingular ) {
+    $ucsingular = bw_singularize( $ucplural );
+  }
+  //bw_trace2( $ucsingular );
   $labels['singular_name'] = $ucsingular; 
   $labels['all_items'] = bw_array_get( $labels, 'all_items', "All $ucplural" );
   $labels['add_new'] = bw_array_get( $labels, 'add_new', "New $ucsingular" );
@@ -165,6 +175,7 @@ function bw_default_labels( $labels= array() ) {
   // 'parent_item_colon'  => __( 'Forum:',                   'bbpress' )
 
   // should each array element now be translated? 
+  //bw_trace2( $labels, "labels" );
   return( $labels );
 } 
 
@@ -221,6 +232,7 @@ function bw_default_taxonomy_labels( $labels = array() ) {
  */
 function bw_default_taxonomy_args( $taxonomy, $arg ) {
   bw_trace2();
+  bw_backtrace();
   if ( !is_array( $arg ) ) {
     $labels = array( "name" => $arg );
   } else { 

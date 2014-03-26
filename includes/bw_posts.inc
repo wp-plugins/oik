@@ -1,6 +1,6 @@
 <?php
 /*
-    Copyright 2011-2013 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2011-2014 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -25,6 +25,7 @@ oik_require( "includes/bw_images.inc" );
  * Return the global post's post_type
  * @return string/NULL - the global post's post_type or NULL
  */
+if ( !function_exists( "bw_global_post_type" ) ) { 
 function bw_global_post_type() {
   if ( isset( $GLOBALS['post'] )) {
     $post_type = $GLOBALS['post']->post_type;
@@ -32,6 +33,7 @@ function bw_global_post_type() {
     $post_type = NULL;
   }  
   return( $post_type ) ;
+}
 }
 
 /** 
@@ -343,6 +345,9 @@ function bw_get_posts( $atts = NULL ) {
     // Only default post_parent for post_type of 'page' 
     // This allows [bw_pages] to be used without parameters on a page
     // and to be used to list 'page's from other post types.
+    //
+    // Note: Pass a non-numeric value of post_parent to cause this parameter to not be used by get_posts()
+    
     // 
     if ( $attr['post_type'] == 'page' || $attr['post_type'] == 'attachment' ) {
       $attr['post_parent'] = bw_array_get_dcb( $attr, "post_parent", NULL, "bw_global_post_id" );

@@ -317,7 +317,7 @@ function _sc_posts() {
                , 'post_mime_type'  => bw_skv( null, "image|application|text|video|mime type", "Attached media MIME type" )
                , 'post_parent'     => bw_skv( null, "ID", "Parent ID to use if not current post" )
                , 'post_status'     => bw_skv( 'publish', "pending|draft|auto-draft|future|private|trash|any", "Post status" )
-               , 'id'              => bw_skv( null, "ID", "ID of post to display"  )
+               , 'id'              => bw_skv( null, "<i>id1,id2</i>", "IDs of posts to display"  )
                ));
 } 
 
@@ -586,7 +586,8 @@ function _sc_telephone() {
                  , "alt" => bw_skv( null, "1", "Use alternative value" )
                  , "number" => bw_skv( null, "<i>number</i>", "Number override" )  
                  , "tag" => bw_skv( "div", "<i>tag</i>", "enclosing HTML tag" )
-                 , "class"=> bw_skv( "", "<i>class names</i>", "CSS class names" )
+                 , "class" => bw_skv( "", "<i>class names</i>", "CSS class names" )
+                 , "link" => bw_skv( null, "n|y|t|s|<i>other</i>:", "tel: or sms: link" )
                  );
   return( $syntax );
 }

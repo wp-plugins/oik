@@ -52,15 +52,18 @@ function bw_tabs( $atts=null, $content=null, $tag=null ) {
     bw_jquery( "#$selector", "tabs" );
     $class = bw_array_get( $atts, "class", "bw_tabs" );
     sdiv( $class, $selector );
+    $cp = bw_current_post_id();
     sul();
     foreach ( $posts as $post ) {
       bw_format_tabs_list( $post, $atts, $selector );
     }
     eul();
     foreach ( $posts as $post ) {
+      bw_current_post_id( $post->ID );
       bw_format_tabs( $post, $atts, $selector );
     }
     ediv( $class );
+    bw_current_post_id( $cp );
     bw_clear_processed_posts();
   }
   return( bw_ret() );

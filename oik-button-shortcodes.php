@@ -1,4 +1,4 @@
-<?php // Copyright Bobbing Wide 2010, 2013
+<?php // Copyright Bobbing Wide 2010-2014
 /**
  * Optional functionality to provide the TinyMCE button for inserting [bw_button] shortcodes
  *
@@ -21,7 +21,13 @@ add_filter( 'mce_external_plugins', 'bw_filter_mce_plugin' );
  * 
  */       
 function bw_filter_mce_button( $buttons ) {
-  array_push( $buttons, 'bwbutton_button' );
+
+  global $tinymce_version;
+  if ( version_compare( $tinymce_version, '4018' ) >= 0 ) {
+    array_push( $buttons, 'bwbutton' );
+  } else {  
+    array_push( $buttons, 'bwbutton_button' );
+  }
   return $buttons;
 }
  
@@ -37,7 +43,12 @@ function bw_filter_mce_button( $buttons ) {
  * @see http://codex.wordpress.org/TinyMCE_Custom_Buttons
 */
 function bw_filter_mce_plugin( $plugins ) {
-  $plugins['bwbutton'] = plugin_dir_url( __FILE__ ) . 'admin/oik_button_plugin.js';
+  global $tinymce_version;
+  if ( version_compare( $tinymce_version, '4018' ) >= 0 ) {
+    $plugins['bwbutton'] = plugin_dir_url( __FILE__ ) . 'admin/oik_button_plugin_4.js';
+  } else {
+    $plugins['bwbutton'] = plugin_dir_url( __FILE__ ) . 'admin/oik_button_plugin.js';
+  }
   return $plugins;
 }
         

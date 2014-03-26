@@ -1,9 +1,9 @@
-<?php // (C) Copyright Bobbing Wide 2010-2012
-if ( defined( 'OIK_BOB_BING_WIDE_SHORTCODES_INCLUDED' ) ) return;
+<?php // (C) Copyright Bobbing Wide 2010-2014
+if ( !defined( 'OIK_BOB_BING_WIDE_SHORTCODES_INCLUDED' ) ) {
 define( 'OIK_BOB_BING_WIDE_SHORTCODES_INCLUDED', true );
 
 /*
-    Copyright 2010-2013 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2010-2014 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -146,13 +146,16 @@ function bw_lbw( $atts=NULL ) {
 }
 
 function bw_loik( $atts=null) {
-  return( retlink( NULL, "http://www.oik-plugins.com/oik", bw_oik(), "Link to the oik plugin")) ;
+  return( retlink( "bw_loik", "http://www.oik-plugins.com/oik", bw_oik(), "Link to the oik plugin")) ;
 } 
 
-function bw_wp( ) {
+function bw_wp( $suffix=false ) {
   $bw = nullretstag( "span", "wordpress"); 
   $bw .= '<span class="bw_word">Word</span>';
   $bw .= '<span class="bw_press">Press</span>';
+  if ( $suffix ) {
+    $bw .= '<span class="bw_dotorg">.org</span>';
+  }
   $bw .= nullretetag( "span", "wordpress" ); 
   return( $bw );
 }
@@ -167,12 +170,12 @@ function bw_bp( ) {
 
 
 function bw_lwp() {
-  alink( NULL, "http://www.wordpress.org", bw_wp(), "Visit WordPress.org" ); 
+  alink( "bw_lwp", "http://www.wordpress.org", bw_wp( true ), "Visit WordPress.org" ); 
   return( bw_ret());
 }
 
 function bw_lwpms() {
-  alink( NULL, "http://www.wordpress.org", bw_wpms(), "Visit WordPress.org for MultiSite" ); 
+  alink( "bw_lwpms", "http://www.wordpress.org", bw_wpms(), "Visit WordPress.org for MultiSite" ); 
   return( bw_ret());
 }
 
@@ -181,7 +184,7 @@ function bw_lwpms() {
  * <a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">Proudly powered by WordPress</a>
 */
 function bw_power( $atts=null ) {
-  alink( null, "http://www.wordpress.org", __("Proudly powered by WordPress"), __("Semantic Personal Publishing Platform" ) );
+  alink( "bw_power", "http://www.wordpress.org", __("Proudly powered by WordPress"), __("Semantic Personal Publishing Platform" ) );
   return( bw_ret());
 }
 
@@ -201,8 +204,8 @@ function bw_lart() {
   return( bw_ret());
 }
 
-function bw_wpms() {
-  $bw = bw_wp();
+function bw_wpms( $suffix=false ) {
+  $bw = bw_wp( $suffix );
   $bw .= ' ';
   $bw .= '<span class="bw_multisite">Multisite</span>';
   return( $bw );
@@ -344,6 +347,7 @@ function bw_get_notes_page_url( $link ) {
       $link = null;
     }
   }
+  bw_trace2( $link, "link", false );
   return( $link );
 }               
 
@@ -363,7 +367,7 @@ function bw_get_notes_page_url( $link ) {
  * 
 */
 function bw_plug( $atts=null, $content=null, $tag=null ) {
-  $name = bw_array_get( $atts, 'name', 'oik' );
+  $name = bw_array_get_from( $atts, 'name,0', 'oik' );
   $link = bw_array_get( $atts, 'link', 'n' );
   $table = bw_array_get( $atts, 'table', NULL ); 
   $option = bw_array_get( $atts, 'option', NULL );
@@ -393,9 +397,9 @@ function bw_plug( $atts=null, $content=null, $tag=null ) {
     $name = bw_plugin_namify( $name );
   
     $plugininfo = bw_get_plugin_info_cache2( $name );
-    // bw_trace( $plugininfo, __FUNCTION__, __LINE__, __FILE__, "plugininfo" );
+    bw_trace( $plugininfo, __FUNCTION__, __LINE__, __FILE__, "plugininfo" );
     
-    if ( is_wp_error( $plugininfo ) || !$plugininfo->name ) {
+    if ( is_wp_error( $plugininfo ) || !$plugininfo || !$plugininfo->name ) {
       if ( $table ) {
         bw_format_plug_table( $name, $link, FALSE );
       }  
@@ -435,7 +439,7 @@ function bw_plug_table( $table=false ) {
     stag( "tbody" );
     stag( "tr" );
     th( "Plugin name and description" );
-    th( "Plugin links: WP,homepage,bw notes" );
+    th( "Plugin links" );
     th( "Version, total downloads, last update, tested" );
     etag( "tr" );
   }  
@@ -453,7 +457,7 @@ function bw_plug_etable( $table=false ) {
 
 /**
  * We don't know about this plugin so we assume it's a WordPress one
- * WordPress will do its 404 processing t help us
+ * WordPress will do its 404 processing to help us
  * The link to the notes page, if required, may have difficult too
  */
 function bw_format_default( $name, $link ) { 
@@ -503,7 +507,9 @@ function bw_link_plugin_banner( $name, $plugininfo, $banner ) {
         $file = bw_get_banner_file_URL( $name, $plugininfo );
         if ( $file ) {
           $image = retimage( "bw_banner", $file, $name );
-          alink( "bw_banner", $plugininfo->oik_server, $image, $file );
+          //alink( "bw_banner", $plugininfo->oik_server, $image, $file );
+          // 2014/03/01 - trying homepage again.
+          alink( "bw_banner", $plugininfo->homepage, $image, $file );
         } else {
           bw_trace2( "Cannot determine banner file URL" );
         }  
@@ -536,13 +542,24 @@ function bw_link_plugin_banner( $name, $plugininfo, $banner ) {
  * 
  * When formatting two links they appear as: plugin(notes)
  * 
+ * @param string $name - the plugin name
+ * @param string $link - link to the notes page URL
+ * @param object $plugininfo - plugininfo object - which may also contain oik_server
  */    
 function bw_format_link( $name, $link, $plugininfo, $banner=null ) {
-  span( "bw_plug" );
+  if ( $banner ) {
+    sdiv( "bw_plug" );
+  } else { 
+    span( "bw_plug" );
+  }  
   bw_link_plugin_banner( $name, $plugininfo, $banner ); 
   bw_link_plugin_download( $name, $plugininfo );          
   bw_link_notes_page( $name, $link, "(", ")" );
-  epan();
+  if ( $banner ) {
+    ediv();
+  } else {
+    epan();
+  }  
 }
 
 function tdlink( $class=NULL, $url, $text, $title=NULL, $id=NULL ) {
@@ -647,13 +664,18 @@ function bw_get_plugin_info_cache2( $plugin_slug ) {
   return ($simple_xml );
 }
 
+
 /**
  * Get defined plugin server
  */
 function bw_get_defined_plugin_server( $plugin_slug ) {
   $plugin = bw_get_option( $plugin_slug, "bw_plugins" );
+  bw_trace2( $plugin, "plugin", false );
   if ( $plugin ) { 
     $server = bw_array_get_dcb( $plugin, "server", null, "oik_get_plugins_server" );
+    if ( !$server ) {
+      $server = oik_get_plugins_server();
+    }
   } else {
     $server = null;
   }
@@ -664,8 +686,10 @@ function bw_get_defined_plugin_server( $plugin_slug ) {
 /**
  * Return information on an oik-plugins plugin.
  * 
- * perhaps we should switch to the php serialized version... it could be easier
- 
+ * perhaps we should switch to the php serialized version... it could be easier **?**
+ * 
+ * @param string $plugin_slug - the plugin slug e.g. oik-fields
+ * @return object - a plugininfo structure
  * 
  */
 function bw_get_oik_plugins_info( $plugin_slug ) {
@@ -768,10 +792,18 @@ function bw_add_xml_child( &$xml, $plugin_data, $src, $target=null ) {
  
 /**
  * Get local plugin info XML
+ *
+ * Loads the plugin information from the plugin file, if available
+ * If the PluginURI is not wordpress.org then either set 
+ * oik_server if defined or set plugin_server to "unknown"
+ * 
+ * @param string $plugin_slug - the name of the plugin we're looking for
+ * @return array consisting of xml_string and server
  */
 function bw_get_local_plugin_xml( $plugin_slug ) {
-  $plugin_data = bw_get_plugin_data( $plugin_slug );
   $xml_string = null;
+  $server = null;
+  $plugin_data = bw_get_plugin_data( $plugin_slug );
   if ( $plugin_data ) {
     $pluginURI = bw_array_get( $plugin_data, "PluginURI", null );
     $url = parse_url( $pluginURI );
@@ -779,6 +811,7 @@ function bw_get_local_plugin_xml( $plugin_slug ) {
     
       $xml = new SimpleXmlElement( "<plugin></plugin>" );
       //$plugin = $xml->plugin;
+      
       bw_trace2( $xml );
       bw_add_xml_child( $xml, $plugin_data, "Name" ) ;
       bw_add_xml_child( $xml, $plugin_data, "Name", "slug" );
@@ -788,16 +821,21 @@ function bw_get_local_plugin_xml( $plugin_slug ) {
       $server = bw_get_defined_plugin_server( $plugin_slug ); 
       if ( $server ) {
         $plugin_data["PluginURI"] = "$server/oik-plugins/$plugin_slug/";
-      }  
-      bw_add_xml_child( $xml, $plugin_data, "PluginURI", "oik_server" );
+        bw_add_xml_child( $xml, $plugin_data, "PluginURI", "oik_server" );
+      } else {
+        // don't set oik_server yet
+        $xml->addChild( "plugin_server", "unknown" ); 
+      } 
       $readme_data = bw_get_readme_data( $plugin_slug ); 
       bw_add_xml_child( $xml, $readme_data, "Tested" );
       bw_add_xml_child( $xml, $readme_data, "Last_updated" );
       
       $xml_string = $xml->asXML();
     }  
+  } else {
+    // Never mind - assume WordPress.org ?
   }   
-  return( $xml_string );  
+  return( array( $xml_string, $server) );  
 } 
 
 /** 
@@ -839,40 +877,97 @@ function bw_get_plugin_data( $plugin_slug ) {
   }    
   bw_trace2( $plugin_data, "plugin_data" );
   return( $plugin_data );
-}  
+}
+
+/**
+ * Analyze the response from bw_remote_get2()
+ *
+ * WordPress.org may reply with an empty XML block
+ * which is going to be less than 70 characters
+ *
+   <?xml version="1.0" encoding="utf-8"?>
+   <plugin>
+   <NULL /></plugin>
+ 
+ * @param string $response_xml2 from wordpress.org
+ * @param string $response_xml from the plugin data  
+ * @returns string - the wordpress.org string if it contains data  
+ */
+function bw_analyze_response_xml2( $response_xml2, $response_xml ) {
+  if ( $response_xml2 && strlen( $response_xml2 ) >= 70 ) {
+    bw_trace2( $response_xml2, "response_xml2" );
+    $response_xml = $response_xml2;
+  }
+  return( $response_xml );
+}
 
 /** 
  * Get plugin information in XML format for cacheing
  *
+ * If the plugin is installed locally we can obtain the information from the plugin data
+ * BUT this doesn't necessarily tell us if it's hosted on WordPress.org
+ * 
+ * A null response from bw_get_local_plugin_xml() tells us it's either hosted on wordpress.org OR we don't know about the plugin.
+ * 
+ * If the oik_server is set then we don't bother accessing WordPress.org but point to the oik server.
+ * For plugins that are dual hosted ( wordpress.org and an oik server) then it all depends on what's in the current setting for the plugin server.
+ *
+ * response_xml oik_server action
+ * ------------ ---------- ---------------------------------
+ * null         null       find information from wordpress.org
+ * null         set        NOT possible
+ * set          null       possibly find information from wordpress.org
+ * set          set        don't bother
+ *
  */
 function bw_get_plugin_info2( $plugin_slug ) {
-
-  $response_xml = bw_get_local_plugin_xml( $plugin_slug );
-  bw_trace( $response_xml, __FUNCTION__, __LINE__, __FILE__, "response_xml" );
-  if ( !$response_xml ) { 
+  list( $response_xml, $oik_server ) = bw_get_local_plugin_xml( $plugin_slug );
+  //bw_trace( $response_xml, __FUNCTION__, __LINE__, __FILE__, "response_xml" );
+  if ( $oik_server ) {
+    // We found the plugin information and also know that it's an oik server
+  } else {
+    // We may have found the plugin information OR believe it's wordpress.org
+    // let's check wordpress.org. If we find some information overwrite what we already know.
     $request_url = "http://api.wordpress.org/plugins/info/1.0/$plugin_slug.xml";
-    //$request_url = urlencode($request_url);
-    //$response_xml = simplexml_load_file($request_url);
-    $response_xml = bw_remote_get2( $request_url ); //, null );
+    $response_xml2 = bw_remote_get2( $request_url ); //, null );
+    $response_xml = bw_analyze_response_xml2( $response_xml2, $response_xml );
   }
-  bw_trace( $response_xml, __FUNCTION__, __LINE__, __FILE__, "response_xml" );
-  
+  //bw_trace( $response_xml, __FUNCTION__, __LINE__, __FILE__, "response_xml" );
   return $response_xml;
 }
 
 /**
  * Create a link to the plugin's download page
+ *
+ * The link to the download page is determined from a number of fields in the plugininfo structure
+ * which get set as we're trying to find out about the plugin.
+ *
+ * oik_server  plugin_server  link to set 
+ * ----------  -------------  -------------------------
+ * null        "unknown"      $homepage - since this is neither a wordpress.org or "oik" plugin
+ * null        not set        wordpress.org/extend/plugins/$name
+ * set         n/a            oik_server 
+ *
+ * @param string $name - the plugin slug name e.g. oik, jetpack, woocommerce
+ * @param mixed $plugininfo - some form of SimpleXMLElement Object 
+ * @return string - the download page URL... which may have a trailing slash
  * 
  */
 function bw_link_plugin_download( $name, $plugininfo ) {
   $title = "Link to the $plugininfo->name ($name: $plugininfo->short_description) plugin" ;
   $download_page = bw_array_get( $plugininfo, "oik_server", null );
   if ( !$download_page ) {
-    $download_page =  "http://wordpress.org/extend/plugins/".$name;
+    $plugin_server = bw_array_get( $plugininfo, "plugin_server", null );
+    if ( $plugin_server == "unknown" ) {
+      $download_page = bw_array_get( $plugininfo, "homepage", null );
+    } else { 
+      $download_page = "http://wordpress.org/extend/plugins/".$name;
+    }
   } else {
-    //$download_page .= "/oik-plugins/$name"; 
+    $download_page = bw_array_get( $plugininfo, "homepage", $download_page );
   }
-  alink( "plugin", $download_page , $plugininfo->slug, $title );  
+  alink( "plugin", $download_page , $plugininfo->slug, $title );
+  return( $download_page );  
 }
 
 /** 
@@ -907,9 +1002,11 @@ function bw_format_plug_table( $name, $link, $plugininfo ) {
     e( $plugininfo->short_description );
     etag( "td" );
     stag( "td" );
-    bw_link_plugin_download( $name, $plugininfo );
-    br();
-    alink( "home", $plugininfo->homepage, "home", "Link to plugin homepage" ); 
+    $download_page = bw_link_plugin_download( $name, $plugininfo );
+    if ( $download_page != $plugininfo->homepage ) {
+      br();
+      alink( "home", $plugininfo->homepage, "home", "Link to plugin homepage" ); 
+    }  
     br();
     bw_link_notes_page( $name, $link );
     etag( "td" );
@@ -981,3 +1078,5 @@ function wp3( $atts=NULL) {
   return( 'wp3 done');
 }  
 */
+
+} /* End if !defined() */

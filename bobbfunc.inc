@@ -159,10 +159,13 @@ function atitle( $title=NULL ) {
 
 /**
  * Create an anchor tag for linking within a page
+ *
+ * @param string $name - the anchor name
+ * @param string $text - optional link text
  */ 
-function aname( $name ) { 
+function aname( $name, $text=null ) { 
   //stag( 'a' );
-  e( '<a name="'. $name . '"></a>' );
+  e( '<a name="'. $name . '">' . $text . '</a>' );
   //etag( 'a' );
   // return( bw_ret() );
 } 

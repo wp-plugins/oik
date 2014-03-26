@@ -69,12 +69,15 @@ function bw_pages( $atts = NULL ) {
   $posts = bw_get_posts( $atts );
   bw_trace( $posts, __FUNCTION__, __LINE__, __FILE__, "posts" );
   if ( $posts ) {
+    $cp = bw_current_post_id();
     $bw_post_formatter = bw_query_post_formatter( $atts );
     foreach ( $posts as $post ) {
       bw_current_post_id( $post->ID );
       $bw_post_formatter( $post, $atts );
     }
-    bw_current_post_id();
+    bw_current_post_id( $cp );
+    //bw_current_post_id();
+    
     bw_clear_processed_posts();
   }
   return( bw_ret() );

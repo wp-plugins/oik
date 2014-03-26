@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012, 2013
+<?php // (C) Copyright Bobbing Wide 2012-2014
 /** 
  * Return the next unique ID for the accordion selector
  */
@@ -38,10 +38,14 @@ function bw_accordion( $atts=null, $content=null, $tag=null ) {
     bw_jquery( "#$selector", "accordion" );
     $class = bw_array_get( $atts, "class", "bw_accordion" );
     sdiv( $class, $selector );
+    
+    $cp = bw_current_post_id();
     foreach ( $posts as $post ) {
+      bw_current_post_id( $post->ID );
       bw_format_accordion( $post, $atts );
     }
     ediv( $class );
+    bw_current_post_id( $cp );
     bw_clear_processed_posts();
   }
   return( bw_ret() );

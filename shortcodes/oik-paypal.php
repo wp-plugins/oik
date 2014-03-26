@@ -1,9 +1,9 @@
 <?php
-if ( defined( 'OIK_PAYPAL_SHORTCODES_INCLUDED' ) ) return;
+if ( !defined( 'OIK_PAYPAL_SHORTCODES_INCLUDED' ) ) {
 define( 'OIK_PAYPAL_SHORTCODES_INCLUDED', true );
 /*
 
-    Copyright 2011-2013 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2011-2014 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -21,7 +21,6 @@ define( 'OIK_PAYPAL_SHORTCODES_INCLUDED', true );
 
 */
 
-oik_require( "bobbforms.inc" );
 
 
 /* PayPal generated code for the buttons was
@@ -80,9 +79,13 @@ oik_require( "bobbforms.inc" );
   </form>
   
   Note: Image locations are currently hardcoded for en_GB
+  
+  @link https://developer.paypal.com/webapps/developer/docs/classic/paypal-payments-standard/integration-guide/Appx_websitestandard_htmlvariables/#id08A6HF00TZS
 */
 
-function bw_pp_shortcodes( $atts = NULL) {
+function bw_pp_shortcodes( $atts=NULL, $content=null, $tag=null) {
+
+  oik_require( "bobbforms.inc" );
   $bw_paypal_email = bw_array_get_dcb( $atts, "email", "paypal-email" , "bw_get_option", "bw_options"  );        
   $atts['location'] = bw_array_get_dcb( $atts, "location", 'paypal-country', "bw_get_option", "bw_options" );  
   $bw_paypal_location = bw_array_get( $atts, "location", "GB" );
@@ -90,6 +93,7 @@ function bw_pp_shortcodes( $atts = NULL) {
   $bw_paypal_currency = bw_array_get( $atts, "currency", 'GBP' ); // hardcoded at present
   $atts['productname'] = bw_array_get( $atts, "productname", "oik-plugin" );
   $atts['sku'] = bw_array_get( $atts, "sku", "oik" );
+  $atts['type'] = bw_array_get( $atts, "type", "donate" );
                 
   $shipadd = bw_array_get( $atts, 'shipadd', 2 );
   if (!is_numeric($shipadd)) 
@@ -221,3 +225,27 @@ function bw_pp_shortcodes( $atts = NULL) {
                 
 		return $code;	
 	}
+  
+  
+/**
+ * Syntax hook for [paypal] shortcode
+ */  
+function paypal__syntax( $shortcode="paypal" ) {
+  $syntax = array( "type" => bw_skv( "donate", "pay|buy|add|view", "Button type" )
+                 , "email" => bw_skv( "paypal-email", "<i>email</i>", "PayPal email address" )
+                 , "location" => bw_skv( "GB", "<i>country</i>", "PayPal Country code" )
+                 , "currency" => bw_skv( "GBP", "<i>currency</i>", "PayPal currency" )
+                 , "amount" => bw_skv( null, "<i>nn.mm</i>", "Amount without currency symbol" ) 
+                 , "productname" => bw_skv( "oik-plugin", "<i>text</i>", "Product name" )
+                 , "sku" =>  bw_skv( "oik", "<i>SKU</i>", "Stock Keeping Unit" )
+                 , "shipadd" => bw_skv( "2", "0|1", "Shipping Address Required? 0=prompt, optional, 1=do not prompt, 2=prompt and require" )
+                 , "weight" => bw_skv( null, "nn.mm", "Weight in kilos or pounds" )
+                 , "shipcost" => bw_skv( null, "nn.mm", "Shipping cost" )
+                 , "shipcost2" => bw_skv( null, "nn.mm", "Shipping cost2" )
+                 );
+  return( $syntax );
+}                  
+   
+
+
+}  

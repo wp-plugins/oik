@@ -1,6 +1,6 @@
 <?php
 /*
-    Copyright 2012, 2013 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012-2014 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -57,4 +57,15 @@ function bw_wtf( $atts=null, $content=null, $tag=null ) {
   etag( "p" );
   ediv();
   return( bw_ret() );
+}
+
+/**
+ * Syntax hook for [bw_wtf] shortcode
+ */
+function bw_wtf__syntax( $shortcode="bw_wtf" ) {
+  $syntax = array( "event" => bw_skv( "hover", "click", "Event to trigger the revealing" )
+                 , "effect" => bw_skv( "event", "slideToggle", "Method used to reveal the content" )
+                 , "text" => bw_skv( "\$event to \$effect source", "<i>text</i>text", "Text above the hidden content" )
+                 );
+  return( $syntax );
 }

@@ -22,8 +22,8 @@ function bw_follow( $atts=null ) {
   }  
   $me = bw_get_me( $atts );
   $imagefile = oik_url( 'images/'. $lc_social . '_48.png' );
-  $image = retimage( NULL, $imagefile, "Follow $me on ".$social_network );
-  alink( NULL, $social, $image, "Follow $me on ".$social_network );
+  $image = retimage( "bw_follow", $imagefile, "Follow $me on ".$social_network );
+  alink( null , $social, $image, "Follow $me on ".$social_network );
   return( bw_ret());
 }
 
@@ -170,7 +170,7 @@ function bw_follow_e( $atts=null ) {
     $social = bw_social_url( $lc_social, $social );
     $me = bw_array_get( $atts, "me", "me" );
     $imagefile = oik_url( 'images/'. $lc_social . '_48.png' );
-    $image = retimage( NULL, $imagefile, "Follow $me on ".$social_network );
+    $image = retimage( "bw_follow", $imagefile, "Follow $me on ".$social_network );
     alink( NULL, $social, $image, "Follow $me on ".$social_network );
   }     
 }

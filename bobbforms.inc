@@ -154,8 +154,14 @@ function iradio( $name, $id, $value, $class, $extras ) {
   $it .= $extras;
   $it .= " />";
   return( $it );
-}  
-    
+}
+
+/**
+ * Create a simple table row
+ * 
+ * @param string $td1 - contents of first cell
+ * @param string $td2 - contents of second cell 
+ */  
 function tablerow( $td1, $td2 ) {  
    echo '<tr>';
    echo '<td>'.$td1.'</td>';
@@ -164,6 +170,9 @@ function tablerow( $td1, $td2 ) {
    return 0;
 }
 
+/**
+ * Create a table data cell
+ */
 function bw_td( $text=NULL, $class=NULL, $id=NULL ) {
   if ( $text ) {
     stag( "td", $class, $id );
@@ -172,6 +181,9 @@ function bw_td( $text=NULL, $class=NULL, $id=NULL ) {
   }
 }
 
+/**
+ * Create a table heading cell
+ */
 function bw_th( $text=NULL, $class=NULL, $id=NULL ) {
   if ( $text ) {
     stag( "th", $class, $id );
@@ -191,7 +203,7 @@ function bw_th( $text=NULL, $class=NULL, $id=NULL ) {
  * @param string $tdtag "td" or "th" or ? 
  * 
  */
-function bw_tablerow( $td_array= array(), $trtag="tr", $tdtag="td" ) {
+function bw_tablerow( $td_array=array(), $trtag="tr", $tdtag="td" ) {
   if ( count( $td_array ) ) {
     stag( $trtag );
     foreach ( $td_array as $td ) {
@@ -202,9 +214,12 @@ function bw_tablerow( $td_array= array(), $trtag="tr", $tdtag="td" ) {
       }  
     }
     etag( $trtag ); 
-  }
+  }  
 }
 
+/**
+ * Create a text field
+ */
 function textfield($name, $len, $text, $value, $class=null ) {
   $lab = label( $name, $text );
   $itext = itext( $name, $len, $value, $class ); 
@@ -212,6 +227,9 @@ function textfield($name, $len, $text, $value, $class=null ) {
   return;
 }
 
+/**
+ * Create a textarea field
+ */
 function textarea( $name, $len, $text, $value, $rows=10 ) {
   $lab = label( $name, $text );
   $itext = iarea( $name, $len, $value, $rows ); 
@@ -399,7 +417,7 @@ function icheckbox( $name, $value=NULL, $disabled=false ) {
   $it.= $name;
   $it.= '"';
   if ( $value && $value != "0" ) {
-    $it.= " checked=checked\"";
+    $it.= " checked=\"checked\"";
   } 
   if ( $disabled ) {
     $it .= kv( "disabled", "disabled" );

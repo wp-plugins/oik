@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2013
+<?php // (C) Copyright Bobbing Wide 2013, 2014
 
 /**
  * Return a list of the jQuery cycle effects 
@@ -27,7 +27,32 @@ function bw_cycle_validate_fx( $fx ) {
   } 
   // e( "Fx=$fx" ); 
   return( $fx );
-}  
+} 
+
+/**
+ * Create previous and next links
+ *
+ * Primarily for use with scrollVert. 
+ * 
+ * In the Centita theme, the links were in an ordered list.
+ *
+ * 
+ *    <ol>
+ *     <li class="previous"><a href="#">Previous</a></li>
+ *     <li class="next"><a href="#">Next</a></li>
+ *   </ol>
+ * BUT span's are OK too!
+ * 
+ * @param string $class - the class parameter for the cycle
+ */          
+function bw_cycle_prevnext_links( $class ) {
+  span( "${class}_prev");
+  aname( "prev", "Prev" );
+  epan();
+  span( "${class}_next" );
+  aname( "next", "Next" );
+  epan();
+} 
 
 /**
  * Implement bw_cycle shortcode that will handle all the things that we've had to do by hand until now
@@ -61,10 +86,18 @@ function bw_cycle( $atts=null, $content=null, $tag=null ) {
   $class = bw_array_get( $atts, "class", "cycle" );
   $fx = bw_array_get( $atts, "fx", "fade" );
   $fx = bw_cycle_validate_fx( $fx );
+  $fit = bw_array_get( $atts, "fit", 1 );
+  $prevnext = bw_array_get( $atts, "prevnext", false );
   $selector = ".$class";
   bw_jquery_enqueue_script( "cycle.all" );
   bw_jquery_enqueue_style( "cycle.all" );
-  $parms = bw_jkv( array( "fx" => $fx, "fit" => 1, "width" => "100%") );
+  $parms_array = array( "fx" => $fx, "fit" => $fit, "width" => "100%");
+  if ( $prevnext ) {
+    $parms_array['next'] = "span.${class}_next";  
+    $parms_array['prev'] = "span.${class}_prev";
+    bw_cycle_prevnext_links( $class );
+  }
+  $parms = bw_jkv( $parms_array );
   bw_jquery( $selector, "cycle", $parms, false );
   sdiv( $class );
   $atts['post_type'] = bw_array_get( $atts, "post_type", "attachment" );
@@ -90,7 +123,11 @@ function bw_cycle__help( $shortcode="bw_cycle" ) {
  * Syntax hook for [bw_cycle] shortcode
  */
 function bw_cycle__syntax( $shortcode="bw_cycle" ) {
-  $syntax = array( "fx" => bw_skv( "fade", bw_cycle_fxs(), "Cycle transition effects" ) );
+  $syntax = array( "fx" => bw_skv( "fade", bw_cycle_fxs(), "Cycle transition effects" ) 
+                 , "class" => bw_skv( "cycle", "<i>class</i>", "CSS class names" )
+                 , "fit" => bw_skv( 1, "0", "Fit parameter. Use fit=0 with fx=scrollVert|scrollHorz" )
+                 , "prevnext" => bw_skv( null, "y", "Display Prev and Next links" )
+                 );
   
   oik_require( "shortcodes/oik-pages.php" );
   $pages_syntax = bw_pages__syntax( $shortcode );

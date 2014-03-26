@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2013
+<?php // (C) Copyright Bobbing Wide 2013,2014
 
 /**
  * Implement [bw_login] shortcode
@@ -56,7 +56,7 @@ function bw_login_shortcode( $atts=null, $content=null, $tag=null ) {
 }
 
 function bw_login__help( $shortcode="bw_login" ) {
-  return( "Display the login form if the user is not logged in or (optionally) the protected content" );
+  return( "Display the login form or protected content" );
 }
 
 function bw_login__syntax( $shortcode="bw_login" ) {

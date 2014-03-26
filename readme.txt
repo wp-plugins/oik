@@ -3,7 +3,7 @@ Contributors: bobbingwide, vsgloik
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, oik, pages, posts, jQuery, contact form, PayPal, buttons, Artisteer, text widget, key information, trace, blocks, bookmarks, images, attachments, smart, lazy, pagelist, sitemap, tree, accordion, tabs, cycle
 Requires at least: 3.5
-Tested up to: 3.8.1
+Tested up to: 3.9-beta2
 Stable tag: 2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -14,6 +14,13 @@ Over 80 advanced, powerful shortcodes for displaying the content of your WordPre
 The *oik base* plugin provides a series of advanced WordPress shortcodes that help you display dynamic content from your website's pages, posts, attachments, links and custom post types.
 The OIK Information Kit uses lazy smart shortcode technology to display your WordPress website's content including your often included key-information. 
 The functionality in the oik base plugin is used by over 40 other WordPress plugins, providing powerful facilities for an efficient, performant website.
+
+At a glance changes in version 2.2
+
+* Supports WordPress 3.9 and TinyMCE v4.0
+* Added link= parameter for [bw_tel] and related shortcodes
+* Improved shortcodes: [bw_link] [bw_tel] and related shortcodes
+
 
 At a glance changes in version 2.1
 
@@ -109,6 +116,19 @@ The Application Programming Interface (API) reference documents over 900 APIs
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
+= 2.2-alpha.0326 =
+Required for WordPress 3.9
+
+= 2.2-alpha.0303 =
+Upgrades for oik-plugins
+
+
+= 2.2-alpha.0218 =
+Changes to [bw_cycle] for RJD Technology Limited to use fx=scrollVert
+
+= 2.2-alpha.0208 =
+Required for oik-plugins.
+
 = 2.1 =
 Tested with WordPress 3.8.1. Please see the Changelog for the full set of changes between 2.0.1 and 2.1.
 
@@ -264,6 +284,32 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.2-alpha.0326
+* Changed: [bw_link] accepts URL as default parameter. Alternative to numeric ID. Also through src= or url=
+* Changed: TinyMCE buttons are now styled similarly to WordPress's dashboard icons
+* Changed: Added link= parameter to [bw_tel], [bw_mob] and other telephone related shortcodes
+
+= 2.2-alpha.0303 =
+* Changed: Improved bw_default_labels() for better handling of singular_name
+* Changed: Improved loik, wp, lwp, lwpms and bw_power shortcode logic, used by oik-bob-bing-wide plugin
+* Changed: Improve links produced for the bw_plug shortcode, oik-bob-bing-wide plugin
+
+= 2.2-alpha.0218 =
+* Changed: [bw_cycle] - added fit=1|0 parameter, added prevnext=y parameter, improved syntax help
+* Changed: Follow me shortcodes - to set "bw_follow" class on images
+* Changed: Added $text parmaeter to aname() 
+* Added: Syntax help for [paypal] 
+* Fixed: Minor error in icheckbox(). 
+* Changed: Added some more docblock comments to bobbfunc.inc
+
+= 2.2-alpha.0208 =
+* Changed: Improve syntax help for id= parameter. It may be a list of post IDs
+* Changed: Ensure [bw_fields] uses the correct post ID when invoked within [bw_accordion], [bw_tabs], [bw_table] and [bw_pages]
+* Changed: [bw_code] will detect the current shortcode so that it can be used in a text widget to display shortcode syntax
+* Changed: HTML for [bw_plug banner=y|j|p] to support improved styling when displaying a banner
+* Changed: Added syntax help for [bw_wtf]
+* Fixed: Styling problems when a jQuery nivo slider is used in a text widget. 
+
 = 2.1 =
 * Tested: with WordPress 3.8.1.
 * See also: change log below.

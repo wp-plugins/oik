@@ -1,9 +1,9 @@
 <?php
-if ( defined( 'OIK_CODES_SHORTCODES_INCLUDED' ) ) return;
+if ( !defined( 'OIK_CODES_SHORTCODES_INCLUDED' ) ) {
 define( 'OIK_CODES_SHORTCODES_INCLUDED', true );
 /*
 
-    Copyright 2012, 2013 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2012-2014 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -198,11 +198,30 @@ function bw_codes( $atts = NULL ) {
 
 /**
  * Display information about a specific shortcode
+ *
+ * If no shortcode is specified then we check to see if this is a shortcode or shortcode example and determine the shortcode from that.
+ *
  * @param array $atts - shortcode parameters
  * @return results of the shortcode
  */
 function bw_code( $atts=null, $content=null, $tag=null ) {
   $shortcode = bw_array_get( $atts, "shortcode", null );
+  if ( !$shortcode ) {
+    $link_text = bw_array_get( $atts, 0, null );
+    if ( !$link_text ) {
+      $post_id = bw_global_post_id();
+      $shortcode_id = get_post_meta( $post_id, "_sc_param_code", true );
+      if ( $shortcode_id ) {
+        $post_id = $shortcode_id;
+      }  
+      $shortcode = get_post_meta( $post_id, "_oik_sc_code", true ); 
+      if ( $shortcode ) { 
+        $atts['syntax'] = bw_array_get( $atts, "syntax", "y" ); 
+        $atts['help'] = bw_array_get( $atts, "help", "n" ); 
+        $atts['example'] = bw_array_get( $atts, "example", "n" ); 
+      }
+    }  
+  }
   if ( $shortcode ) {
     $help = bw_array_get( $atts, "help", "Y" );
     $syntax = bw_array_get(  $atts,  "syntax", "Y" );
@@ -243,13 +262,10 @@ function bw_code( $atts=null, $content=null, $tag=null ) {
     $link_text = bw_array_get( $atts, 0, null );
     if ( $link_text ) {
       bw_code_example_link( $atts );
-      
     } else {
       return( bw_code( array( "shortcode" => "bw_code" ) ) );
     }
-    
   } 
-  
   return( bw_trace2( bw_ret(), "bw_code_return"));
 }
 
@@ -301,3 +317,4 @@ function bw_code_example_link( $atts ) {
 }
    
 
+} /* end !defined */

@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2011,2013
+<?php // (C) Copyright Bobbing Wide 2011-2014
 /*
 
 Notes & Limitations
@@ -56,7 +56,12 @@ add_filter( 'mce_external_plugins', 'bw_paypal_filter_mce_plugin' );
  * Implement 'mce_buttons' filter to add the bwpaypal_button to the array of Tiny MCE buttons
  */       
 function bw_paypal_filter_mce_button( $buttons ) {
-  array_push( $buttons, 'bwpaypal_button' );
+  global $tinymce_version;
+  if ( version_compare( $tinymce_version, '4018' ) >= 0 ) {
+    array_push( $buttons, 'bwpaypal' );
+  } else {  
+    array_push( $buttons, 'bwpaypal_button' );
+  }
   return $buttons;
 }
  
@@ -68,7 +73,12 @@ function bw_paypal_filter_mce_button( $buttons ) {
  *
 */ 
 function bw_paypal_filter_mce_plugin($plugins) {
-  $plugins['bwpaypal'] = plugin_dir_url( __FILE__ ) . 'admin/oik_paypal_plugin.js';
+  global $tinymce_version;
+  if ( version_compare( $tinymce_version, '4018' ) >= 0 ) {
+    $plugins['bwpaypal'] = plugin_dir_url( __FILE__ ) . 'admin/oik_paypal_plugin_4.js';
+  } else {
+    $plugins['bwpaypal'] = plugin_dir_url( __FILE__ ) . 'admin/oik_paypal_plugin.js';
+  }
   return $plugins;
 }
         

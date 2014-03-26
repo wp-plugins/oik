@@ -409,7 +409,10 @@ function bw_default_empty_att( $bw_value=NULL, $bw_field=NULL, $bw_default=NULL,
  * Note: It could could still match a default null value
  * Also: We don't expect a null value for the default callback function __()
  * 2012/12/04 - we have to allow for the value being set as 0 which differs from a default value of NULL
- * so the comparison needs to be identical ( === ) rather than equal ( == ) 
+ * so the comparison needs to be identical ( === ) rather than equal ( == )
+ * 
+ * 2014/02/27 - In cases where value found may be the same as the default and the dcb function could mess this up
+ * then it's advisable to NOT use this function.  
  */
 function bw_array_get_dcb( $array = array(), $index, $default = NULL, $callback='__', $text_domain="oik" ) {
   $value = bw_array_get( $array, $index, $default );

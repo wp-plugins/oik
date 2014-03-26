@@ -1,6 +1,6 @@
 <?php // (C) Copyright Bobbing Wide 2013
 /**
- * Implement [bw_link] shortcode for a link to a post
+ * Implement [bw_link] shortcode for a link to a post or an external URL
  * 
  * @param array $atts - array of shortcode parameters
  * @param string $content - 
@@ -10,15 +10,18 @@
 function bw_link( $atts=null, $content=null, $tag=null ) {
   $id = bw_array_get_from( $atts, "id,0", null );
   $class = bw_array_get( $atts, "class", "bw_link" );
-  if ( $id ) {
+  $text = bw_array_get( $atts, "text", null );
+  $title = bw_array_get( $atts, "title", null );
+  if ( $id && is_numeric( $id ) ) {
     $url = get_permalink( $id );
-    $text = bw_array_get( $atts, "text", null );
     if ( !$text ) {
       $text = get_the_title( $id );
     }
-    $title = bw_array_get( $atts, "title", null );
-    alink( $class, $url, $text, $title );
-  } 
+  } else { 
+    $url = bw_array_get_from( $atts, "url,src", $id );
+  }  
+  
+  alink( $class, $url, $text, $title );
   return( bw_ret()); 
 }
 
@@ -28,7 +31,7 @@ function bw_link__help( $shortcode="bw_link" ) {
 }
 
 function bw_link__syntax( $shortcode="bw_link" ) {
-  $syntax = array( "id" => bw_skv( "id", "ID", "ID of the post to link to" )
+  $syntax = array( "id" => bw_skv( "id", "<i>ID</i>|<i>URL</i>", "ID of the post to link to or external URL" )
                  , "text" => bw_skv( "<i>post title</i>", "<i>text</i>", "Text for the link" )
                  , "title" => bw_skv( "<i>post title</i>", "<i>tool tip string</i>", "Tool tip text" )
                  );
@@ -36,6 +39,12 @@ function bw_link__syntax( $shortcode="bw_link" ) {
   return( $syntax );
 }
 
+/**
+ * Return a post ID for bw_link example
+ * 
+ * If the global post ID is not set try for a recently published post ID#
+ *
+ */  
 function _bw_get_an_id() {
   oik_require( "includes/bw_posts.inc" );
   $id = bw_global_post_id();
