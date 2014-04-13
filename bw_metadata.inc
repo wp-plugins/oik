@@ -233,8 +233,14 @@ function bw_form_field_textarea( $name, $type, $title, $value, $args ) {
  */
 function bw_pre_form_field() {
   static $bw_pre_form_field = 0;
-  if ( 0 === $bw_pre_form_field ) { 
-    do_action( "oik_pre_form_field" );
+  if ( 0 === $bw_pre_form_field ) {
+
+      /**
+       * Request plugins to load field forming functions
+       *
+       * Any plugin that provides a field forming function should respond to this action by loading the hooks that may be called to form fields.
+       */
+      do_action( "oik_pre_form_field" );
   }
   $bw_pre_form_field++;
 }
@@ -381,6 +387,11 @@ function bw_effort_save_postdata( $post_id, $post ) {
     
     //bw_trace2( $_POST, "_POST" );
     //bw_trace( $post_type, __FUNCTION__, __LINE__, __FILE__, "post->post_type" );
+    /**
+     * Save the custom fields for this post
+     * @param integer $post_id The ID of this post
+     * @param object $post the post object
+     */
     do_action( "save_post_${post_type}", $post_id, $post );
   
     global $bw_mapping; 

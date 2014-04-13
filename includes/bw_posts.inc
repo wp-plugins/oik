@@ -350,7 +350,7 @@ function bw_get_posts( $atts = NULL ) {
     
     // 
     if ( $attr['post_type'] == 'page' || $attr['post_type'] == 'attachment' ) {
-      $attr['post_parent'] = bw_array_get_dcb( $attr, "post_parent", NULL, "bw_global_post_id" );
+      $attr['post_parent'] = bw_array_get_dcb( $attr, "post_parent", NULL, "bw_current_post_id" );
     }
     
     /** If we're listing posts and the category is not specified then determine the category from the global post

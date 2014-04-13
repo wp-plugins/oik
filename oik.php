@@ -4,7 +4,7 @@ Plugin Name: oik base plugin
 Plugin URI: http://www.oik-plugins.com/oik-plugins/oik
 Plugin URI: http://wordpress.org/extend/plugins/oik/
 Description: OIK Information Kit - Over 80 lazy smart shortcodes for displaying WordPress content
-Version: 2.2-alpha.0326
+Version: 2.2-beta.0412
 Author: bobbingwide
 Author URI: http://www.bobbingwide.com
 Text Domain: oik
@@ -29,13 +29,6 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
     http://www.gnu.org/licenses/gpl-2.0.html
 
 */
-require_once( "oik_boot.inc" );
-
-/* All of the oik plugins and many of the common functions include calls to bw_trace(), bw_trace2() or bw_backtrace() so we need to include bwtrace.inc
-*/   
-  require_once( 'bwtrace.inc' );
-  require_once( "bobbfunc.inc" );
-  require_once( "bobbcomp.inc" );
 
 /**
  * Return the oik_version
@@ -46,46 +39,28 @@ function oik_version() {
   return bw_oik_version();
 }
 
-
 /**
  * Function to invoke when the file has been loaded
  *
+ * All of the oik plugins and many of the common functions include calls to bw_trace(), bw_trace2() or bw_backtrace() so we need to include bwtrace.inc
+ *   
  */
 function oik_plugin_file_loaded() {
-
+  require_once( "oik_boot.inc" );
+  require_once( 'bwtrace.inc' );
+  require_once( "bobbfunc.inc" );
+  //require_once( "bobbcomp.inc" );
   require_once( "oik-add-shortcodes.php" );
-
-  add_filter('widget_text', 'do_shortcode');
-  add_filter('the_title', 'do_shortcode' ); 
-  //add_filter('wpbody-content', 'do_shortcode' );
-  add_filter('wp_footer', 'do_shortcode' );
-
-  add_filter('get_the_excerpt', 'do_shortcode' );
-  add_filter('the_excerpt', 'do_shortcode' );
-  // The big question is... do we need to add this filter 
-  // or can we rely on it having been already added
-  // Well it all depends on how add_filter works **?**
-  // add_filter('the_content', 'do_shortcode', 11 );
-  //add_filter('get_pages', 'do_shortcode' );
-
-  //$bw_options = get_option( 'bw_options' );
-
-  //add_action('wp_print_styles', 'oik_enqueue_stylesheets');
   add_action('wp_enqueue_scripts', 'oik_enqueue_stylesheets', 11);
-  add_action('admin_enqueue_scripts', 'oik_enqueue_stylesheets', 11 );
   add_action('init', 'oik_main_init' );
-  
-  add_action( 'wp_ajax_oik_ajax_list_shortcodes', 'oik_ajax_list_shortcodes' );
-  add_action( 'wp_ajax_oik_ajax_load_shortcode_syntax', 'oik_ajax_load_shortcode_syntax' );
-  add_action( 'wp_ajax_oik_ajax_load_shortcode_help', 'oik_ajax_load_shortcode_help' );
-  //add_action( 'admin_enqueue_scripts', 'bw_button_options' );
-  
-
+   
+  if ( defined('DOING_AJAX') && DOING_AJAX ) {
+    oik_require( "includes/oik-ajax.php" );
+    oik_ajax_lazy_init();
+  }  
   add_filter( "attachment_fields_to_edit", "oik_attachment_fields_to_edit", null, 2 ); 
   add_filter( "attachment_fields_to_save", "oik_attachment_fields_to_save", null, 2 );
-
 }  
-  
 
 /** 
  * Implement 'wp_enqueue_scripts' action enqueue the oik.css and $customCSS stylesheets as required
@@ -113,29 +88,22 @@ function oik_enqueue_stylesheets() {
   }
 } 
 
-
 /** 
  * Implement the 'init' action
  * 
  * start oik and let oik dependent plugins know it's OK to use the oik API
-*/
+ */
 function oik_main_init() {
-  //if ( bw_is_loaded( "wp-login.php" ) ) {
-  //  bw_trace2( "wp-login is main" );
-  //  do_action( "oik_login_only" );
-  //  
-  //} else {
-    add_action( 'admin_menu', 'oik_admin_menu' );
-    add_action( "activate_plugin", "oik_load_plugins" );
-    add_action( 'network_admin_menu', "oik_network_admin_menu" );
-    add_action( "network_admin_notices", "oik_network_admin_menu" );
-    bw_load_plugin_textdomain();
-    /**
-      * Tell plugins that oik has been loaded.
-      *
-      */
-    do_action( 'oik_loaded' );
-  //}  
+  add_action( 'admin_menu', 'oik_admin_menu' );
+  add_action( "activate_plugin", "oik_load_plugins" );
+  add_action( 'network_admin_menu', "oik_network_admin_menu" );
+  add_action( "network_admin_notices", "oik_network_admin_menu" );
+  bw_load_plugin_textdomain();
+  /**
+    * Tell plugins that oik has been loaded.
+    *
+    */
+  do_action( 'oik_loaded' );
 }
 
 /**
@@ -143,12 +111,13 @@ function oik_main_init() {
  *
  * Note: This comes before 'admin_init' and after '_admin_menu'
  *
-*/ 
+ */ 
 function oik_admin_menu() {
   require_once( 'admin/oik-admin.inc' );
   oik_options_add_page();
   add_action('admin_init', 'oik_admin_init' );
   do_action( 'oik_admin_menu' );
+  add_action('admin_enqueue_scripts', 'oik_enqueue_stylesheets', 11 );
 }
 
 /** 
@@ -178,53 +147,17 @@ function oik_admin_init() {
 }
 
 /**
- * Ajax shortcode list
- */
-function oik_ajax_list_shortcodes() {
-  oik_require( 'shortcodes/oik-codes.php' );
-  $sc_list = bw_shortcode_list();
-  $sc_json = json_encode( $sc_list );   
-  bw_trace2( $sc_json );
-  echo $sc_json;
-  die(); 
-}
-
-/**
- * Ajax shortcode syntax
- */
-function oik_ajax_load_shortcode_syntax() {
-  oik_require( "includes/oik-sc-help.inc" );
-  $shortcode = bw_array_get( $_REQUEST, 'shortcode', 'oik' );
-  $sc_syntax = _bw_lazy_sc_syntax( $shortcode );
-  $sc_json = json_encode( $sc_syntax );   
-  bw_trace2( $sc_json, "sc_json" );
-  echo $sc_json;
-  die();
-}
-
-/**
- * Ajax shortcode help information
- */
-function oik_ajax_load_shortcode_help() {
-  oik_require( "includes/oik-sc-help.inc" );
-  $shortcode = bw_array_get( $_REQUEST, 'shortcode', 'oik' );
-  bw_trace2( $shortcode, "shortcode" );
-  $sc_help = bw_lazy_sc_example( $shortcode );
-  bw_trace2( $sc_help, "sc_help" );
-  echo $sc_help;
-  bw_flush();
-  die();
-}
-
-
-/**
  * Add the custom image link using the same method as the Portfolio slideshow plugin which used the method documented here:
  * @link http://wpengineer.com/2076/add-custom-field-attachment-in-wordpress/
  *
  * This is the method that adds fields to the form. Paired with 'attachment_fields_to_save'
+ *
+ * Note: Although this filter is only invoked during image editing
+ * ( in admin processing ) it can't be registered during admin_init / admin_menu
+ * since it's not invoked that way
+ * i.e. Don't move the add_filter() logic for this filter.
  */
 function oik_attachment_fields_to_edit( $form_fields, $post) { 
-  //bw_trace2( $form_fields ); 
   $form_fields['bw_image_link'] = array(  
 			"label" => __( "oik custom image link URL", "oik" ),  
 			"input" => "text",
@@ -237,16 +170,15 @@ function oik_attachment_fields_to_edit( $form_fields, $post) {
 
 /**
  * Save the "oik custom image link URL"
+ *
  * We save the value even if it's blanked out.
  * Note: The custom meta field is prefixed with an underscore but the field name is not.
  * Paired with 'attachment_fields_to_edit'
+ *
+ * See also comments for oik_attachment_fields_to_edit()
  */ 
 function oik_attachment_fields_to_save( $post, $attachment) { 
-  bw_trace2();
-  //gobang();   
   $link = bw_array_get( $attachment, "bw_image_link", null ) ;
-  //$link = bw_array_get( $attachment, "url", null ) ;
-
   update_post_meta( $post['ID'], '_bw_image_link', $link );  
   return $post;  
 }

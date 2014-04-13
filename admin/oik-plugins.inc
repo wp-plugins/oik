@@ -1,5 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012, 2013
-
+<?php // (C) Copyright Bobbing Wide 2012-2014
 /**
  * oik plugins settings page 
  *
@@ -290,6 +289,7 @@ function oik_plugins_check() {
         p( "Plugin: $check_plugin" );
         p( "Current version: $check_version " );
         p( "New version: $new_version " );
+        oik_plugin_record_new_version( $check_plugin, $check_version, $response ); 
         oik_plugin_new_version( $response );
       } else {
         p( "Plugin is up to date." );
@@ -300,6 +300,69 @@ function oik_plugins_check() {
   }
 }
 
+/**
+ * Let WordPress know that there is a new version of the plugin
+ *
+ * Update the "_site_transient_update_plugins" option with the latest information about this plugin
+ *
+ * @param string $plugin - the plugin slug 
+ * @param string $check_version - the version we checked against (it's used for theme updates! )
+ * @param object $response - for this plugin
+ * 
+ 
+ * Example: Parameters contain...
+ 
+    [0] => oik-fields
+    [1] => 1.19.1107
+    [2] => stdClass Object
+        (
+            [slug] => oik-fields
+            [plugin] => oik-fields/oik-fields.php
+            [new_version] => 1.34
+            [url] => http://oik-plugins.co.uk/oik_plugin/oik-fields
+            [package] => http://oik-plugins.co.uk/plugins/download?plugin=oik-fields-custom-post-type-field-apis&version=1.34&id=3465&action=update
+        )
+
+
+
+ *
+ * Site transient contains something like...  note the fields that WordPress also provides ( [id] and [upgrade_notice] )
+ * 
+ (
+    [last_checked] => 1397238677
+    [response] => Array
+        (
+
+            [oik-css/oik-css.php] => stdClass Object
+                (
+                    [id] => 42249
+                    [slug] => oik-css
+                    [plugin] => oik-css/oik-css.php
+                    [new_version] => 0.5
+                    [upgrade_notice] => Now dependent upon oik v2.1. Tested with WordPress 3.9-beta3
+                    [url] => https://wordpress.org/plugins/oik-css/
+                    [package] => https://downloads.wordpress.org/plugin/oik-css.0.5.zip
+                )
+         )
+ * 
+ * We add/update the [oik-fields/oik-fields.php] entry
+
+ 
+ */ 
+function oik_plugin_record_new_version( $plugin, $check_version, $response ) { 
+  bw_trace2( $response );
+  $option = get_site_option( "_site_transient_update_plugins" );
+  bw_trace2( $option, "option", false );
+  
+  $new_version = bw_array_get( $response, "new_version", null );
+  $plugin_name = bw_array_get( $response, "plugin", "$plugin/$plugin.php" );
+  //$option->checked[$plugin] = $check_version;
+  $option->response[$plugin_name] = $response;
+  $option->last_checked = time();
+  
+  bw_trace2( $option, "option", false );
+  update_site_option( "_site_transient_update_plugins", $option );
+}  
 
 /** 
  *

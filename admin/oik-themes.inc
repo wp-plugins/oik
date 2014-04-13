@@ -245,14 +245,8 @@ function oik_themes_edit_settings( ) {
 }
 
 /**
+ * Check for an updated theme
  *
- (
-    [slug] => oik
-    [new_version] => 1.17.1030.1702
-    [url] => http://oik-themes.co.uk/oik_theme/oik
-    [package] => http://oik-themes.co.uk/themes/download?theme=oik-often-included-key-information-kit&version=1.17.1030.1702&id=419&action=update
-)
-
  */
 function oik_themes_check() {
   $check_theme = bw_array_get( $_REQUEST, "check_theme", null );
@@ -274,6 +268,7 @@ function oik_themes_check() {
         p( "theme: $check_theme" );
         p( "Current version: $check_version " );
         p( "New version: $new_version " );
+        oik_theme_record_new_version( $check_theme, $check_version, $response ); 
         oik_theme_new_version( $response );
       } else {
         p( "Theme is up to date." );
@@ -284,26 +279,64 @@ function oik_themes_check() {
   }
 }
 
+/**
+ * Let WordPress know that there is a new version of the theme
+ * 
+ * Response contains...
+ 
+    [new_version] => 1.1
+    [url] => http://qw/wordpress/oik-themes/rf0311/
+    [package] => http://qw/wordpress/themes/download?theme=rf0311&version=1.1&id=10106&action=update
+
+ *
+ * Site transient update themes contains something like
+ * 
+
+    [last_checked] => 1397232118
+    [checked] => Array
+        (
+            [rf0311] => 1.0
+            [twentythirteen] => 1.0
+        )
+    [response] => Array
+        (
+            [twentythirteen] => Array
+                (
+                    [theme] => twentythirteen
+                    [new_version] => 1.1
+                    [url] => https://wordpress.org/themes/twentythirteen
+                    [package] => https://wordpress.org/themes/download/twentythirteen.1.1.zip
+                )
+        )
+    [translations] => Array
+        (
+        )
+ *
+ * Set/update the [checked] version of the theme
+ * Set/update the [response] for the checked theme
+ *        
+ 
+ */ 
+function oik_theme_record_new_version( $theme, $check_version, $response ) { 
+  //bw_trace2( $response );
+  $option = get_site_option( "_site_transient_update_themes" );
+  //bw_trace2( $option, "option" );
+  $new_version = bw_array_get( $response, "new_version", null );
+  $option->checked[$theme] = $check_version;
+  $option->response[$theme] = $response;
+  //bw_trace2( $option, "option" );
+  update_site_option( "_site_transient_update_themes", $option );
+}  
 
 /** 
+ * Enable upgrade to the new version of the theme 
  *
- 
- (
-    [slug] => oik
-    [new_version] => 1.17.1030.1702
-    [url] => http://oik-themes.co.uk/oik_theme/oik
-    [package] => http://oik-themes.co.uk/themes/download?theme=oik-often-included-key-information-kit&version=1.17.1030.1702&id=419&action=update
-    
-  http://oik-plugins.co.uk/wp-admin/theme-install.php?tab=theme-information&theme=oik&section=changelog&TB_iframe=true&width=640&height=662
-  http://oik-plugins.co.uk/wp-admin/update.php?action=upgrade-theme&theme=oik%2Foik.php&_wpnonce=7efefad99d
-)
  */
 function oik_theme_new_version( $response ) {
-  $slug = bw_array_get( $response, "slug", null );
+  $theme = bw_array_get( $response, "theme", null );
   //$theme_name = bw_get_theme_name( $slug );
-  p( oik_update_theme( $slug ) );
+  p( oik_update_theme( $theme ) );
 }
-
 
 /** 
  * Update the theme   

@@ -99,7 +99,7 @@ function oik_box( $class=NULL, $id=NULL, $title=NULL, $callback='oik_callback' )
   ediv();
   h3( bw_translate( $title ), "hndle" );
   sdiv( "inside" );
-  $callback();
+  call_user_func( $callback );
   ediv( "inside" );
   ediv( "postbox" );
 }
@@ -796,8 +796,9 @@ function bw_edit_custom_css_link( $customCSS, $theme ) {
       $link .= path_join( get_stylesheet_directory(), $customCSS );
     }  
     $link .= "&theme=$theme";
-    $img = retimage( null, oik_url( 'images/editcss_48.png') , "Edit custom CSS" );
-    alink( null, $link, $img, "Edit custom CSS" ); 
+    //$img = retimage( null, oik_url( 'images/editcss_48.png') , "Edit custom CSS" );
+    $img = "{}";
+    alink( "bw_custom_css", $link, $img, "Edit custom CSS" ); 
   }
 }  
 
@@ -815,6 +816,7 @@ function oik_load_plugins() {
  * **?** For some reason, when the shortcode is 'nivo' the columns get wide than normal. Don't yet know why Herb 2012/04/26
 */ 
 function oik_help_do_page() {
+  do_action( "oik_add_shortcodes" );
   oik_menu_header( "shortcode help", "w95pc" );
   oik_box( null, null, "About shortcodes", "oik_code_about" );
   
@@ -1093,7 +1095,7 @@ function oik_lazy_alttheme_init() {
   add_action( "pre_set_site_transient_update_themes", "oik_alttheme_check" );
   add_action( "site_transient_update_themes", "oik_site_transient_update_themes", 10, 1 );
   add_filter( "themes_api", "oik_themes_api", 10, 3 );
-  add_filter( "themes_api_result", "oik_themes_api_result", 10, 3  );
+  //add_filter( "themes_api_result", "oik_themes_api_result", 10, 3  );
 }
 
 /**

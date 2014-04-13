@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012, 2013
+<?php // (C) Copyright Bobbing Wide 2012-2014
 
 /**
  * Deprecated variables
@@ -442,3 +442,81 @@ function bw_image_link( $link
   e( retimage( "", $image, $imagetext, $width, $height ));
   etag( "a" );
 } 
+
+/*
+ * @deprecated 2.2-alpha.0403
+ * @deprecated use _bw_get_plugins()
+ */
+function bw_get_plugins() {
+  require_once( ABSPATH . "wp-admin/includes/plugin.php" );
+  $plugins = get_plugins();
+  bw_trace2( $plugins );
+}
+
+
+
+/**
+ * @deprecated 2.2-alpha.0403
+ * 
+ * Load module information for a Drupal module
+ * **?** TBD No idea how to get this information at present
+ * perhaps I just load it from a bobbingwidewebdevelopment.com/rss feed
+ * Drupal.org probably needs to know the node id of the module before it can show detailed stuff.
+ */
+function bw_get_module_info( $name ) {
+  $moduleinfo->name = $name;
+  $moduleinfo->short_description = $name;
+  return( $moduleinfo );
+}
+
+
+/** 
+ * @deprecated 2.2-alpha.0403
+ * 
+ * Added [bw_mod name="module name" link="URL" table="t,y/n/1/0"] shortcode
+ */
+function bw_module( $atts ) {
+  $name = bw_array_get( $atts, 'name', "oik" );
+  $link = bw_array_get( $atts, 'link', "http://www.bobbingwide.com" );
+  $table = bw_array_get( $atts, 'table', "n" ); 
+  bw_trace( $atts, __FUNCTION__, __LINE__, __FILE__, "atts" );
+  
+  $table = bw_validate_torf( $table );
+  
+  bw_trace( $table, __FUNCTION__, __LINE__, __FILE__, "table" );
+  
+  $moduleinfo = bw_get_module_info( $name );
+  
+  bw_trace( $moduleinfo, __FUNCTION__, __LINE__, __FILE__, "moduleinfo" );
+  
+  bw_format_modlink( $name, $link, $moduleinfo );
+  return( bw_ret());  
+}
+
+/**
+ * @deprecated 2.2-alpha.0403
+  * Create a link to the Drupal module
+  * (http://drupal.org/project/
+  */
+function bw_format_modlink( $name, $link, $moduleinfo ) {  
+  $title = "Link to the $moduleinfo->name ($name: $moduleinfo->short_description) module on drupal.org" ;
+  alink( NULL, "http://drupal.org/project/".$name, $moduleinfo->name, $title ); 
+  if (empty( $link )) {
+    $link = "http://www.bobbingwidewebdevelopment.com/modules/$name";
+  }
+  e( "(" );
+  alink( "bwlink", $link, "...", "Link to bobbing wide's notes on ".$name );
+  e( ")" ); 
+}
+
+/* 
+ * @deprecated 2.2-alpha.0403
+ * @deprecated - use indivdual APIs, stag(), alink() and etag() as below.
+ */
+function tdlink( $class=NULL, $url, $text, $title=NULL, $id=NULL ) {
+  stag( "td" );
+  alink( $classm, $url, $text, $title, $id );
+  etag( "td" );
+}  
+
+

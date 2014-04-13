@@ -75,7 +75,7 @@ function bw_remote_post( $url, $args ) {
   $request = wp_remote_post( $url, $args );
   if ( is_wp_error ($request ) ) {
     bw_trace2( $request, "request is_wp_error" );
-    $result = null;
+    $result = $request; // Was NULL
   } else {
     $result = bw_retrieve_result( $request );
   }
@@ -237,7 +237,7 @@ function oik_check_for_update( $plugin, $version ) {
                  , "version" => $version
                  , "apikey" => $apikey
                  );
-    $args = array( "body" => $body );
+    $args = array( "body" => $body, "timeout" => 10 );
     $result = bw_remote_post( $url, $args ); 
     if ( $result ) {
       bw_trace2( $result );
@@ -282,7 +282,7 @@ function oik_check_for_theme_update( $theme, $version ) {
                  , "version" => $version
                  , "apikey" => $apikey
                  );
-    $args = array( "body" => $body );
+    $args = array( "body" => $body, "timeout" => 10 );
     $result = bw_remote_post( $url, $args ); 
     if ( $result ) {
       bw_trace2( $result, "result-ocftu" );
