@@ -4,7 +4,7 @@ Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, oik, pages, posts, jQuery, contact form, PayPal, buttons, Artisteer, text widget, key information, trace, blocks, bookmarks, images, attachments, smart, lazy, pagelist, sitemap, tree, accordion, tabs, cycle
 Requires at least: 3.7
 Tested up to: 3.9
-Stable tag: 2.1
+Stable tag: 2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -121,10 +121,10 @@ The Application Programming Interface (API) reference documents over 900 APIs
 = 2.2 =
 Tested with WordPress 3.9
 
-= 2.2-beta.0412
+= 2.2-beta.0412 =
 Tested with WordPress 3.9-RC1
 
-= 2.2-alpha.0403 
+= 2.2-alpha.0403 =
 Improved shortcode processing. 
 
 = 2.2-alpha.0326 =
@@ -297,12 +297,11 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
 = 2.2 =
 * Tested with WordPress 3.9 
 
-= 2.2-beta.0412
+= 2.2-beta.0412 =
 * Tested: With WordPress 3.9-RC1
 * Fixed: oik options > Plugins - Check followed by Upgrade - improved likelihood of update being performed on request
 * Fixed: oik options > Themes - Check followed by Upgrade - improved likelihood of update being performed on request
 * Changed: set timeout on oik_check_for_update() and oik_check_for_theme_update() to 10 seconds.
-
 
 = 2.2-alpha.0403 =
 * Changed: shortcodes are not registered until we know they're needed
