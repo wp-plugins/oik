@@ -3,7 +3,7 @@ Contributors: bobbingwide, vsgloik
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, oik, pages, posts, jQuery, contact form, PayPal, buttons, Artisteer, text widget, key information, trace, blocks, bookmarks, images, attachments, smart, lazy, pagelist, sitemap, tree, accordion, tabs, cycle
 Requires at least: 3.7
-Tested up to: 3.9-RC1
+Tested up to: 3.9
 Stable tag: 2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -19,7 +19,7 @@ At a glance changes in version 2.2
 
 * Supports WordPress 3.9 and TinyMCE v4.0
 * Added link= parameter for [bw_tel] and related shortcodes
-* Improved shortcodes: [bw_link], [bw_tel] and related shortcodes
+* Improved shortcodes: [bw_link], [bw_tel] and related shortcodes, [bw_cycle]
 * Shortcodes not registered until required.
 * Custom CSS edit button more consistent with WordPress 3.9
 * Improved support for plugin and theme updates
@@ -118,6 +118,9 @@ The Application Programming Interface (API) reference documents over 900 APIs
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
+= 2.2 =
+Tested with WordPress 3.9
+
 = 2.2-beta.0412
 Tested with WordPress 3.9-RC1
 
@@ -291,6 +294,9 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.2 =
+* Tested with WordPress 3.9 
+
 = 2.2-beta.0412
 * Tested: With WordPress 3.9-RC1
 * Fixed: oik options > Plugins - Check followed by Upgrade - improved likelihood of update being performed on request

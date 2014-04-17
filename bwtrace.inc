@@ -37,6 +37,7 @@ function bw_trace( $text, $function=__FUNCTION__, $lineno=__LINE__, $file=__FILE
  * @param bool $show_args - true if the parameter values are to be traced, false otherwise
  * @return mixed $value - the first parameter
  */
+if ( !function_exists( "bw_trace2" ) ) { 
 function bw_trace2( $value=NULL, $text=NULL, $show_args=true ) { 
   global $bw_trace_on;
   if ( $bw_trace_on ) 
@@ -44,16 +45,20 @@ function bw_trace2( $value=NULL, $text=NULL, $show_args=true ) {
   else  
     return( $value );
 } 
+}
 
 /**
  * Log a debug_backtrace() to the trace log file if tracing is active
  * 
  */
+ 
+if ( !function_exists( "bw_backtrace" ) ) { 
 function bw_backtrace() {
   global $bw_trace_on;
   if ( $bw_trace_on ) {
     bw_lazy_backtrace();
   }
+}
 }    
 
 /**
