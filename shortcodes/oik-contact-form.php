@@ -126,11 +126,11 @@ function bw_get_message() {
  * @return bool - whether or not to send the email message
  */
 function bw_akismet_check( $fields ) {
-  if ( function_exists( 'akismet_http_post' ) ) {
+  if ( class_exists( "Akismet") || function_exists( 'akismet_http_post' ) ) {
     $query_string = bw_build_akismet_query_string( $fields );
     $send = bw_call_akismet( $query_string );
   } else {
-    bw_trace2( "akismet_http_post not loaded" ); 
+    bw_trace2( "Akismet not loaded." ); 
     $send = true;
   }
   return( $send );  
@@ -143,7 +143,11 @@ function bw_akismet_check( $fields ) {
  */
 function bw_call_akismet( $query_string ) {
   global $akismet_api_host, $akismet_api_port;
-  $response = akismet_http_post( $query_string, $akismet_api_host, '/1.1/comment-check', $akismet_api_port );
+  if ( class_exists( "Akismet" ) ) {
+    $response = Akismet::http_post( $query_string, 'comment-check' );
+  } else {
+    $response = akismet_http_post( $query_string, $akismet_api_host, '/1.1/comment-check', $akismet_api_port  );
+  }  
   bw_trace2( $response, "akismet response" );
   $result = false;
   $send = 'false' == trim( $response[1] ); // 'true' is spam, 'false' is not spam
@@ -232,6 +236,8 @@ function _bw_process_contact_form_oik() {
     $fields['comment_type'] = 'oik-contact-form';
     $send = bw_akismet_check( $fields );
     if ( $send ) {
+      $message .= "<br />\r\n";
+      $message .= retlink( null, get_permalink() );
       $fields['message'] = $message;
       $fields['contact'] =  $fields['comment_author'];
       $fields['from'] = $fields['comment_author_email']; 

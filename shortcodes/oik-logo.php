@@ -1,8 +1,6 @@
-<?php //(C) Copyright Bobbing Wide 2011, 2012
-if ( defined( 'OIK_LOGO_SHORTCODES_INCLUDED' ) ) return;
-define( 'OIK_LOGO_SHORTCODES_INCLUDED', true );
+<?php 
 /*
-    Copyright 2011,2012 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2011-2014 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -22,10 +20,14 @@ define( 'OIK_LOGO_SHORTCODES_INCLUDED', true );
 
 /**
  * Display the company logo with a link if required
- * Notes: the attribute defaulting needs to be improved 
-*/ 
+ *
+ * Notes: the attribute defaulting needs to be improved
+ *
+ * @param array $atts - shortcode parameters
+ * @return string HTML for the company logo image
+ */ 
 function bw_logo( $atts=null ) {
-  wp_register_script( "oik_bw_logo", plugin_dir_url( __FILE__). "oik_bw_logo.js" );  
+  wp_register_script( "oik_bw_logo", plugin_dir_url( __FILE__). "oik_bw_logo.js", array( 'jquery') );  
   wp_enqueue_script( "oik_bw_logo" );
   $link = bw_array_get( $atts, 'link', null );
   $text = bw_array_get( $atts, 'text', null );
@@ -49,6 +51,9 @@ function bw_logo( $atts=null ) {
   return( bw_ret());
 }
 
+/**
+ * Syntax hook for [bw_logo] shortcode
+ */
 function bw_logo__syntax( $shortcode="bw_logo" ) {
   $syntax = array( "link" => bw_skv( "", ".|<i>URL</i>", "Link when clicked" )
                  , "text" => bw_skv( "", "<i>company</i>", "Text for tooltip" )

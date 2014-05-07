@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012,2013
+<?php // (C) Copyright Bobbing Wide 2012-2014
 if ( defined( 'OIK_BOOT_INCLUDED' ) ) return;
 define( 'OIK_BOOT_INCLUDED', true );
 /**
@@ -71,7 +71,8 @@ function oik_require2( $include_file="bobbfunc.inc", $to_plugin, $from_plugin="o
  * load up the functions required to allow use of the bw/oik API
  *
  * Notes: a plugin that is dependent upon oik and/or uses the trace facility
- * should call add_action( "init", "oik_init" ); to let oik load the required API files.
+ * should either call add_action( "init", "oik_init" ); to let oik load the required API files
+ * OR, if add_action() is not yet available, call this function, if it's available.
  * In most cases all that is required initially is bwtrace.inc
 */ 
 function oik_init( ) {

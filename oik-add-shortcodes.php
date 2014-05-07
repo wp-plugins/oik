@@ -308,6 +308,9 @@ function oik_do_shortcode( $content ) {
  * If so, then the shortcodes are registered by "oik_add_shortcodes"
  * Shortcodes are not expanded until later... during "do_shortcode" processing.
  *
+ * Fix on oik v2.3: For 'the_content' we use a priority between 0 and 10 to allow other plugins to add shortcodes to the content
+ * without them having to also invoke "oik_do_shortcode"
+ *
  */
 function bw_oik_add_shortcodes_loaded() {
   //add_filter( "do_shortcode", "oik_do_shortcode", 0 );
@@ -317,7 +320,7 @@ function bw_oik_add_shortcodes_loaded() {
   add_filter('wp_footer', 'oik_do_shortcode', 0 );
   add_filter('get_the_excerpt', 'oik_do_shortcode', 0 );
   add_filter('the_excerpt', 'oik_do_shortcode', 0 );
-  add_filter('the_content', 'oik_do_shortcode', 0 );
+  add_filter('the_content', 'oik_do_shortcode', 2 );
   //add_filter('get_pages', 'do_shortcode' );
   add_filter( "oik_do_shortcode", "oik_do_shortcode", 0 );
   add_action( "oik_add_shortcodes", "bw_oik_add_shortcodes" );

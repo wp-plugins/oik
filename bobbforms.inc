@@ -82,7 +82,7 @@ function itext( $name, $len, $value, $class=null, $extras=null ) {
   $it.= "\" id=\"";
   $it.= $name;
   $it.= "\" value=\"";
-  $it.= $value;
+  $it.= esc_attr( $value );
   $it.= "\" class=\"";
   $it.= $class;
   $it.= "\"";

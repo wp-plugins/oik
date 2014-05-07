@@ -118,6 +118,9 @@ The Application Programming Interface (API) reference documents over 900 APIs
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
+= 2.3-alpha.0506 = 
+Tested with WordPress 3.9 
+
 = 2.2 =
 Tested with WordPress 3.9
 
@@ -294,6 +297,15 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.3-alpha.0506 =
+* Changed: [bw_contact_form] upgraded for Akismet 3
+* Changed: [bw_contact_form] email includes link to original page
+* Changed: For 'the_content' filter 'oik_do_shortcode' is added with priority 2 - to allow other plugins to introduce shortcodes into the content 
+* Fixed: [bw_logo] Add dependency upon 'jquery' 
+* Fixed: Text fields call esc_attr() to correctly handle double quotes in content. See itext()
+* Fixed: Titles call esc_attr to correctly handle double quotes. See atitle()
+* Changed: screenshot-10.php for new TinyMCE buttons
+
 = 2.2 =
 * Tested with WordPress 3.9 
 

@@ -154,6 +154,7 @@ function kv( $keyword, $value=null ) {
  */  
 function atitle( $title=NULL ) {
   $title = wp_strip_all_tags( $title );
+  $title = esc_attr( $title );
   return( kv( "title", $title ) );
 } 
 
