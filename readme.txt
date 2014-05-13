@@ -3,7 +3,7 @@ Contributors: bobbingwide, vsgloik
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, oik, pages, posts, jQuery, contact form, PayPal, buttons, Artisteer, text widget, key information, trace, blocks, bookmarks, images, attachments, smart, lazy, pagelist, sitemap, tree, accordion, tabs, cycle
 Requires at least: 3.7
-Tested up to: 3.9
+Tested up to: 3.9.1
 Stable tag: 2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -118,6 +118,13 @@ The Application Programming Interface (API) reference documents over 900 APIs
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
+= 2.3-alpha.0511 =
+Fixes for sites using [bw_code] and improvements for taxonomy fields
+
+= 2.3-alpha.0509 = 
+Required for shortcode expansion when the current filter is not a standard one.
+Tested with WordPress 3.9.1
+
 = 2.3-alpha.0506 = 
 Tested with WordPress 3.9 
 
@@ -297,6 +304,24 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.3-alpha.0511 =
+* Added: Documented the unexpected gobang() function in deprecated.inc
+* Added: Help description and syntax for Artisteer shortcodes, some of which appear fairly useless!
+* Added: Help description and syntax for WordPress shortcodes: [audio] and [video]
+* Added: Support for custom taxonomies registered as fields not being included in the Fields metabox
+* Added: Virtual field callback function bw_get_shortcode_expands_in_titles()
+* Changed: Improved formatting for custom taxonomy fields
+* Changed: [bw_codes] now displays if the shortcode expands during 'the_title' filter processing
+* Fixed: bw_get_shortcode_function() needs to check for the 'all' event, in addition to 'the_content'
+
+
+= 2.3-alpha.0509 = 
+* Changed: Shortcodes expansion now supports values for current filter, not just 'the_content', 'the_excerpt' and 'the_title'
+* Changed: Expansion of shortcodes in 'the_title' is explicitly catered for with the bw_add_shortcode() $the_title parameter
+* Changed: Some shortcode no longer allowed to expand during 'the_title' processing
+* Changed: Improved some documentation
+* Changed: [oik] shortcode now includes an abbr tag 
+ 
 = 2.3-alpha.0506 =
 * Changed: [bw_contact_form] upgraded for Akismet 3
 * Changed: [bw_contact_form] email includes link to original page

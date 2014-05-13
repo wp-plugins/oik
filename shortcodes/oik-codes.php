@@ -22,6 +22,11 @@ define( 'OIK_CODES_SHORTCODES_INCLUDED', true );
 */
 oik_require( "includes/oik-sc-help.inc" );
 
+/**
+ * Create a link to the shortcode if in admin pages
+ *
+ * @param string $shortcode - the shortcode
+ */
 function bw_code_link( $shortcode ) {
   if ( is_admin() ) {
      alink( null, admin_url("admin.php?page=oik_sc_help&amp;code=$shortcode"), $shortcode );
@@ -31,6 +36,16 @@ function bw_code_link( $shortcode ) {
   e( " - " );
 }
 
+/**
+ * Return the shortcode's callback function
+ *
+ * For functions registered using bw_add_shortcode() the callback function will be bw_shortcode_event.
+ * This won't be unique so we then try to find the actual function passed. @see bw_get_shortcode_function() 
+ *
+ * @param string $shortcode - the shortcode tag
+ * @return mixed - the registered callback function
+ *
+ */
 function bw_get_shortcode_callback( $shortcode ) {
   global $shortcode_tags; 
   $callback = bw_array_get( $shortcode_tags, $shortcode, null );
@@ -57,13 +72,13 @@ function bw_get_shortcode_callback( $shortcode ) {
  *  But this doesn't mean that the $function should be callable.        
  *
  * @param string $shortcode - the shortcode to invoke
- * @param mixed $callback - default callback for the shortcode, if the event is not defined for the shortcode.
+ * @param mixed $callback - default callback for the shortcode, if the 'all' or 'the_content' event is not defined for the shortcode.
  * @return string callable name for the shortcode function
  */
 function bw_get_shortcode_function( $shortcode, $callback=null ) {
   global $bw_sc_ev;
   $events = bw_array_get( $bw_sc_ev, $shortcode, null );
-  $function = bw_array_get( $events, 'the_content', $callback );
+  $function = bw_array_get_from( $events, 'all,the_content', $callback );
   $callable_name = null;
   if ( !is_callable( $function, false, $callable_name ) ) {
     $callable_name = bw_array_get( $function, 1, $shortcode );
@@ -74,19 +89,51 @@ function bw_get_shortcode_function( $shortcode, $callback=null ) {
   return( $callable_name );  
 }
 
-function bw_get_shortcode_syntax_link( $shortcode, $callback ) {
+/**
+ * Return Yes / No to indicate if a shortcode expands in titles
+ *
+ * When you register a shortcode using bw_add_shortcode() you can decide whether or not it will be expanded during 'the_title' processing.
+ * Shortcodes which are registered using add_shortcode() have to control their own expansion.
+ * So, unless they have logic to test the current filter then they will be expanded in titles
+ * due to the fact that oik adds the do_shortcode action for 'the_title'
+ * We use a lower case "yes" to indicate this. 
+ *
+ * @param string $shortcode
+ * @return string 'Yes' if it does, 'No' if it doesn't, 'yes' for unknown
+ */
+function bw_get_shortcode_expands_in_titles( $shortcode ) {
+  $expand = bw_get_shortcode_title_expansion( $shortcode );
+  if ( $expand === null ) {
+    $sceit = __( "yes", "oik" );
+  } elseif ( $expand === false ) {
+    $sceit = __( "No", "oik" );
+  } else {
+    $sceit = __( "Yes", "oik" );
+  }
+  return( $sceit );
+}
 
+/**
+ * Display the shortcode, syntax and link
+ *
+ * @param string $shortcode - the shortcode tag
+ * @param string $callback - the registered callback for the shortcode
+ */
+function bw_get_shortcode_syntax_link( $shortcode, $callback ) {
   //p( "Shortcode $shortcode, callback $callback" );
   //bw_tablerow( array( $shortcode, $link ) );
   stag( "tr" );
   stag( "td" );
   bw_code_link( $shortcode );
-  
   do_action( "bw_sc_help", $shortcode );
   //do_action( "bw_sc_example", $shortcode );
   etag( "td" );
   stag( "td" );
   do_action( "bw_sc_syntax", $shortcode );
+  etag( "td" );
+  
+  stag( "td" );
+  e( bw_get_shortcode_expands_in_titles( $shortcode ) );
   etag( "td" );
   
   stag( "td" );
@@ -99,10 +146,8 @@ function bw_get_shortcode_syntax_link( $shortcode, $callback ) {
   etag( "tr" );
 }
 
-
-
 /**
- * table header for bw_codes
+ * Table header for bw_codes
  *
  * <table>
  * <tbody>
@@ -111,7 +156,9 @@ function bw_get_shortcode_syntax_link( $shortcode, $callback ) {
  * <th>Help link</th>
  * <th>Syntax</th>
  * </tr>
-*/
+ * 
+ * @param bool $table - set to true when a table is required
+ */
 function bw_help_table( $table=true ) {
   if ( $table ) {
     stag( "table", "widefat" );   
@@ -119,6 +166,7 @@ function bw_help_table( $table=true ) {
     stag( "tr" );
     th( "Help" );
     th( "Syntax" );
+    th( "Expands in titles?" );
     th( "more oik help" );
     etag( "tr" );
     etag( "thead" );
@@ -129,6 +177,8 @@ function bw_help_table( $table=true ) {
 
 /**
  * table footer for bw_codes
+ *
+ * @param bool $table - set to true when a table is required
  */
 function bw_help_etable( $table=true ) { 
   if ( $table ) {
@@ -144,7 +194,7 @@ function bw_help_etable( $table=true ) {
  * @return array - associative array of shortcode => description
  *
  * The array is ordered by shortcode
- * @uses _bw_lazy_shortcode_help() rather than
+ * @uses _bw_lazy_sc_help() rather than
 */ 
 function bw_shortcode_list( $atts=null ) {
   global $shortcode_tags; 
@@ -183,6 +233,7 @@ function bw_list_shortcodes( $atts = NULL ) {
 
 /** 
  * Display a table of active shortcodes
+ *
  * @param array $atts - shortcode parameters
  * @return results of the shortcode
  * @uses bw_list_shortcodes()
@@ -307,7 +358,9 @@ function bw_code_example_link( $atts ) {
     $function = null;
   }
   if ( $function ) {
-    $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode/$function";     
+    $link = "http://www.oik-plugins.com/oik-shortcodes/$shortcode/$function";  
+    //$link = "http://qw/wordpress/oik-shortcodes/$shortcode/$function";  
+       
     alink( "bw_code $shortcode", $link, $link_text, "Link to help for shortcode: $shortcode" );   
   } else { 
     span( "bw_code $shortcode" );

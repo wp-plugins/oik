@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2012,2013
+<?php // (C) Copyright Bobbing Wide 2012,2014
 /**
  * Logic to create metaboxes for each of the custom fields defined for a particular post type
  *
@@ -17,6 +17,9 @@ function bw_metadata_loaded() {
 
 /**
  * Create "Fields" meta box for each field associated with each object type in the mapping
+ *
+ * @TODO We only need to create this for the active object type
+ *
  */
 function bw_effort_meta_boxes() {
   oik_require( 'bobbforms.inc' );
@@ -72,6 +75,7 @@ function bw_form_field_email( $name, $type, $title, $value, $args ) {
 
 /**
  * bw_form_field_select - formatting for a field as a select list
+ *
  * The options come from $args[#options] 
  */
 function bw_form_field_select( $name, $type, $title, $value, $args ) {
@@ -145,25 +149,20 @@ function bw_load_noderef( $args ) {
 }
 
 /**
+ * Form a 'noderef' field type
+ * 
  * bw_form_field_noderef - formatting for a field as a select list of a list of nodes of a particular type
  * The options come from $args[#type] 
  */
 function bw_form_field_noderef( $name, $type, $title, $value, $args ) {
   $options = bw_load_noderef( $args );
-  //$optional = bw_array_get( $args, "#optional", false );
-  //if ( $optional ) {
-  //  $options = array( "None" ) + $options;
-  //}
   $args['#options'] =  $options;
-  //$multiple = bw_array_get( $args, "#multiple", false );
-  //if ( $multiple ) { 
-  //  bw_multiple_select( $name, $title, $value, array( '#options' => $options ));
-  //} else {
-    bw_select( $name, $title, $value, $args );
-  //}
+  bw_select( $name, $title, $value, $args );
 }
    
 /**
+ * Enqueue the datepicker script
+ * 
  * Enqueue the debug script if needed otherwise enqueue the minified (packed) one
  */
 if ( !function_exists( "bw_datepicker_enqueue_script" ) ) {
@@ -336,11 +335,39 @@ function bw_form_field( $field_name, $field_type, $field_title, $field_value, $a
   $funcname( $field_name, $field_type, $field_title, $field_value, $args );
 }
 
+
+/**
+ * Check if the field should be displayed in the metabox
+ *
+ * Currently we only prevent "taxonomy" fields from appearing in the metabox
+ * This may need to be extended to 'fieldref' fields, which are forms of virtual fields
+ * though we may choose to provide a different interface to allow these to be set.
+ * 
+ * @param array $data - Containing the #field_type and other values in #args
+ * @return bool - true if the field should be 'formed' in the metabox
+ */
+function bw_check_metabox_field( $data ) {
+  bw_trace2();
+  $metabox_field = true;
+  switch ( $data['#field_type'] ) {
+    case 'taxonomy':
+      $metabox_field = false;
+  }
+  return( $metabox_field );
+}
+
 /**
  * Create fields in the meta box to accept data for the fields
+ *
+ * This should not display 'taxonomy' fields as they appear in their own metaboxes.
+ * @TOOD Similarly 'virtual' fields should not have their values loaded using get_post_meta()
+ * @TODO Worry about Fields metaboxes which don't have any fields simply because they're all (custom) taxonomies
+ *
+ * @param post $post - the post object
+ * @param array $args -
+ *
  */
 function bw_effort_box( $post, $args ) {
-  //bw_bang();
   global $bw_fields; 
   $fields = $args['args'];
   //bw_trace2( $fields );
@@ -348,15 +375,24 @@ function bw_effort_box( $post, $args ) {
   foreach ( $fields as $field ) {
     $data = $bw_fields[$field];
     //bw_trace2( $field );
-    bw_trace2( $data );
-    $multiple = bw_array_get( $data['#args'], "#multiple", false );
-    $value = get_post_meta( $post->ID, $field, !$multiple );
-    bw_form_field( $field, $data['#field_type'], $data['#title'], $value, $data['#args'] );
+    $metabox_field = bw_check_metabox_field( $data );
+    if ( $metabox_field ) {
+      $multiple = bw_array_get( $data['#args'], "#multiple", false );
+      $value = get_post_meta( $post->ID, $field, !$multiple );
+      bw_form_field( $field, $data['#field_type'], $data['#title'], $value, $data['#args'] );
+    }  
   }
   etag( "table" );
   echo( bw_ret());
 }
 
+/**
+ * Perform simple authorization
+ *
+ * **?** Is this function actually used? 
+ *
+ * @return book - true if authorized
+ */
 if ( !function_exists( "bw_authorized" ) ) {
   function bw_authorized() {
     $authorized = TRUE;

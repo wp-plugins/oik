@@ -1,4 +1,4 @@
-<?php // Copyright Bobbing Wide 2009-2013
+<?php // Copyright Bobbing Wide 2009-2014
 // bobbfunc.inc
 
 /** 
@@ -611,7 +611,7 @@ function cite( $text, $class=NULL, $id=NULL ) {
 /** 
  * Create an <abbr> tag 
  */
-function abbr( $title="Often Included Key-information", $abbrev="oik" ) {
+function abbr( $title="OIK Information Kit", $abbrev="oik" ) {
   if ( $abbrev ) {
     $abbr = '<abbr title="';
     $abbr .= $title;
@@ -626,7 +626,7 @@ function abbr( $title="Often Included Key-information", $abbrev="oik" ) {
  * Create an <acronym> tag 
  * Note: acronym becomes obsolete in HTML5
  */
-function acronym( $title="Often Included Key-information", $acronym="oik" ) {
+function acronym( $title="OIK Information Kit", $acronym="oik" ) {
   if ( $acronym ) {
     $acro = '<acronym title="';
     $acro .= $title;

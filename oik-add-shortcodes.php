@@ -106,6 +106,12 @@ function bw_global_post( $saved_post=null ) {
 /** 
  * Expand a shortcode if the function is defined for the event
  *
+ * For oik v2.3 we now support the 'all' event which takes precedence over the event for the specific 'current filter'
+ * except when the current filter is "the_title". 
+ * When it's 'the_title' we only expand the shortcode if $the_title was true on bw_add_shortcode().
+ *
+ * We still need to know the current filter in order to determine whether or not any post processing should be performed.
+ *
  * If the function is not defined then simply return the tag inside []'s
  * Note: We use the HTML symbol for [ (&#91;) to prevent the shortcode being expanded multiple times
  
@@ -126,29 +132,53 @@ This is confusing and perhaps reflects an underlying bug,
 but an overloaded callback routine can correctly determine what shortcode was used to call it, 
 by checking BOTH the third argument to the callback and the zeroeth attribute. 
 (It is NOT an error to have two shortcodes reference the same callback routine, which allows for common code.) 
- 
-*/ 
+ * 
+ * @param array $atts - the shortcode parameters
+ * @param string $content - content for a shortcode with start and end codes
+ * @param string $tag - see NOTE
+ * @return string - the generated HTML
+ */ 
 function bw_shortcode_event( $atts, $content=null, $tag=null) {
-  global $bw_sc_ev, $bw_sc_ev_pp;
-  $cf = current_filter();
-  if ( empty( $cf ) ) { 
-    $cf = 'wp_footer'; 
-  }
+  global $bw_sc_ev, $bw_sc_ev_pp, $bw_sc_te;
   // bw_trace( "<$tag>", __FUNCTION__, __LINE__, __FILE__, "tag" ); 
-  if ( !isset($tag) || $tag == null ) {
+  $cf = current_filter();
+  if ( !isset( $tag ) || $tag == null ) {
     $tag = bw_array_get( $atts, 0, null );
-  }  
+  } 
+  if ( $cf == "the_title" ) {
+    $expand = bw_get_shortcode_title_expansion( $tag ); 
+  } else {
+    $expand = true;
+  }
+  $shortcodefunc = null; 
+  bw_trace2( $cf, "current_filter $tag $expand $shortcodefunc" );  
+  if ( $expand ) {
+    if ( isset( $bw_sc_ev[ $tag ][ 'all' ] ) ) {
+      $shortcodefunc = $bw_sc_ev[ $tag ][ 'all' ];
+    } else {  
+      if ( empty( $cf ) ) { 
+        $cf = 'all'; // was 'wp_footer'; 
+      }
+      if ( isset( $bw_sc_ev[ $tag ][ $cf ] ) ) {  
+        $shortcodefunc = $bw_sc_ev[ $tag ][ $cf ];
+      }  
+    }
+  }
   //bw_trace( $tag, __FUNCTION__, __LINE__, __FILE__, "tag" ); 
   $saved_post = bw_global_post();
   $result = '&#91;' . $tag . ']';
   //bw_trace( $cf, __FUNCTION__, __LINE__, __FILE__, "current_filter" );
-  if ( isset( $bw_sc_ev[ $tag ][ $cf ] ))  {
+  if ( $shortcodefunc ) {
     //bw_trace( $bw_sc_ev, __FUNCTION__, __LINE__, __FILE__, "bw_sc_ev" );
     $atts = apply_filters( "oik_shortcode_atts", $atts, $content, $tag );
-    $shortcodefunc = $bw_sc_ev[ $tag ][ $cf ];
     $shortcodefunc = bw_load_shortcodefunc( $shortcodefunc, $tag ); 
     $result = call_user_func( $shortcodefunc, $atts, $content, $tag );   
-  } 
+  }
+  
+  /**
+   * Regardless of what routine we used to expand the shortcode we still need to check
+   * if there's a specific function to post process the result. e.g. remove attrs in admin processing
+   */ 
   //bw_trace( $result, __FUNCTION__, __LINE__, __FILE__, "result" );
   if ( isset( $bw_sc_ev_pp[ $tag ][ $cf ] ))  {
     $ppfunc = $bw_sc_ev_pp[ $tag ][ $cf ];
@@ -205,17 +235,24 @@ function bw_admin_strip_tags( $string, $current_filter=NULL ) {
 
 /**
  * Add a shortcode function for a specific set of events
- *
+ *                                 
  * This is a wrapper API for add_shortcode() that will affect how shortcodes are expanded during do_shortcode() processing.
  * Instead of calling the shortcode expansion function directly we always invoke bw_shortcode_event()
  * bw_shortcode_event() checks to see if the shortcode should be expanded in the context.
- * The $postprocess parameter is a function name for performing post processing of the $result in certain contexts
- * Possible functions are:
- *   bw_strip_tags
- *   bw_admin_strip_tags  
- *   etcetara tbc
-*/
-function bw_add_shortcode_event( $shortcode, $function=NULL, $eventlist='the_content,widget_text,the_title', $postprocess=NULL ) {
+ *
+ * As of oik version 2.3 we support a special event of "all" which will allow shorrtcode expansion to be 
+ * performed when do_shortcode() is invoked directly rather than during filter processing.
+ * The default eventlist therefore becomes 'all' 
+ *
+ *
+ * @param string $shortcode - the shortcode name e.g. bw
+ * @param callback $function - the function to implement the shortcode
+ * @param string $eventlist - the list of events for which the shortcode should be expanded
+ * @param callback $postprocess - function name for performing post processing of the $result in certain contexts
+ * Possible functions are: bw_strip_tags, bw_admin_strip_tags, etcetera tbc
+ *
+ */
+function bw_add_shortcode_event( $shortcode, $function=NULL, $eventlist='all', $postprocess=NULL ) {
   global $bw_sc_ev, $bw_sc_ev_pp;
   //bw_trace( $shortcode, __FUNCTION__, __LINE__, __FILE__, "shortcode" );
   if ( $function == NULL ) {
@@ -243,18 +280,49 @@ function bw_add_shortcode_file( $shortcode, $file=NULL ) {
 } 
 
 /**
+ * Set the value for shortcode expansion for "the_title"
+ *
+ * @param string $shortcode - the shortcode tag
+ * @param bool $the_title - true when the shortcode may be expanded in the title, false otherwise
+ */
+function bw_add_shortcode_title_expansion( $shortcode, $the_title ) {
+  global $bw_sc_te;
+  $bw_sc_te[$shortcode] = $the_title;
+}
+
+/**
+ * Query the value for shortcode expansion for "the_title"
+ *
+ * @param string $shortcode
+ * @return bool - true if set, false if it doesn't expand, or null if not specified for this shortcode
+ */
+function bw_get_shortcode_title_expansion( $shortcode ) {
+  global $bw_sc_te;
+  bw_trace2( $bw_sc_te, "bw_sc_te" );
+  $expand = bw_array_get( $bw_sc_te, $shortcode, null );
+  return( $expand );
+}
+
+/**
  * Add a shortcode that safely expands in admin page titles
  * but is properly expanded in content and widget text
+ *
+ * Up to oik version 2.2 the events that we'd respond to defaulted to
+ *  
+ * 'the_content,widget_text,wp_footer,get_the_excerpt,settings_page_bw_email_signature,bp_screens' 
+ *
+ *
  * Note: settings_page_bw_email_signature is included to allow the shortcodes to be shown on the "oik email signature" page
  * bp_screens is included to support BuddyPress
  * get_the_excerpt is to support Artisteer 3.1 beta 1 
  * and is used in oik-plugins server
 */
 function bw_add_shortcode( $shortcode, $function=NULL, $file=NULL, $the_title=TRUE ) {
-  bw_add_shortcode_event( $shortcode, $function, 'the_content,widget_text,wp_footer,get_the_excerpt,settings_page_bw_email_signature,bp_screens' );
+  bw_add_shortcode_event( $shortcode, $function ) ;
+  bw_add_shortcode_title_expansion( $shortcode, $the_title );
   if ( $the_title ) {
     bw_add_shortcode_event( $shortcode, $function, 'the_title', 'bw_admin_strip_tags' );
-  }  
+  }   
   if ( $file ) { 
     bw_add_shortcode_file( $shortcode, $file );
   }  

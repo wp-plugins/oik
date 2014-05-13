@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2010-2013
+<?php // (C) Copyright Bobbing Wide 2010-2014
 //namespace bw_oik; 
 
 // bobbcomp.inc - Company Information
@@ -285,14 +285,23 @@ function bw_clear( $atts=null ) {
 } 
  
 /** 
+ * Implement the [oik] shortcode
+ *
+ * Format's OIK - in lower case? - as an abbreviation for "OIK Information Kit" 
+ *  
+ * Note: bw_oik() is needed here since it's used in the oik admin pages
  * 
- * bw_oik() is needed here since it's used in the oik admin pages
- *   
+ * @param array $atts - shortcode parameters
+ * @param string $content - not expected
+ * @param string $tag - the shortcode tag 
+ * @return string - the generated HTML 
  */
 function bw_oik( $atts=null ) {
   $class = bw_array_get( $atts, "class", "bw_oik" );
   $bw = nullretstag( "span", $class );
+  $bw .= retstag( "abbr", null, null, kv( "title", __( "OIK Information Kit", "oik" ) ) );
   $bw .= "oik"; 
+  $bw .= retetag( "abbr" );
   $bw .= nullretetag( "span", $class ); 
   bw_trace2( $bw, "bw" );
   return( $bw );

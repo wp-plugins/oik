@@ -509,7 +509,7 @@ function bw_format_modlink( $name, $link, $moduleinfo ) {
   e( ")" ); 
 }
 
-/* 
+/** 
  * @deprecated 2.2-alpha.0403
  * @deprecated - use indivdual APIs, stag(), alink() and etag() as below.
  */
@@ -520,3 +520,17 @@ function tdlink( $class=NULL, $url, $text, $title=NULL, $id=NULL ) {
 }  
 
 
+/**
+ * @deprecated 2.3-alpha.0511
+ * @deprecated - Only use gobang() to receive the following message 'Fatal error: Call to undefined function gobang()'
+ * 
+ * This function is NOT intended to exist. 
+ * You should not call it in production code.
+ * We use it during debugging when we want to trigger a Fatal error.
+ * Of course you can choose to use any undefined function; I simply plumped for gobang();
+ */
+if ( false ) {
+  function gobang() {
+    $fatal = _doing_it_wrong( __FUNCTION__, "gobang() is not expected to exist", "3.9.1" );
+  }
+}  

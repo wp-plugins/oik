@@ -15,7 +15,8 @@ function bw_query_field_type( $name ) {
   if ( $field ) {
     $field_type = bw_array_get( $field, "#field_type", null );
   } else {
-    bw_trace2( "Invalid field name" );
+    bw_trace2( $name, "Invalid field name" );
+    bw_backtrace();
     $field_type = null;
   }
   return( $field_type );
@@ -382,9 +383,11 @@ function bw_format_meta( $customfields ) {
 if ( !function_exists( "bw_format_taxonomy" ) ) {
 function bw_format_taxonomy( $field, $post_id ) {
   // We need to query the taxonomy name 
+  sdiv( "bw_taxonomy $field" );
   bw_format_label( array( $field => $field ) );
   bw_format_sep( $field );
   bw_custom_column_taxonomy( $field, $post_id );
+  ediv();
 }  
 }
 

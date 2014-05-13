@@ -25,6 +25,10 @@
  * The shortcode now supports different events to trigger the display of the "wtf" content
  * with different effects to display it: slideToggle or Toggle
  *
+ * Note: In certain situations this shortcode will not be able to determine the correct content.
+ * For example the shortcode is being expanded in 'content' being passed directly to do_shortcode().
+ * In this case the content of the global $post variable will be displayed rather than the content passed to do_shortcode().
+ *
  * @param mixed $atts - parameters to the shortcode 
  * @param string $content - alternative way of getting content 
  * @param string $tag 

@@ -6,24 +6,27 @@
  * Deferred registration of shortcodes until they're actually needed
  */
 function bw_oik_lazy_add_shortcodes() {
-  bw_add_shortcode_event( "bw_wtf");
-  bw_add_shortcode_event( "bw_wtf", NULL, "the_title", "bw_strip_tags" );
-  bw_add_shortcode_file( "bw_wtf", oik_path( "shortcodes/oik-wtf.php" ) );
+  //bw_add_shortcode_event( "bw_wtf");
+  //bw_add_shortcode_event( "bw_wtf", NULL, "the_title", "bw_strip_tags" );
+  //bw_add_shortcode_file( "bw_wtf", oik_path( "shortcodes/oik-wtf.php" ) );
+  bw_add_shortcode( "bw_wtf", "bw_wtf", oik_path( "shortcodes/oik-wtf.php" ), false ); 
 
-  bw_add_shortcode_event( 'bw_directions', 'bw_directions', 'the_content,widget_text' );
-  bw_add_shortcode_file( 'bw_directions', oik_path( "shortcodes/oik-geo.php" ) );
+  //bw_add_shortcode_event( 'bw_directions', 'bw_directions', 'the_content,widget_text' );
+  //bw_add_shortcode_file( 'bw_directions', oik_path( "shortcodes/oik-geo.php" ) );
+  bw_add_shortcode( 'bw_directions', 'bw_directions', oik_path( "shortcodes/oik-geo.php" ), false ); 
 
   bw_add_shortcode( 'bw', 'bw' );
   //bw_add_shortcode_event( "bw", "bw" );
   //bw_add_shortcode_event( "bw", "bw", 'the_title', 'bw_admin_strip_tags' );
 
-  bw_add_shortcode_event( 'oik', 'bw_oik' );
-  bw_add_shortcode_event( "oik", "bw_oik", 'the_title', 'bw_admin_strip_tags' );
+  //bw_add_shortcode_event( 'oik', 'bw_oik' );
+  //bw_add_shortcode_event( "oik", "bw_oik", 'the_title', 'bw_admin_strip_tags' );
+  bw_add_shortcode( "oik", "bw_oik" );
 
   bw_add_shortcode( 'bw_address', 'bw_address', oik_path( "shortcodes/oik-address.php" ), false );
 
-  bw_add_shortcode( 'bw_mailto', 'bw_mailto', oik_path( "shortcodes/oik-email.php" ) );
-  bw_add_shortcode( 'bw_email', 'bw_email', oik_path( "shortcodes/oik-email.php" ) );
+  bw_add_shortcode( 'bw_mailto', 'bw_mailto', oik_path( "shortcodes/oik-email.php" ), false );
+  bw_add_shortcode( 'bw_email', 'bw_email', oik_path( "shortcodes/oik-email.php" ), false );
 
   bw_add_shortcode( 'bw_geo', 'bw_geo', oik_path( "shortcodes/oik-geo.php"), false );
   bw_add_shortcode( 'bw_telephone', 'bw_telephone', oik_path( "shortcodes/oik-phone.php" ) );
@@ -43,29 +46,31 @@ function bw_oik_lazy_add_shortcodes() {
   bw_add_shortcode( 'bw_alt_slogan', 'bw_alt_slogan', oik_path( "shortcodes/oik-company.php" ) );
   bw_add_shortcode( 'bw_admin', 'bw_admin_sc', oik_path( "shortcodes/oik-company.php" ) );
 
-  bw_add_shortcode( 'bw_twitter', 'bw_twitter', oik_path( "shortcodes/oik-follow.php" ) );
-  bw_add_shortcode( 'bw_facebook', 'bw_facebook', oik_path( "shortcodes/oik-follow.php" ) );
-  bw_add_shortcode( 'bw_linkedin', 'bw_linkedin', oik_path( "shortcodes/oik-follow.php" ) );
-  bw_add_shortcode( 'bw_youtube', 'bw_youtube', oik_path( "shortcodes/oik-follow.php" ) );
-  bw_add_shortcode( 'bw_flickr', 'bw_flickr', oik_path( "shortcodes/oik-follow.php" ) );
-  bw_add_shortcode( 'bw_picasa', 'bw_picasa', oik_path( "shortcodes/oik-follow.php" ) );
-  bw_add_shortcode( 'bw_googleplus', 'bw_google_plus', oik_path( "shortcodes/oik-follow.php" ) );
-  bw_add_shortcode( 'bw_google_plus', 'bw_google_plus', oik_path( "shortcodes/oik-follow.php" ) );
-  bw_add_shortcode( 'bw_google-plus', 'bw_google_plus', oik_path( "shortcodes/oik-follow.php" ) );
-  bw_add_shortcode( 'bw_google', 'bw_google_plus', oik_path( "shortcodes/oik-follow.php" ) );
-  bw_add_shortcode( 'bw_instagram', 'bw_instagram', oik_path( "shortcodes/oik-follow.php" ) );
-  bw_add_shortcode( 'bw_pinterest', 'bw_pinterest', oik_path( "shortcodes/oik-follow.php" ) );
+  bw_add_shortcode( 'bw_twitter', 'bw_twitter', oik_path( "shortcodes/oik-follow.php" ), false );
+  bw_add_shortcode( 'bw_facebook', 'bw_facebook', oik_path( "shortcodes/oik-follow.php" ), false );
+  bw_add_shortcode( 'bw_linkedin', 'bw_linkedin', oik_path( "shortcodes/oik-follow.php" ), false );
+  bw_add_shortcode( 'bw_youtube', 'bw_youtube', oik_path( "shortcodes/oik-follow.php" ), false );
+  bw_add_shortcode( 'bw_flickr', 'bw_flickr', oik_path( "shortcodes/oik-follow.php" ), false );
+  bw_add_shortcode( 'bw_picasa', 'bw_picasa', oik_path( "shortcodes/oik-follow.php" ), false );
+  bw_add_shortcode( 'bw_googleplus', 'bw_google_plus', oik_path( "shortcodes/oik-follow.php" ), false );
+  bw_add_shortcode( 'bw_google_plus', 'bw_google_plus', oik_path( "shortcodes/oik-follow.php" ), false );
+  bw_add_shortcode( 'bw_google-plus', 'bw_google_plus', oik_path( "shortcodes/oik-follow.php" ), false );
+  bw_add_shortcode( 'bw_google', 'bw_google_plus', oik_path( "shortcodes/oik-follow.php" ), false );
+  bw_add_shortcode( 'bw_instagram', 'bw_instagram', oik_path( "shortcodes/oik-follow.php" ), false );
+  bw_add_shortcode( 'bw_pinterest', 'bw_pinterest', oik_path( "shortcodes/oik-follow.php" ), false );
 
-  bw_add_shortcode( 'bw_follow_me', 'bw_follow_me', oik_path( "shortcodes/oik-follow.php" ) );
+  bw_add_shortcode( 'bw_follow_me', 'bw_follow_me', oik_path( "shortcodes/oik-follow.php" ), false );
 
   bw_add_shortcode( 'clear', 'bw_clear' );
 
 
-  bw_add_shortcode_event( 'bw_logo', 'bw_logo', 'the_content,widget_text,settings_page_bw_email_signature' );
-  bw_add_shortcode_file( "bw_logo", oik_path( "shortcodes/oik-logo.php" ) );
+  //bw_add_shortcode_event( 'bw_logo', 'bw_logo', 'the_content,widget_text,settings_page_bw_email_signature' );
+  //bw_add_shortcode_file( "bw_logo", oik_path( "shortcodes/oik-logo.php" ) );
+  bw_add_shortcode( 'bw_logo', 'bw_logo', oik_path( "shortcodes/oik-logo.php" ), false ); 
 
-  bw_add_shortcode_event( 'bw_qrcode', 'bw_qrcode', 'the_content,widget_text,settings_page_bw_email_signature');
-  bw_add_shortcode_file( 'bw_qrcode', oik_path( "shortcodes/oik-qrcode.php" ) );
+  //bw_add_shortcode_event( 'bw_qrcode', 'bw_qrcode', 'the_content,widget_text,settings_page_bw_email_signature');
+  //bw_add_shortcode_file( 'bw_qrcode', oik_path( "shortcodes/oik-qrcode.php" ) );
+  bw_add_shortcode( 'bw_qrcode', 'bw_qrcode', oik_path( "shortcodes/oik-qrcode.php" ), false );
 
   // Include [div]/[sdiv], [ediv] and [sediv] 
   bw_add_shortcode( 'div', 'bw_sdiv' );
@@ -119,7 +124,7 @@ function bw_oik_lazy_add_shortcodes() {
   add_action( "bw_sc_example", "bw_sc_example");
   add_action( "bw_sc_snippet", "bw_sc_snippet" );
 
-  bw_add_shortcode_file( 'portfolio_slideshow', oik_path( "shortcodes/oik-slideshows.php") );
+  bw_add_shortcode_file( 'portfolio_slideshow', oik_path( "shortcodes/oik-slideshows.php"), false );
   bw_add_shortcode_file( 'nggallery', oik_path( "shortcodes/oik-galleries.php" ) );
 
   bw_add_shortcode( "bw_power", "bw_power", oik_path( "shortcodes/oik-power.php" ) );

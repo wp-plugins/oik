@@ -3,7 +3,9 @@
 
 /**
  * Format the shortcode syntax for returning in HTML
-*/
+ *
+ * @param array $syntax - array of key => shortcode key values
+ */
 function bw_form_sc_syntax( $syntax ) {
   if ( count( $syntax ) ) { 
     foreach ( $syntax as $key => $value ) {
@@ -142,8 +144,9 @@ function _sc__help( $shortcode="bw_code" ) {
 "abt_slider_hero" => "",
 "ad" => "Show an advertisement block (Artisteer theme)",
 "artisteer" => "Styled form of Artisteer",
+"audio" => "Embed audio files",
 "bing" => "Styled form of bing",
-"blog-title" => "blog title (Artisteer theme)",
+"blog_title" => "blog title (Artisteer theme)",
 "bob" => "Styled form of bob",
 "bong" => "Styled form of bong",
 "bp" => "Styled form of BuddyPress",
@@ -222,6 +225,7 @@ function _sc__help( $shortcode="bw_code" ) {
 "bwtron" => "Force trace on",
 "caption" => "Display the caption for an image. Standard WordPress shortcode",
 "clear" => "Clear divs ",
+"collage" => "Display a collage (Artisteer theme)",
 "css" => "Show a valid CSS icon (Artisteer theme)",
 "div" => "start a <div> tag",
 "drupal" => "Styled form of Drupal",
@@ -236,18 +240,24 @@ function _sc__help( $shortcode="bw_code" ) {
 "lbp" => "Link to BuddyPress",
 "lbw" => "Link to Bobbing Wide sites",
 "ldrupal" => "Link to drupal.org",
-"login-link" => "Login link (Artisteer themes)",
+"login_link" => "Login link (Artisteer themes)",
 "loik" => "Link to [oik]-plugins",
 "lwp" => "Link to WordPress.org",
 "lwpms" => "Link to WordPress Multi Site",
 "ngslideshow" => "NextGen gallery slideshow",
 "oik" => "Expand to the logo for oik",
 "paypal" => "Paypal shortcodes",
+"post_link" => "Produce a post link (Artisteer themes)",
 "rss" => "Produce an RSS feeds button (Artisteer themes)",
+"rss_title" => "Produce an RSS title (Artisteer themes)",
+"rss_url" => "Produce an RSS URL (Artisteer themes)",
+"search" => "Search button (Artisteer themes)",
 "sdiv" => "Start a div",
 "sediv" => "Start and end a div",
 "stag" => "Start a tag",
+"template_url" => "Produce a template_url (Artisteer themes)",
 "top" => "Top of page button (Artisteer themes)",
+"video" => "Embed video files",
 "wide" => "Styled form of wide",
 "wow" => "Styled form of WoW",
 "wp" => "Display a styled form of WordPress. ",
@@ -422,6 +432,36 @@ function embed__syntax( $shortcode='embed' ) {
                  , "height" => bw_skv( "height", "700|embed_size_h", "Required height" )
                  );
   return( $syntax );
+}
+
+/**
+ * Syntax for [audio] shortcode
+ * @link http://codex.wordpress.org/Audio_Shortcode
+ */
+function audio__syntax( $shortcode='audio' ) {
+  $syntax = array( "src,mp3,m4a,ogg,wav,wma" => bw_skv( null, "<i>source_url</i>", "If omitted uses first attachment" )
+                 , "loop" => bw_skv( "off", "on", "Allow looping of media" )
+                 , "autoplay" => bw_skv( "off", "on", "Causes media to autoplay" )
+                 , "preload" => bw_skv( "none", "auto|metadata", "How the audio should be loaded" )
+                 );
+  return( $syntax ); 
+}
+
+/**
+ * Syntax for [video] shortcode
+ *
+ * @link http://codex.wordpress.org/Video_Shortcode
+ */
+function video__syntax( $shortcode='video' ) {
+  $syntax = array( "src,mp4,m4v,webm,ogv,wmv,flv" => bw_skv( null, "<i>source_url</i>", "If omitted uses first attachment" )
+                 , "poster" => bw_skv( null, "<i>image_url</i>", "Placeholder image" )
+                 , "loop" => bw_skv( "off", "on", "Allow looping of media" )
+                 , "autoplay" => bw_skv( "off", "on", "Causes media to autoplay" )
+                 , "preload" => bw_skv( "none", "auto|metadata", "How the audio should be loaded" )
+                 , "height" => bw_skv( "height", "<i>integer</i>", "Required height" )
+                 , "width" => bw_skv( "width", "<i>integer</i>", "Required width" )
+                 );
+  return( $syntax ); 
 }
 
 function wp__help() {
@@ -741,3 +781,31 @@ function bw_invoke_shortcode( $shortcode, $atts=null, $text=null ) {
   bw_trace2( $expanded );
   //bw_backtrace();
 }  
+
+function ad__syntax( $shortcode='ad' ) {
+  $syntax = array( "code" => bw_skv( 1, "2|3|4|5", "Advertisement selection - Artisteer theme options" )
+                 , "align" => bw_skv( "left", "center|right", "Alignment" )
+                 , "inline" => bw_skv( 0, "1", "0 if inline, 1 for block" )
+                 );
+  return( $syntax );
+}
+
+/**
+ * Syntax for [post_link] shortcode 
+ * 
+ * If the name= parameter starts with "/Blog%20Posts/" then the post name is considered to be a post, otherwise it's a page
+ * A bit of a crappy shortcode if you ask me Herb 2014/05/10
+ *
+ */
+function post_link__syntax( $shortcode='post_link' ) {
+  $syntax = array( "name" => bw_skv( "/", "<i>page_name</i>", "Page to link to" ) );
+  return( $syntax  );
+}
+
+/**
+ * Syntax for [collage] shortcode
+ */
+function collage__syntax( $shortcode="collage" ) {
+  $syntax = array( "id" => bw_skv( null, "<i>collage ID</i>", "Index of the theme_collages post meta to display" ) );
+  return( $syntax  );
+}
