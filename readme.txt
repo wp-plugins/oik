@@ -3,7 +3,7 @@ Contributors: bobbingwide, vsgloik
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
 Tags: shortcodes, oik, pages, posts, jQuery, contact form, PayPal, buttons, Artisteer, text widget, key information, trace, blocks, bookmarks, images, attachments, smart, lazy, pagelist, sitemap, tree, accordion, tabs, cycle
 Requires at least: 3.9
-Tested up to: 4.0
+Tested up to: 4.1
 Stable tag: 2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -14,6 +14,28 @@ Over 80 advanced, powerful shortcodes for displaying the content of your WordPre
 The *oik base* plugin provides a series of advanced WordPress shortcodes that help you display dynamic content from your website's pages, posts, attachments, links and custom post types.
 The OIK Information Kit uses lazy smart shortcode technology to display your WordPress website's content including your often included key-information. 
 The functionality in the oik base plugin is used by over 40 other WordPress plugins, providing powerful facilities for an efficient, performant website.
+
+At a glance changes in version 2.4
+
+* [bw_follow_me] and related shortcode can now use genericons ( theme=gener parameter )
+* Delivers genericons v3.2 in case not already provided by Jetpack
+* oik.css provides some basic styling of dashicons, genericons and oik's own texticons
+* [bw_logo] shortcode should not display a broken image when no image is defined
+* [bw_show_googlemap] improved for use with oik-user
+* [bw_show_googlemap] supports multiple Google Maps being displayed
+* [bw_table] column titles improved
+* [wp] shortcode can now display the current version of WordPress `[wp v]` and PHP `[wp v p]`
+* Better support for shortcode expansion in post titles
+* Improved support for styling output of [bw_pages]
+
+For developers
+
+* Class BW_List_Table, based on WP_List_table, with helper functions 
+* Prototype code for working with WP-API ( WordPress REST API )
+* bw-nav-tab.php to support implementation of tabs on admin pages.
+* bw_query_field_label() which will get the title for the registered field
+* Better support for styling images; added bw_thumbnail class to div surrounding images created using bw_format_thumbnail()
+
 
 At a glance changes in version 2.3
 
@@ -129,6 +151,33 @@ The Application Programming Interface (API) reference documents over 960 APIs, i
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
+= 2.4 =
+Needed to fix pagination problems with WordPress 4.1. Tested with WordPress 4.1 and WordPress MultiSite.
+
+= 2.4-beta.1223 = 
+Needed to fix pagination problems with WordPress 4.1. Tested with WordPress 4.1 and WordPress MultiSite.
+
+= 2.4-beta.1222 = 
+Tested with WordPress 4.1 and WordPress MultiSite
+
+= 2.4-beta.1218 = 
+Tested with WordPress 4.1 and WordPress MultiSite
+
+= 2.4-alpha.1128 = 
+Tested with WordPress 4.1 and WordPress MultiSite 
+
+= 2.4-alpha.1112 =
+Improvements for WP-a2z and oik-plugins
+
+= 2.4-alpha.1031 = 
+For Jeremy Davis - two googlemaps (or more) on one page.
+
+= 2.4-alpha.1012 = 
+Improvements for oik-plugins.com. Tested with WordPress 4.0
+
+= 2.3 =
+Official version on WordPress.org. Tested with WordPress 4.0 and WordPress Multi-Site
+
 = 2.3-beta.0825 =
 Improvements for oik-plugins.com. Tested with WordPress 4.0-RC1
 
@@ -333,6 +382,59 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
+= 2.4= 
+* Fixed: Version released to wordpress.org 
+
+= 2.4-beta.1223 = 
+* Fixed: Changed code to cater for WordPress 4.1 changes to paginate_links(). See TRAC #30831 
+
+= 2.4-beta.1222 =
+* Fixed: Undid the change in bw_get_attached_image() to. Does not access the given post if $post_id is set; uses 'post_parent', as before 2.4-beta.1218 
+* Changed: Commented out some bw_trace() calls 
+
+= 2.4-beta.1218 =
+* Changed: Improved performance of plugin update checks.  
+* Fixed: Changed bw_get_the_content() and bw_get_the_excerpt() to invoke do_shortcode() directly rather than using apply_filters()
+* Changed: bw_get_attached_image() to access the given ID if $post_id set  
+
+= 2.4-alpha.1128
+* Changed: Added some debugging logic in bw_skv() to track problems noted in PHP 5.5(.18)
+* Changed: Improved some more docblock comments for better formatting in the Dynamic API Reference
+* Changed: `[wp]` shortcode can now display the current version of WordPress `[wp v]` and PHP `[wp v p]`
+* Fixed: Support title links with expanded shortcode in shortcodes such as `[bw_pages]` and `[bw_related]` ( from oik-fields)
+* Tested: Now tested with PHP 5.5
+* Tested: With WordPress 4.1-beta2 and WordPress MultiSite
+
+= 2.4-alpha.1112 =
+* Changed: bw_get_posts() ensures the post_type parameter is set, even when query is for selected IDs
+* Changed: bw_td() and bw_th() will now create empty cells. 
+* Changed: bw_nav_tabs() sets the selected tab in $_REQUEST
+* Changed: Some doc block improvements
+
+= 2.4-alpha.1031 = 
+* Changed: bw_show_googlemap() now supports multiple Google maps being displayed
+* Changed: Improved BW_List_Table - see WordPress TRAC #30183
+
+= 2.4-alpha.1028 = 
+* Added: Class BW_List_Table - based on WP_List_Table class - to be used by extension plugins
+* Added: Support for [bw_follow_me] and related shortcodes to use genericons. 
+* Added: genericons v3.2: used when Jetpack is not activated
+* Fixed: bw_get_slug() should not issue notify messages
+* Fixed: Changed bw_get_the_content() to use "get_the_excerpt" instead of "the_content" - needs testing.
+* Changed: Improved more docblocks
+* Added: bw-nav-tab.php to support implementation of tabs on admin pages.
+* Added: List table helper functions
+* Changed: oik.css to support some basic styling of dashicons, genericons and oik's own texticons
+
+= 2.4-alpha.1012 = 
+* Changed: Improvements to [bw_table] column titles. bw_format_label() and bw_default_title_arr() call bw_query_field_label() 
+* Added: bw_query_field_label() which will get the title for the registered field.
+* Changed: Some more i18n changes.
+* Changed: bw_label_from_key() is now equivalent to bw_titleify()
+* Added: Prototype code for working with WP-API in includes/oik-remote.inc
+* Changed: Improvements to [bw_show_googlemap] for use with oik-user
+* Changed: Improve [bw_logo]. Should not display 'broken image' when no logo image is defined.  
+
 = 2.3 = 
 * Changed: oik now implements the "init" action with priority 11. This means "oik_loaded" will be fired after other plugins have registered post types and taxonomies.
 * Changed: Updated readme.txt for official release of v2.3
@@ -1096,13 +1198,13 @@ This plugin is not dependent upon oik.
 More FREE and Premium plugins are available from [oik-plugins.com](http://www.oik-plugins.com/wordpress-plugins-from-oik-plugins/) including:
 
 * [diy-oik](http://www.oik-plugins.com/oik-plugins/diy-oik) - Do-It-Yourself shortcodes
-* [oik-External link warning jQuery](http://www.oik-plugins.com/oik-plugins/external-link-warning-jquery/)
+* [oik-External link warning jQuery](http://www.oik-plugins.com/oik-plugins/external-link-warning-jquery/) - Warns visitor about leaving your site
 * [oik-fields](http://www.oik-plugins.com/oik-plugins/oik-fields-custom-post-type-field-apis) - custom post type field APIs
 * [oik-ms](http://www.oik-plugins.com/oik-plugins/oik-ms-oik-multisite-shortcodes/) - oik MultiSite shortcodes
 * [oik-mshot](http://www.oik-plugins.com/oik-plugins/oik-mshot) - Shortcode to display the "mshot" of an URL; oik-fields extension
 * [oik-rating](http://www.oik-plugins.com/oik-plugins/oik-rating) - 5 star rating custom field; oik-fields extension
 * [oik-testimonials](http://www.oik-plugins.com/oik-plugins/oik-testimonials) - Manage and display testimonials.
-* [oik-todo]http://www.oik-plugins.com/oik-plugins/oik-todo-todo-list) - TODO list
+* [oik-todo](http://www.oik-plugins.com/oik-plugins/oik-todo-todo-list) - TO DO list
 * [oik-types](http://www.oik-plugins.com/oik-plugins/oik-types) - custom content type, field and taxonomy manager
 * [oik-user](http://www.oik-plugins.com/oik-plugins/oik-user) - display oik information for each site user
 * [us-tides](http://www.oik-plugins.com/oik-plugins/us-tides) - US saltwater tide times and heights

@@ -1,6 +1,4 @@
 <?php // (C) Copyright Bobbing Wide 2011-2014
-if ( defined( 'OIK_ADMIN_ADMIN_INCLUDED' ) ) return;
-define( 'OIK_ADMIN_ADMIN_INCLUDED', true );
 
 /**
  * Load 'plugin' file if the options checkbox is set on
@@ -304,7 +302,7 @@ function oik_support() {
  * Display the oik admin options
  */
 function oik_admin_options() { 
-$option = 'bw_admin_options'; 
+  $option = 'bw_admin_options'; 
   $options = bw_form_start( $option, 'oik_admin_options' );
   bw_checkbox_arr( "bw_admin_options", "Show IDs on admin pages", $options, 'show_ids' );
   etag( "table" );
@@ -616,6 +614,8 @@ function oik_main_shortcode_options() {
 
 /**
  * Display usage notes for some oik shortcodes
+ * 
+ *
  */
 function oik_usage_notes() {
   $alt0_suffix = str_replace( " ", "", _oik_alt0_suffix() );
@@ -628,6 +628,7 @@ function oik_usage_notes() {
   bw_invoke_shortcode( "bw_show_googlemap", $alt0_suffix, "Display a Googlemap for your primary address." );
   bw_invoke_shortcode( "bw_directions", $alt0_suffix, "Display a button for obtaining directions to your address." );
   bw_invoke_shortcode( "bw_follow_me", $alt0_suffix, "Show all your <b>Follow me</b> buttons" );
+  bw_invoke_shortcode( "bw_follow_me", "$alt0_suffix theme=gener", "Show your <b>Follow me</b> buttons using genericons" );
   p( "For more information about the shortcodes you can use select <b>Shortcode help</b>" );
   alink( "button-secondary", admin_url( "admin.php?page=oik_sc_help"), "Shortcode help", "Discover shortcodes you can use" );
   bw_flush();
@@ -674,8 +675,9 @@ function oik_extra_shortcode_options() {
   bw_textfield_arr( $option, "Latitude [bw_geo alt=1] [bw_directions alt=1]", $options, 'lat', 50 );
   bw_textfield_arr( $option, "Longitude [bw_show_googlemap alt=1]", $options, 'long', 50 );
  
-  bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
-  etag( "table" ); 			
+  //bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
+  etag( "table" ); 
+  e( isubmit( "ok", __("Save changes", "oik" ), null, "button-primary" ) ); 
   etag( "form" );
   bw_flush();
 }  
@@ -986,18 +988,28 @@ function bw_last_path( $file ) {
 /**
  * Return the slug part of a plugin name
  *
- * This function should only be called when we know it's a plugin name with a directory 
- *
+ * This function should only be called when we know it's a plugin name with a directory.
+ * 
  * Sample results
  * "slug" for "slug/plugin_name.php" - when called for "update-check"
  * "slugonly" for "slugonly" - when called for "plugin_information"
  * "hello" for "hello.php" - does this ever happen?
+ * null for null
+ * 
+ * @param string $plugin - a plugin name
+ * @return string $slug - the slug used to identify the plugin 
+ *
  */
 function bw_get_slug( $plugin ) {
-  $pathinfo = pathinfo( $plugin );
-  $slug = $pathinfo['dirname'] ;
-  if ( $slug == '.' ) 
-    $slug = $pathinfo['filename'];
+  if ( $plugin ) {
+    $pathinfo = pathinfo( $plugin );
+    $slug = $pathinfo['dirname'] ;
+    if ( $slug == '.' ) { 
+      $slug = $pathinfo['filename'];
+    }
+  } else {
+    $slug = null;
+  }  
   return( $slug );    
 }
 
@@ -1162,8 +1174,12 @@ function oik_site_transient_update_themes( $transient ) {
   }     
   //bw_backtrace();
   return( $transient );
-}  
+}
 
+/**
+ * Check for plugin updates
+ *
+ */  
 function oik_altapi_check( $transient ) {
   //bw_backtrace();
   oik_require( "includes/oik-remote.inc" );
@@ -1193,6 +1209,7 @@ function oik_themes_api_result( $result, $action, $args ) {
 
 /**
  * Perform plugin relocation just before the plugins are listed on the admin page
+ *
  * for action: pre_current_active_plugins
  */
 function bw_relocate_pre_current_active_plugins( $plugins ) {

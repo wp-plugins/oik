@@ -643,6 +643,9 @@ function bw_format_skv( $value ) {
     $values = bw_array_get( $value, "values", null );
     $values = str_replace( "|", "| ", $values );
     $notes = bw_array_get( $value, "notes", null );
+    if ( is_array( $values ) ) { bw_trace2(); }
+    if ( is_array( $notes ) ) {bw_trace2(); }
+    
     return( "<b>$default</b>|$values - $notes" );
   } else {
     return( $value );

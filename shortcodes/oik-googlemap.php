@@ -1,6 +1,6 @@
 <?php 
 /*
-    Copyright 2011-2013 Bobbing Wide (email : herb@bobbingwide.com )
+    Copyright 2011-2014 Bobbing Wide (email : herb@bobbingwide.com )
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -18,17 +18,45 @@
 
 */
 
+/**
+ * Insert multiple markers
+ *
+ * @TODO - complete this code!
+ *
+ * @param string|array $markers - the markers to display on the map
+ 
+ */
+function bw_gmap_markers( $markers ) {
+  $marker_arr = bw_as_array( $markers );
+  if ( count( $marker_arr ) ) {
+    foreach ( $marker_arr as $marker ) {
+      $alt = $marker;
+      $set = "bw_options$alt"; 
+      $lat = bw_default_empty_att( null, "lat", 50.887856, $set );
+      $long = bw_default_empty_att( null, "long", -0.965113, $set );
+      $latlng = "$lat,$long";
+      $title = $latlng;
+      bw_echo( 'latlng = new google.maps.LatLng('. $latlng .');' );
+      bw_gmap_marker( $title );
+    }
+  }
+}
+
 /*
- * set the Google map marker
-*/
+ * Set the Google map marker
+ *
+ */
 function bw_gmap_marker( $title ) {
   bw_echo( 'var marker = new google.maps.Marker({ position: latlng, title:"' . $title . '"});' );
   bw_echo( 'marker.setMap( map );' );
 }
 
 /*
- * set the Google map Info Window
-*/
+ * Set the Google map Info Window
+ *
+ * @TODO Don't display anything if the contentString becomes null when you trim it.
+ * 
+ */
 function bw_gmap_infowindow( $title, $postcode ) {
   bw_echo( "var contentString = '". $title . " " . $postcode . "';" );   
   bw_echo( 'var infowindow = new google.maps.InfoWindow({ content: contentString });' );
@@ -36,7 +64,8 @@ function bw_gmap_infowindow( $title, $postcode ) {
 } 
 
 /* 
- * Google Maps JavaScript API V3
+ * Display a GoogleMap using Google Maps JavaScript API V3
+ * 
  * Display a GoogleMap centred around the lat and long specified in oik options
  * zoomed to level 12 - which is good for local viewing
  * with a red marker centred at the lat,long and showing the postcode as a tool tip 
@@ -55,28 +84,55 @@ function bw_gmap_infowindow( $title, $postcode ) {
  *
  * If this doesn't work don't forget to set: #bw_map_canvas { height: 100% } in oik.css or your custom CSS file
  * Note: the default height is 100%
-*/
- 
-function bw_googlemap_v3(  $title, $lat, $lng, $postcode, $width, $height ) {
+ *
+ * 31 Oct 2014: Quick and Dirty fix to support the display of multiple Google maps on a page.
+ * Each time the routine is invoked it increments the $map variable.
+ * This is used to create multiple initialize functions. 
+ * At the end of the initialize function, if the map is greater than one then
+ * it invokes the previous initialize function.
+ * So initialise1() will call initialize0()
+ * This gets over the problem of only the last initialize function being called by window.onload=initialisen;
+ *
+ *
+ * @param string $title - part of the infowindow
+ * @param number $lat - latitude
+ * @param number $lng - longitude
+ * @param string $postcode - part of the infowindow
+ * @param string $width - width in pixels or percentage  
+ * @param string $height - height in pixels
+ * @param string $markers - display multiple markers - for each alt number chosen. 
+ */
+function bw_googlemap_v3(  $title, $lat, $lng, $postcode, $width, $height, $markers=null ) {
+  static $map = 0;
+  
 
   $latlng = $lat . ',' . $lng ;
-
-  bw_echo( '<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;region=GB">' );
-  bw_echo( '</script>' );
+  
+  if ( !$map ) {
+    bw_echo( '<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;region=GB">' );
+    bw_echo( '</script>' );
+  }
   bw_echo( '<script type="text/javascript">' );
-  bw_echo( 'function initialize() {' );
+  bw_echo( 'function initialize' . $map . '() {' );
   bw_echo( 'var latlng = new google.maps.LatLng('. $latlng .');' );
   
   // Choose from ROADMAP, SATELLITE, HYBRID, TERRAIN 
   bw_echo( 'var myOptions = { zoom: 12, center: latlng, mapTypeId: google.maps.MapTypeId.ROADMAP };' );
-  bw_echo( 'var map = new google.maps.Map(document.getElementById("bw_map_canvas"), myOptions); ' );
+  bw_echo( 'var map = new google.maps.Map(document.getElementById("bw_map_canvas' . $map . '"), myOptions); ' );
 
   if ( $postcode ) {
     bw_gmap_marker( $postcode );
     bw_gmap_infowindow( $title, $postcode );
   }
+  if ( $markers ) {
+    bw_gmap_markers( $markers );
+  }
+  if ( $map ) {
+    $previous = $map - 1;
+    bw_echo( 'initialize' . $previous. '();' );
+  }
   bw_echo( '}' );
-  bw_echo( 'window.onload=initialize;');
+  bw_echo( 'window.onload=initialize' . $map . ';');
 
   bw_echo( '</script>' );
   
@@ -88,13 +144,18 @@ function bw_googlemap_v3(  $title, $lat, $lng, $postcode, $width, $height ) {
   } else {
     $hv = '';  
   }  
-  bw_echo( '<div id="bw_map_canvas" style="min-height: 200px; width:' . $width. ';' .$hv .';"></div>');
-
+  bw_echo( '<div id="bw_map_canvas' . $map . '" style="min-height: 200px; width:' . $width. ';' .$hv .';"></div>');
+  $map++;
 
 }
 
 /* 
- * Fixed or percentage? 
+ * Fixed or percentage?
+ * 
+ * @param string $value - the value being tested
+ * @param string $append - what to append if the value is numeric
+ * @return string - the updated value
+ *  
  */
 function bw_forp( $value, $append='px' ) {
   if ( is_numeric( $value ))
@@ -103,27 +164,45 @@ function bw_forp( $value, $append='px' ) {
 }
 
 /* 
- * show a googlemap - called from [bw_show_googlemap] 
- * The width may default to 100%, the height may default to 400px
+ * Implement [bw_show_googlemap] shortcode to display a Google Map
+ *
+ *
+ * For oik 2.4-alpha.1001 this has been changed to work with oik-user
+ * Also, any spaces in the post code are converted to &nbsp; 
  * 
+ * The width may default to 100%, the height may default to 400px
+ *
+ * @param array $atts - shortcode attributes
+ * @param string $content - not expected
+ * @param string $tag - the shortcode 
  */
-function bw_show_googlemap( $atts=null ) {
-  $company = bw_array_get_dcb( $atts, "company", "company", "bw_get_option" );
+function bw_show_googlemap( $atts=null, $content=null, $tag=null ) {
+  //$company = bw_array_get_dcb( $atts, "company", "company", "bw_get_option", "bw_options" );
+  $company = bw_get_option_arr( "company", "bw_options", $atts );
   $width = bw_array_get( $atts, "width", null );
   $height = bw_array_get( $atts, "height", null );
-  $lat = bw_array_get( $atts, "lat", null );
-  $long = bw_array_get( $atts, "long", null );
-  $alt = bw_array_get( $atts, "alt", null );
-  $alt = str_replace( "0", "", $alt );
-  $postcode = bw_array_get( $atts, "postcode", null );
+  //$lat = bw_array_get( $atts, "lat", null );
+  $lat = bw_get_option_arr( "lat", "bw_options", $atts );
+  //$long = bw_array_get( $atts, "long", null );
+  $long = bw_get_option_arr( "long", "bw_options", $atts );
+  
+  
+  
+  //$postcode = bw_array_get( $atts, "postcode", null );
+  $postcode = bw_get_option_arr( "postcode", "bw_options", $atts );
+  //e( "Postcode:$postcode:" );
+  $markers = bw_array_get( $atts, "markers", null );
       
   // $company = bw_get_option( "company" );
-  $gmap_intro = bw_get_option( "gmap_intro", "bw_options$alt" );
+  $alt = bw_array_get( $atts, "alt", null );
+  $alt = str_replace( "0", "", $alt );
+  //$gmap_intro = bw_get_option( "gmap_intro", "bw_options$alt" );
+  $gmap_intro = bw_get_option_arr( "gmap_intro", "bw_options", $atts );
   
   //$gmap_intro = bw_get_option_arr( "gmap_intro", "bw_options", $atts );
   if ( $gmap_intro ) {
     p( bw_do_shortcode( $gmap_intro ) );
-    bw_backtrace();
+    // bw_backtrace();
   }
   /*
   if ( $company_override === NULL )
@@ -144,15 +223,21 @@ function bw_show_googlemap( $atts=null ) {
   
   $lat = bw_default_empty_att( $lat, "lat", 50.887856, $set );
   $long = bw_default_empty_att( $long, "long", -0.965113, $set );
-  $postcode = bw_default_empty_att( $postcode, "postal-code", NULL, $set );
   
-
+  if ( !$postcode ) {
+    //$postcode = bw_default_empty_att( $postcode, "postal-code", NULL, $set );
+    
+    $postcode = bw_get_option_arr( "postal-code", "bw_options", $atts );
+  }
+  $postcode = str_replace( " ", "&nbsp;", $postcode );
+ 
   bw_googlemap_v3( $company      
             , $lat
             , $long
             , $postcode
             , $width
             , $height
+            , $markers
             );
   return( bw_ret() );
 }
@@ -177,7 +262,7 @@ function bw_show_googlemap__example( $shortcode = "bw_show_googlemap" ) {
 
 
 function bw_show_googlemap__syntax( $shortcode = "bw_show_googlemap" ) {
-  $syntax = array( "company_override" => bw_skv( "", "company name", "type your company name" )
+  $syntax = array( "company" => bw_skv( "", "company name", "type your company name" )
                  , "lat" => bw_skv( "<i>lat</i>", "latitude", "latitude" )
                  , "long" => bw_skv( "<i>long</i>", "longitude", "longitude" )
                  , "postcode" => bw_skv( "<i>postcode</i>", "postcode", "post code or zip code" )

@@ -3,6 +3,9 @@
 
 /**
  * Ajax shortcode list
+ * 
+ * List the shortcodes when requested by AJAX
+ * 
  */
 function oik_ajax_list_shortcodes() {
   do_action( "oik_add_shortcodes" );
@@ -16,6 +19,9 @@ function oik_ajax_list_shortcodes() {
 
 /**
  * Ajax shortcode syntax
+ *
+ * Display the syntax of the requested shortcode
+ *
  */
 function oik_ajax_load_shortcode_syntax() {
   do_action( "oik_add_shortcodes" );
@@ -30,6 +36,8 @@ function oik_ajax_load_shortcode_syntax() {
 
 /**
  * Ajax shortcode help information
+ *
+ * Display additional help information for the shortcode
  */
 function oik_ajax_load_shortcode_help() {
   do_action( "oik_add_shortcodes" );
