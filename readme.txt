@@ -145,15 +145,13 @@ The Application Programming Interface (API) reference documents over 960 APIs, i
 1. oik options - Options
 2. Demonstrating [bw_pages] and [bw_thumbs] 
 3. [bw_contact_form] - Contact form and [bw_show_googlemap] - Google Map
-4. [bw_countdown] - Countdown timers
-5. [bw_address] and shortcode snippets
+4. Option to display post IDs on admin pages
+5. Custom CSS button
 6. oik button dialog - to create the [bw_button] shortcode
 7. oik PayPal dialog - create PayPal buttons: Pay Now, Buy Now, Donate, Add to Cart and View Cart/Checkout
 8. oik shortcodes dialog - showing syntax for [bw_block]
 9. oik options - Shortcode help - lists ALL active shortcodes
 10. oik options - Buttons
-11. oik options - More options
-12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
 = 2.5 =
