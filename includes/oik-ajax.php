@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2013-2014
+<?php // (C) Copyright Bobbing Wide 2013-2015
 
 
 /**
@@ -51,6 +51,41 @@ function oik_ajax_load_shortcode_help() {
   die();
 }
 
+/**
+ * Implement "shortcode_ui_before_do_shortcode" action for oik-shortcake
+ *
+ */
+function oik_shortcake_shortcode_ui_before_do_shortcode() {
+  oik_require( "includes/oik-sc-help.inc" );
+  bw_save_scripts();
+  echo( "<!-- before shortcode preview -->" );
+  
+} 
+
+
+/**
+ * Implement "shortcode_ui_after_do_shortcode" action for oik-shortcake
+ * 
+ */
+function oik_shortcake_shortcode_ui_after_do_shortcode() {
+  //bw_report_scripts();
+  //bw_flush();
+  wp_print_footer_scripts();
+  echo( "<!-- after shortcode preview -->" );
+} 
+
+/**
+ * AJAX shortcode pre-shortcake's implementation
+ *
+ * 
+ */
+function oik_ajax_do_shortcode() {
+  do_action( "oik_add_shortcodes" );
+  
+  add_action( "shortcode_ui_before_do_shortcode", "oik_shortcake_shortcode_ui_before_do_shortcode" );
+  add_action( "shortcode_ui_after_do_shortcode", "oik_shortcake_shortcode_ui_after_do_shortcode" );
+} 
+
  
 /**
  * Register AJAX actions
@@ -59,6 +94,7 @@ function oik_ajax_lazy_init() {
   add_action( 'wp_ajax_oik_ajax_list_shortcodes', 'oik_ajax_list_shortcodes' );
   add_action( 'wp_ajax_oik_ajax_load_shortcode_syntax', 'oik_ajax_load_shortcode_syntax' );
   add_action( 'wp_ajax_oik_ajax_load_shortcode_help', 'oik_ajax_load_shortcode_help' );
+  add_action( 'wp_ajax_do_shortcode', "oik_ajax_do_shortcode", 9 );
 }
 
 

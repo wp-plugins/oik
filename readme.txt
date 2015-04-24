@@ -1,9 +1,9 @@
 === oik ===
 Contributors: bobbingwide, vsgloik
 Donate link: http://www.oik-plugins.com/oik/oik-donate/
-Tags: shortcodes, oik, pages, posts, jQuery, contact form, PayPal, buttons, Artisteer, text widget, key information, trace, blocks, bookmarks, images, attachments, smart, lazy, pagelist, sitemap, tree, accordion, tabs, cycle
+Tags: shortcodes, oik, pages, posts, jQuery, contact form, PayPal, buttons, Artisteer, text widget, key information, trace, blocks, bookmarks, images, attachments, smart, lazy, pagelist, sitemap, tree, accordion, tabs, cycle, google map, countdown, shortcake
 Requires at least: 3.9
-Tested up to: 4.1
+Tested up to: 4.2
 Stable tag: 2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -15,10 +15,16 @@ The *oik base* plugin provides a series of advanced WordPress shortcodes that he
 The OIK Information Kit uses lazy smart shortcode technology to display your WordPress website's content including your often included key-information. 
 The functionality in the oik base plugin is used by over 40 other WordPress plugins, providing powerful facilities for an efficient, performant website.
 
+At a glance changes in version 2.5
+
+* Supports shortcode UI plugin
+* noderef field type supports hierarchical post types
+
+
 At a glance changes in version 2.4
 
-* [bw_follow_me] and related shortcode can now use genericons ( theme=gener parameter )
-* Delivers genericons v3.2 in case not already provided by Jetpack
+* [bw_follow_me] and related shortcodes can now use genericons ( theme=gener parameter )
+* Delivers genericons v3.2, in case not already provided by Jetpack
 * oik.css provides some basic styling of dashicons, genericons and oik's own texticons
 * [bw_logo] shortcode should not display a broken image when no image is defined
 * [bw_show_googlemap] improved for use with oik-user
@@ -111,7 +117,6 @@ Features:
 1. Activate the oik base plugin through the 'Plugins' menu in WordPress
 1. Go to **oik options** > **options** to fill in your **o**ften **i**ncluded **k**ey information
 1. Use the shortcodes when writing your content
-1. Activate other oik plugins when you need them
 
 
 == Frequently Asked Questions ==
@@ -139,7 +144,7 @@ The Application Programming Interface (API) reference documents over 960 APIs, i
 == Screenshots ==
 1. oik options - Options
 2. Demonstrating [bw_pages] and [bw_thumbs] 
-3. [bw_contact_form] - Contact form
+3. [bw_contact_form] - Contact form and [bw_show_googlemap] - Google Map
 4. [bw_countdown] - Countdown timers
 5. [bw_address] and shortcode snippets
 6. oik button dialog - to create the [bw_button] shortcode
@@ -151,6 +156,18 @@ The Application Programming Interface (API) reference documents over 960 APIs, i
 12. oik options - More information for [bw_show_googlemap] 
 
 == Upgrade Notice ==
+= 2.5 =
+Tested with WordPress 4.2 and WordPress MultiSite. Contains security fix for workaround for shortcode pagination problems.
+
+= 2.5-beta.0409 =
+Workaround for shortcode pagination problems. See WordPress TRAC #31939 
+
+= 2.5-alpha.0204 =
+Upgrade to fix problems with [bw_show_googlemap] 
+
+= 2.5-alpha.0130
+First version with support for the shortcake UI plugin
+
 = 2.4 =
 Needed to fix pagination problems with WordPress 4.1. Tested with WordPress 4.1 and WordPress MultiSite.
 
@@ -382,7 +399,47 @@ Some plugins have been created as separate plugins (e.g. uk-tides). Others have 
  
 
 == Changelog ==
-= 2.4= 
+= 2.5 = 
+* Changed: Added esc_url() to workaround in bw_navi_paginate_links(). Security fix.
+* Fixed: bw_build_url() tests the path is not empty before calling unltrim() 
+* Changed: bw_retrieve_result() accepts 201 HTTP code as well as 200.
+
+= 2.5-beta.0409 =
+* Added: Now caters for "noderef" fields for hierarchical post types
+* Added: includes/bw_noderef2.php
+* Changed: Debug code in oik_require(). Attempting to track down a random problem with symlinked plugins
+* Changed: More support for symlinks: bw_logo()
+* Changed: bw_effort_meta_boxes() only creates a meta box for the current post type 
+* Changed: bw_navi_paginate_links() to workaround WordPress TRAC #31939
+* Changed: bw_sl() now supports definition lists
+* Fixed: oik_checked_check_for_update() tests if $server_response is an array; it could be garbage
+
+= 2.5-alpha.0204 = 
+* Added: Help and syntax for [bw_count]
+* Added: Temporary debug code for shortcake pre and post shortcode expansion actions 
+* Added: Temporary debug code in oik_boot.inc to attempt to detect symlinks to missing files 
+* Added: [bw_show_googlemap] zoom parameter. Default: 12
+* Changed: Improved support for shortcake UI
+* Changed: [bw_show_googlemap] markers parameter accepts "lat:lng" format for additional markers 
+* Fixed: For shortcake, caption content field defined as textarea
+* Fixed: More support for symlinks.
+* Fixed: [bw_show_googlemap] control visibility problem ( GitHub Issue #1 )
+ 
+= 2.5-alpha.0130
+* Added: Action "wp_ajax_do_shortcode" supported by "oik_ajax_do_shortcode" - invokes "oik_add_shortcodes" 
+* Added: oik-shortcake.php 'module' - enable by setting the checkbox on oik options > Buttons
+* Changed: Commented out some calls to trace APIs
+* Changed: Some PHPdoc improvements
+* Changed: [bw_images] and related shortcodes now accept the id parameter as positional 
+* Changed: oik_init() now wrapped in function_exists() test; to cater for weird invocation sequences and symlinked / non-symlinked plugins
+* Fixed: Better support for symlinks; replaced plugin_dir_url( __FILE__ ) with call to oik_url()
+* Fixed: Syntax help for [bw_bookmarks] shortcode 
+* Fixed: Syntax help for [gallery] and [caption] WordPress supplied shortcodes
+* Fixed: [bw_images] and related shortcodes forces post_status to 'inherit' 
+* Fixed: bw_gallery() now wrapped in function_exists(); to cater for other plugins which declare this function
+* Fixed: titles on [bw_tree] shortcode when shortcodes are expanded
+
+= 2.4 = 
 * Fixed: Version released to wordpress.org 
 
 = 2.4-beta.1223 = 
@@ -1010,7 +1067,7 @@ For details see below or visit [oik plugin](http://www.oik-plugins.com/oik)
 * Added: files for deprecated functions - but these are TOTALLY lazy
 * Added: help and syntax information for (some) NextGEN and Portfolio slideshow shortcodes
 * Added: help and syntax information for the NextGEN [nggallery] shortcode
-* Added: shortcode quicktag (labelled [] ) with jQuery code shared with th existing TinyMCE buttons
+* Added: shortcode quicktag (labelled [] ) with jQuery code shared with the existing TinyMCE buttons
 * Added: shortcodes can now provide: help, syntax, examples, live examples and snippets
 * Added: trace options, trace actions and trace reset buttons
 * Changed: Improved API for form fields

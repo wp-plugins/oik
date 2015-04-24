@@ -196,5 +196,5 @@ function wp3( $atts=NULL) {
 
 } /* End if !defined() */
 
-bw_trace2( "oik-bob-bing-wide-loaded" );
-bw_backtrace();
+//bw_trace2( "oik-bob-bing-wide-loaded" );
+//bw_backtrace();

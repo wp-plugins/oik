@@ -1,4 +1,4 @@
-<?php // (C) Copyright Bobbing Wide 2011-2014
+<?php // (C) Copyright Bobbing Wide 2011-2015
 
 /**
  * Load 'plugin' file if the options checkbox is set on
@@ -31,6 +31,7 @@ function oik_options_init() {
   bw_load_plugin( "bw_buttons", "oik-button-shortcodes" );
   bw_load_plugin( "bw_buttons", "oik-shortc-shortcodes" );
   bw_load_plugin( "bw_buttons", "oik-quicktags" );
+  bw_load_plugin( "bw_buttons", "oik-shortcake", "oik-shortcake.php" );
   bw_load_plugin( "bw_admin_options", "show_ids", "oik-ids.php" );
   // For WordPress 3.5 these filters are added in oik.php
   //add_filter( "attachment_fields_to_edit", "oik_attachment_fields_to_edit", null, 2 ); 
@@ -41,10 +42,12 @@ function oik_options_init() {
 
 /**
  * Load the oik-quicktags jQuery/JavaScript for when TinyMCE or the advanced HTML editor is being used
+ * 
+ * 
  * @TODO Question: Does this work in full screen? **?**
  */
 function bw_load_admin_scripts() {
-  wp_register_script( "oik-quicktags", plugin_dir_url( __FILE__). "bw_shortcodes.js", array('quicktags') );  
+  wp_register_script( "oik-quicktags", oik_url( "admin/bw_shortcodes.js" ), array('quicktags') );  
   wp_enqueue_script( "oik-quicktags" );
 }
 
@@ -225,6 +228,8 @@ function oik_plugins_servers() {
 
 /**
  * Return default values for the Tiny MCE buttons
+ *
+ * Note: oik-shortcake is not done this way **?** 2015/01/28
  */
 function oik_default_tinymce_buttons() {
   $defaults = array();
@@ -249,13 +254,14 @@ function oik_tinymce_buttons() {
   $options = bw_reset_options( $option, $options, "oik_default_tinymce_buttons", "_oik_reset_buttons" );
   $options = bw_recreate_options( 'bw_buttons' );
   
-  $imagefile_bw = retimage( NULL, plugin_dir_url(__FILE__ ).'bw-bn-icon.gif', "Button shortcodes" );
-  $imagefile_pp = retimage( NULL, plugin_dir_url( __FILE__ ).'bw-pp-icon.gif', "PayPal shortcodes" );
-  $imagefile_sc = retimage( NULL, plugin_dir_url( __FILE__ ).'bw-sc-icon.gif', "ALL shortcodes" );
+  $imagefile_bw = retimage( NULL, oik_url( 'admin/bw-bn-icon.gif' ), "Button shortcodes" );
+  $imagefile_pp = retimage( NULL, oik_url( 'admin/bw-pp-icon.gif' ), "PayPal shortcodes" );
+  $imagefile_sc = retimage( NULL, oik_url( 'admin/bw-sc-icon.gif' ), "ALL shortcodes" );
   bw_checkbox_arr( "bw_buttons", $imagefile_bw . bw_translate(" Button shortcodes" ), $options, 'oik-button-shortcodes' ); 
   bw_checkbox_arr( "bw_buttons", $imagefile_pp . bw_translate(" PayPal shortcodes" ), $options, 'oik-paypal-shortcodes' ); 
   bw_checkbox_arr( "bw_buttons", $imagefile_sc . bw_translate(" ALL shortcodes"), $options, 'oik-shortc-shortcodes' ); 
   bw_checkbox_arr( "bw_buttons", bw_translate( "[] quicktag for HTML editor"), $options, "oik-quicktags" );
+  bw_checkbox_arr( "bw_buttons", bw_translate( "Integrate with shortcake" ), $options, "oik-shortcake" );
   //bw_tablerow( array( "", "<input type=\"submit\" name=\"ok\" value=\"Save changes\" class=\"button-primary\"/>") ); 
   etag( "table" );
   e( isubmit( "ok", __("Save changes", "oik" ), null, "button-primary" ) ); 
